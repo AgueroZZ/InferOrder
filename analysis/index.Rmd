@@ -10,6 +10,7 @@ editor_options:
 
 In this project, we aim to study various ways to infer the latent ordering from the loading vectors.
 The inferred ordering could be used
+
 - to produce a smooth informative structure plot;
 - to quantify the distance between two observations;
 - as side information to assist in covariate-adjusted matrix factorization method.
