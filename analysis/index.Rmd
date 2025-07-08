@@ -20,7 +20,7 @@ The inferred ordering could be used
 
 + [Exploring smooth-EM algorithm.](explore_smoothEM.html)
 
-+ [Inferring latent ordering on pancrea dataset](explore_pancrea.rmd)
++ [Inferring latent ordering on pancrea dataset](explore_pancrea.html)
 
 
 
