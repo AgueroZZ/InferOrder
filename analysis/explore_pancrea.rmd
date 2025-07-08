@@ -1,0 +1,369 @@
+---
+title: "Infering latent ordering from the pancrea dataset"
+author: "Ziang Zhang"
+date: "2025-06-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Ordering structure plot
+
+Given a set of loadings, we want to infer a latent ordering, that will produce a smooth structure plot.
+
+
+### Data
+
+In this study, we will consider the pancrea dataset studied in [here](https://stephenslab.github.io/single-cell-jamboree/pancreas_factors.html).
+
+For simplicity, we will use the loadings from the semi-NMF, considering only the factors that are most relevant to the cell types, and only a subset of cells with a specific batch type (inDrop3).
+
+```{r}
+library(tibble)
+library(tidyr)
+library(ggplot2)
+library(Rtsne)
+library(umap)
+set.seed(1)
+source("./code/plot_ordering.R")
+load("./data/loading_order/pancreas_factors.rdata")
+load("./data/loading_order/pancreas.rdata")
+cells <- subsample_cell_types(sample_info$celltype,n = 500)
+Loadings <- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
+celltype <- as.character(sample_info$celltype[cells])
+names(celltype) <- rownames(Loadings)
+batchtype <- as.character(sample_info$tech[cells])
+names(batchtype) <- rownames(Loadings)
+```
+
+```{r}
+# Let's further restrict cells to only contain cells from one type of batch
+Loadings <- Loadings[batchtype == "inDrop3",]
+celltype <- celltype[batchtype == "inDrop3"]
+batchtype <- batchtype[batchtype == "inDrop3"]
+```
+
+
+Let's start with an un-ordered structure plot.
+
+```{r}
+plot_structure(Loadings)
+```
+
+
+### First PC
+
+Now, let's see how does the result look like when we order the structure plot by the first PC.
+
+```{r}
+PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+PC1_order <- order(PC1)
+plot_structure(Loadings, order = rownames(Loadings)[PC1_order])
+```
+
+Take a look at the ordering metric versus the cell types.
+
+```{r}
+highlights <- c("acinar","ductal","delta","gamma", "macrophage", "endothelial")
+PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     ordering_metric = PC1,
+                     other_color = "white"
+                     )
+```
+
+Here the x-axis represents the latent ordering of each cell, and the color represents its cell type.
+Based on this figure, it appears the first PC distinguishes between (delta, gamma) and (acinar, ductal).
+However, the ordering could not tell the difference between delta and gamma.
+Also, the ordering could not distinguish the macrophage from other cell types.
+
+
+We could also take a look at the distribution of the latent ordering metric for each cell type.
+
+```{r}
+distribution_highlight_types(
+  type_vec        = celltype,
+  subset_types    = highlights,
+  ordering_metric = PC1,
+  density         = FALSE
+)
+```
+
+The ordering just based on the first PC seems to be not bad. 
+Further since the PC has a probabilistic interpretation, the ordering can also be interpreted probabilistically.
+
+
+### tSNE
+
+Just as a comparison, let's see how does the result look like when we order the structure plot by the first tSNE.
+
+```{r}
+set.seed(1)
+tsne <- Rtsne(Loadings, dims = 1, perplexity = 30, verbose = TRUE, check_duplicates = FALSE)
+tsne_metric <- tsne$Y[,1]
+tsne_order <- order(tsne_metric)
+names(tsne_metric) <- rownames(Loadings)
+```
+
+```{r}
+plot_structure(Loadings, order = rownames(Loadings)[tsne_order])
+```
+
+Just based on the structure plot, it seems like the ordering is producing more structured results than the first PC.
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     ordering_metric = tsne_metric,
+                     other_color = "white"
+                     )
+```
+
+
+```{r}
+distribution_highlight_types(
+  type_vec        = celltype,
+  subset_types    = highlights,
+  ordering_metric = tsne_metric,
+  density         = FALSE
+)
+```
+
+
+Although the tSNE ordering does not have a clear probabilistic interpretation, the structure produced by this ordering matches the cell types much better than the first PC ordering.
+The distribution of the ordering metric also shows a clear **compact separation** between the cell types, which is not the case for the first PC.
+In particular, the macrophage and endothelial cells are now clearly separated from the other cell types.
+
+However, tSNE's metric only preserves the local structure of the data, and there is no guarantee that the global distance between the points is preserved in the tSNE metric (e.g. the distance between two groups).
+
+
+### UMAP
+
+Let's see how does the result look like when we order the structure plot by the first UMAP.
+
+```{r}
+umap_result <- umap(Loadings, n_neighbors = 15, min_dist = 0.1, metric = "euclidean")
+umap_metric <- umap_result$layout[,1]
+names(umap_metric) <- rownames(Loadings)
+umap_order <- order(umap_metric)
+names(umap_metric) <- rownames(Loadings)
+```
+
+```{r}
+plot_structure(Loadings, order = rownames(Loadings)[umap_order])
+```
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     ordering_metric = umap_metric,
+                     other_color = "white"
+                     )
+```
+
+```{r}
+distribution_highlight_types(
+  type_vec        = celltype,
+  subset_types    = highlights,
+  ordering_metric = umap_metric,
+  density         = FALSE
+)
+```
+
+UMAP can also provide very clear separation between the cell types. 
+However, just like tSNE, it does not have a clear probabilistic interpretation.
+Furthermore, the global ordering structure from UMAP seems to conflict with the global ordering structure from the tSNE.
+In the tSNE ordering, acinar is next to delta, which is next to endothelial, where as in the UMAP ordering, acinar is next to endothelial, which is next to delta.
+
+The separation of macrophage is not as clear as in the tSNE ordering.
+
+
+
+### Hierarchical Clustering
+
+Next, let's try doing hierarchical clustering on the loadings and see how does the result look like when we order the structure plot by the hierarchical clustering.
+
+First, let's try when method = `single`.
+
+```{r}
+hc <- hclust(dist(Loadings), method = "single")
+hc_order <- hc$order
+names(hc_order) <- rownames(Loadings)
+```
+
+```{r}
+plot_structure(Loadings, order = rownames(Loadings)[hc_order])
+```
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[hc_order],
+                     other_color = "white"
+                     )
+```
+
+```{r}
+distribution_highlight_types(
+  type_vec        = celltype,
+  subset_types    = highlights,
+  order_vec = rownames(Loadings)[hc_order],
+  density         = FALSE
+)
+```
+
+Similar to t-SNE, the hierarchical clustering ordering also produces a clear separation between the cell types.
+
+Then, let's try when method = `ward.D2`.
+
+```{r}
+hc <- hclust(dist(Loadings), method = "ward.D2")
+hc_order <- hc$order
+names(hc_order) <- rownames(Loadings)
+```
+
+```{r}
+plot_structure(Loadings, order = rownames(Loadings)[hc_order])
+```
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[hc_order],
+                     other_color = "white"
+                     )
+```
+
+```{r}
+distribution_highlight_types(
+  type_vec        = celltype,
+  subset_types    = highlights,
+  order_vec = rownames(Loadings)[hc_order],
+  density         = FALSE
+)
+```
+
+Again, the hierarchical clustering ordering produces a clear separation between the cell types.
+
+However, just like tSNE and UMAP, the hierarchical clustering ordering does not necessarily produce a interpretable global ordering structure.
+In particular, the ordering is not unique, as clades of the tree can be rearranged without changing the clustering result.
+
+
+
+<!-- ## Ordering based on EM -->
+
+<!-- Now, let's try to obtain the ordering based on the smooth-EM algorithm. -->
+
+
+<!-- ### Traditional EM -->
+
+<!-- First, we will see how the traditional EM algorithm performs on the loadings. -->
+
+<!-- ```{r} -->
+<!-- library(mclust) -->
+<!-- fit_mclust <- Mclust(Loadings, G=100) -->
+<!-- ``` -->
+
+<!-- Let's assume observations in the same cluster are ordered next to each other. -->
+
+<!-- ```{r} -->
+<!-- loadings_order <- order(fit_mclust$classification) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot_highlight_types(type_vec = celltype, -->
+<!--                      subset_types = highlights, -->
+<!--                      order_vec = rownames(Loadings)[loadings_order], -->
+<!--                      other_color = "white" -->
+<!--                      ) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- distribution_highlight_types( -->
+<!--   type_vec        = celltype, -->
+<!--   subset_types    = highlights, -->
+<!--   order_vec = rownames(Loadings)[loadings_order], -->
+<!--   density         = FALSE -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- The same cell types tend to be grouped together, but the ordering does not make much sense.  -->
+<!-- This is okay as we know in traditional EM, the index of the cluster is arbitrary. -->
+
+
+<!-- ### Smooth-EM with linear prior -->
+
+
+<!-- ```{r} -->
+<!-- source("./code/linear_EM.R") -->
+<!-- source("./code/general_EM.R") -->
+<!-- source("./code/prior_precision.R") -->
+<!-- result_linear <- EM_algorithm_linear( -->
+<!--   data = Loadings, -->
+<!--   K = 100, -->
+<!--   betaprec = 0.001, -->
+<!--   seed = 1, -->
+<!--   max_iter = 50, -->
+<!--   verbose = TRUE -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- result_linear$clustering <- apply(result_linear$gamma, 1, which.max) -->
+<!-- loadings_order <- order(result_linear$clustering) -->
+<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot_highlight_types(type_vec = celltype, -->
+<!--                      subset_types = highlights, -->
+<!--                      order_vec = rownames(Loadings)[loadings_order], -->
+<!--                      other_color = "white" -->
+<!--                      ) -->
+<!-- ``` -->
+
+
+<!-- ### Smooth-EM with RW1 prior -->
+
+<!-- ```{r} -->
+<!-- Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 5) -->
+<!-- init_params <- make_default_init(Loadings, K=100) -->
+<!-- result_RW1 <- EM_algorithm( -->
+<!--   data = Loadings, -->
+<!--   Q_prior = Q_prior_RW1, -->
+<!--   init_params = init_params, -->
+<!--   max_iter = 50, -->
+<!--   modelName = "EII", -->
+<!--   tol = 1e-5, -->
+<!--   verbose = TRUE -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max) -->
+<!-- loadings_order <- order(result_RW1$clustering) -->
+<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot_highlight_types(type_vec = celltype, -->
+<!--                      subset_types = highlights, -->
+<!--                      order_vec = rownames(Loadings)[loadings_order], -->
+<!--                      other_color = "white" -->
+<!--                      ) -->
+<!-- ``` -->
+
+
+
+
+
+
+
+
+
+
