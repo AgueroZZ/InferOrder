@@ -326,22 +326,18 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">InferOrder</a>
+      <a class="navbar-brand" href="index.html">Inferring latent ordering</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
-</li>
-<li>
-  <a href="about.html">About</a>
-</li>
-<li>
-  <a href="license.html">License</a>
+  <a href="index.html">Overview</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">source</a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -383,7 +379,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-07-07
+<strong>Last updated:</strong> 2025-07-08
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -514,13 +510,13 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongccaa320">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong9cb2d00">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> ccaa320
+aria-hidden="true"></span> <strong>Repository version:</strong> 9cb2d00
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongccaa320"
+<div id="strongRepositoryversionstrong9cb2d00"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -529,7 +525,7 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version ccaa320.
+The results in this page were generated with repository version 9cb2d00.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -544,13 +540,22 @@ were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
 
 Untracked files:
     Untracked:  code/general_EM.R
     Untracked:  code/linear_EM.R
+    Untracked:  code/ordering_loading.R
+    Untracked:  code/plot_ordering.R
     Untracked:  code/prior_precision.R
     Untracked:  code/simulate.R
+    Untracked:  data/loading_order/
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -595,6 +600,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -705,6 +727,43 @@ sim &lt;- simulate_mixture(n=500, K = 5, d=2, seed=123, proj_mat = matrix(c(1,-0
      xlab = &quot;X1&quot;, ylab = &quot;X2&quot;,
      main = &quot;Simulated mixture of Gaussians in 2D&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, let’s assume we don’t know there are five components, and we
 will fit a mixture model with <span class="math inline">\(K =
 20\)</span> components to this data. For simplicity, let’s assume <span
@@ -731,6 +790,43 @@ Attaching package: &#39;mclust&#39;</code></pre>
 mclust_means &lt;- t(fit_mclust$parameters$mean)
 points(mclust_means, pch=3, cex=2, lwd=2, col=&quot;red&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The inferred means are shown in red. We can see that the means are
 well aligned with the true component means, but we don’t have a natural
 ordering of the means.</p>
@@ -818,6 +914,43 @@ for (k in 1:(nrow(mu_matrix)-1)) {
          col=&quot;orange&quot;, lwd=4, length=0.1)
 }</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Here the fitted means are shown as orange arrows, with direction
 indicating the order of the components.</p>
 <p>Note that the fitted slope <span
@@ -860,6 +993,43 @@ text(
   labels=&quot;PC1&quot;, pos=4, col=&quot;red&quot;
 )</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fitting-smooth-em-with-a-var1-prior" class="section level3">
 <h3>Fitting smooth-EM with a VAR(1) prior</h3>
@@ -941,6 +1111,43 @@ for (k in 1:(nrow(mu_matrix)-1)) {
   }
 }</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fitting-smooth-em-with-a-rw1-prior" class="section level3">
 <h3>Fitting smooth-EM with a RW1 prior</h3>
@@ -1035,6 +1242,43 @@ zero-length arrow is of indeterminate angle and so skipped
 Warning in arrows(mu_matrix[k, 1], mu_matrix[k, 2], mu_matrix[k + 1, 1], :
 zero-length arrow is of indeterminate angle and so skipped</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The result of RW1 looks similar to that of VAR(1), which is not
 surprising since the RW1 prior is a special case of the VAR(1) prior
 with <span class="math inline">\(\mathbf{A} = \mathbf{I}\)</span>.</p>
@@ -1129,6 +1373,43 @@ for (k in 1:(nrow(mu_matrix)-1)) {
          col=&quot;orange&quot;, lwd=4, length=0.1)
 }</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Similar to the RW1 prior, the RW2 prior is also a partially improper
 prior, as it is invariant to addition of a constant vector as well as a
 linear trend (in terms of <span class="math inline">\(k\)</span>) to all
@@ -1205,6 +1486,43 @@ for (k in 1:(nrow(mu_matrix)-1)) {
          col=&quot;orange&quot;, lwd=4, length=0.1)
 }</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+028201f
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
