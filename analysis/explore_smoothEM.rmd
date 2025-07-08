@@ -1,0 +1,351 @@
+---
+title: "Exploring smooth-EM algorithm with various priors"
+author: "Ziang Zhang"
+date: "2025-07-07"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In this study, we consider a mixture model with \(K\) components, specified as follows:
+\begin{equation}
+\label{eq:smooth-EM}
+\begin{aligned}
+\boldsymbol{X}_i \mid z_i = k &\sim \mathcal{N}(\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \quad i\in [n], \\
+\boldsymbol{U} = (\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_K) &\sim \mathcal{N}(\boldsymbol{0}, \mathbf{Q}^{-1}),
+\end{aligned}
+\end{equation}
+where \(\boldsymbol{X}_i \in \mathbb{R}^d\) denotes the observed data, \(z_i \in [K]\) is a latent indicator assigning observation \(i\) to component \(k\), \(\boldsymbol{\mu}_k \in \mathbb{R}^d\) is the mean vector of component \(k\), and \(\boldsymbol{\Sigma}_k \in \mathbb{R}^{d\times d}\) is its covariance matrix.
+
+The prior distribution over the stacked mean vectors \(\boldsymbol{U}\) is multivariate normal with mean zero and precision matrix \(\mathbf{Q}\). This prior can encode smoothness or structural assumptions about how the component means evolve or are ordered (e.g., spatial or temporal constraints across \(k=1,\ldots,K\)).
+
+Rather than using the standard EM algorithm, we employ a **smooth-EM** approach that incorporates this structured prior over component means. In this framework:
+
+- **E-step (standard):**
+  \[
+  \gamma_{ik}^{(t)} = \frac{\pi_k^{(t)} \, \mathcal{N}(\boldsymbol{X}_i \mid \boldsymbol{\mu}_k^{(t)}, \boldsymbol{\Sigma}_k^{(t)})}{\sum_{j=1}^K \pi_j^{(t)} \, \mathcal{N}(\boldsymbol{X}_i \mid \boldsymbol{\mu}_j^{(t)}, \boldsymbol{\Sigma}_j^{(t)})}.
+  \]
+
+- **M-step (incorporating prior):**
+  \[
+  \begin{aligned}
+  \{\pi^{(t+1)}, \mathbf{U}^{(t+1)}, \boldsymbol{\Sigma}^{(t+1)}\} 
+  &= \arg\max \, \mathbb{E}_{\gamma^{(t)}}\Big[\log p(\boldsymbol{X}, \mathbf{U}, \mathbf{Z} \mid \pi, \boldsymbol{\Sigma})\Big] \\
+  &= \arg\max \, \mathbb{E}_{\gamma^{(t)}}\Big[\log p(\boldsymbol{X}, \mathbf{Z} \mid \pi, \mathbf{U}, \boldsymbol{\Sigma}) + \log p(\mathbf{U})\Big] \\
+  &= \arg\max \, \bigg\{\mathbb{E}_{\gamma^{(t)}}\Big[\log p(\boldsymbol{X}, \mathbf{Z} \mid \pi, \mathbf{U}, \boldsymbol{\Sigma})\Big] - \frac{1}{2} \mathbf{U}^\top \mathbf{Q} \mathbf{U}\bigg\} \\
+  &= \arg\max \, \left\{ -\frac{1}{2} \sum_{i,k} \gamma_{ik}^{(t)} \|\boldsymbol{X}_i - \boldsymbol{\mu}_k\|^2_{\boldsymbol{\Sigma}_k^{-1}} - \frac{1}{2} \mathbf{U}^\top \mathbf{Q} \mathbf{U}\right\}.
+  \end{aligned}
+  \]
+
+
+Unlike the standard EM algorithm, which maximizes the likelihood independently over component means, the smooth-EM algorithm performs MAP estimation that considers the prior of \(\boldsymbol{U}\), encouraging ordered or smooth transitions across components indexed by \(k\).
+
+We will now explore how this smooth-EM algorithm behaves under different prior specifications for \(\mathbf{Q}\). 
+
+## Simulate mixture in 2D
+
+Here, we will simulate a mixture of Gaussians in 2D, for $n = 500$ observations and $K = 5$ components.
+
+```{r}
+source("./code/simulate.R")
+library(MASS)
+library(mvtnorm)
+palette_colors <- rainbow(5)
+alpha_colors <- sapply(palette_colors, function(clr) adjustcolor(clr, alpha.f=0.3))
+sim <- simulate_mixture(n=500, K = 5, d=2, seed=123, proj_mat = matrix(c(1,-0.6,-0.6,1), nrow = 2, byrow = T))
+```
+
+```{r}
+plot(sim$X, col = alpha_colors[sim$z],
+     pch = 19, cex = 0.5, 
+     xlab = "X1", ylab = "X2",
+     main = "Simulated mixture of Gaussians in 2D")
+```
+
+Now, let's assume we don't know there are five components, and we will fit a mixture model with \(K = 20\) components to this data.
+For simplicity, let's assume $\mathbf{\Sigma}_k = \sigma^2 \mathbf{I}$ for all $k$, where $\sigma^2$ is a constant variance across components.
+
+
+### Fitting regular EM
+
+First, we fit the standard EM algorithm to this mixture model without any prior on the means.
+
+```{r}
+library(mclust)
+fit_mclust <- Mclust(sim$X, G=20)
+```
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z],
+     xlab="X1", ylab="X2",
+     cex=0.5, pch=19, main="mclust")
+mclust_means <- t(fit_mclust$parameters$mean)
+points(mclust_means, pch=3, cex=2, lwd=2, col="red")
+```
+
+
+The inferred means are shown in red. 
+We can see that the means are well aligned with the true component means, but we don't have a natural ordering of the means.
+
+
+### Fitting smooth-EM with a linear prior
+
+We consider the simplest case for the prior on the component means \(\mathbf{U}\), where \(\mathbf{Q}\) corresponds to a linear trend prior. Specifically, we assume that
+\[
+\boldsymbol{\mu}_k = l_k \boldsymbol{\beta},
+\]
+for some shared slope vector \(\boldsymbol{\beta} \in \mathbb{R}^d\), with \(\{l_k\}\) being equally spaced values increasing from \(-1\) to \(1\).
+
+```{r}
+source("./code/linear_EM.R")
+source("./code/general_EM.R")
+result_linear <- EM_algorithm_linear(
+  data = sim$X,
+  K = 20,
+  betaprec = 0.001,
+  seed = 1,
+  max_iter = 50,
+  verbose = TRUE
+)
+```
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     pch=19, main="EM Fitted Means with linear Prior")
+# Turn mu_list into matrix
+mu_matrix <- do.call(rbind, result_linear$params$mu)
+# Draw arrows showing sequence
+for (k in 1:(nrow(mu_matrix)-1)) {
+  arrows(mu_matrix[k,1], mu_matrix[k,2],
+         mu_matrix[k+1,1], mu_matrix[k+1,2],
+         col="orange", lwd=4, length=0.1)
+}
+```
+
+Here the fitted means are shown as orange arrows, with direction indicating the order of the components.
+
+Note that the fitted slope $\boldsymbol{\beta}$ is very close to the first principal component of the data.
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with Linear Prior")
+     
+# Turn mu_list into matrix
+mu_matrix <- do.call(rbind, result_linear$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=4, length=0.1)
+  }
+}
+
+# ====== Fit PCA ======
+pca_fit <- prcomp(sim$X, center=TRUE, scale.=FALSE)
+pcs <- pca_fit$rotation  # columns are PC directions
+X_center <- colMeans(sim$X)
+
+# Set radius for arrows
+radius <- 1
+
+# ====== Draw PC arrows ======
+arrows(
+  X_center[1], X_center[2],
+  X_center[1] + radius * pcs[1,1],
+  X_center[2] + radius * pcs[2,1],
+  col="red", lwd=4, length=0.1
+)
+text(
+  X_center[1] + radius * pcs[1,1],
+  X_center[2] + radius * pcs[2,1],
+  labels="PC1", pos=4, col="red"
+)
+```
+
+
+### Fitting smooth-EM with a VAR(1) prior
+
+Next, we consider a first-order vector autoregressive (VAR(1)) prior on the component means. 
+Under this prior, each component mean \(\boldsymbol{\mu}_k\) depends linearly on its immediate predecessor \(\boldsymbol{\mu}_{k-1}\), with Gaussian noise:
+\[
+\begin{aligned}
+\boldsymbol{\mu}_k &= \mathbf{A} \boldsymbol{\mu}_{k-1} + \boldsymbol{\epsilon}_k, \\
+\boldsymbol{\epsilon}_k &\sim \mathcal{N}(\mathbf{0}, \mathbf{Q}_\epsilon^{-1}),
+\end{aligned}
+\]
+where \(\mathbf{A}\) is the transition matrix encoding the dependence of the current mean on the previous mean, and \(\mathbf{Q}_\epsilon\) is the precision matrix of the noise term.
+
+
+Let's for now assume the transition matrix \(\mathbf{A}\) and the noise precision matrix \(\mathbf{Q}_\epsilon\) are given by:
+
+\[
+\mathbf{A} = 0.8 \, \mathbf{I}_2
+\]
+\[
+\mathbf{Q}_\epsilon = 0.1 \, \mathbf{I}_2
+\]
+
+where \(\mathbf{I}_2\) is the 2-dimensional identity matrix.
+
+```{r}
+source("./code/prior_precision.R")
+Q_prior_VAR1 <- make_VAR1_precision(K=20, d=2, A = diag(2) * 0.8, Q = diag(2) * 0.1)
+set.seed(1)
+init_params <- make_default_init(sim$X, K=20)
+result_VAR1 <- EM_algorithm(
+  data = sim$X,
+  Q_prior = Q_prior_VAR1,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EII",
+  tol = 1e-5,
+  verbose = TRUE
+)
+```
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with VAR(1) Prior")
+     
+# Turn mu_list into matrix
+mu_matrix <- do.call(rbind, result_VAR1$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=4, length=0.1)
+  }
+}
+```
+
+
+### Fitting smooth-EM with a RW1 prior
+
+Next, we consider a first-order random walk (RW1) prior on the component means, formulated using the difference operator. Under this prior, successive differences of the means are modeled as independent Gaussian noise:
+
+\[
+\Delta \boldsymbol{\mu}_k = \boldsymbol{\mu}_k - \boldsymbol{\mu}_{k-1} \sim \mathcal{N}\big(\mathbf{0}, \lambda^{-1} \mathbf{I}_d\big),
+\]
+
+where \(\lambda\) is a scalar precision parameter that controls the smoothness of the mean sequence. Larger values of \(\lambda\) enforce stronger smoothness by penalizing large differences between successive component means.
+
+
+```{r}
+Q_prior_RW1 <- make_random_walk_precision(K=20, d=2, lambda = 5)
+result_RW1 <- EM_algorithm(
+  data = sim$X,
+  Q_prior = Q_prior_RW1,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EII",
+  tol = 1e-5,
+  verbose = TRUE
+)
+```
+
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with RW(1) Prior")
+# Turn mu_list into matrix
+mu_matrix <- do.call(rbind, result_RW1$params$mu)
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=4, length=0.1)
+  }
+}
+```
+
+
+The result of RW1 looks similar to that of VAR(1), which is not surprising since the RW1 prior is a special case of the VAR(1) prior with \(\mathbf{A} = \mathbf{I}\).
+
+Note that RW1 is a partially improper prior, as the overall level of the means is not penalized. 
+In other words, the prior is invariant to addition of any constant vector to all component means.
+
+
+
+
+
+### Fitting smooth-EM with a RW2 prior
+
+
+Next, we consider a second-order random walk (RW2) prior on the component means, which penalizes the second differences of the means:
+
+\[
+\Delta^2 \boldsymbol{\mu}_k = \boldsymbol{\mu}_k - 2\boldsymbol{\mu}_{k-1} + \boldsymbol{\mu}_{k-2} \sim \mathcal{N}\big(\mathbf{0}, \lambda^{-1} \mathbf{I}_d\big),
+\]
+
+where \(\Delta^2 \boldsymbol{\mu}_k\) denotes the second-order difference operator. The scalar precision parameter \(\lambda\) controls the smoothness of the sequence, with larger values enforcing stronger penalization of curvature.
+
+```{r}
+Q_prior_rw2 <- make_random_walk_precision(K = 20, d = 2, q=2, lambda=400)
+result_rw2 <- EM_algorithm(
+  data = sim$X,
+  Q_prior = Q_prior_rw2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EII",
+  tol = 1e-5,
+  verbose = TRUE
+)
+```
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     pch=19, main="EM Fitted Means with RW2 Prior")
+# Turn mu_list into matrix
+mu_matrix <- do.call(rbind, result_rw2$params$mu)
+# Draw arrows showing sequence
+for (k in 1:(nrow(mu_matrix)-1)) {
+  arrows(mu_matrix[k,1], mu_matrix[k,2],
+         mu_matrix[k+1,1], mu_matrix[k+1,2],
+         col="orange", lwd=4, length=0.1)
+}
+```
+
+
+Similar to the RW1 prior, the RW2 prior is also a partially improper prior, as it is invariant to addition of a constant vector as well as a linear trend (in terms of $k$) to all component means.
+As $\lambda$ increases, the fitted means become closer to a linear trend.
+
+```{r}
+Q_prior_rw2_strong <- make_random_walk_precision(K = 20, d = 2, q=2, lambda=4000)
+Q_prior_rw2_strong <- EM_algorithm(
+  data = sim$X,
+  Q_prior = Q_prior_rw2_strong,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EII",
+  tol = 1e-5,
+  verbose = TRUE
+)
+```
+
+```{r}
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     pch=19, main="EM Fitted Means with RW2 Prior (strong penalty)")
+# Turn mu_list into matrix
+mu_matrix <- do.call(rbind, Q_prior_rw2_strong$params$mu)
+# Draw arrows showing sequence
+for (k in 1:(nrow(mu_matrix)-1)) {
+  arrows(mu_matrix[k,1], mu_matrix[k,2],
+         mu_matrix[k+1,1], mu_matrix[k+1,2],
+         col="orange", lwd=4, length=0.1)
+}
+```
+
+
+
+
+
