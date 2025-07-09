@@ -379,7 +379,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-07-08
+<strong>Last updated:</strong> 2025-07-09
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree9867260543ce03a33d63d7703396e9e64eb75e94targetblank9867260a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreee4aadb04a9f0502a38d2b62afcd534ed33ffd152targetblanke4aadb0a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/9867260543ce03a33d63d7703396e9e64eb75e94" target="_blank">9867260</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/e4aadb04a9f0502a38d2b62afcd534ed33ffd152" target="_blank">e4aadb0</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree9867260543ce03a33d63d7703396e9e64eb75e94targetblank9867260a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreee4aadb04a9f0502a38d2b62afcd534ed33ffd152targetblanke4aadb0a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/9867260543ce03a33d63d7703396e9e64eb75e94" target="_blank">9867260</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/e4aadb04a9f0502a38d2b62afcd534ed33ffd152" target="_blank">e4aadb0</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -550,6 +550,12 @@ Ignored files:
 
 Untracked files:
     Untracked:  all_celltypes_umap.png
+    Untracked:  code/general_EM_obs.R
+
+Unstaged changes:
+    Modified:   analysis/explore_smoothEM.rmd
+    Modified:   code/general_EM.R
+    Modified:   code/linear_EM.R
 
 </code></pre>
 <p>
@@ -594,6 +600,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e4aadb04a9f0502a38d2b62afcd534ed33ffd152/analysis/explore_pancrea.rmd" target="_blank">e4aadb0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_pancrea.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/dbcdf9aa908266d3ffc0296ed082786e7a561b58/docs/explore_pancrea.html" target="_blank">dbcdf9a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -905,7 +945,7 @@ Iteration 850: error is 0.428145 (50 iterations in 0.03 seconds)
 Iteration 900: error is 0.424017 (50 iterations in 0.03 seconds)
 Iteration 950: error is 0.420721 (50 iterations in 0.03 seconds)
 Iteration 1000: error is 0.417580 (50 iterations in 0.03 seconds)
-Fitting performed in 0.60 seconds.</code></pre>
+Fitting performed in 0.59 seconds.</code></pre>
 <pre class="r"><code>tsne_metric &lt;- tsne$Y[,1]
 tsne_order &lt;- order(tsne_metric)
 names(tsne_metric) &lt;- rownames(Loadings)</code></pre>
@@ -1468,90 +1508,492 @@ separation between the cell types.</p>
 ordering does not necessarily produce a interpretable global ordering
 structure. In particular, the ordering is not unique, as clades of the
 tree can be rearranged without changing the clustering result.</p>
-<!-- ## Ordering based on EM -->
-<!-- Now, let's try to obtain the ordering based on the smooth-EM algorithm. -->
-<!-- ### Traditional EM -->
-<!-- First, we will see how the traditional EM algorithm performs on the loadings. -->
-<!-- ```{r} -->
-<!-- library(mclust) -->
-<!-- fit_mclust <- Mclust(Loadings, G=100) -->
-<!-- ``` -->
-<!-- Let's assume observations in the same cluster are ordered next to each other. -->
-<!-- ```{r} -->
-<!-- loadings_order <- order(fit_mclust$classification) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- plot_highlight_types(type_vec = celltype, -->
-<!--                      subset_types = highlights, -->
-<!--                      order_vec = rownames(Loadings)[loadings_order], -->
-<!--                      other_color = "white" -->
-<!--                      ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- distribution_highlight_types( -->
-<!--   type_vec        = celltype, -->
-<!--   subset_types    = highlights, -->
-<!--   order_vec = rownames(Loadings)[loadings_order], -->
-<!--   density         = FALSE -->
-<!-- ) -->
-<!-- ``` -->
-<!-- The same cell types tend to be grouped together, but the ordering does not make much sense.  -->
-<!-- This is okay as we know in traditional EM, the index of the cluster is arbitrary. -->
-<!-- ### Smooth-EM with linear prior -->
-<!-- ```{r} -->
-<!-- source("./code/linear_EM.R") -->
-<!-- source("./code/general_EM.R") -->
-<!-- source("./code/prior_precision.R") -->
-<!-- result_linear <- EM_algorithm_linear( -->
-<!--   data = Loadings, -->
-<!--   K = 100, -->
-<!--   betaprec = 0.001, -->
-<!--   seed = 1, -->
-<!--   max_iter = 50, -->
-<!--   verbose = TRUE -->
-<!-- ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- result_linear$clustering <- apply(result_linear$gamma, 1, which.max) -->
-<!-- loadings_order <- order(result_linear$clustering) -->
-<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- plot_highlight_types(type_vec = celltype, -->
-<!--                      subset_types = highlights, -->
-<!--                      order_vec = rownames(Loadings)[loadings_order], -->
-<!--                      other_color = "white" -->
-<!--                      ) -->
-<!-- ``` -->
-<!-- ### Smooth-EM with RW1 prior -->
-<!-- ```{r} -->
-<!-- Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 5) -->
-<!-- init_params <- make_default_init(Loadings, K=100) -->
-<!-- result_RW1 <- EM_algorithm( -->
-<!--   data = Loadings, -->
-<!--   Q_prior = Q_prior_RW1, -->
-<!--   init_params = init_params, -->
-<!--   max_iter = 50, -->
-<!--   modelName = "EII", -->
-<!--   tol = 1e-5, -->
-<!--   verbose = TRUE -->
-<!-- ) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max) -->
-<!-- loadings_order <- order(result_RW1$clustering) -->
-<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- plot_highlight_types(type_vec = celltype, -->
-<!--                      subset_types = highlights, -->
-<!--                      order_vec = rownames(Loadings)[loadings_order], -->
-<!--                      other_color = "white" -->
-<!--                      ) -->
-<!-- ``` -->
+</div>
+</div>
+<div id="ordering-based-on-em" class="section level2">
+<h2>Ordering based on EM</h2>
+<p>Now, let’s try to obtain the ordering based on the smooth-EM
+algorithm.</p>
+<div id="traditional-em" class="section level3">
+<h3>Traditional EM</h3>
+<p>First, we will see how the traditional EM algorithm performs on the
+loadings.</p>
+<pre class="r"><code>library(mclust)</code></pre>
+<pre><code>Package &#39;mclust&#39; version 6.1.1
+Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
+<pre class="r"><code>fit_mclust &lt;- Mclust(Loadings, G=100)</code></pre>
+<p>Let’s assume observations in the same cluster are ordered next to
+each other.</p>
+<pre class="r"><code>loadings_order_EM &lt;- order(fit_mclust$classification)</code></pre>
+<pre class="r"><code>plot_structure(Loadings, order = rownames(Loadings)[loadings_order_EM])</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_EM],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The same cell types tend to be clustered together, but the ordering
+does not make much sense. This is okay as we know in traditional EM, the
+index of the cluster is arbitrary.</p>
+</div>
+<div id="smooth-em-with-linear-prior" class="section level3">
+<h3>Smooth-EM with linear prior</h3>
+<pre class="r"><code>source(&quot;./code/linear_EM.R&quot;)
+source(&quot;./code/general_EM.R&quot;)</code></pre>
+<pre><code>Warning: package &#39;matrixStats&#39; was built under R version 4.3.3</code></pre>
+<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.3.3</code></pre>
+<pre><code>
+Attaching package: &#39;mvtnorm&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:mclust&#39;:
+
+    dmvnorm</code></pre>
+<pre><code>
+Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:tidyr&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
+result_linear &lt;- EM_algorithm_linear(
+  data = Loadings,
+  K = 300,
+  betaprec = 0.001,
+  seed = 1,
+  max_iter = 100,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration   1: objective = 9000.369633
+Iteration   2: objective = 10090.984786
+Iteration   3: objective = 11677.123012
+Iteration   4: objective = 13122.105668
+Iteration   5: objective = 14365.551851
+Iteration   6: objective = 15650.656488
+Iteration   7: objective = 17084.260074
+Iteration   8: objective = 18867.723968
+Iteration   9: objective = 20309.852222
+Iteration  10: objective = 21734.735885
+Iteration  11: objective = 22807.979428
+Iteration  12: objective = 23585.435901
+Iteration  13: objective = 24257.348997
+Iteration  14: objective = 24771.595414
+Iteration  15: objective = 25124.436676
+Iteration  16: objective = 25359.678547
+Iteration  17: objective = 25508.305496
+Iteration  18: objective = 25601.761928
+Iteration  19: objective = 25650.983591
+Iteration  20: objective = 25683.153584
+Iteration  21: objective = 25704.632332
+Iteration  22: objective = 25727.183836
+Iteration  23: objective = 25750.591984
+Iteration  24: objective = 25765.573937
+Iteration  25: objective = 25776.722237
+Iteration  26: objective = 25787.843278
+Iteration  27: objective = 25798.021246
+Iteration  28: objective = 25808.756013
+Iteration  29: objective = 25817.933945
+Iteration  30: objective = 25827.923133
+Iteration  31: objective = 25832.892733
+Iteration  32: objective = 25834.937413
+Iteration  33: objective = 25836.583470
+Iteration  34: objective = 25837.352388
+Iteration  35: objective = 25837.290170
+Converged at iteration 35 with objective 25837.290170</code></pre>
+<pre class="r"><code>result_linear$clustering &lt;- apply(result_linear$gamma, 1, which.max)
+loadings_order_linear &lt;- order(result_linear$clustering)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_linear])</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_linear],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The ordering from linear prior does not look very informative, which
+is not unexpected since the linear prior is like a coarser version of
+the PCA.</p>
+</div>
+<div id="smooth-em-with-rw1-prior" class="section level3">
+<h3>Smooth-EM with RW1 prior</h3>
+<p>Now, let’s try the smooth-EM algorithm with a first order random walk
+prior.</p>
+<pre class="r"><code>set.seed(1)
+Q_prior_RW1 &lt;- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=1)
+init_params &lt;- make_default_init(Loadings, K=100)
+result_RW1 &lt;- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW1,
+  init_params = init_params,
+  max_iter = 100,
+  modelName = &quot;EII&quot;,
+  tol = 1e-5,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration 1: objective = 7400.4641
+Iteration 2: objective = 7404.8029
+Iteration 3: objective = 7446.8542
+Iteration 4: objective = 7767.8426
+Iteration 5: objective = 8750.8617
+Iteration 6: objective = 9647.5658
+Iteration 7: objective = 10635.3860
+Iteration 8: objective = 11617.9350
+Iteration 9: objective = 12398.8647
+Iteration 10: objective = 12774.2315
+Iteration 11: objective = 12943.7901
+Iteration 12: objective = 13043.6552
+Iteration 13: objective = 13099.3848
+Iteration 14: objective = 13133.0113
+Iteration 15: objective = 13159.2779
+Iteration 16: objective = 13175.1134
+Iteration 17: objective = 13187.5853
+Iteration 18: objective = 13210.1739
+Iteration 19: objective = 13232.3480
+Iteration 20: objective = 13241.6946
+Iteration 21: objective = 13247.4560
+Iteration 22: objective = 13251.3146
+Iteration 23: objective = 13254.0073
+Iteration 24: objective = 13255.9540
+Iteration 25: objective = 13257.4111
+Iteration 26: objective = 13258.5356
+Iteration 27: objective = 13259.4256
+Iteration 28: objective = 13260.1468
+Iteration 29: objective = 13260.7461
+Iteration 30: objective = 13261.2588
+Iteration 31: objective = 13261.7119
+Iteration 32: objective = 13262.1256
+Iteration 33: objective = 13262.5140
+Iteration 34: objective = 13262.8859
+Iteration 35: objective = 13263.2456
+Iteration 36: objective = 13263.5936
+Iteration 37: objective = 13263.9276
+Iteration 38: objective = 13264.2436
+Iteration 39: objective = 13264.5371
+Iteration 40: objective = 13264.8039
+Iteration 41: objective = 13265.0412
+Iteration 42: objective = 13265.2473
+Iteration 43: objective = 13265.4222
+Iteration 44: objective = 13265.5672
+Iteration 45: objective = 13265.6847
+Iteration 46: objective = 13265.7776
+Iteration 47: objective = 13265.8490
+Iteration 48: objective = 13265.9022
+Iteration 49: objective = 13265.9403
+Iteration 50: objective = 13265.9661
+Iteration 51: objective = 13265.9821
+Iteration 52: objective = 13265.9904
+Iteration 53: objective = 13265.9927
+Converged at iteration 54 with objective 13265.9905</code></pre>
+<pre class="r"><code>result_RW1$clustering &lt;- apply(result_RW1$gamma, 1, which.max)
+loadings_order_RW1 &lt;- order(result_RW1$clustering)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_RW1],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The result from RW1 looks good. Each cell type is separated from the
+others, and the ordering seems to make sense.</p>
+</div>
+<div id="smooth-em-with-rw2-prior" class="section level3">
+<h3>Smooth-EM with RW2 prior</h3>
+<p>Next, we will try the RW2 prior in the smooth-EM algorithm.</p>
+<pre class="r"><code>Q_prior_RW2 &lt;- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 1000, q=2)
+result_RW2 &lt;- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 300,
+  modelName = &quot;EII&quot;,
+  tol = 1e-5,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration 1: objective = 8312.5101
+Iteration 2: objective = 8319.7097
+Iteration 3: objective = 8400.4678
+Iteration 4: objective = 8979.9229
+Iteration 5: objective = 10026.7426
+Iteration 6: objective = 10918.0549
+Iteration 7: objective = 12621.1532
+Iteration 8: objective = 13722.5287
+Iteration 9: objective = 14240.3743
+Iteration 10: objective = 14502.8912
+Iteration 11: objective = 14690.2165
+Iteration 12: objective = 14811.4430
+Iteration 13: objective = 14915.9464
+Iteration 14: objective = 15008.8120
+Iteration 15: objective = 15087.0693
+Iteration 16: objective = 15155.1829
+Iteration 17: objective = 15223.5622
+Iteration 18: objective = 15295.3476
+Iteration 19: objective = 15354.6444
+Iteration 20: objective = 15407.8951
+Iteration 21: objective = 15457.7666
+Iteration 22: objective = 15498.2489
+Iteration 23: objective = 15531.2266
+Iteration 24: objective = 15556.1943
+Iteration 25: objective = 15577.5501
+Iteration 26: objective = 15594.5084
+Iteration 27: objective = 15608.8738
+Iteration 28: objective = 15622.5929
+Iteration 29: objective = 15634.1777
+Iteration 30: objective = 15642.1329
+Iteration 31: objective = 15648.3680
+Iteration 32: objective = 15656.1015
+Iteration 33: objective = 15666.3914
+Iteration 34: objective = 15674.4580
+Iteration 35: objective = 15679.5330
+Iteration 36: objective = 15684.5742
+Iteration 37: objective = 15690.1435
+Iteration 38: objective = 15695.9500
+Iteration 39: objective = 15703.7122
+Iteration 40: objective = 15712.3576
+Iteration 41: objective = 15718.6916
+Iteration 42: objective = 15722.2593
+Iteration 43: objective = 15724.6795
+Iteration 44: objective = 15727.5857
+Iteration 45: objective = 15730.5362
+Iteration 46: objective = 15734.3871
+Iteration 47: objective = 15739.8149
+Iteration 48: objective = 15745.0370
+Iteration 49: objective = 15749.2871
+Iteration 50: objective = 15752.4081
+Iteration 51: objective = 15754.9334
+Iteration 52: objective = 15758.4964
+Iteration 53: objective = 15763.4665
+Iteration 54: objective = 15767.0124
+Iteration 55: objective = 15769.3160
+Iteration 56: objective = 15772.4248
+Iteration 57: objective = 15777.5482
+Iteration 58: objective = 15783.9405
+Iteration 59: objective = 15790.3024
+Iteration 60: objective = 15795.5554
+Iteration 61: objective = 15798.8527
+Iteration 62: objective = 15801.0477
+Iteration 63: objective = 15803.0848
+Iteration 64: objective = 15805.6896
+Iteration 65: objective = 15808.9195
+Iteration 66: objective = 15811.9902
+Iteration 67: objective = 15815.0200
+Iteration 68: objective = 15818.5022
+Iteration 69: objective = 15822.5847
+Iteration 70: objective = 15826.2054
+Iteration 71: objective = 15829.0675
+Iteration 72: objective = 15831.8108
+Iteration 73: objective = 15833.7451
+Iteration 74: objective = 15834.9587
+Iteration 75: objective = 15836.0208
+Iteration 76: objective = 15837.4377
+Iteration 77: objective = 15839.5974
+Iteration 78: objective = 15842.5106
+Iteration 79: objective = 15845.7941
+Iteration 80: objective = 15849.0930
+Iteration 81: objective = 15852.3393
+Iteration 82: objective = 15855.6113
+Iteration 83: objective = 15858.9370
+Iteration 84: objective = 15861.0288
+Iteration 85: objective = 15862.0126
+Iteration 86: objective = 15862.9482
+Iteration 87: objective = 15863.9877
+Iteration 88: objective = 15865.1048
+Iteration 89: objective = 15866.4606
+Iteration 90: objective = 15868.3884
+Iteration 91: objective = 15871.1821
+Iteration 92: objective = 15874.7395
+Iteration 93: objective = 15878.5338
+Iteration 94: objective = 15882.0466
+Iteration 95: objective = 15885.0449
+Iteration 96: objective = 15887.5562
+Iteration 97: objective = 15889.6412
+Iteration 98: objective = 15891.0735
+Iteration 99: objective = 15891.9653
+Iteration 100: objective = 15893.0371
+Iteration 101: objective = 15894.7001
+Iteration 102: objective = 15896.6561
+Iteration 103: objective = 15899.1740
+Iteration 104: objective = 15902.4640
+Iteration 105: objective = 15906.0594
+Iteration 106: objective = 15909.4853
+Iteration 107: objective = 15912.5164
+Iteration 108: objective = 15915.0794
+Iteration 109: objective = 15917.1597
+Iteration 110: objective = 15918.7799
+Iteration 111: objective = 15920.0033
+Iteration 112: objective = 15920.9311
+Iteration 113: objective = 15921.7072
+Iteration 114: objective = 15922.5167
+Iteration 115: objective = 15923.5115
+Iteration 116: objective = 15924.7572
+Iteration 117: objective = 15926.4261
+Iteration 118: objective = 15929.0117
+Iteration 119: objective = 15932.9452
+Iteration 120: objective = 15937.5178
+Iteration 121: objective = 15941.7716
+Iteration 122: objective = 15945.3556
+Iteration 123: objective = 15948.2022
+Iteration 124: objective = 15950.4021
+Iteration 125: objective = 15952.1622
+Iteration 126: objective = 15953.3570
+Iteration 127: objective = 15953.6938
+Iteration 128: objective = 15953.7289
+Iteration 129: objective = 15953.8868
+Iteration 130: objective = 15954.2423
+Iteration 131: objective = 15954.8295
+Iteration 132: objective = 15955.7711
+Iteration 133: objective = 15957.1776
+Iteration 134: objective = 15958.8118
+Iteration 135: objective = 15960.4928
+Iteration 136: objective = 15962.4626
+Iteration 137: objective = 15964.8530
+Iteration 138: objective = 15967.6641
+Iteration 139: objective = 15970.8526
+Iteration 140: objective = 15973.9971
+Iteration 141: objective = 15976.5595
+Iteration 142: objective = 15978.5208
+Iteration 143: objective = 15979.9771
+Iteration 144: objective = 15981.0058
+Iteration 145: objective = 15981.7263
+Iteration 146: objective = 15982.2615
+Iteration 147: objective = 15982.7077
+Iteration 148: objective = 15983.1361
+Iteration 149: objective = 15983.6091
+Iteration 150: objective = 15984.2051
+Iteration 151: objective = 15985.0294
+Iteration 152: objective = 15986.1217
+Iteration 153: objective = 15987.3295
+Iteration 154: objective = 15988.6553
+Iteration 155: objective = 15990.2511
+Iteration 156: objective = 15992.0018
+Iteration 157: objective = 15993.7038
+Iteration 158: objective = 15995.2475
+Iteration 159: objective = 15996.6159
+Iteration 160: objective = 15997.8461
+Iteration 161: objective = 15999.0275
+Iteration 162: objective = 16000.3326
+Iteration 163: objective = 16001.9482
+Iteration 164: objective = 16003.7755
+Iteration 165: objective = 16005.6044
+Iteration 166: objective = 16007.5233
+Iteration 167: objective = 16009.2591
+Iteration 168: objective = 16010.4835
+Iteration 169: objective = 16011.2715
+Iteration 170: objective = 16011.8007
+Iteration 171: objective = 16012.2078
+Iteration 172: objective = 16012.6239
+Iteration 173: objective = 16013.1949
+Iteration 174: objective = 16013.8843
+Iteration 175: objective = 16014.4308
+Iteration 176: objective = 16014.9800
+Iteration 177: objective = 16015.9720
+Iteration 178: objective = 16017.6391
+Iteration 179: objective = 16019.8875
+Iteration 180: objective = 16022.3939
+Iteration 181: objective = 16024.8444
+Iteration 182: objective = 16027.0760
+Iteration 183: objective = 16029.0477
+Iteration 184: objective = 16030.7630
+Iteration 185: objective = 16032.2189
+Iteration 186: objective = 16033.3705
+Iteration 187: objective = 16034.1276
+Iteration 188: objective = 16034.5729
+Iteration 189: objective = 16034.9604
+Iteration 190: objective = 16035.2527
+Iteration 191: objective = 16035.3855
+Iteration 192: objective = 16035.5456
+Iteration 193: objective = 16035.8929
+Iteration 194: objective = 16036.5151
+Iteration 195: objective = 16037.5181
+Iteration 196: objective = 16039.0074
+Iteration 197: objective = 16040.9897
+Iteration 198: objective = 16043.3184
+Iteration 199: objective = 16045.7750
+Iteration 200: objective = 16048.2060
+Iteration 201: objective = 16050.6007
+Iteration 202: objective = 16053.0211
+Iteration 203: objective = 16055.2855
+Iteration 204: objective = 16057.1498
+Iteration 205: objective = 16058.6444
+Iteration 206: objective = 16059.8624
+Iteration 207: objective = 16060.8600
+Iteration 208: objective = 16061.6709
+Iteration 209: objective = 16062.3241
+Iteration 210: objective = 16062.8491
+Iteration 211: objective = 16063.2734
+Iteration 212: objective = 16063.6198
+Iteration 213: objective = 16063.9044
+Iteration 214: objective = 16064.1370
+Iteration 215: objective = 16064.3238
+Iteration 216: objective = 16064.4732
+Iteration 217: objective = 16064.6056
+Iteration 218: objective = 16064.7583
+Iteration 219: objective = 16064.9691
+Iteration 220: objective = 16065.2505
+Iteration 221: objective = 16065.6284
+Iteration 222: objective = 16066.1647
+Iteration 223: objective = 16066.8341
+Iteration 224: objective = 16067.3458
+Iteration 225: objective = 16067.7147
+Iteration 226: objective = 16068.4277
+Iteration 227: objective = 16069.6652
+Iteration 228: objective = 16071.4987
+Iteration 229: objective = 16073.9146
+Iteration 230: objective = 16076.6455
+Iteration 231: objective = 16079.3293
+Iteration 232: objective = 16081.7391
+Iteration 233: objective = 16083.8077
+Iteration 234: objective = 16085.5509
+Iteration 235: objective = 16087.0114
+Iteration 236: objective = 16088.2369
+Iteration 237: objective = 16089.2741
+Iteration 238: objective = 16090.1663
+Iteration 239: objective = 16090.9492
+Iteration 240: objective = 16091.6484
+Iteration 241: objective = 16092.2828
+Iteration 242: objective = 16092.8728
+Iteration 243: objective = 16093.4451
+Iteration 244: objective = 16094.0338
+Iteration 245: objective = 16094.6796
+Iteration 246: objective = 16095.4291
+Iteration 247: objective = 16096.3333
+Iteration 248: objective = 16097.4396
+Iteration 249: objective = 16098.7757
+Iteration 250: objective = 16100.3285
+Iteration 251: objective = 16102.0305
+Iteration 252: objective = 16103.7747
+Iteration 253: objective = 16105.4526
+Iteration 254: objective = 16106.9868
+Iteration 255: objective = 16108.3376
+Iteration 256: objective = 16109.4956
+Iteration 257: objective = 16110.4753
+Iteration 258: objective = 16111.3152
+Iteration 259: objective = 16112.0883
+Iteration 260: objective = 16112.9050
+Iteration 261: objective = 16113.8335
+Iteration 262: objective = 16114.7107
+Iteration 263: objective = 16115.2945
+Iteration 264: objective = 16115.6691
+Iteration 265: objective = 16116.0095
+Iteration 266: objective = 16116.3628
+Iteration 267: objective = 16116.7300
+Iteration 268: objective = 16117.1125
+Iteration 269: objective = 16117.5102
+Iteration 270: objective = 16117.9212
+Iteration 271: objective = 16118.3527
+Iteration 272: objective = 16118.8139
+Iteration 273: objective = 16119.1688
+Converged at iteration 274 with objective 16119.1339</code></pre>
+<pre class="r"><code>result_RW2$clustering &lt;- apply(result_RW2$gamma, 1, which.max)
+loadings_order_RW2 &lt;- order(result_RW2$clustering)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_RW2],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The result also looks good, but the choice of the smoothing parameter
+(<code>lambda</code>) is very important…</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1579,25 +2021,26 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] umap_0.2.10.0   Rtsne_0.17      ggplot2_3.5.2   tidyr_1.3.1    
-[5] tibble_3.2.1    workflowr_1.7.1
+ [1] Matrix_1.6-4      mvtnorm_1.3-1     matrixStats_1.4.1 mclust_6.1.1     
+ [5] umap_0.2.10.0     Rtsne_0.17        ggplot2_3.5.2     tidyr_1.3.1      
+ [9] tibble_3.2.1      workflowr_1.7.1  
 
 loaded via a namespace (and not attached):
  [1] sass_0.4.10        generics_0.1.4     stringi_1.8.7      lattice_0.22-6    
  [5] digest_0.6.37      magrittr_2.0.3     evaluate_1.0.3     grid_4.3.1        
  [9] RColorBrewer_1.1-3 fastmap_1.2.0      rprojroot_2.0.4    jsonlite_2.0.0    
-[13] Matrix_1.6-4       processx_3.8.6     whisker_0.4.1      RSpectra_0.16-2   
-[17] ps_1.9.1           promises_1.3.3     httr_1.4.7         purrr_1.0.4       
-[21] scales_1.4.0       jquerylib_0.1.4    cli_3.6.5          rlang_1.1.6       
-[25] withr_3.0.2        cachem_1.1.0       yaml_2.3.10        tools_4.3.1       
-[29] dplyr_1.1.4        httpuv_1.6.16      reticulate_1.42.0  png_0.1-8         
-[33] vctrs_0.6.5        R6_2.6.1           lifecycle_1.0.4    git2r_0.33.0      
-[37] stringr_1.5.1      fs_1.6.6           pkgconfig_2.0.3    callr_3.7.6       
-[41] pillar_1.10.2      bslib_0.9.0        later_1.4.2        gtable_0.3.6      
-[45] glue_1.8.0         Rcpp_1.0.14        xfun_0.52          tidyselect_1.2.1  
-[49] rstudioapi_0.16.0  knitr_1.50         farver_2.1.2       htmltools_0.5.8.1 
-[53] labeling_0.4.3     rmarkdown_2.28     compiler_4.3.1     getPass_0.2-4     
-[57] askpass_1.2.1      openssl_2.2.2     </code></pre>
+[13] processx_3.8.6     whisker_0.4.1      RSpectra_0.16-2    ps_1.9.1          
+[17] promises_1.3.3     httr_1.4.7         purrr_1.0.4        scales_1.4.0      
+[21] jquerylib_0.1.4    cli_3.6.5          rlang_1.1.6        withr_3.0.2       
+[25] cachem_1.1.0       yaml_2.3.10        tools_4.3.1        dplyr_1.1.4       
+[29] httpuv_1.6.16      reticulate_1.42.0  png_0.1-8          vctrs_0.6.5       
+[33] R6_2.6.1           lifecycle_1.0.4    git2r_0.33.0       stringr_1.5.1     
+[37] fs_1.6.6           pkgconfig_2.0.3    callr_3.7.6        pillar_1.10.2     
+[41] bslib_0.9.0        later_1.4.2        gtable_0.3.6       glue_1.8.0        
+[45] Rcpp_1.0.14        xfun_0.52          tidyselect_1.2.1   rstudioapi_0.16.0 
+[49] knitr_1.50         farver_2.1.2       htmltools_0.5.8.1  labeling_0.4.3    
+[53] rmarkdown_2.28     compiler_4.3.1     getPass_0.2-4      askpass_1.2.1     
+[57] openssl_2.2.2     </code></pre>
 </div>
 </div>
 </div>
