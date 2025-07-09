@@ -147,7 +147,6 @@ umap_result <- umap(Loadings, n_neighbors = 15, min_dist = 0.1, metric = "euclid
 umap_metric <- umap_result$layout[,1]
 names(umap_metric) <- rownames(Loadings)
 umap_order <- order(umap_metric)
-names(umap_metric) <- rownames(Loadings)
 ```
 
 ```{r}
