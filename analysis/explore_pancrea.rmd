@@ -250,119 +250,143 @@ In particular, the ordering is not unique, as clades of the tree can be rearrang
 
 
 
-<!-- ## Ordering based on EM -->
+## Ordering based on EM
 
-<!-- Now, let's try to obtain the ordering based on the smooth-EM algorithm. -->
-
-
-<!-- ### Traditional EM -->
-
-<!-- First, we will see how the traditional EM algorithm performs on the loadings. -->
-
-<!-- ```{r} -->
-<!-- library(mclust) -->
-<!-- fit_mclust <- Mclust(Loadings, G=100) -->
-<!-- ``` -->
-
-<!-- Let's assume observations in the same cluster are ordered next to each other. -->
-
-<!-- ```{r} -->
-<!-- loadings_order <- order(fit_mclust$classification) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- plot_highlight_types(type_vec = celltype, -->
-<!--                      subset_types = highlights, -->
-<!--                      order_vec = rownames(Loadings)[loadings_order], -->
-<!--                      other_color = "white" -->
-<!--                      ) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- distribution_highlight_types( -->
-<!--   type_vec        = celltype, -->
-<!--   subset_types    = highlights, -->
-<!--   order_vec = rownames(Loadings)[loadings_order], -->
-<!--   density         = FALSE -->
-<!-- ) -->
-<!-- ``` -->
-
-<!-- The same cell types tend to be grouped together, but the ordering does not make much sense.  -->
-<!-- This is okay as we know in traditional EM, the index of the cluster is arbitrary. -->
+Now, let's try to obtain the ordering based on the smooth-EM algorithm.
 
 
-<!-- ### Smooth-EM with linear prior -->
+### Traditional EM
+
+First, we will see how the traditional EM algorithm performs on the loadings.
+
+```{r}
+library(mclust)
+fit_mclust <- Mclust(Loadings, G=100)
+```
+
+Let's assume observations in the same cluster are ordered next to each other.
+
+```{r}
+loadings_order_EM <- order(fit_mclust$classification)
+```
+
+```{r}
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_EM])
+```
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_EM],
+                     other_color = "white"
+                     )
+```
+
+The same cell types tend to be clustered together, but the ordering does not make much sense.
+This is okay as we know in traditional EM, the index of the cluster is arbitrary.
 
 
-<!-- ```{r} -->
-<!-- source("./code/linear_EM.R") -->
-<!-- source("./code/general_EM.R") -->
-<!-- source("./code/prior_precision.R") -->
-<!-- result_linear <- EM_algorithm_linear( -->
-<!--   data = Loadings, -->
-<!--   K = 100, -->
-<!--   betaprec = 0.001, -->
-<!--   seed = 1, -->
-<!--   max_iter = 50, -->
-<!--   verbose = TRUE -->
-<!-- ) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- result_linear$clustering <- apply(result_linear$gamma, 1, which.max) -->
-<!-- loadings_order <- order(result_linear$clustering) -->
-<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- plot_highlight_types(type_vec = celltype, -->
-<!--                      subset_types = highlights, -->
-<!--                      order_vec = rownames(Loadings)[loadings_order], -->
-<!--                      other_color = "white" -->
-<!--                      ) -->
-<!-- ``` -->
+### Smooth-EM with linear prior
 
 
-<!-- ### Smooth-EM with RW1 prior -->
+```{r}
+source("./code/linear_EM.R")
+source("./code/general_EM.R")
+source("./code/prior_precision.R")
+result_linear <- EM_algorithm_linear(
+  data = Loadings,
+  K = 300,
+  betaprec = 0.001,
+  seed = 1,
+  max_iter = 100,
+  verbose = TRUE
+)
+```
 
-<!-- ```{r} -->
-<!-- Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 5) -->
-<!-- init_params <- make_default_init(Loadings, K=100) -->
-<!-- result_RW1 <- EM_algorithm( -->
-<!--   data = Loadings, -->
-<!--   Q_prior = Q_prior_RW1, -->
-<!--   init_params = init_params, -->
-<!--   max_iter = 50, -->
-<!--   modelName = "EII", -->
-<!--   tol = 1e-5, -->
-<!--   verbose = TRUE -->
-<!-- ) -->
-<!-- ``` -->
+```{r}
+result_linear$clustering <- apply(result_linear$gamma, 1, which.max)
+loadings_order_linear <- order(result_linear$clustering)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_linear])
+```
 
-<!-- ```{r} -->
-<!-- result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max) -->
-<!-- loadings_order <- order(result_RW1$clustering) -->
-<!-- plot_structure(Loadings, order = rownames(Loadings)[loadings_order]) -->
-<!-- ``` -->
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_linear],
+                     other_color = "white"
+                     )
+```
 
-<!-- ```{r} -->
-<!-- plot_highlight_types(type_vec = celltype, -->
-<!--                      subset_types = highlights, -->
-<!--                      order_vec = rownames(Loadings)[loadings_order], -->
-<!--                      other_color = "white" -->
-<!--                      ) -->
-<!-- ``` -->
-
-
+The ordering from linear prior does not look very informative, which is not unexpected since the linear prior is like a coarser version of the PCA.
 
 
+### Smooth-EM with RW1 prior
+
+Now, let's try the smooth-EM algorithm with a first order random walk prior.
+
+```{r}
+set.seed(1)
+Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=1)
+init_params <- make_default_init(Loadings, K=100)
+result_RW1 <- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW1,
+  init_params = init_params,
+  max_iter = 100,
+  modelName = "EII",
+  tol = 1e-5,
+  verbose = TRUE
+)
+```
+
+```{r}
+result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max)
+loadings_order_RW1 <- order(result_RW1$clustering)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])
+```
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_RW1],
+                     other_color = "white"
+                     )
+```
 
 
+The result from RW1 looks good. 
+Each cell type is separated from the others, and the ordering seems to make sense.
 
 
+### Smooth-EM with RW2 prior
 
+Next, we will try the RW2 prior in the smooth-EM algorithm.
 
+```{r}
+Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 1000, q=2)
+result_RW2 <- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 300,
+  modelName = "EII",
+  tol = 1e-5,
+  verbose = TRUE
+)
+```
+
+```{r}
+result_RW2$clustering <- apply(result_RW2$gamma, 1, which.max)
+loadings_order_RW2 <- order(result_RW2$clustering)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
+```
+
+```{r}
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_RW2],
+                     other_color = "white"
+                     )
+```
+
+The result also looks good, but the choice of the smoothing parameter (`lambda`) is very important...
