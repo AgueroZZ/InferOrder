@@ -106,7 +106,7 @@ result_linear <- EM_algorithm_linear(
   K = 20,
   betaprec = 0.001,
   seed = 1,
-  max_iter = 50,
+  max_iter = 100,
   verbose = TRUE
 )
 ```
@@ -201,7 +201,7 @@ result_VAR1 <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_VAR1,
   init_params = init_params,
-  max_iter = 50,
+  max_iter = 100,
   modelName = "EII",
   tol = 1e-5,
   verbose = TRUE
@@ -244,7 +244,7 @@ result_RW1 <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_RW1,
   init_params = init_params,
-  max_iter = 50,
+  max_iter = 100,
   modelName = "EII",
   tol = 1e-5,
   verbose = TRUE
@@ -295,7 +295,7 @@ result_rw2 <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2,
   init_params = init_params,
-  max_iter = 50,
+  max_iter = 100,
   modelName = "EII",
   tol = 1e-5,
   verbose = TRUE
@@ -325,7 +325,7 @@ Q_prior_rw2_strong <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2_strong,
   init_params = init_params,
-  max_iter = 50,
+  max_iter = 100,
   modelName = "EII",
   tol = 1e-5,
   verbose = TRUE
