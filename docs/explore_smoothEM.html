@@ -358,7 +358,7 @@ priors</h1>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -369,8 +369,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -379,13 +379,13 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-07-08
+<strong>Last updated:</strong> 2025-07-10
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>InferOrder/</code> <span
@@ -408,21 +408,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -513,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreedbcdf9aa908266d3ffc0296ed082786e7a561b58targetblankdbcdf9aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree3298282e51df9d7968d67269e9512913b8af32b1targetblank3298282a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/dbcdf9aa908266d3ffc0296ed082786e7a561b58" target="_blank">dbcdf9a</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/3298282e51df9d7968d67269e9512913b8af32b1" target="_blank">3298282</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreedbcdf9aa908266d3ffc0296ed082786e7a561b58targetblankdbcdf9aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree3298282e51df9d7968d67269e9512913b8af32b1targetblank3298282a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -531,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/dbcdf9aa908266d3ffc0296ed082786e7a561b58" target="_blank">dbcdf9a</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/3298282e51df9d7968d67269e9512913b8af32b1" target="_blank">3298282</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -551,13 +548,10 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
 
-Untracked files:
-    Untracked:  all_celltypes_umap.png
-    Untracked:  code/general_EM_obs.R
-
 Unstaged changes:
-    Modified:   analysis/explore_smoothEM.rmd
+    Modified:   analysis/explore_pancrea.rmd
     Modified:   code/general_EM.R
+    Modified:   code/general_EM_obs.R
     Modified:   code/linear_EM.R
 
 </code></pre>
@@ -603,6 +597,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/3298282e51df9d7968d67269e9512913b8af32b1/analysis/explore_smoothEM.rmd" target="_blank">3298282</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-10
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_smoothEM.rmd")
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/041218f88e898217d52eabb3d6802bb139f075f0/analysis/explore_smoothEM.rmd" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+<td>
+add result using smoothEM
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/041218f88e898217d52eabb3d6802bb139f075f0/docs/explore_smoothEM.html" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+<td>
+add result using smoothEM
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -803,7 +848,7 @@ Attaching package: &#39;mclust&#39;</code></pre>
 <pre><code>The following object is masked from &#39;package:mvtnorm&#39;:
 
     dmvnorm</code></pre>
-<pre class="r"><code>fit_mclust &lt;- Mclust(sim$X, G=20)</code></pre>
+<pre class="r"><code>fit_mclust &lt;- Mclust(sim$X, G=20, modelNames = &quot;EEI&quot;)</code></pre>
 <pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z],
      xlab=&quot;X1&quot;, ylab=&quot;X2&quot;,
      cex=0.5, pch=19, main=&quot;mclust&quot;)
@@ -870,96 +915,55 @@ source(&quot;./code/general_EM.R&quot;)</code></pre>
   data = sim$X,
   K = 20,
   betaprec = 0.001,
-  seed = 1,
+  seed = 123,
   max_iter = 100,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration   1: objective = -1794.785290
-Iteration   2: objective = -1676.287607
-Iteration   3: objective = -1594.534882
-Iteration   4: objective = -1547.815205
-Iteration   5: objective = -1520.284196
-Iteration   6: objective = -1505.535764
-Iteration   7: objective = -1499.831666
-Iteration   8: objective = -1492.486764
-Iteration   9: objective = -1467.281786
-Iteration  10: objective = -1423.922556
-Iteration  11: objective = -1392.955481
-Iteration  12: objective = -1374.137729
-Iteration  13: objective = -1362.239220
-Iteration  14: objective = -1354.345894
-Iteration  15: objective = -1348.967906
-Iteration  16: objective = -1345.309281
-Iteration  17: objective = -1342.819447
-Iteration  18: objective = -1341.063884
-Iteration  19: objective = -1339.599799
-Iteration  20: objective = -1338.073416
-Iteration  21: objective = -1336.802795
-Iteration  22: objective = -1335.823345
-Iteration  23: objective = -1334.509331
-Iteration  24: objective = -1332.522383
-Iteration  25: objective = -1329.292722
-Iteration  26: objective = -1323.409944
-Iteration  27: objective = -1315.566099
-Iteration  28: objective = -1303.067541
-Iteration  29: objective = -1285.883153
-Iteration  30: objective = -1266.520610
-Iteration  31: objective = -1242.896699
-Iteration  32: objective = -1218.750880
-Iteration  33: objective = -1195.032745
-Iteration  34: objective = -1174.064575
-Iteration  35: objective = -1159.252399
-Iteration  36: objective = -1146.819267
-Iteration  37: objective = -1139.761038
-Iteration  38: objective = -1134.543798
-Iteration  39: objective = -1132.456566
-Iteration  40: objective = -1130.845108
-Iteration  41: objective = -1129.007986
-Iteration  42: objective = -1126.329907
-Iteration  43: objective = -1123.545288
-Iteration  44: objective = -1121.857487
-Iteration  45: objective = -1120.831180
-Iteration  46: objective = -1120.219780
-Iteration  47: objective = -1119.844230
-Iteration  48: objective = -1119.534582
-Iteration  49: objective = -1119.234419
-Iteration  50: objective = -1118.912224
-Iteration  51: objective = -1118.575739
-Iteration  52: objective = -1118.300720
-Iteration  53: objective = -1118.084234
-Iteration  54: objective = -1117.889961
-Iteration  55: objective = -1117.712607
-Iteration  56: objective = -1117.549722
-Iteration  57: objective = -1117.386903
-Iteration  58: objective = -1117.178771
-Iteration  59: objective = -1116.878916
-Iteration  60: objective = -1116.526803
-Iteration  61: objective = -1116.195578
-Iteration  62: objective = -1115.909015
-Iteration  63: objective = -1115.662271
-Iteration  64: objective = -1115.447616
-Iteration  65: objective = -1115.259644
-Iteration  66: objective = -1115.094964
-Iteration  67: objective = -1114.951226
-Iteration  68: objective = -1114.826497
-Iteration  69: objective = -1114.719243
-Iteration  70: objective = -1114.629180
-Iteration  71: objective = -1114.559518
-Iteration  72: objective = -1114.511041
-Iteration  73: objective = -1114.314872
-Iteration  74: objective = -1113.482912
-Iteration  75: objective = -1113.790817
-Converged at iteration 75 with objective -1113.790817</code></pre>
+<pre><code>Iteration   1: objective = -2741.247096
+Iteration   2: objective = -2556.265957
+Iteration   3: objective = -2368.973053
+Iteration   4: objective = -2159.332551
+Iteration   5: objective = -1872.947089
+Iteration   6: objective = -1586.908025
+Iteration   7: objective = -1382.252276
+Iteration   8: objective = -1277.268346
+Iteration   9: objective = -1236.296149
+Iteration  10: objective = -1218.570070
+Iteration  11: objective = -1210.506912
+Iteration  12: objective = -1206.925206
+Iteration  13: objective = -1205.281111
+Iteration  14: objective = -1204.472725
+Iteration  15: objective = -1204.051511
+Iteration  16: objective = -1203.822996
+Iteration  17: objective = -1203.695380
+Iteration  18: objective = -1203.622527
+Iteration  19: objective = -1203.580213
+Iteration  20: objective = -1203.555297
+Iteration  21: objective = -1203.540464
+Iteration  22: objective = -1203.531557
+Iteration  23: objective = -1203.526170
+Iteration  24: objective = -1203.522895
+Iteration  25: objective = -1203.520894
+Iteration  26: objective = -1203.519669
+Iteration  27: objective = -1203.518915
+Iteration  28: objective = -1203.518452
+Iteration  29: objective = -1203.518166
+Iteration  30: objective = -1203.517989
+Iteration  31: objective = -1203.517880
+Iteration  32: objective = -1203.517813
+Converged at iteration 32 with objective -1203.517813</code></pre>
 <pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
      pch=19, main=&quot;EM Fitted Means with linear Prior&quot;)
 # Turn mu_list into matrix
-mu_matrix &lt;- do.call(rbind, result_linear$params$mu)
+mu_matrix &lt;- do.call(rbind, as.vector(result_linear$params$mu))
 # Draw arrows showing sequence
 for (k in 1:(nrow(mu_matrix)-1)) {
   arrows(mu_matrix[k,1], mu_matrix[k,2],
          mu_matrix[k+1,1], mu_matrix[k+1,2],
          col=&quot;orange&quot;, lwd=4, length=0.1)
-}</code></pre>
+}
+# add dots for fitted means
+points(mu_matrix, pch=1, cex=0.8, lwd=2, col=&quot;orange&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -983,6 +987,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/041218f88e898217d52eabb3d6802bb139f075f0/docs/figure/explore_smoothEM.rmd/unnamed-chunk-6-1.png" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/028201f1d8f750fb9a4258a5722ce4c2fe116eb8/docs/figure/explore_smoothEM.rmd/unnamed-chunk-6-1.png" target="_blank">028201f</a>
@@ -1064,6 +1079,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/041218f88e898217d52eabb3d6802bb139f075f0/docs/figure/explore_smoothEM.rmd/unnamed-chunk-7-1.png" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/028201f1d8f750fb9a4258a5722ce4c2fe116eb8/docs/figure/explore_smoothEM.rmd/unnamed-chunk-7-1.png" target="_blank">028201f</a>
 </td>
 <td>
@@ -1117,31 +1143,77 @@ result_VAR1 &lt;- EM_algorithm(
   Q_prior = Q_prior_VAR1,
   init_params = init_params,
   max_iter = 100,
-  modelName = &quot;EII&quot;,
-  tol = 1e-5,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration 1: objective = -1958.4957
-Iteration 2: objective = -1716.3758
-Iteration 3: objective = -1621.1090
-Iteration 4: objective = -1483.2038
-Iteration 5: objective = -1482.9465
-Iteration 6: objective = -1482.7929
-Iteration 7: objective = -1482.5235
-Iteration 8: objective = -1482.0087
-Iteration 9: objective = -1480.9540
-Iteration 10: objective = -1478.6996
-Iteration 11: objective = -1473.9652
-Iteration 12: objective = -1464.8801
-Iteration 13: objective = -1449.2401
-Iteration 14: objective = -1424.5433
-Iteration 15: objective = -1390.0631
-Iteration 16: objective = -1350.8749
-Iteration 17: objective = -1316.2225
-Iteration 18: objective = -1294.2820
-Iteration 19: objective = -1286.2432
-Iteration 20: objective = -1285.0849
-Converged at iteration 21 with objective -1285.3027</code></pre>
+<pre><code>Iteration   1: objective = -1816.061482
+Iteration   2: objective = -1584.739929
+Iteration   3: objective = -1476.102618
+Iteration   4: objective = -1402.112627
+Iteration   5: objective = -1401.647535
+Iteration   6: objective = -1401.536854
+Iteration   7: objective = -1401.377684
+Iteration   8: objective = -1401.143065
+Iteration   9: objective = -1400.794563
+Iteration  10: objective = -1400.275018
+Iteration  11: objective = -1399.499366
+Iteration  12: objective = -1398.341404
+Iteration  13: objective = -1396.613967
+Iteration  14: objective = -1394.037634
+Iteration  15: objective = -1390.187887
+Iteration  16: objective = -1384.401471
+Iteration  17: objective = -1375.611192
+Iteration  18: objective = -1362.103523
+Iteration  19: objective = -1341.553522
+Iteration  20: objective = -1312.517496
+Iteration  21: objective = -1277.611360
+Iteration  22: objective = -1248.488954
+Iteration  23: objective = -1234.630112
+Iteration  24: objective = -1230.153804
+Iteration  25: objective = -1228.759121
+Iteration  26: objective = -1228.280403
+Iteration  27: objective = -1228.092926
+Iteration  28: objective = -1228.003670
+Iteration  29: objective = -1227.949442
+Iteration  30: objective = -1227.907899
+Iteration  31: objective = -1227.870447
+Iteration  32: objective = -1227.833512
+Iteration  33: objective = -1227.795485
+Iteration  34: objective = -1227.755549
+Iteration  35: objective = -1227.713217
+Iteration  36: objective = -1227.668129
+Iteration  37: objective = -1227.619966
+Iteration  38: objective = -1227.568416
+Iteration  39: objective = -1227.513155
+Iteration  40: objective = -1227.453845
+Iteration  41: objective = -1227.390136
+Iteration  42: objective = -1227.321674
+Iteration  43: objective = -1227.248120
+Iteration  44: objective = -1227.169174
+Iteration  45: objective = -1227.084618
+Iteration  46: objective = -1226.994367
+Iteration  47: objective = -1226.898541
+Iteration  48: objective = -1226.797545
+Iteration  49: objective = -1226.692138
+Iteration  50: objective = -1226.583467
+Iteration  51: objective = -1226.473012
+Iteration  52: objective = -1226.362453
+Iteration  53: objective = -1226.253512
+Iteration  54: objective = -1226.147997
+Iteration  55: objective = -1226.048246
+Iteration  56: objective = -1225.957755
+Iteration  57: objective = -1225.881081
+Iteration  58: objective = -1225.822064
+Iteration  59: objective = -1225.781393
+Iteration  60: objective = -1225.756125
+Iteration  61: objective = -1225.741639
+Iteration  62: objective = -1225.733763
+Iteration  63: objective = -1225.729610
+Iteration  64: objective = -1225.727451
+Iteration  65: objective = -1225.726332
+Iteration  66: objective = -1225.725747
+Converged at iteration 66 with objective -1225.725747</code></pre>
 <pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
      xlab=&quot;X1&quot;, ylab=&quot;X2&quot;,
      pch=19, main=&quot;EM Fitted Means with VAR(1) Prior&quot;)
@@ -1156,7 +1228,8 @@ for (k in 1:(nrow(mu_matrix)-1)) {
            mu_matrix[k+1,1], mu_matrix[k+1,2],
            col=&quot;orange&quot;, lwd=4, length=0.1)
   }
-}</code></pre>
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -1211,116 +1284,34 @@ precision parameter that controls the smoothness of the mean sequence.
 Larger values of <span class="math inline">\(\lambda\)</span> enforce
 stronger smoothness by penalizing large differences between successive
 component means.</p>
-<pre class="r"><code>Q_prior_RW1 &lt;- make_random_walk_precision(K=20, d=2, lambda = 5)
+<pre class="r"><code>Q_prior_RW1 &lt;- make_random_walk_precision(K=20, d=2, lambda = 10)
 result_RW1 &lt;- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_RW1,
   init_params = init_params,
   max_iter = 100,
-  modelName = &quot;EII&quot;,
-  tol = 1e-5,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration 1: objective = -1669.1600
-Iteration 2: objective = -1447.0245
-Iteration 3: objective = -1430.4711
-Iteration 4: objective = -1417.7644
-Iteration 5: objective = -1352.0973
-Iteration 6: objective = -1320.7124
-Iteration 7: objective = -1320.7116
-Iteration 8: objective = -1320.7105
-Iteration 9: objective = -1320.7081
-Iteration 10: objective = -1320.7029
-Iteration 11: objective = -1320.6914
-Iteration 12: objective = -1320.6650
-Iteration 13: objective = -1320.5996
-Iteration 14: objective = -1320.4142
-Iteration 15: objective = -1319.7833
-Iteration 16: objective = -1317.4450
-Iteration 17: objective = -1309.8554
-Iteration 18: objective = -1289.4234
-Iteration 19: objective = -1244.3649
-Iteration 20: objective = -1170.6025
-Iteration 21: objective = -1110.6832
-Iteration 22: objective = -1097.4406
-Iteration 23: objective = -1096.1111
-Iteration 24: objective = -1095.8917
-Iteration 25: objective = -1095.8366
-Iteration 26: objective = -1095.8194
-Iteration 27: objective = -1095.8132
-Iteration 28: objective = -1095.8107
-Iteration 29: objective = -1095.8094
-Iteration 30: objective = -1095.8084
-Iteration 31: objective = -1095.8075
-Iteration 32: objective = -1095.8067
-Iteration 33: objective = -1095.8057
-Iteration 34: objective = -1095.8046
-Iteration 35: objective = -1095.8034
-Iteration 36: objective = -1095.8021
-Iteration 37: objective = -1095.8006
-Iteration 38: objective = -1095.7989
-Iteration 39: objective = -1095.7969
-Iteration 40: objective = -1095.7947
-Iteration 41: objective = -1095.7922
-Iteration 42: objective = -1095.7893
-Iteration 43: objective = -1095.7860
-Iteration 44: objective = -1095.7822
-Iteration 45: objective = -1095.7777
-Iteration 46: objective = -1095.7726
-Iteration 47: objective = -1095.7666
-Iteration 48: objective = -1095.7596
-Iteration 49: objective = -1095.7514
-Iteration 50: objective = -1095.7417
-Iteration 51: objective = -1095.7302
-Iteration 52: objective = -1095.7166
-Iteration 53: objective = -1095.7003
-Iteration 54: objective = -1095.6807
-Iteration 55: objective = -1095.6572
-Iteration 56: objective = -1095.6285
-Iteration 57: objective = -1095.5935
-Iteration 58: objective = -1095.5503
-Iteration 59: objective = -1095.4966
-Iteration 60: objective = -1095.4291
-Iteration 61: objective = -1095.3434
-Iteration 62: objective = -1095.2334
-Iteration 63: objective = -1095.0904
-Iteration 64: objective = -1094.9024
-Iteration 65: objective = -1094.6524
-Iteration 66: objective = -1094.3169
-Iteration 67: objective = -1093.8643
-Iteration 68: objective = -1093.2545
-Iteration 69: objective = -1092.4416
-Iteration 70: objective = -1091.3828
-Iteration 71: objective = -1090.0571
-Iteration 72: objective = -1088.4902
-Iteration 73: objective = -1086.7685
-Iteration 74: objective = -1085.0190
-Iteration 75: objective = -1083.3649
-Iteration 76: objective = -1081.8967
-Iteration 77: objective = -1080.6658
-Iteration 78: objective = -1079.6840
-Iteration 79: objective = -1078.9293
-Iteration 80: objective = -1078.3626
-Iteration 81: objective = -1077.9450
-Iteration 82: objective = -1077.6462
-Iteration 83: objective = -1077.4426
-Iteration 84: objective = -1077.3103
-Iteration 85: objective = -1077.2143
-Iteration 86: objective = -1077.0918
-Iteration 87: objective = -1076.8202
-Iteration 88: objective = -1076.1348
-Iteration 89: objective = -1074.1889
-Iteration 90: objective = -1067.4701
-Iteration 91: objective = -1053.8526
-Iteration 92: objective = -1051.5103
-Iteration 93: objective = -1051.3568
-Iteration 94: objective = -1051.2443
-Iteration 95: objective = -1051.1521
-Iteration 96: objective = -1051.0744
-Iteration 97: objective = -1051.0085
-Iteration 98: objective = -1050.9522
-Iteration 99: objective = -1050.9042
-Iteration 100: objective = -1050.8632</code></pre>
+<pre><code>Iteration   1: objective = -1687.103780
+Iteration   2: objective = -1476.193798
+Iteration   3: objective = -1353.226437
+Iteration   4: objective = -1313.555728
+Iteration   5: objective = -1312.645222
+Iteration   6: objective = -1309.586061
+Iteration   7: objective = -1299.026583
+Iteration   8: objective = -1276.794786
+Iteration   9: objective = -1242.036484
+Iteration  10: objective = -1197.177730
+Iteration  11: objective = -1161.014374
+Iteration  12: objective = -1150.538792
+Iteration  13: objective = -1149.417363
+Iteration  14: objective = -1149.307137
+Iteration  15: objective = -1149.293956
+Iteration  16: objective = -1149.292130
+Iteration  17: objective = -1149.291739
+Converged at iteration 17 with objective -1149.291739</code></pre>
 <pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
      xlab=&quot;X1&quot;, ylab=&quot;X2&quot;,
      pch=19, main=&quot;EM Fitted Means with RW(1) Prior&quot;)
@@ -1335,11 +1326,8 @@ for (k in 1:(nrow(mu_matrix)-1)) {
   }
 }</code></pre>
 <pre><code>Warning in arrows(mu_matrix[k, 1], mu_matrix[k, 2], mu_matrix[k + 1, 1], :
-zero-length arrow is of indeterminate angle and so skipped
-Warning in arrows(mu_matrix[k, 1], mu_matrix[k, 2], mu_matrix[k + 1, 1], :
-zero-length arrow is of indeterminate angle and so skipped
-Warning in arrows(mu_matrix[k, 1], mu_matrix[k, 2], mu_matrix[k + 1, 1], :
 zero-length arrow is of indeterminate angle and so skipped</code></pre>
+<pre class="r"><code>points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
@@ -1363,6 +1351,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/041218f88e898217d52eabb3d6802bb139f075f0/docs/figure/explore_smoothEM.rmd/unnamed-chunk-11-1.png" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/028201f1d8f750fb9a4258a5722ce4c2fe116eb8/docs/figure/explore_smoothEM.rmd/unnamed-chunk-11-1.png" target="_blank">028201f</a>
@@ -1407,110 +1406,110 @@ result_rw2 &lt;- EM_algorithm(
   Q_prior = Q_prior_rw2,
   init_params = init_params,
   max_iter = 100,
-  modelName = &quot;EII&quot;,
-  tol = 1e-5,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration 1: objective = -2717.3131
-Iteration 2: objective = -2040.4867
-Iteration 3: objective = -1712.1471
-Iteration 4: objective = -1626.4376
-Iteration 5: objective = -1384.5483
-Iteration 6: objective = -1220.9010
-Iteration 7: objective = -1198.9225
-Iteration 8: objective = -1195.9110
-Iteration 9: objective = -1195.2222
-Iteration 10: objective = -1194.4981
-Iteration 11: objective = -1193.2618
-Iteration 12: objective = -1190.6613
-Iteration 13: objective = -1184.5477
-Iteration 14: objective = -1169.4566
-Iteration 15: objective = -1134.6713
-Iteration 16: objective = -1076.3360
-Iteration 17: objective = -1032.1404
-Iteration 18: objective = -1022.9190
-Iteration 19: objective = -1022.2435
-Iteration 20: objective = -1022.2303
-Iteration 21: objective = -1022.1385
-Iteration 22: objective = -1021.9050
-Iteration 23: objective = -1021.4831
-Iteration 24: objective = -1020.7971
-Iteration 25: objective = -1019.7545
-Iteration 26: objective = -1018.2650
-Iteration 27: objective = -1016.2637
-Iteration 28: objective = -1013.7339
-Iteration 29: objective = -1010.7330
-Iteration 30: objective = -1007.4247
-Iteration 31: objective = -1004.0931
-Iteration 32: objective = -1001.0844
-Iteration 33: objective = -998.6681
-Iteration 34: objective = -996.9198
-Iteration 35: objective = -995.7364
-Iteration 36: objective = -994.9474
-Iteration 37: objective = -994.4062
-Iteration 38: objective = -994.0169
-Iteration 39: objective = -993.7237
-Iteration 40: objective = -993.4947
-Iteration 41: objective = -993.3106
-Iteration 42: objective = -993.1591
-Iteration 43: objective = -993.0317
-Iteration 44: objective = -992.9223
-Iteration 45: objective = -992.8264
-Iteration 46: objective = -992.7407
-Iteration 47: objective = -992.6623
-Iteration 48: objective = -992.5895
-Iteration 49: objective = -992.5204
-Iteration 50: objective = -992.4537
-Iteration 51: objective = -992.3883
-Iteration 52: objective = -992.3234
-Iteration 53: objective = -992.2580
-Iteration 54: objective = -992.1914
-Iteration 55: objective = -992.1230
-Iteration 56: objective = -992.0521
-Iteration 57: objective = -991.9783
-Iteration 58: objective = -991.9011
-Iteration 59: objective = -991.8198
-Iteration 60: objective = -991.7342
-Iteration 61: objective = -991.6437
-Iteration 62: objective = -991.5480
-Iteration 63: objective = -991.4468
-Iteration 64: objective = -991.3396
-Iteration 65: objective = -991.2263
-Iteration 66: objective = -991.1064
-Iteration 67: objective = -990.9799
-Iteration 68: objective = -990.8465
-Iteration 69: objective = -990.7060
-Iteration 70: objective = -990.5584
-Iteration 71: objective = -990.4036
-Iteration 72: objective = -990.2415
-Iteration 73: objective = -990.0722
-Iteration 74: objective = -989.8957
-Iteration 75: objective = -989.7121
-Iteration 76: objective = -989.5215
-Iteration 77: objective = -989.3240
-Iteration 78: objective = -989.1198
-Iteration 79: objective = -988.9091
-Iteration 80: objective = -988.6922
-Iteration 81: objective = -988.4692
-Iteration 82: objective = -988.2404
-Iteration 83: objective = -988.0061
-Iteration 84: objective = -987.7666
-Iteration 85: objective = -987.5223
-Iteration 86: objective = -987.2734
-Iteration 87: objective = -987.0204
-Iteration 88: objective = -986.7636
-Iteration 89: objective = -986.5036
-Iteration 90: objective = -986.2407
-Iteration 91: objective = -985.9754
-Iteration 92: objective = -985.7084
-Iteration 93: objective = -985.4401
-Iteration 94: objective = -985.1712
-Iteration 95: objective = -984.9024
-Iteration 96: objective = -984.6342
-Iteration 97: objective = -984.3674
-Iteration 98: objective = -984.1027
-Iteration 99: objective = -983.8407
-Iteration 100: objective = -983.5823</code></pre>
+<pre><code>Iteration   1: objective = -3413.492461
+Iteration   2: objective = -1339.868554
+Iteration   3: objective = -1131.944070
+Iteration   4: objective = -1127.300715
+Iteration   5: objective = -1126.500899
+Iteration   6: objective = -1126.353573
+Iteration   7: objective = -1126.322354
+Iteration   8: objective = -1126.311858
+Iteration   9: objective = -1126.304847
+Iteration  10: objective = -1126.298135
+Iteration  11: objective = -1126.291099
+Iteration  12: objective = -1126.283589
+Iteration  13: objective = -1126.275541
+Iteration  14: objective = -1126.266904
+Iteration  15: objective = -1126.257620
+Iteration  16: objective = -1126.247614
+Iteration  17: objective = -1126.236773
+Iteration  18: objective = -1126.224914
+Iteration  19: objective = -1126.211705
+Iteration  20: objective = -1126.196528
+Iteration  21: objective = -1126.178183
+Iteration  22: objective = -1126.154325
+Iteration  23: objective = -1126.120390
+Iteration  24: objective = -1126.067727
+Iteration  25: objective = -1125.980868
+Iteration  26: objective = -1125.835227
+Iteration  27: objective = -1125.599663
+Iteration  28: objective = -1125.249589
+Iteration  29: objective = -1124.785039
+Iteration  30: objective = -1124.233244
+Iteration  31: objective = -1123.631010
+Iteration  32: objective = -1123.007474
+Iteration  33: objective = -1122.379173
+Iteration  34: objective = -1121.752901
+Iteration  35: objective = -1121.129623
+Iteration  36: objective = -1120.506330
+Iteration  37: objective = -1119.875343
+Iteration  38: objective = -1119.221726
+Iteration  39: objective = -1118.519319
+Iteration  40: objective = -1117.724714
+Iteration  41: objective = -1116.766372
+Iteration  42: objective = -1115.523260
+Iteration  43: objective = -1113.783998
+Iteration  44: objective = -1111.179801
+Iteration  45: objective = -1107.124552
+Iteration  46: objective = -1100.932573
+Iteration  47: objective = -1092.321644
+Iteration  48: objective = -1081.897749
+Iteration  49: objective = -1071.461173
+Iteration  50: objective = -1063.729364
+Iteration  51: objective = -1060.288339
+Iteration  52: objective = -1059.433398
+Iteration  53: objective = -1059.246114
+Iteration  54: objective = -1059.178104
+Iteration  55: objective = -1059.132736
+Iteration  56: objective = -1059.092704
+Iteration  57: objective = -1059.054142
+Iteration  58: objective = -1059.015948
+Iteration  59: objective = -1058.977764
+Iteration  60: objective = -1058.939493
+Iteration  61: objective = -1058.901144
+Iteration  62: objective = -1058.862776
+Iteration  63: objective = -1058.824473
+Iteration  64: objective = -1058.786332
+Iteration  65: objective = -1058.748453
+Iteration  66: objective = -1058.710941
+Iteration  67: objective = -1058.673898
+Iteration  68: objective = -1058.637426
+Iteration  69: objective = -1058.601623
+Iteration  70: objective = -1058.566583
+Iteration  71: objective = -1058.532391
+Iteration  72: objective = -1058.499129
+Iteration  73: objective = -1058.466869
+Iteration  74: objective = -1058.435672
+Iteration  75: objective = -1058.405593
+Iteration  76: objective = -1058.376675
+Iteration  77: objective = -1058.348952
+Iteration  78: objective = -1058.322449
+Iteration  79: objective = -1058.297180
+Iteration  80: objective = -1058.273150
+Iteration  81: objective = -1058.250355
+Iteration  82: objective = -1058.228785
+Iteration  83: objective = -1058.208421
+Iteration  84: objective = -1058.189237
+Iteration  85: objective = -1058.171204
+Iteration  86: objective = -1058.154286
+Iteration  87: objective = -1058.138445
+Iteration  88: objective = -1058.123638
+Iteration  89: objective = -1058.109821
+Iteration  90: objective = -1058.096948
+Iteration  91: objective = -1058.084973
+Iteration  92: objective = -1058.073849
+Iteration  93: objective = -1058.063527
+Iteration  94: objective = -1058.053963
+Iteration  95: objective = -1058.045111
+Iteration  96: objective = -1058.036925
+Iteration  97: objective = -1058.029364
+Iteration  98: objective = -1058.022386
+Iteration  99: objective = -1058.015951
+Iteration 100: objective = -1058.010022</code></pre>
 <pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
      pch=19, main=&quot;EM Fitted Means with RW2 Prior&quot;)
 # Turn mu_list into matrix
@@ -1520,7 +1519,8 @@ for (k in 1:(nrow(mu_matrix)-1)) {
   arrows(mu_matrix[k,1], mu_matrix[k,2],
          mu_matrix[k+1,1], mu_matrix[k+1,2],
          col=&quot;orange&quot;, lwd=4, length=0.1)
-}</code></pre>
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
@@ -1546,6 +1546,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/041218f88e898217d52eabb3d6802bb139f075f0/docs/figure/explore_smoothEM.rmd/unnamed-chunk-13-1.png" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/028201f1d8f750fb9a4258a5722ce4c2fe116eb8/docs/figure/explore_smoothEM.rmd/unnamed-chunk-13-1.png" target="_blank">028201f</a>
 </td>
 <td>
@@ -1564,85 +1575,46 @@ prior, as it is invariant to addition of a constant vector as well as a
 linear trend (in terms of <span class="math inline">\(k\)</span>) to all
 component means. As <span class="math inline">\(\lambda\)</span>
 increases, the fitted means become closer to a linear trend.</p>
-<pre class="r"><code>Q_prior_rw2_strong &lt;- make_random_walk_precision(K = 20, d = 2, q=2, lambda=4000)
+<pre class="r"><code>Q_prior_rw2_strong &lt;- make_random_walk_precision(K = 20, d = 2, q=2, lambda=10000)
 Q_prior_rw2_strong &lt;- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2_strong,
   init_params = init_params,
   max_iter = 100,
-  modelName = &quot;EII&quot;,
-  tol = 1e-5,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration 1: objective = -2543.3091
-Iteration 2: objective = -1875.5104
-Iteration 3: objective = -1225.2726
-Iteration 4: objective = -1180.2106
-Iteration 5: objective = -1177.4332
-Iteration 6: objective = -1171.3993
-Iteration 7: objective = -1159.9830
-Iteration 8: objective = -1143.1198
-Iteration 9: objective = -1126.1589
-Iteration 10: objective = -1114.7535
-Iteration 11: objective = -1106.9885
-Iteration 12: objective = -1099.3001
-Iteration 13: objective = -1090.3622
-Iteration 14: objective = -1080.6620
-Iteration 15: objective = -1072.0990
-Iteration 16: objective = -1066.5441
-Iteration 17: objective = -1063.9732
-Iteration 18: objective = -1063.0584
-Iteration 19: objective = -1062.7694
-Iteration 20: objective = -1062.6747
-Iteration 21: objective = -1062.6364
-Iteration 22: objective = -1062.6116
-Iteration 23: objective = -1062.5833
-Iteration 24: objective = -1062.5382
-Iteration 25: objective = -1062.4584
-Iteration 26: objective = -1062.3137
-Iteration 27: objective = -1062.0516
-Iteration 28: objective = -1061.5820
-Iteration 29: objective = -1060.7606
-Iteration 30: objective = -1059.3833
-Iteration 31: objective = -1057.2288
-Iteration 32: objective = -1054.2017
-Iteration 33: objective = -1050.5410
-Iteration 34: objective = -1046.8627
-Iteration 35: objective = -1043.8279
-Iteration 36: objective = -1041.7294
-Iteration 37: objective = -1040.4537
-Iteration 38: objective = -1039.7286
-Iteration 39: objective = -1039.3187
-Iteration 40: objective = -1039.0764
-Iteration 41: objective = -1038.9221
-Iteration 42: objective = -1038.8162
-Iteration 43: objective = -1038.7395
-Iteration 44: objective = -1038.6818
-Iteration 45: objective = -1038.6378
-Iteration 46: objective = -1038.6039
-Iteration 47: objective = -1038.5779
-Iteration 48: objective = -1038.5578
-Iteration 49: objective = -1038.5424
-Iteration 50: objective = -1038.5307
-Iteration 51: objective = -1038.5217
-Iteration 52: objective = -1038.5149
-Iteration 53: objective = -1038.5097
-Iteration 54: objective = -1038.5058
-Iteration 55: objective = -1038.5028
-Iteration 56: objective = -1038.5006
-Iteration 57: objective = -1038.4990
-Iteration 58: objective = -1038.4978
-Iteration 59: objective = -1038.4969
-Iteration 60: objective = -1038.4962
-Iteration 61: objective = -1038.4957
-Iteration 62: objective = -1038.4954
-Iteration 63: objective = -1038.4952
-Iteration 64: objective = -1038.4950
-Iteration 65: objective = -1038.4949
-Iteration 66: objective = -1038.4948
-Iteration 67: objective = -1038.4948
-Iteration 68: objective = -1038.4948
-Converged at iteration 69 with objective -1038.4948</code></pre>
+<pre><code>Iteration   1: objective = -3157.728602
+Iteration   2: objective = -1106.648394
+Iteration   3: objective = -1086.466221
+Iteration   4: objective = -1074.714809
+Iteration   5: objective = -1067.389971
+Iteration   6: objective = -1062.264452
+Iteration   7: objective = -1058.282529
+Iteration   8: objective = -1055.386219
+Iteration   9: objective = -1053.498006
+Iteration  10: objective = -1052.333884
+Iteration  11: objective = -1051.607395
+Iteration  12: objective = -1051.132149
+Iteration  13: objective = -1050.803883
+Iteration  14: objective = -1050.560226
+Iteration  15: objective = -1050.350615
+Iteration  16: objective = -1050.108547
+Iteration  17: objective = -1049.705044
+Iteration  18: objective = -1048.848610
+Iteration  19: objective = -1046.892445
+Iteration  20: objective = -1042.636367
+Iteration  21: objective = -1034.710061
+Iteration  22: objective = -1023.171195
+Iteration  23: objective = -1010.464150
+Iteration  24: objective = -999.721065
+Iteration  25: objective = -992.826533
+Iteration  26: objective = -989.639211
+Iteration  27: objective = -988.680214
+Iteration  28: objective = -988.586794
+Iteration  29: objective = -988.661556
+Converged at iteration 29 with objective -988.661556</code></pre>
 <pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
      pch=19, main=&quot;EM Fitted Means with RW2 Prior (strong penalty)&quot;)
 # Turn mu_list into matrix
@@ -1652,7 +1624,8 @@ for (k in 1:(nrow(mu_matrix)-1)) {
   arrows(mu_matrix[k,1], mu_matrix[k,2],
          mu_matrix[k+1,1], mu_matrix[k+1,2],
          col=&quot;orange&quot;, lwd=4, length=0.1)
-}</code></pre>
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
 <p><img src="figure/explore_smoothEM.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
@@ -1676,6 +1649,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/041218f88e898217d52eabb3d6802bb139f075f0/docs/figure/explore_smoothEM.rmd/unnamed-chunk-15-1.png" target="_blank">041218f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/028201f1d8f750fb9a4258a5722ce4c2fe116eb8/docs/figure/explore_smoothEM.rmd/unnamed-chunk-15-1.png" target="_blank">028201f</a>
@@ -1719,19 +1703,20 @@ attached base packages:
 
 other attached packages:
 [1] Matrix_1.6-4      matrixStats_1.4.1 mclust_6.1.1      mvtnorm_1.3-1    
-[5] MASS_7.3-60      
+[5] MASS_7.3-60       workflowr_1.7.1  
 
 loaded via a namespace (and not attached):
  [1] jsonlite_2.0.0    compiler_4.3.1    promises_1.3.3    Rcpp_1.0.14      
- [5] stringr_1.5.1     git2r_0.33.0      later_1.4.2       jquerylib_0.1.4  
- [9] yaml_2.3.10       fastmap_1.2.0     lattice_0.22-6    R6_2.6.1         
-[13] workflowr_1.7.1   knitr_1.50        tibble_3.2.1      rprojroot_2.0.4  
+ [5] stringr_1.5.1     git2r_0.33.0      callr_3.7.6       later_1.4.2      
+ [9] jquerylib_0.1.4   yaml_2.3.10       fastmap_1.2.0     lattice_0.22-6   
+[13] R6_2.6.1          knitr_1.50        tibble_3.2.1      rprojroot_2.0.4  
 [17] bslib_0.9.0       pillar_1.10.2     rlang_1.1.6       cachem_1.1.0     
-[21] stringi_1.8.7     httpuv_1.6.16     xfun_0.52         fs_1.6.6         
-[25] sass_0.4.10       cli_3.6.5         magrittr_2.0.3    digest_0.6.37    
-[29] grid_4.3.1        rstudioapi_0.16.0 lifecycle_1.0.4   vctrs_0.6.5      
-[33] evaluate_1.0.3    glue_1.8.0        whisker_0.4.1     rmarkdown_2.28   
-[37] tools_4.3.1       pkgconfig_2.0.3   htmltools_0.5.8.1</code></pre>
+[21] stringi_1.8.7     httpuv_1.6.16     xfun_0.52         getPass_0.2-4    
+[25] fs_1.6.6          sass_0.4.10       cli_3.6.5         magrittr_2.0.3   
+[29] ps_1.9.1          grid_4.3.1        digest_0.6.37     processx_3.8.6   
+[33] rstudioapi_0.16.0 lifecycle_1.0.4   vctrs_0.6.5       evaluate_1.0.3   
+[37] glue_1.8.0        whisker_0.4.1     rmarkdown_2.28    httr_1.4.7       
+[41] tools_4.3.1       pkgconfig_2.0.3   htmltools_0.5.8.1</code></pre>
 </div>
 </div>
 </div>
