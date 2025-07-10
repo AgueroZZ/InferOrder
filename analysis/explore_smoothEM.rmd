@@ -74,7 +74,7 @@ First, we fit the standard EM algorithm to this mixture model without any prior 
 
 ```{r}
 library(mclust)
-fit_mclust <- Mclust(sim$X, G=20)
+fit_mclust <- Mclust(sim$X, G=20, modelNames = "EEI")
 ```
 
 ```{r}
@@ -105,7 +105,7 @@ result_linear <- EM_algorithm_linear(
   data = sim$X,
   K = 20,
   betaprec = 0.001,
-  seed = 1,
+  seed = 123,
   max_iter = 100,
   verbose = TRUE
 )
@@ -115,13 +115,15 @@ result_linear <- EM_algorithm_linear(
 plot(sim$X, col=alpha_colors[sim$z], cex=1,
      pch=19, main="EM Fitted Means with linear Prior")
 # Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_linear$params$mu)
+mu_matrix <- do.call(rbind, as.vector(result_linear$params$mu))
 # Draw arrows showing sequence
 for (k in 1:(nrow(mu_matrix)-1)) {
   arrows(mu_matrix[k,1], mu_matrix[k,2],
          mu_matrix[k+1,1], mu_matrix[k+1,2],
          col="orange", lwd=4, length=0.1)
 }
+# add dots for fitted means
+points(mu_matrix, pch=1, cex=0.8, lwd=2, col="orange")
 ```
 
 Here the fitted means are shown as orange arrows, with direction indicating the order of the components.
@@ -202,8 +204,8 @@ result_VAR1 <- EM_algorithm(
   Q_prior = Q_prior_VAR1,
   init_params = init_params,
   max_iter = 100,
-  modelName = "EII",
-  tol = 1e-5,
+  modelName = "EEI",
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
@@ -224,6 +226,7 @@ for (k in 1:(nrow(mu_matrix)-1)) {
            col="orange", lwd=4, length=0.1)
   }
 }
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
 ```
 
 
@@ -239,14 +242,14 @@ where \(\lambda\) is a scalar precision parameter that controls the smoothness o
 
 
 ```{r}
-Q_prior_RW1 <- make_random_walk_precision(K=20, d=2, lambda = 5)
+Q_prior_RW1 <- make_random_walk_precision(K=20, d=2, lambda = 10)
 result_RW1 <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_RW1,
   init_params = init_params,
   max_iter = 100,
-  modelName = "EII",
-  tol = 1e-5,
+  modelName = "EEI",
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
@@ -266,6 +269,7 @@ for (k in 1:(nrow(mu_matrix)-1)) {
            col="orange", lwd=4, length=0.1)
   }
 }
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
 ```
 
 
@@ -296,8 +300,8 @@ result_rw2 <- EM_algorithm(
   Q_prior = Q_prior_rw2,
   init_params = init_params,
   max_iter = 100,
-  modelName = "EII",
-  tol = 1e-5,
+  modelName = "EEI",
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
@@ -313,6 +317,7 @@ for (k in 1:(nrow(mu_matrix)-1)) {
          mu_matrix[k+1,1], mu_matrix[k+1,2],
          col="orange", lwd=4, length=0.1)
 }
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
 ```
 
 
@@ -320,14 +325,14 @@ Similar to the RW1 prior, the RW2 prior is also a partially improper prior, as i
 As $\lambda$ increases, the fitted means become closer to a linear trend.
 
 ```{r}
-Q_prior_rw2_strong <- make_random_walk_precision(K = 20, d = 2, q=2, lambda=4000)
+Q_prior_rw2_strong <- make_random_walk_precision(K = 20, d = 2, q=2, lambda=10000)
 Q_prior_rw2_strong <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2_strong,
   init_params = init_params,
   max_iter = 100,
-  modelName = "EII",
-  tol = 1e-5,
+  modelName = "EEI",
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
@@ -343,6 +348,7 @@ for (k in 1:(nrow(mu_matrix)-1)) {
          mu_matrix[k+1,1], mu_matrix[k+1,2],
          col="orange", lwd=4, length=0.1)
 }
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
 ```
 
 
