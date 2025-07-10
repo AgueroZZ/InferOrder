@@ -64,7 +64,8 @@ plot_structure(Loadings, order = rownames(Loadings)[PC1_order])
 Take a look at the ordering metric versus the cell types.
 
 ```{r}
-highlights <- c("acinar","ductal","delta","gamma", "macrophage", "endothelial")
+# highlights <- c("acinar","ductal","delta","gamma", "macrophage", "endothelial")
+highlights <- unique(celltype)
 PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
 plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
@@ -295,10 +296,11 @@ source("./code/general_EM.R")
 source("./code/prior_precision.R")
 result_linear <- EM_algorithm_linear(
   data = Loadings,
-  K = 300,
+  K = 100,
   betaprec = 0.001,
-  seed = 1,
+  seed = 123,
   max_iter = 100,
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
@@ -325,16 +327,16 @@ The ordering from linear prior does not look very informative, which is not unex
 Now, let's try the smooth-EM algorithm with a first order random walk prior.
 
 ```{r}
-set.seed(1)
-Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=1)
+set.seed(123)
+Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 10000, q=1)
 init_params <- make_default_init(Loadings, K=100)
 result_RW1 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW1,
   init_params = init_params,
   max_iter = 100,
-  modelName = "EII",
-  tol = 1e-5,
+  modelName = "EEI",
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
@@ -363,14 +365,16 @@ Each cell type is separated from the others, and the ordering seems to make sens
 Next, we will try the RW2 prior in the smooth-EM algorithm.
 
 ```{r}
-Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 1000, q=2)
+Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 20000, q=2)
+set.seed(1234)
+init_params <- make_default_init(Loadings, K=100)
 result_RW2 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 300,
-  modelName = "EII",
-  tol = 1e-5,
+  max_iter = 100,
+  modelName = "EEI",
+  tol = 1e-3,
   verbose = TRUE
 )
 ```
