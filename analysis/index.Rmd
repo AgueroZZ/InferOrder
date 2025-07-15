@@ -20,6 +20,8 @@ The inferred ordering could be used
 
 + [Exploring smooth-EM algorithm.](explore_smoothEM.html)
 
++ [Exploring smooth threshold EM algorithm.](explore_smoothSEM.html)
+
 + [Inferring latent ordering on pancrea dataset](explore_pancrea.html)
 
 
