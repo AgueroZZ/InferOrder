@@ -1,0 +1,339 @@
+---
+title: "Exploring Smooth Threshold EM algorithm with various smoother"
+author: "Ziang Zhang"
+date: "2025-07-15"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+As in the [previous study](explore_smoothEM.html), we consider a mixture model with $K$ components:
+
+$$
+\boldsymbol{X}_i \mid z_i = k \sim \mathcal{N}(\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k), \quad i = 1, \ldots, n.
+$$
+
+We assume that the sequence of component means $\{\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_K\}$ corresponds to evaluations of an underlying smooth function:
+
+$$
+\boldsymbol{\mu}_k = u\Bigl(\frac{k}{K}\Bigr), \quad k = 1, \ldots, K,
+$$
+
+where $u : [0,1] \to \mathbb{R}^d$ is an unknown smooth function. This formulation does not impose a specific probabilistic prior on $u$, but instead assumes that $\{\boldsymbol{\mu}_k\}$ vary smoothly across $k$.
+
+---
+
+## Algorithm steps
+
+Our **Smooth Threshold EM** approach modifies the standard EM procedure as follows:
+
+### 1. E-step
+
+$$
+\gamma_{ik}^{(t)} = \frac{\pi_k^{(t)} \, \mathcal{N}\bigl(\boldsymbol{X}_i \mid \boldsymbol{\mu}_k^{(t)}, \boldsymbol{\Sigma}_k^{(t)}\bigr)}{\sum_{j=1}^K \pi_j^{(t)} \, \mathcal{N}\bigl(\boldsymbol{X}_i \mid \boldsymbol{\mu}_j^{(t)}, \boldsymbol{\Sigma}_j^{(t)}\bigr)}.
+$$
+
+### 2. Thresholding step
+
+**Hard assignment (deterministic):**
+
+$$
+z_i^{(t)} = \arg\max_k \gamma_{ik}^{(t)}.
+$$
+
+**Optional stochastic assignment:**
+
+$$
+z_i^{(t)} \sim \text{Categorical}\bigl(\gamma_{i1}^{(t)}, \ldots, \gamma_{iK}^{(t)}\bigr).
+$$
+
+### 3. M-step (Smoother)
+
+Given the assignments $\{(z_i^{(t)}, \boldsymbol{X}_i)\}$, we fit a smoother that directly estimates the sequence of cluster means:
+
+$$
+\bigl(\boldsymbol{\mu}_1^{(t+1)}, \ldots, \boldsymbol{\mu}_K^{(t+1)}\bigr) \leftarrow \text{Smooth}\bigl(\{(z_i^{(t)}, \boldsymbol{X}_i)\}\bigr).
+$$
+
+The smoother can be any technique enforcing the desired level of smoothness across component indices.
+
+The cluster covariances are updated as:
+
+$$
+\boldsymbol{\Sigma}_k^{(t+1)} = \frac{1}{n_k^{(t)}} \sum_{i: z_i^{(t)} = k} \bigl(\boldsymbol{X}_i - \boldsymbol{\mu}_k^{(t+1)}\bigr)\bigl(\boldsymbol{X}_i - \boldsymbol{\mu}_k^{(t+1)}\bigr)^\top.
+$$
+
+---
+
+
+
+## Simulate mixture in 2D
+
+Here, we will simulate a mixture of Gaussians in 2D, for $n = 500$ observations and $K = 20$ components.
+
+```{r}
+set.seed(123)
+source("./code/simulate.R")
+source("./code/stochasticEM.R")
+library(Matrix)
+library(matrixStats)
+library(MASS)
+library(mvtnorm)
+palette_colors <- rainbow(20)
+alpha_colors <- sapply(palette_colors, function(clr) adjustcolor(clr, alpha.f=0.3))
+sim <- simulate_mixture(n=500, K = 20, d=2, seed=123, proj_mat = matrix(c(1,-0.6,-0.6,1), nrow = 2, byrow = T))
+```
+
+```{r}
+plot(sim$X, col = alpha_colors[sim$z],
+     pch = 19, cex = 0.5, 
+     xlab = "X1", ylab = "X2",
+     main = "Simulated mixture of Gaussians in 2D")
+```
+
+Now, let's assume we don't know there are 20 components, and we will fit a mixture model with \(K = 50\) components to this data.
+For simplicity, let's assume $\mathbf{\Sigma}_k = \mathbf{\Sigma}$ for all $k$, where $\mathbf{\Sigma}$ is a diagonal matrix.
+
+
+### Penalized B-spline smoother
+
+We first consider the penalized B-spline smoother implemented through the package `mgcv`. 
+This smoother uses a penalty term to enforce smoothness across the estimated means.
+
+Let's write a function to generate such smoother:
+
+```{r}
+smoother_mgcv_generator <- function(K, pi = NULL, bs = "bs", num_basis = 30, locations = NULL, m = 2, sp = NULL, method = "ML") {
+  if (is.null(locations)) {
+    locations <- seq(0, 1, length.out = K)
+  }
+  if (is.null(pi)) {
+    pi <- rep(1/K, K)
+  } else if (length(pi) != K) {
+    stop("pi must be a vector of length K")
+  }
+
+  smoother <- function(Z, X, params = NULL) {
+    z_idx <- apply(Z, 1, which.max)
+    t <- locations[z_idx]
+
+    d <- ncol(X)
+    U <- matrix(0, nrow = K, ncol = d)
+    sigma <- numeric(d)
+
+    for (i in 1:d) {
+      df_current <- data.frame(x = X[, i], t = t)
+      mod <- mgcv::gam(x ~ s(t, bs = bs, k = num_basis, m = m, sp = sp),
+                       method = method,
+                       family = gaussian(),
+                       data = df_current)
+      # mgcv::predict.gam returns a vector
+      U[, i] <- predict(mod, newdata = data.frame(t = locations))
+      sigma[i] <- var(mod$residuals)
+    }
+
+    list(pi = pi, mu = split(U, row(U)), sigma = sigma)
+  }
+
+  return(smoother)
+}
+```
+
+Applying the smoother (with a fixed level of smoothness penalty) in the M-step to our simulated data:
+
+```{r}
+smoother_mgcv <- smoother_mgcv_generator(K = 50, bs = "bs",
+                                         num_basis = 20, m = c(3,2),
+                                         sp = 100)
+set.seed(123)
+init_params <- make_default_init(sim$X, K=50)
+result_mgcv <- stochastic_EM(
+  X = sim$X,
+  init_params = init_params,
+  threshold = "hard",
+  smoother = smoother_mgcv,
+  max_iter = 100,
+  tol = 1e-5,
+  verbose = TRUE
+)
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with MGCV Smoothing (Fixed)")
+mu_matrix <- do.call(rbind, result_mgcv$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=2, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
+```
+
+
+
+The estimated mean in each dimension:
+
+```{r}
+plot(mu_matrix[,1] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = "b", col = "blue", pch = 19,
+     xlab = "Index", ylab = "Mean",
+     main = "Means from MGCV Smoother (Fixed)",
+     ylim = range(mu_matrix))
+plot(mu_matrix[,2] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = "b", col = "blue", pch = 19,
+     xlab = "Index", ylab = "Mean",
+     main = "Means from MGCV Smoother (Fixed)",
+     ylim = range(mu_matrix))
+```
+
+
+Applying the smoother (with EB adapted smoothness penalty) in the M-step to our simulated data:
+
+```{r}
+smoother_mgcv <- smoother_mgcv_generator(K = 50, bs = "bs",
+                                         num_basis = 20, m = c(3,2),
+                                         sp = NULL, method = "ML")
+set.seed(123)
+init_params <- make_default_init(sim$X, K=50)
+result_mgcv <- stochastic_EM(
+  X = sim$X,
+  init_params = init_params,
+  threshold = "hard",
+  smoother = smoother_mgcv,
+  max_iter = 100,
+  tol = 1e-5,
+  verbose = TRUE
+)
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with MGCV Smoothing (EB)")
+mu_matrix <- do.call(rbind, result_mgcv$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=2, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
+```
+
+The estimated mean in each dimension:
+
+```{r}
+plot(mu_matrix[,1] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = "b", col = "blue", pch = 19,
+     xlab = "Index", ylab = "Mean",
+     main = "Means from MGCV Smoother (EB)",
+     ylim = range(mu_matrix))
+plot(mu_matrix[,2] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = "b", col = "blue", pch = 19,
+     xlab = "Index", ylab = "Mean",
+     main = "Means from MGCV Smoother (EB)",
+     ylim = range(mu_matrix))
+```
+
+
+
+
+### Gaussian process smoother
+
+Next, we consider the Gaussian process smoother based on the Integrated Wiener process (IWP). We use the package `BayesGP` to implement this smoother.
+The implementation is fully Bayesian, meaning we will assign prior to the smoothing parameter in each dimension as well as the noise variance.
+We will take the posterior mean/median as the final estimate.
+
+```{r}
+smoother_iwp_generator <- function(K, pi = NULL, order = 2, locations = NULL, num_basis = 30, smooth.prior = NULL){
+  if (is.null(locations)) {
+    locations <- seq(0, 1, length.out = K)
+  }
+  if (is.null(pi)) {
+    pi <- rep(1/K, K)
+  } else if (length(pi) != K) {
+    stop("pi must be a vector of length K")
+  }
+
+  smoother <- function(Z, X, params = NULL) {
+    z_idx <- apply(Z, 1, which.max)
+    t <- locations[z_idx]
+
+    d <- ncol(X)
+    U <- matrix(0, nrow = K, ncol = d)
+    sigma <- numeric(d)
+
+    for (i in 1:d) {
+      df_current <- data.frame(x = X[, i], t = t)
+      mod <- BayesGP::model_fit(x ~ f(t, model = "IWP",
+                                      sd.prior = smooth.prior,
+                                      order = order, k = num_basis),
+                       family = "Gaussian",
+                       data = df_current)
+      U[, i] <- predict(mod, variable = "t", newdata = data.frame(t = locations))$mean
+      sigma[i] <- BayesGP::post_table(mod)$median[3]^2
+    }
+
+    list(pi = pi, mu = split(U, row(U)), sigma = sigma)
+  }
+
+  return(smoother)
+}
+```
+
+```{r}
+smoother_iwp <- smoother_iwp_generator(K = 50, order = 2, smooth.prior = 0.5,
+                                         num_basis = 20)
+set.seed(1234)
+init_params <- make_default_init(sim$X, K=50)
+result_iwp <- stochastic_EM(
+  X = sim$X,
+  init_params = init_params,
+  threshold = "hard",
+  smoother = smoother_iwp,
+  max_iter = 100,
+  tol = 1e-2,
+  verbose = TRUE
+)
+plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with IWP prior (fully Bayes)")
+mu_matrix <- do.call(rbind, result_iwp$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=2, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
+```
+
+Take a look at the estimated mean in each dimension:
+
+```{r}
+plot(mu_matrix[,1] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = "b", col = "blue", pch = 19,
+     xlab = "Index", ylab = "Mean",
+     main = "Means from IWP Smoother",
+     ylim = range(mu_matrix))
+plot(mu_matrix[,2] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = "b", col = "blue", pch = 19,
+     xlab = "Index", ylab = "Mean",
+     main = "Means from IWP Smoother",
+     ylim = range(mu_matrix))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
