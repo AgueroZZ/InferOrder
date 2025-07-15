@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2025-07-15" />
+
+<title>Exploring Smooth Threshold EM algorithm with various smoother</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Inferring latent ordering</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Exploring Smooth Threshold EM algorithm
+with various smoother</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2025-07-15</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-07-15
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>InferOrder/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250707code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250707)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250707code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250707)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreed9bed11edab4b94923b20689364ddc6e28477537targetblankd9bed11a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/d9bed11edab4b94923b20689364ddc6e28477537" target="_blank">d9bed11</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreed9bed11edab4b94923b20689364ddc6e28477537targetblankd9bed11a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/InferOrder/tree/d9bed11edab4b94923b20689364ddc6e28477537" target="_blank">d9bed11</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+
+Untracked files:
+    Untracked:  Smooth_EB.png
+    Untracked:  Smooth_fixed.png
+    Untracked:  code/smoother_experiment.R
+    Untracked:  code/stochasticEM.R
+
+Unstaged changes:
+    Deleted:    all_celltypes_umap.png
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/explore_smoothSEM.rmd</code>) and
+HTML (<code>docs/explore_smoothSEM.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d9bed11edab4b94923b20689364ddc6e28477537/analysis/explore_smoothSEM.rmd" target="_blank">d9bed11</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-15
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_smoothSEM.rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>As in the <a href="explore_smoothEM.html">previous study</a>, we
+consider a mixture model with <span class="math inline">\(K\)</span>
+components:</p>
+<p><span class="math display">\[
+\boldsymbol{X}_i \mid z_i = k \sim \mathcal{N}(\boldsymbol{\mu}_k,
+\boldsymbol{\Sigma}_k), \quad i = 1, \ldots, n.
+\]</span></p>
+<p>We assume that the sequence of component means <span
+class="math inline">\(\{\boldsymbol{\mu}_1, \ldots,
+\boldsymbol{\mu}_K\}\)</span> corresponds to evaluations of an
+underlying smooth function:</p>
+<p><span class="math display">\[
+\boldsymbol{\mu}_k = u\Bigl(\frac{k}{K}\Bigr), \quad k = 1, \ldots, K,
+\]</span></p>
+<p>where <span class="math inline">\(u : [0,1] \to \mathbb{R}^d\)</span>
+is an unknown smooth function. This formulation does not impose a
+specific probabilistic prior on <span class="math inline">\(u\)</span>,
+but instead assumes that <span
+class="math inline">\(\{\boldsymbol{\mu}_k\}\)</span> vary smoothly
+across <span class="math inline">\(k\)</span>.</p>
+<hr />
+</div>
+<div id="algorithm-steps" class="section level2">
+<h2>Algorithm steps</h2>
+<p>Our <strong>Smooth Threshold EM</strong> approach modifies the
+standard EM procedure as follows:</p>
+<div id="e-step" class="section level3">
+<h3>1. E-step</h3>
+<p><span class="math display">\[
+\gamma_{ik}^{(t)} = \frac{\pi_k^{(t)} \,
+\mathcal{N}\bigl(\boldsymbol{X}_i \mid \boldsymbol{\mu}_k^{(t)},
+\boldsymbol{\Sigma}_k^{(t)}\bigr)}{\sum_{j=1}^K \pi_j^{(t)} \,
+\mathcal{N}\bigl(\boldsymbol{X}_i \mid \boldsymbol{\mu}_j^{(t)},
+\boldsymbol{\Sigma}_j^{(t)}\bigr)}.
+\]</span></p>
+</div>
+<div id="thresholding-step" class="section level3">
+<h3>2. Thresholding step</h3>
+<p><strong>Hard assignment (deterministic):</strong></p>
+<p><span class="math display">\[
+z_i^{(t)} = \arg\max_k \gamma_{ik}^{(t)}.
+\]</span></p>
+<p><strong>Optional stochastic assignment:</strong></p>
+<p><span class="math display">\[
+z_i^{(t)} \sim \text{Categorical}\bigl(\gamma_{i1}^{(t)}, \ldots,
+\gamma_{iK}^{(t)}\bigr).
+\]</span></p>
+</div>
+<div id="m-step-smoother" class="section level3">
+<h3>3. M-step (Smoother)</h3>
+<p>Given the assignments <span class="math inline">\(\{(z_i^{(t)},
+\boldsymbol{X}_i)\}\)</span>, we fit a smoother that directly estimates
+the sequence of cluster means:</p>
+<p><span class="math display">\[
+\bigl(\boldsymbol{\mu}_1^{(t+1)}, \ldots,
+\boldsymbol{\mu}_K^{(t+1)}\bigr) \leftarrow
+\text{Smooth}\bigl(\{(z_i^{(t)}, \boldsymbol{X}_i)\}\bigr).
+\]</span></p>
+<p>The smoother can be any technique enforcing the desired level of
+smoothness across component indices.</p>
+<p>The cluster covariances are updated as:</p>
+<p><span class="math display">\[
+\boldsymbol{\Sigma}_k^{(t+1)} = \frac{1}{n_k^{(t)}} \sum_{i: z_i^{(t)} =
+k} \bigl(\boldsymbol{X}_i -
+\boldsymbol{\mu}_k^{(t+1)}\bigr)\bigl(\boldsymbol{X}_i -
+\boldsymbol{\mu}_k^{(t+1)}\bigr)^\top.
+\]</span></p>
+<hr />
+</div>
+</div>
+<div id="simulate-mixture-in-2d" class="section level2">
+<h2>Simulate mixture in 2D</h2>
+<p>Here, we will simulate a mixture of Gaussians in 2D, for <span
+class="math inline">\(n = 500\)</span> observations and <span
+class="math inline">\(K = 20\)</span> components.</p>
+<pre class="r"><code>set.seed(123)
+source(&quot;./code/simulate.R&quot;)
+source(&quot;./code/stochasticEM.R&quot;)
+library(Matrix)
+library(matrixStats)</code></pre>
+<pre><code>Warning: package &#39;matrixStats&#39; was built under R version 4.3.3</code></pre>
+<pre class="r"><code>library(MASS)
+library(mvtnorm)</code></pre>
+<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.3.3</code></pre>
+<pre class="r"><code>palette_colors &lt;- rainbow(20)
+alpha_colors &lt;- sapply(palette_colors, function(clr) adjustcolor(clr, alpha.f=0.3))
+sim &lt;- simulate_mixture(n=500, K = 20, d=2, seed=123, proj_mat = matrix(c(1,-0.6,-0.6,1), nrow = 2, byrow = T))</code></pre>
+<pre class="r"><code>plot(sim$X, col = alpha_colors[sim$z],
+     pch = 19, cex = 0.5, 
+     xlab = &quot;X1&quot;, ylab = &quot;X2&quot;,
+     main = &quot;Simulated mixture of Gaussians in 2D&quot;)</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, let’s assume we don’t know there are 20 components, and we will
+fit a mixture model with <span class="math inline">\(K = 50\)</span>
+components to this data. For simplicity, let’s assume <span
+class="math inline">\(\mathbf{\Sigma}_k = \mathbf{\Sigma}\)</span> for
+all <span class="math inline">\(k\)</span>, where <span
+class="math inline">\(\mathbf{\Sigma}\)</span> is a diagonal matrix.</p>
+<div id="penalized-b-spline-smoother" class="section level3">
+<h3>Penalized B-spline smoother</h3>
+<p>We first consider the penalized B-spline smoother implemented through
+the package <code>mgcv</code>. This smoother uses a penalty term to
+enforce smoothness across the estimated means.</p>
+<p>Let’s write a function to generate such smoother:</p>
+<pre class="r"><code>smoother_mgcv_generator &lt;- function(K, pi = NULL, bs = &quot;bs&quot;, num_basis = 30, locations = NULL, m = 2, sp = NULL, method = &quot;ML&quot;) {
+  if (is.null(locations)) {
+    locations &lt;- seq(0, 1, length.out = K)
+  }
+  if (is.null(pi)) {
+    pi &lt;- rep(1/K, K)
+  } else if (length(pi) != K) {
+    stop(&quot;pi must be a vector of length K&quot;)
+  }
+
+  smoother &lt;- function(Z, X, params = NULL) {
+    z_idx &lt;- apply(Z, 1, which.max)
+    t &lt;- locations[z_idx]
+
+    d &lt;- ncol(X)
+    U &lt;- matrix(0, nrow = K, ncol = d)
+    sigma &lt;- numeric(d)
+
+    for (i in 1:d) {
+      df_current &lt;- data.frame(x = X[, i], t = t)
+      mod &lt;- mgcv::gam(x ~ s(t, bs = bs, k = num_basis, m = m, sp = sp),
+                       method = method,
+                       family = gaussian(),
+                       data = df_current)
+      # mgcv::predict.gam returns a vector
+      U[, i] &lt;- predict(mod, newdata = data.frame(t = locations))
+      sigma[i] &lt;- var(mod$residuals)
+    }
+
+    list(pi = pi, mu = split(U, row(U)), sigma = sigma)
+  }
+
+  return(smoother)
+}</code></pre>
+<p>Applying the smoother (with a fixed level of smoothness penalty) in
+the M-step to our simulated data:</p>
+<pre class="r"><code>smoother_mgcv &lt;- smoother_mgcv_generator(K = 50, bs = &quot;bs&quot;,
+                                         num_basis = 20, m = c(3,2),
+                                         sp = 100)
+set.seed(123)
+init_params &lt;- make_default_init(sim$X, K=50)
+result_mgcv &lt;- stochastic_EM(
+  X = sim$X,
+  init_params = init_params,
+  threshold = &quot;hard&quot;,
+  smoother = smoother_mgcv,
+  max_iter = 100,
+  tol = 1e-5,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Warning in smooth.construct.bs.smooth.spec(object, dk$data, dk$knots): basis
+dimension is larger than number of unique covariates
+Warning in smooth.construct.bs.smooth.spec(object, dk$data, dk$knots): basis
+dimension is larger than number of unique covariates</code></pre>
+<pre><code>Iteration 1 (initialization) 
+Iteration 2:
+  relΔU     = 1.183220e+00
+  relΔSigma = 7.358657e-01
+  relΔGamma = 9.679182e-01
+Iteration 3:
+  relΔU     = 2.192901e-01
+  relΔSigma = 5.289045e-01
+  relΔGamma = 1.135869e+00
+Iteration 4:
+  relΔU     = 1.339744e-01
+  relΔSigma = 2.197193e-01
+  relΔGamma = 6.204105e-01
+Iteration 5:
+  relΔU     = 9.890663e-02
+  relΔSigma = 1.915638e-01
+  relΔGamma = 3.838961e-01
+Iteration 6:
+  relΔU     = 6.595388e-02
+  relΔSigma = 1.562570e-01
+  relΔGamma = 3.482616e-01
+Iteration 7:
+  relΔU     = 5.100825e-02
+  relΔSigma = 9.419623e-02
+  relΔGamma = 2.871593e-01
+Iteration 8:
+  relΔU     = 4.177309e-02
+  relΔSigma = 7.120505e-02
+  relΔGamma = 2.487183e-01
+Iteration 9:
+  relΔU     = 4.257584e-02
+  relΔSigma = 7.574855e-02
+  relΔGamma = 2.226644e-01
+Iteration 10:
+  relΔU     = 2.985455e-02
+  relΔSigma = 3.759246e-02
+  relΔGamma = 2.316885e-01
+Iteration 11:
+  relΔU     = 2.985916e-02
+  relΔSigma = 3.147648e-02
+  relΔGamma = 1.803975e-01
+Iteration 12:
+  relΔU     = 2.694174e-02
+  relΔSigma = 3.075809e-02
+  relΔGamma = 1.840151e-01
+Iteration 13:
+  relΔU     = 2.368060e-02
+  relΔSigma = 3.862209e-02
+  relΔGamma = 1.734926e-01
+Iteration 14:
+  relΔU     = 1.979606e-02
+  relΔSigma = 3.954792e-02
+  relΔGamma = 1.575292e-01
+Iteration 15:
+  relΔU     = 1.916345e-02
+  relΔSigma = 2.113260e-02
+  relΔGamma = 1.424851e-01
+Iteration 16:
+  relΔU     = 1.831534e-02
+  relΔSigma = 4.344799e-02
+  relΔGamma = 1.375305e-01
+Iteration 17:
+  relΔU     = 1.815695e-02
+  relΔSigma = 4.936822e-02
+  relΔGamma = 1.428554e-01
+Iteration 18:
+  relΔU     = 1.662043e-02
+  relΔSigma = 7.236334e-02
+  relΔGamma = 1.453502e-01
+Iteration 19:
+  relΔU     = 1.446701e-02
+  relΔSigma = 8.602045e-02
+  relΔGamma = 1.408367e-01
+Iteration 20:
+  relΔU     = 1.586729e-02
+  relΔSigma = 1.022498e-01
+  relΔGamma = 1.383092e-01
+Iteration 21:
+  relΔU     = 1.796540e-02
+  relΔSigma = 1.050712e-01
+  relΔGamma = 1.572451e-01
+Iteration 22:
+  relΔU     = 2.129529e-02
+  relΔSigma = 1.517928e-01
+  relΔGamma = 1.809439e-01
+Iteration 23:
+  relΔU     = 3.704875e-02
+  relΔSigma = 9.025651e-02
+  relΔGamma = 2.381033e-01
+Iteration 24:
+  relΔU     = 1.867614e-02
+  relΔSigma = 3.766447e-02
+  relΔGamma = 3.079331e-01
+Iteration 25:
+  relΔU     = 1.555028e-02
+  relΔSigma = 1.885227e-02
+  relΔGamma = 2.111723e-01
+Iteration 26:
+  relΔU     = 1.517953e-02
+  relΔSigma = 3.279566e-02
+  relΔGamma = 2.042569e-01
+Iteration 27:
+  relΔU     = 1.848291e-02
+  relΔSigma = 3.600861e-02
+  relΔGamma = 2.017631e-01
+Iteration 28:
+  relΔU     = 1.774300e-02
+  relΔSigma = 4.099660e-02
+  relΔGamma = 2.189802e-01
+Iteration 29:
+  relΔU     = 1.027746e-02
+  relΔSigma = 1.193345e-02
+  relΔGamma = 2.030787e-01
+Iteration 30:
+  relΔU     = 1.185255e-02
+  relΔSigma = 4.338463e-03
+  relΔGamma = 1.402380e-01
+Iteration 31:
+  relΔU     = 1.052690e-02
+  relΔSigma = 6.251619e-03
+  relΔGamma = 1.386801e-01
+Iteration 32:
+  relΔU     = 9.163139e-03
+  relΔSigma = 1.142382e-02
+  relΔGamma = 1.186152e-01
+Iteration 33:
+  relΔU     = 6.977837e-03
+  relΔSigma = 3.410998e-04
+  relΔGamma = 1.226224e-01
+Iteration 34:
+  relΔU     = 9.168412e-03
+  relΔSigma = 6.764842e-03
+  relΔGamma = 9.466590e-02
+Iteration 35:
+  relΔU     = 7.959482e-03
+  relΔSigma = 6.030971e-03
+  relΔGamma = 1.090649e-01
+Iteration 36:
+  relΔU     = 4.745328e-03
+  relΔSigma = 1.389693e-03
+  relΔGamma = 7.962275e-02
+Iteration 37:
+  relΔU     = 5.445506e-03
+  relΔSigma = 4.887827e-03
+  relΔGamma = 3.969775e-02
+Iteration 38:
+  relΔU     = 8.701325e-03
+  relΔSigma = 5.465738e-03
+  relΔGamma = 4.402158e-02
+Iteration 39:
+  relΔU     = 3.620258e-03
+  relΔSigma = 3.805160e-03
+  relΔGamma = 6.051306e-02
+Iteration 40:
+  relΔU     = 4.416102e-03
+  relΔSigma = 2.511656e-03
+  relΔGamma = 5.792962e-02
+Iteration 41:
+  relΔU     = 6.176041e-03
+  relΔSigma = 1.404402e-04
+  relΔGamma = 6.644673e-02
+Iteration 42:
+  relΔU     = 5.423766e-03
+  relΔSigma = 6.004494e-03
+  relΔGamma = 7.646657e-02
+Iteration 43:
+  relΔU     = 4.951290e-03
+  relΔSigma = 8.819709e-03
+  relΔGamma = 8.487834e-02
+Iteration 44:
+  relΔU     = 4.777191e-03
+  relΔSigma = 1.100042e-02
+  relΔGamma = 6.139040e-02
+Iteration 45:
+  relΔU     = 4.760495e-03
+  relΔSigma = 5.070052e-04
+  relΔGamma = 6.652292e-02
+Iteration 46:
+  relΔU     = 3.164905e-03
+  relΔSigma = 8.022960e-04
+  relΔGamma = 5.834619e-02
+Iteration 47:
+  relΔU     = 1.363249e-03
+  relΔSigma = 2.602167e-03
+  relΔGamma = 4.658138e-02
+Iteration 48:
+  relΔU     = 1.223237e-03
+  relΔSigma = 2.485901e-03
+  relΔGamma = 2.816954e-02
+Iteration 49:
+  relΔU     = 5.813147e-04
+  relΔSigma = 2.142353e-04
+  relΔGamma = 2.920946e-02
+Iteration 50:
+  relΔU     = 6.828939e-04
+  relΔSigma = 2.159854e-05
+  relΔGamma = 1.242802e-02
+Iteration 51:
+  relΔU     = 9.459284e-04
+  relΔSigma = 3.955822e-04
+  relΔGamma = 1.814146e-02
+Iteration 52:
+  relΔU     = 0.000000e+00
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.848741e-02
+Iteration 53:
+  relΔU     = 0.000000e+00
+  relΔSigma = 0.000000e+00
+  relΔGamma = 0.000000e+00
+Converged.</code></pre>
+<pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab=&quot;X1&quot;, ylab=&quot;X2&quot;,
+     pch=19, main=&quot;EM Fitted Means with MGCV Smoothing (Fixed)&quot;)
+mu_matrix &lt;- do.call(rbind, result_mgcv$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=2, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The estimated mean in each dimension:</p>
+<pre class="r"><code>plot(mu_matrix[,1] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = &quot;b&quot;, col = &quot;blue&quot;, pch = 19,
+     xlab = &quot;Index&quot;, ylab = &quot;Mean&quot;,
+     main = &quot;Means from MGCV Smoother (Fixed)&quot;,
+     ylim = range(mu_matrix))</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(mu_matrix[,2] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = &quot;b&quot;, col = &quot;blue&quot;, pch = 19,
+     xlab = &quot;Index&quot;, ylab = &quot;Mean&quot;,
+     main = &quot;Means from MGCV Smoother (Fixed)&quot;,
+     ylim = range(mu_matrix))</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Applying the smoother (with EB adapted smoothness penalty) in the
+M-step to our simulated data:</p>
+<pre class="r"><code>smoother_mgcv &lt;- smoother_mgcv_generator(K = 50, bs = &quot;bs&quot;,
+                                         num_basis = 20, m = c(3,2),
+                                         sp = NULL, method = &quot;ML&quot;)
+set.seed(123)
+init_params &lt;- make_default_init(sim$X, K=50)
+result_mgcv &lt;- stochastic_EM(
+  X = sim$X,
+  init_params = init_params,
+  threshold = &quot;hard&quot;,
+  smoother = smoother_mgcv,
+  max_iter = 100,
+  tol = 1e-5,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Warning in smooth.construct.bs.smooth.spec(object, dk$data, dk$knots): basis
+dimension is larger than number of unique covariates
+Warning in smooth.construct.bs.smooth.spec(object, dk$data, dk$knots): basis
+dimension is larger than number of unique covariates</code></pre>
+<pre><code>Iteration 1 (initialization) 
+Iteration 2:
+  relΔU     = 6.684361e-02
+  relΔSigma = 4.873505e-01
+  relΔGamma = 7.277495e-01
+Iteration 3:
+  relΔU     = 2.862220e-02
+  relΔSigma = 2.861013e-01
+  relΔGamma = 3.494936e-01
+Iteration 4:
+  relΔU     = 9.985312e-03
+  relΔSigma = 5.339118e-02
+  relΔGamma = 1.816420e-01
+Iteration 5:
+  relΔU     = 7.500035e-03
+  relΔSigma = 2.833092e-02
+  relΔGamma = 9.892933e-02
+Iteration 6:
+  relΔU     = 6.302947e-03
+  relΔSigma = 1.399816e-02
+  relΔGamma = 8.060649e-02
+Iteration 7:
+  relΔU     = 9.475010e-03
+  relΔSigma = 1.253006e-02
+  relΔGamma = 4.534402e-02
+Iteration 8:
+  relΔU     = 8.641219e-03
+  relΔSigma = 2.415722e-02
+  relΔGamma = 6.335558e-02
+Iteration 9:
+  relΔU     = 7.284369e-03
+  relΔSigma = 1.537775e-02
+  relΔGamma = 4.084748e-02
+Iteration 10:
+  relΔU     = 2.650234e-03
+  relΔSigma = 7.450274e-03
+  relΔGamma = 2.934321e-02
+Iteration 11:
+  relΔU     = 3.492960e-03
+  relΔSigma = 1.490281e-02
+  relΔGamma = 2.301410e-02
+Iteration 12:
+  relΔU     = 3.896702e-03
+  relΔSigma = 7.976918e-03
+  relΔGamma = 2.921189e-02
+Iteration 13:
+  relΔU     = 3.675120e-03
+  relΔSigma = 1.179966e-03
+  relΔGamma = 1.828996e-02
+Iteration 14:
+  relΔU     = 7.085302e-03
+  relΔSigma = 7.019274e-03
+  relΔGamma = 2.115482e-02
+Iteration 15:
+  relΔU     = 4.649088e-03
+  relΔSigma = 2.211740e-03
+  relΔGamma = 2.920791e-02
+Iteration 16:
+  relΔU     = 9.028368e-03
+  relΔSigma = 2.000472e-03
+  relΔGamma = 2.078615e-02
+Iteration 17:
+  relΔU     = 6.397165e-03
+  relΔSigma = 2.324601e-03
+  relΔGamma = 3.548781e-02
+Iteration 18:
+  relΔU     = 2.358001e-03
+  relΔSigma = 1.794774e-03
+  relΔGamma = 3.189209e-02
+Iteration 19:
+  relΔU     = 4.747310e-03
+  relΔSigma = 8.373788e-03
+  relΔGamma = 1.853817e-02
+Iteration 20:
+  relΔU     = 4.803193e-03
+  relΔSigma = 7.118830e-03
+  relΔGamma = 3.669495e-02
+Iteration 21:
+  relΔU     = 4.669608e-03
+  relΔSigma = 1.443668e-02
+  relΔGamma = 5.085044e-02
+Iteration 22:
+  relΔU     = 2.057923e-03
+  relΔSigma = 1.660992e-02
+  relΔGamma = 5.093011e-02
+Iteration 23:
+  relΔU     = 4.794940e-03
+  relΔSigma = 8.086061e-03
+  relΔGamma = 2.891246e-02
+Iteration 24:
+  relΔU     = 4.416780e-03
+  relΔSigma = 6.614696e-03
+  relΔGamma = 3.950574e-02
+Iteration 25:
+  relΔU     = 4.713925e-03
+  relΔSigma = 1.410874e-02
+  relΔGamma = 3.542620e-02
+Iteration 26:
+  relΔU     = 6.561008e-03
+  relΔSigma = 1.829404e-02
+  relΔGamma = 2.826149e-02
+Iteration 27:
+  relΔU     = 3.667926e-03
+  relΔSigma = 1.220594e-02
+  relΔGamma = 4.072974e-02
+Iteration 28:
+  relΔU     = 1.465747e-03
+  relΔSigma = 3.753192e-03
+  relΔGamma = 2.973192e-02
+Iteration 29:
+  relΔU     = 0.000000e+00
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.328417e-02
+Iteration 30:
+  relΔU     = 0.000000e+00
+  relΔSigma = 0.000000e+00
+  relΔGamma = 0.000000e+00
+Converged.</code></pre>
+<pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab=&quot;X1&quot;, ylab=&quot;X2&quot;,
+     pch=19, main=&quot;EM Fitted Means with MGCV Smoothing (EB)&quot;)
+mu_matrix &lt;- do.call(rbind, result_mgcv$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=2, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The estimated mean in each dimension:</p>
+<pre class="r"><code>plot(mu_matrix[,1] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = &quot;b&quot;, col = &quot;blue&quot;, pch = 19,
+     xlab = &quot;Index&quot;, ylab = &quot;Mean&quot;,
+     main = &quot;Means from MGCV Smoother (EB)&quot;,
+     ylim = range(mu_matrix))</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(mu_matrix[,2] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = &quot;b&quot;, col = &quot;blue&quot;, pch = 19,
+     xlab = &quot;Index&quot;, ylab = &quot;Mean&quot;,
+     main = &quot;Means from MGCV Smoother (EB)&quot;,
+     ylim = range(mu_matrix))</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gaussian-process-smoother" class="section level3">
+<h3>Gaussian process smoother</h3>
+<p>Next, we consider the Gaussian process smoother based on the
+Integrated Wiener process (IWP). We use the package <code>BayesGP</code>
+to implement this smoother. The implementation is fully Bayesian,
+meaning we will assign prior to the smoothing parameter in each
+dimension as well as the noise variance. We will take the posterior
+mean/median as the final estimate.</p>
+<pre class="r"><code>smoother_iwp_generator &lt;- function(K, pi = NULL, order = 2, locations = NULL, num_basis = 30, smooth.prior = NULL){
+  if (is.null(locations)) {
+    locations &lt;- seq(0, 1, length.out = K)
+  }
+  if (is.null(pi)) {
+    pi &lt;- rep(1/K, K)
+  } else if (length(pi) != K) {
+    stop(&quot;pi must be a vector of length K&quot;)
+  }
+
+  smoother &lt;- function(Z, X, params = NULL) {
+    z_idx &lt;- apply(Z, 1, which.max)
+    t &lt;- locations[z_idx]
+
+    d &lt;- ncol(X)
+    U &lt;- matrix(0, nrow = K, ncol = d)
+    sigma &lt;- numeric(d)
+
+    for (i in 1:d) {
+      df_current &lt;- data.frame(x = X[, i], t = t)
+      mod &lt;- BayesGP::model_fit(x ~ f(t, model = &quot;IWP&quot;,
+                                      sd.prior = smooth.prior,
+                                      order = order, k = num_basis),
+                       family = &quot;Gaussian&quot;,
+                       data = df_current)
+      U[, i] &lt;- predict(mod, variable = &quot;t&quot;, newdata = data.frame(t = locations))$mean
+      sigma[i] &lt;- BayesGP::post_table(mod)$median[3]^2
+    }
+
+    list(pi = pi, mu = split(U, row(U)), sigma = sigma)
+  }
+
+  return(smoother)
+}</code></pre>
+<pre class="r"><code>smoother_iwp &lt;- smoother_iwp_generator(K = 50, order = 2, smooth.prior = 0.5,
+                                         num_basis = 20)
+set.seed(1234)
+init_params &lt;- make_default_init(sim$X, K=50)
+result_iwp &lt;- stochastic_EM(
+  X = sim$X,
+  init_params = init_params,
+  threshold = &quot;hard&quot;,
+  smoother = smoother_iwp,
+  max_iter = 100,
+  tol = 1e-2,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration 1 (initialization) 
+Iteration 2:
+  relΔU     = 1.460574e+00
+  relΔSigma = 7.330318e-01
+  relΔGamma = 9.611504e-01
+Iteration 3:
+  relΔU     = 4.346333e-01
+  relΔSigma = 6.990058e-01
+  relΔGamma = 1.463907e+00
+Iteration 4:
+  relΔU     = 1.325829e-01
+  relΔSigma = 5.504142e-01
+  relΔGamma = 1.163550e+00
+Iteration 5:
+  relΔU     = 8.018969e-02
+  relΔSigma = 4.218150e-01
+  relΔGamma = 5.245279e-01
+Iteration 6:
+  relΔU     = 2.824925e-02
+  relΔSigma = 1.137275e-01
+  relΔGamma = 3.418116e-01
+Iteration 7:
+  relΔU     = 1.958441e-02
+  relΔSigma = 5.035668e-02
+  relΔGamma = 1.538578e-01
+Iteration 8:
+  relΔU     = 1.303516e-02
+  relΔSigma = 4.107821e-02
+  relΔGamma = 9.094313e-02
+Iteration 9:
+  relΔU     = 1.412391e-02
+  relΔSigma = 6.804256e-02
+  relΔGamma = 7.603361e-02
+Iteration 10:
+  relΔU     = 1.879457e-02
+  relΔSigma = 6.430619e-02
+  relΔGamma = 1.006903e-01
+Iteration 11:
+  relΔU     = 1.451761e-02
+  relΔSigma = 9.003162e-02
+  relΔGamma = 7.791152e-02
+Iteration 12:
+  relΔU     = 9.808148e-03
+  relΔSigma = 5.610747e-02
+  relΔGamma = 1.088806e-01
+Iteration 13:
+  relΔU     = 1.353506e-02
+  relΔSigma = 6.695791e-02
+  relΔGamma = 7.988591e-02
+Iteration 14:
+  relΔU     = 1.307107e-02
+  relΔSigma = 3.876638e-02
+  relΔGamma = 7.979120e-02
+Iteration 15:
+  relΔU     = 8.210096e-03
+  relΔSigma = 3.174851e-02
+  relΔGamma = 6.288925e-02
+Iteration 16:
+  relΔU     = 6.149075e-03
+  relΔSigma = 1.151352e-03
+  relΔGamma = 6.495302e-02
+Iteration 17:
+  relΔU     = 4.989675e-03
+  relΔSigma = 1.839257e-02
+  relΔGamma = 4.850374e-02
+Iteration 18:
+  relΔU     = 7.842382e-03
+  relΔSigma = 2.456145e-02
+  relΔGamma = 4.638856e-02
+Iteration 19:
+  relΔU     = 7.393653e-03
+  relΔSigma = 2.094358e-02
+  relΔGamma = 5.890827e-02
+Iteration 20:
+  relΔU     = 2.946989e-03
+  relΔSigma = 1.782861e-02
+  relΔGamma = 3.834447e-02
+Iteration 21:
+  relΔU     = 4.415997e-03
+  relΔSigma = 3.504158e-02
+  relΔGamma = 3.781950e-02
+Iteration 22:
+  relΔU     = 1.974806e-03
+  relΔSigma = 3.002725e-03
+  relΔGamma = 2.782536e-02
+Iteration 23:
+  relΔU     = 1.372296e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 2.104529e-02
+Iteration 24:
+  relΔU     = 1.501882e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.049189e-02
+Iteration 25:
+  relΔU     = 1.900828e-03
+  relΔSigma = 2.836835e-03
+  relΔGamma = 1.202885e-02
+Iteration 26:
+  relΔU     = 1.440786e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.964937e-02
+Iteration 27:
+  relΔU     = 1.967807e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.101789e-02
+Iteration 28:
+  relΔU     = 1.595411e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.239784e-02
+Iteration 29:
+  relΔU     = 1.546608e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.056878e-02
+Iteration 30:
+  relΔU     = 3.289177e-03
+  relΔSigma = 9.577742e-04
+  relΔGamma = 1.298842e-02
+Iteration 31:
+  relΔU     = 2.275586e-03
+  relΔSigma = 5.773719e-03
+  relΔGamma = 4.108827e-02
+Iteration 32:
+  relΔU     = 3.262257e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 2.268453e-02
+Iteration 33:
+  relΔU     = 6.099177e-03
+  relΔSigma = 2.990604e-03
+  relΔGamma = 3.718201e-02
+Iteration 34:
+  relΔU     = 4.788426e-03
+  relΔSigma = 9.379059e-04
+  relΔGamma = 3.728146e-02
+Iteration 35:
+  relΔU     = 5.343617e-03
+  relΔSigma = 9.339674e-04
+  relΔGamma = 4.011198e-02
+Iteration 36:
+  relΔU     = 2.215458e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 4.144540e-02
+Iteration 37:
+  relΔU     = 4.006462e-03
+  relΔSigma = 9.300269e-04
+  relΔGamma = 2.559614e-02
+Iteration 38:
+  relΔU     = 3.858039e-03
+  relΔSigma = 3.383990e-03
+  relΔGamma = 4.328759e-02
+Iteration 39:
+  relΔU     = 3.853080e-03
+  relΔSigma = 9.156118e-04
+  relΔGamma = 4.813256e-02
+Iteration 40:
+  relΔU     = 4.773849e-03
+  relΔSigma = 9.116741e-04
+  relΔGamma = 4.320719e-02
+Iteration 41:
+  relΔU     = 2.166964e-03
+  relΔSigma = 2.973816e-03
+  relΔGamma = 5.438512e-02
+Iteration 42:
+  relΔU     = 2.615399e-03
+  relΔSigma = 9.012538e-04
+  relΔGamma = 2.755419e-02
+Iteration 43:
+  relΔU     = 4.246129e-03
+  relΔSigma = 1.147849e-02
+  relΔGamma = 3.654475e-02
+Iteration 44:
+  relΔU     = 2.671815e-03
+  relΔSigma = 8.497419e-03
+  relΔGamma = 4.968569e-02
+Iteration 45:
+  relΔU     = 1.857617e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 2.896816e-02
+Iteration 46:
+  relΔU     = 1.791708e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.818032e-02
+Iteration 47:
+  relΔU     = 1.767503e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.755026e-02
+Iteration 48:
+  relΔU     = 1.210919e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.649480e-02
+Iteration 49:
+  relΔU     = 1.480854e-03
+  relΔSigma = 8.683240e-04
+  relΔGamma = 1.043264e-02
+Iteration 50:
+  relΔU     = 2.147760e-03
+  relΔSigma = 2.929820e-03
+  relΔGamma = 1.256862e-02
+Iteration 51:
+  relΔU     = 2.369189e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.421194e-02
+Iteration 52:
+  relΔU     = 3.420338e-03
+  relΔSigma = 8.707490e-04
+  relΔGamma = 2.474637e-02
+Iteration 53:
+  relΔU     = 2.043789e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 4.266265e-02
+Iteration 54:
+  relΔU     = 1.089013e-03
+  relΔSigma = 0.000000e+00
+  relΔGamma = 1.913618e-02
+Iteration 55:
+  relΔU     = 9.060527e-04
+  relΔSigma = 0.000000e+00
+  relΔGamma = 2.428926e-03
+Converged.</code></pre>
+<pre class="r"><code>plot(sim$X, col=alpha_colors[sim$z], cex=1,
+     xlab=&quot;X1&quot;, ylab=&quot;X2&quot;,
+     pch=19, main=&quot;EM Fitted Means with IWP prior (fully Bayes)&quot;)
+mu_matrix &lt;- do.call(rbind, result_iwp$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=2, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Take a look at the estimated mean in each dimension:</p>
+<pre class="r"><code>plot(mu_matrix[,1] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = &quot;b&quot;, col = &quot;blue&quot;, pch = 19,
+     xlab = &quot;Index&quot;, ylab = &quot;Mean&quot;,
+     main = &quot;Means from IWP Smoother&quot;,
+     ylim = range(mu_matrix))</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(mu_matrix[,2] ~ seq(0,1, length.out = nrow(mu_matrix)),
+     type = &quot;b&quot;, col = &quot;blue&quot;, pch = 19,
+     xlab = &quot;Index&quot;, ylab = &quot;Mean&quot;,
+     main = &quot;Means from IWP Smoother&quot;,
+     ylim = range(mu_matrix))</code></pre>
+<p><img src="figure/explore_smoothSEM.rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS Monterey 12.7.4
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mvtnorm_1.3-1     MASS_7.3-60       matrixStats_1.4.1 Matrix_1.6-4     
+[5] workflowr_1.7.1  
+
+loaded via a namespace (and not attached):
+ [1] mvQuad_1.0-8        jsonlite_2.0.0      compiler_4.3.1     
+ [4] promises_1.3.3      Rcpp_1.0.14         stringr_1.5.1      
+ [7] git2r_0.33.0        callr_3.7.6         later_1.4.2        
+[10] jquerylib_0.1.4     splines_4.3.1       statmod_1.5.0      
+[13] yaml_2.3.10         fastmap_1.2.0       lattice_0.22-6     
+[16] R6_2.6.1            BayesGP_0.1.3       knitr_1.50         
+[19] tibble_3.2.1        rprojroot_2.0.4     TMB_1.9.15         
+[22] bslib_0.9.0         pillar_1.10.2       rlang_1.1.6        
+[25] cachem_1.1.0        stringi_1.8.7       httpuv_1.6.16      
+[28] xfun_0.52           getPass_0.2-4       fs_1.6.6           
+[31] sass_0.4.10         cli_3.6.5           mgcv_1.9-1         
+[34] magrittr_2.0.3      ps_1.9.1            digest_0.6.37      
+[37] grid_4.3.1          processx_3.8.6      rstudioapi_0.16.0  
+[40] nlme_3.1-166        lifecycle_1.0.4     vctrs_0.6.5        
+[43] data.table_1.16.2   aghq_0.4.1          evaluate_1.0.3     
+[46] glue_1.8.0          numDeriv_2016.8-1.1 whisker_0.4.1      
+[49] rmarkdown_2.28      httr_1.4.7          tools_4.3.1        
+[52] pkgconfig_2.0.3     htmltools_0.5.8.1  </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
