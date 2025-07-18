@@ -328,7 +328,7 @@ Now, let's try the smooth-EM algorithm with a first order random walk prior.
 
 ```{r}
 set.seed(1234567)
-Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=1, ridge = 1e-10)
+Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 50, q=1, ridge = 1e-10)
 # Random initialization
 init_params <- make_default_init(Loadings, K=100)
 # # Initalize based on the tSNE metric
@@ -369,12 +369,12 @@ Each cell type is separated from the others, and the ordering seems to make sens
 Next, we will try the RW2 prior in the smooth-EM algorithm.
 
 ```{r}
-Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 150, q=2, ridge = 1e-10)
+Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 3000, q=2, ridge = 1e-10)
 set.seed(12345)
 # Random initialization
 init_params <- make_default_init(Loadings, K=100)
-# Initialize based on the tSNE metric
-init_params <- make_init(X = Loadings, ordering_vec = tsne_metric, K = 100)
+# # Initialize based on the tSNE metric
+# init_params <- make_init(X = Loadings, ordering_vec = tsne_metric, K = 100)
 result_RW2 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW2,
