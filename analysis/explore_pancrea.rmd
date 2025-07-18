@@ -327,9 +327,12 @@ The ordering from linear prior does not look very informative, which is not unex
 Now, let's try the smooth-EM algorithm with a first order random walk prior.
 
 ```{r}
-set.seed(123)
-Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 10000, q=1)
+set.seed(1234567)
+Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=1, ridge = 1e-10)
+# Random initialization
 init_params <- make_default_init(Loadings, K=100)
+# # Initalize based on the tSNE metric
+# init_params <- make_init(X = Loadings, ordering_vec = tsne_metric, K = 100)
 result_RW1 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW1,
@@ -337,6 +340,7 @@ result_RW1 <- EM_algorithm(
   max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
+  relative_lambda = TRUE,
   verbose = TRUE
 )
 ```
@@ -365,9 +369,12 @@ Each cell type is separated from the others, and the ordering seems to make sens
 Next, we will try the RW2 prior in the smooth-EM algorithm.
 
 ```{r}
-Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 20000, q=2)
-set.seed(1234)
+Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 150, q=2, ridge = 1e-10)
+set.seed(12345)
+# Random initialization
 init_params <- make_default_init(Loadings, K=100)
+# Initialize based on the tSNE metric
+init_params <- make_init(X = Loadings, ordering_vec = tsne_metric, K = 100)
 result_RW2 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW2,
@@ -375,6 +382,7 @@ result_RW2 <- EM_algorithm(
   max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
+  relative_lambda = TRUE,
   verbose = TRUE
 )
 ```
