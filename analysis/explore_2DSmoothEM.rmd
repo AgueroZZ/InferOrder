@@ -1,0 +1,250 @@
+---
+title: "Smooth EM in 2D"
+author: "Ziang Zhang"
+date: "2025-07-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+We consider a smooth EM algorithm where the component means $\boldsymbol{\mu}_{1,1}, \dots, \boldsymbol{\mu}_{K,K}$ are placed on a 2D equally spaced lattice of size $K \times K$. To encourage **spatial smoothness**, we impose a **random walk of order $q$ (RW-$q$)** prior on the means.
+
+Let $\boldsymbol{\mu}$ denote the stacked vector of all component means. The prior takes the form:
+
+$$
+p(\boldsymbol{\mu}) \propto \exp\left(-\frac{\lambda}{2} \boldsymbol{\mu}^\top Q \boldsymbol{\mu}\right),
+$$
+
+where $Q$ is a sparse precision matrix encoding $q$-th order discrete differences across the lattice.
+
+For example, under a first-order random walk (RW-1), the penalty encourages each $\mu_{i,j}$ to be close to the average of its immediate neighbors:
+
+$$
+\mu_{i,j} \approx \frac{1}{4} (\mu_{i+1,j} + \mu_{i-1,j} + \mu_{i,j+1} + \mu_{i,j-1}).
+$$
+
+This model is sometimes called a Intrinsic Conditional AutoRegressive (ICAR) model in spatial statistics.
+
+```{r}
+library(ggplot2)
+library(reshape2)
+source("./code/prior_precision.R")
+source("./code/general_EM.R")
+source("./code/simulate2D_fields.R")
+```
+
+## Simulate Data
+
+First, let's simulate some $d=16$-dimensional data from a $20 \times 20$ grid defined on the unit square $[0,1] \times [0,1]$. 
+Each dimension is a smooth function of the 2D coordinates $(x,y)$.
+The smooth function is randomly simulated from a Matern process with smoothness parameter $\nu=2$ and range parameter $\rho=0.3$.
+
+The observation noise is assumed to be Gaussian with standard deviation 0.1 in each dimension.
+
+```{r}
+sim <- simulate_2d_processes(
+  f          = NULL,
+  nrow       = 20,
+  ncol       = 20,
+  d          = 16,
+  epsilon_sd = 0.1,
+  seed       = 123
+)
+```
+
+Let's visualize the simulated processes.
+
+```{r}
+df_plot <- cbind(sim$grid, sim$Y)
+df_long <- melt(df_plot, id.vars = c("x", "y"),
+                variable.name = "process",
+                value.name = "value")
+
+ggplot(df_long, aes(x = x, y = y, color = value)) +
+  geom_point() +
+  scale_color_viridis_c(name = "value") +
+  coord_equal() +
+  facet_wrap(~ process, nrow = 4) +
+  labs(
+    title = "Simulated 2D Processes (colored dots)",
+    x = "x",
+    y = "y"
+  ) +
+  theme_minimal()
+```
+
+Now, let's permute the rows of `sim$Y` to avoid any spatial structure in the ordering of the data points.
+
+```{r}
+sim$Y <- sim$Y[sample(nrow(sim$Y)), ]
+```
+
+
+## Fitting RW-1
+
+First, we fit the model with a first-order random walk (RW-1) prior, with $K=10$ (i.e., a $10 \times 10$ lattice of components). 
+
+```{r}
+K <- 10
+Q_prior_RW1 <- make_lattice_rwq_precision(K=K, d = ncol(sim$Y), q = 1, lambda = 2, ridge = 0)
+set.seed(123)
+init_params <- make_default_init(sim$Y, K=(K^2))
+
+result_RW1 <- EM_algorithm(
+  data = sim$Y,
+  Q_prior = Q_prior_RW1,
+  init_params = init_params,
+  max_iter = 200,
+  modelName = "EII",
+  relative_lambda = T,
+  tol = 1e-2,
+  verbose = TRUE
+)
+```
+
+Let's visualize the smoothed component means $\boldsymbol{\mu}_{i,j}$ inferred for each dimension.
+
+```{r}
+mu_list <- result_RW1$params$mu
+n_cells <- length(mu_list)   
+K       <- sqrt(n_cells)     
+df <- do.call(rbind, lapply(seq_along(mu_list), function(i) {
+  row <- ((i - 1) %/% K) + 1
+  col <- ((i - 1) %%  K) + 1
+  vals <- mu_list[[i]]
+  data.frame(
+    row = row,
+    col = col,
+    dim = factor(1:length(vals)), 
+    value = vals
+  )
+}))
+
+df$col <- df$col/K
+df$row <- df$row/K
+
+ggplot(df, aes(x = col, y = row, fill = value)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "D") +
+  facet_wrap(~ dim, nrow = 4,
+             labeller = labeller(dim = function(x) paste("Dimension", x))) +
+  coord_equal() +
+  labs(
+    x = "column index",
+    y = "row index",
+    fill = "mu value",
+    title = "RW1: Estimated mu values on 5×5 lattice"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+## Fitting RW-2
+
+Next, we fit the model with a second-order random walk (RW-2) prior, again with $K=10$.
+
+```{r}
+K <- 10
+Q_prior_RW2 <- make_lattice_rwq_precision(K=K, d = ncol(sim$Y), q = 2, lambda = 1, ridge = 0)
+set.seed(123)
+init_params <- make_default_init(sim$Y, K=(K^2))
+
+result_RW2 <- EM_algorithm(
+  data = sim$Y,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 200,
+  modelName = "EII",
+  relative_lambda = TRUE,
+  tol = 1e-2,
+  verbose = TRUE
+)
+```
+
+Let's visualize the smoothed component means $\boldsymbol{\mu}_{i,j}$ inferred for each dimension.
+
+```{r}
+mu_list <- result_RW2$params$mu
+n_cells <- length(mu_list)   
+K       <- sqrt(n_cells)     
+
+df <- do.call(rbind, lapply(seq_along(mu_list), function(i) {
+  row <- ((i - 1) %/% K) + 1
+  col <- ((i - 1) %%  K) + 1
+  vals <- mu_list[[i]]
+  data.frame(
+    row = row,
+    col = col,
+    dim = factor(1:length(vals)), 
+    value = vals
+  )
+}))
+
+df$col <- df$col/K
+df$row <- df$row/K
+
+ggplot(df, aes(x = col, y = row, fill = value)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "D") +
+  facet_wrap(~ dim, nrow = 4,
+             labeller = labeller(dim = function(x) paste("Dimension", x))) +
+  coord_equal() +
+  labs(
+    x = "column index",
+    y = "row index",
+    fill = "mu value",
+    title = "RW2: Estimated mu values on 5×5 lattice"
+  ) +
+  theme_minimal()
+```
+
+
+
+## Fitting PCA
+
+As a comparison, let's fit PCA to the data and visualize how each coordinate varies over the PC1–PC2 plane.
+
+```{r}
+pca_res <- prcomp(sim$Y, center = TRUE, scale. = FALSE)
+# 1. Prepare a data frame with PC1, PC2, and each coordinate’s values
+d  <- ncol(sim$Y)
+df <- data.frame(
+  PC1 = pca_res$x[,1],
+  PC2 = pca_res$x[,2],
+  sim$Y
+)
+colnames(df)[3:(2+d)] <- paste0("coord", seq_len(d))
+
+# 2. Melt to long format
+df_long <- melt(df,
+                id.vars       = c("PC1","PC2"),
+                variable.name = "coordinate",
+                value.name    = "value")
+
+# 3. Plot a “surface” of mean coordinate value over the PC1–PC2 plane
+#    We bin the PC1/PC2 space and compute the average 'value' in each bin.
+ggplot(df_long, aes(x = PC1, y = PC2, z = value)) +
+  stat_summary_2d(fun = mean, bins = 30) +
+  scale_fill_viridis_c(name = "mean value") +
+  facet_wrap(~ coordinate, nrow = 4) +
+  coord_equal() +
+  labs(
+    title = "Coordinate surfaces over PC1–PC2",
+    x     = "PC1",
+    y     = "PC2"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+
+
+
+
+
