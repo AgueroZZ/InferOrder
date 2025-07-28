@@ -11,22 +11,19 @@ subsample_cell_types <- function (x, n = 1000) {
 }
 
 plot_structure <- function(loadings,
+                           plot_name = NULL,
                            order   = NULL,
                            palette = NULL) {
-  # 检查
   if (is.null(rownames(loadings))) {
-    stop("loadings 矩阵必须带有行名，作为 Sample ID。")
+    stop("loadings must have row names representing Sample IDs.")
   }
 
-  # 转成 data.frame 并加上 Sample 列
   df <- as.data.frame(loadings)
   df <- tibble::rownames_to_column(df, var = "Sample")
 
-  # 给列命名为 Factor1…FactorK
   K <- ncol(loadings)
   colnames(df)[-1] <- paste0("Factor", seq_len(K))
 
-  # reshape 为 long 格式
   df_long <- tidyr::pivot_longer(
     df,
     cols      = paste0("Factor", seq_len(K)),
@@ -34,22 +31,20 @@ plot_structure <- function(loadings,
     values_to = "Loading"
   )
 
-  # 如果用户指定了 order，就把 Sample 转为因子并设定水平
   if (!is.null(order)) {
     if (!all(order %in% df_long$Sample)) {
-      stop("提供的 order 必须包含所有 Sample 名称。")
+      stop("Order must contain all Sample names in the data.")
     }
     df_long$Sample <- factor(df_long$Sample, levels = order)
   }
 
-  # 绘图
   p <- ggplot(df_long, aes(x = Sample, y = Loading, fill = Factor)) +
     geom_bar(stat = "identity", width = 1) +
     scale_y_continuous(expand = expansion(mult = c(0, .05))) +
     labs(
       x     = NULL,
       y     = "Loading (membership)",
-      title = "Structure–style Plot of Loadings"
+      title = plot_name
     ) +
     theme_minimal(base_size = 14) +
     theme(
@@ -72,21 +67,17 @@ plot_highlight_types <- function(type_vec,
                                  order_vec       = NULL,
                                  other_color     = "grey80") {
 
-  # 样本数
   n <- length(type_vec)
 
-  # 检查 type_vec
   if (is.null(names(type_vec))) {
-    stop("type_vec 必须是命名向量，names(type_vec)=样本 ID。")
+    stop("type_vec must be a named vector with names as Sample IDs.")
   }
 
   if (!is.null(ordering_metric)) {
-    # 用 ordering_metric 定义样本和位置
     if (is.null(names(ordering_metric))) {
-      stop("ordering_metric 必须是命名向量，names(ordering_metric)=样本 ID。")
+      stop("ordering_metric must be a named vector with names as Sample IDs.")
     }
     metric <- ordering_metric
-    # 只保留在 type_vec 中的样本
     common <- intersect(names(metric), names(type_vec))
     metric <- metric[common]
     types  <- as.character(type_vec[common])
@@ -96,15 +87,13 @@ plot_highlight_types <- function(type_vec,
       Type   = types,
       stringsAsFactors = FALSE
     )
-    # 样本按 Metric 排序
     df <- df[order(df$Metric), ]
   } else {
-    # 没有 ordering_metric，使用 order_vec 定义顺序和等间距度量
     if (is.null(order_vec)) {
-      stop("必须提供 order_vec（或 ordering_metric）。")
+      stop("Must provide order_vec (or ordering_metric).")
     }
     if (!all(order_vec %in% names(type_vec))) {
-      stop("order_vec 中的所有样本 ID 必须出现在 type_vec 中。")
+      stop("order_vec must contain all Sample IDs in type_vec.")
     }
     df <- data.frame(
       Sample = order_vec,
@@ -114,15 +103,12 @@ plot_highlight_types <- function(type_vec,
     )
   }
 
-  # 标记高亮
   df$Highlight <- ifelse(df$Type %in% subset_types, df$Type, "Other")
   df$Highlight <- factor(df$Highlight, levels = c(subset_types, "Other"))
 
-  # 配色
   cols <- c(scales::hue_pal()(length(subset_types)), other_color)
   names(cols) <- levels(df$Highlight)
 
-  # 绘图
   ggplot(df, aes(x = Metric, y = 1, fill = Highlight)) +
     geom_col(width = if (is.null(ordering_metric)) 1/n else diff(range(df$Metric)) / n) +
     scale_fill_manual(values = cols) +
@@ -141,41 +127,29 @@ plot_highlight_types <- function(type_vec,
 }
 
 library(ggplot2)
-
-#’ 绘制各类型在 Ordering Metric 或 order_vec 上的分布（核密度或小提琴图）
-#’
-#’ @param type_vec        命名字符向量，names(type_vec)=样本 ID，values=对应的类别。
-#’ @param subset_types    要可视化分布的类别向量。
-#’ @param ordering_metric 可选命名数值向量，names=样本 ID，对应的度量值。
-#’ @param order_vec       可选字符向量，指定样本 ID 顺序；当 ordering_metric=NULL 且提供了 order_vec 时，会用等间距 seq(1/n,2/n,…,1) 代替 metric。
-#’ @param density         逻辑值，TRUE 时画叠加的核密度曲线，FALSE 时画小提琴图。
-#’ @param other_color     “Other” 类别在图中的颜色（默认灰色），此版本中不直接绘制 Other。
-#’ @return ggplot2 对象
 distribution_highlight_types <- function(type_vec,
                                          subset_types,
                                          ordering_metric = NULL,
                                          order_vec       = NULL,
                                          density         = TRUE,
                                          other_color     = "grey80") {
-  # 检查 type_vec
   if (is.null(names(type_vec))) {
-    stop("type_vec 必须是命名向量，names(type_vec)=样本 ID。")
+    stop("type_vec must be a named vector with names as Sample IDs.")
   }
 
-  # 如果有 ordering_metric，优先使用；否则尝试用 order_vec
   if (!is.null(ordering_metric)) {
     if (is.null(names(ordering_metric))) {
-      stop("ordering_metric 必须是命名数值向量，names=样本 ID。")
+      stop("ordering_metric must be a named vector with names as Sample IDs.")
     }
     common <- intersect(names(ordering_metric), names(type_vec))
     metric <- ordering_metric[common]
     types  <- as.character(type_vec[common])
   } else {
     if (is.null(order_vec)) {
-      stop("必须提供 ordering_metric 或 order_vec。")
+      stop("Must provide ordering_metric or order_vec.")
     }
     if (!all(order_vec %in% names(type_vec))) {
-      stop("order_vec 中的所有样本 ID 必须出现在 type_vec 中。")
+      stop("order_vec must contain all Sample IDs in type_vec.")
     }
     n      <- length(order_vec)
     common <- order_vec
@@ -184,7 +158,6 @@ distribution_highlight_types <- function(type_vec,
     types  <- as.character(type_vec[order_vec])
   }
 
-  # 构造数据框，且只保留 subset_types
   df <- data.frame(
     Metric = metric[common],
     Type   = factor(types, levels = subset_types),
@@ -192,12 +165,10 @@ distribution_highlight_types <- function(type_vec,
   )
   df <- df[!is.na(df$Type), , drop=FALSE]
 
-  # 配色
   cols <- scales::hue_pal()(length(subset_types))
   names(cols) <- subset_types
 
   if (density) {
-    # 叠加核密度曲线
     p <- ggplot(df, aes(x = Metric, color = Type, fill = Type)) +
       geom_density(alpha = 0.3, size = 1) +
       scale_color_manual(values = cols) +
@@ -210,7 +181,6 @@ distribution_highlight_types <- function(type_vec,
         panel.grid  = element_blank()
       )
   } else {
-    # 小提琴图
     p <- ggplot(df, aes(x = Type, y = Metric, fill = Type)) +
       geom_violin(trim = FALSE, alpha = 0.6) +
       geom_jitter(width = 0.1, size = 0.5, alpha = 0.4) +

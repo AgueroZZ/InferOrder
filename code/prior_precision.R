@@ -29,7 +29,7 @@ make_VAR1_precision <- function(K, d, A=NULL, Q=NULL) {
 
 
 # generate prior precision matrices for p-th order random walk
-make_random_walk_precision <- function(K, d, q=1, lambda=1) {
+make_random_walk_precision <- function(K, d, q=1, lambda=1, ridge=0) {
   # Construct q-th order difference matrix
   D_q <- diag(K)
   for (i in 1:q) {
@@ -40,10 +40,49 @@ make_random_walk_precision <- function(K, d, q=1, lambda=1) {
   Q_scalar <- t(D_q) %*% D_q
 
   # Add tiny ridge for numerical stability
-  Q_scalar <- Q_scalar + 1e-6 * diag(K)
+  Q_scalar <- Q_scalar + ridge * diag(K)
 
   # Final precision matrix
   Q_U <- lambda * kronecker(Q_scalar, diag(d))
+
+  return(Q_U)
+}
+
+
+# generate prior precision matrices for q-th order random walk on a KxK lattice
+make_lattice_rwq_precision <- function(K, d, q = 1, lambda = 1, ridge = 0) {
+  if (!requireNamespace("Matrix", quietly = TRUE)) {
+    stop("Please install.packages('Matrix')")
+  }
+  # Validate inputs
+  if (K <= 0 || K != as.integer(K))    stop("K must be a positive integer.")
+  if (d <= 0 || d != as.integer(d))    stop("d must be a positive integer.")
+  if (q <= 0 || q != as.integer(q) || q >= K) {
+    stop("q must be a positive integer less than K.")
+  }
+
+  # 1. Build the q-th order difference matrix in 1D
+  D <- diag(K)
+  for (i in seq_len(q)) {
+    D <- diff(D)
+  }
+
+  # 2. 1D precision: Q1D = t(D) %*% D
+  Q1D <- crossprod(D)
+  Q1D <- Matrix::Matrix(Q1D, sparse = TRUE)
+
+  # 3. Kronecker sum to get 2D precision on K×K lattice
+  I_K <- Matrix::Diagonal(K)
+  Q2D_base <- Matrix::kronecker(Q1D, I_K) +
+    Matrix::kronecker(I_K, Q1D)
+
+  # 4. Add ridge term if requested
+  if (ridge > 0) {
+    Q2D_base <- Q2D_base + ridge * Matrix::Diagonal(K * K)
+  }
+
+  # 5. Replicate across d independent processes
+  Q_U <- lambda * Matrix::kronecker(Q2D_base, Matrix::Diagonal(d))
 
   return(Q_U)
 }

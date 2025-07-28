@@ -1,0 +1,190 @@
+---
+title: "Explore various way to learn a trajectory in 2D"
+author: "Ziang Zhang"
+date: "2025-07-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+We will generate some noisy observations of a 2D curve.
+
+```{r}
+generate_noisy_curve_observations <- function(N = 150, noise_std = 0.2) {
+  # t values equally spaced from -4 to 4
+  t <- seq(-4, 4, length.out = N)
+  
+  # true 2D curve
+  x1 <- log(t^2 + 1)
+  x2 <- 4 * sin(0.25 * t)
+  X_true <- cbind(x1, x2)          # N × 2 matrix
+  
+  # add Gaussian noise
+  Y_obs <- X_true + matrix(
+    rnorm(N * 2, mean = 0, sd = noise_std),
+    nrow = N, ncol = 2
+  )
+  
+  list(
+    X_true = X_true, 
+    Y_obs   = Y_obs, 
+    t       = t
+  )
+}
+assess_trajectory <- function(X_true, Y_obs, X_mean, pad = 0.1, title = NULL) {
+  require(viridis)
+  require(fields)
+  N <- nrow(Y_obs)
+  sort_idx  <- order(X_mean)
+  Y_ordered <- Y_obs[sort_idx, , drop = FALSE]
+  cols <- viridis(N)
+  
+  all_x <- c(Y_ordered[,1], X_true[,1])
+  all_y <- c(Y_ordered[,2], X_true[,2])
+  x_range <- range(all_x)
+  y_range <- range(all_y)
+  x_pad <- diff(x_range) * pad
+  y_pad <- diff(y_range) * pad
+  xlim <- x_range + c(-x_pad, +x_pad)
+  ylim <- y_range + c(-y_pad, +y_pad)
+  
+  plot(Y_ordered,
+       col = cols, pch = 19, cex = 0.6,
+       xlab = "Y1", ylab = "Y2",
+       main = title,
+       xlim = xlim,
+       ylim = ylim)
+  
+  image.plot(zlim = range(X_mean),
+             legend.only = TRUE,
+             col = viridis(256),
+             legend.args = list(text = "Inferred latent", side = 4, line = 2.5))
+  
+  lines(X_true, col = "orange", lwd = 2)
+}
+```
+
+
+Visualize the noisy observations and the true curve.
+
+```{r}
+set.seed(0)
+dat <- generate_noisy_curve_observations(N = 150, noise_std = 0.2)
+# visualize
+plot(dat$Y_obs, col = "grey", pch = 16,
+     xlab = "Y1", ylab = "Y2", main = "Noisy 2D curve")
+lines(dat$X_true, col = "orange", lwd = 2)
+```
+
+
+
+
+## PCA
+
+```{r}
+PC1 <- prcomp(dat$Y_obs, center = TRUE, scale. = FALSE)
+PC1_scores <- PC1$x[, 1]
+
+plot(dat$Y_obs, cex=0.5,
+     xlab="X1", ylab="X2",
+     pch=19, main="PCA Fitted Means")
+# add the PC1 direction to the center of the data
+arrows(PC1$center[1], PC1$center[2], PC1$center[1] + PC1$rotation[1,1], PC1$center[2] + PC1$rotation[2,1],
+       col="orange", lwd=2, length=0.05)
+# add the PC2 direction to the center of the data
+arrows(PC1$center[1], PC1$center[2], PC1$center[1] + PC1$rotation[1,2], PC1$center[2] + PC1$rotation[2,2],
+       col="blue", lwd=2, length=0.05)
+
+X_order <- rank(PC1_scores) / length(PC1_scores)
+assess_trajectory(dat$X_true, dat$Y_obs, X_order)
+```
+
+
+
+
+## SmoothEM
+
+```{r}
+source("./code/linear_EM.R")
+source("./code/general_EM.R")
+source("./code/prior_precision.R")
+library(MASS)
+library(mvtnorm)
+K <- 50
+init_params <- make_default_init(dat$Y_obs, K=K)
+```
+
+### RW1
+
+```{r}
+Q_prior_RW1 <- make_random_walk_precision(K=K, d=2, lambda = 10)
+result_RW1 <- EM_algorithm(
+  data = dat$Y_obs,
+  Q_prior = Q_prior_RW1,
+  init_params = init_params,
+  max_iter = 200,
+  modelName = "EEI",
+  tol = 1e-2,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)
+```
+
+```{r}
+plot(dat$Y_obs, cex=0.5,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with RW1 Prior")
+mu_matrix <- do.call(rbind, result_RW1$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=1, length=0.05)
+  }
+}
+
+X_order <- apply(result_RW1$gamma, MARGIN = 1, FUN = which.max)/
+  ncol(result_RW1$gamma)
+assess_trajectory(dat$X_true, dat$Y_obs, X_order)
+```
+
+### RW2
+
+```{r}
+init_params <- make_default_init(dat$Y_obs, K=K)
+Q_prior_RW2 <- make_random_walk_precision(K=K, d=2, lambda = 10, q = 2, ridge=0)
+result_RW2 <- EM_algorithm(
+  data = dat$Y_obs,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 300,
+  modelName = "EEI",
+  tol = 1e-2,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)
+```
+
+
+```{r}
+plot(dat$Y_obs, cex=0.5,
+     xlab="X1", ylab="X2",
+     pch=19, main="EM Fitted Means with RW2 Prior")
+mu_matrix <- do.call(rbind, result_RW2$params$mu)
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col="orange", lwd=1, length=0.05)
+  }
+}
+
+X_order <- apply(result_RW2$gamma, MARGIN = 1, FUN = which.max)/
+  ncol(result_RW2$gamma)
+assess_trajectory(dat$X_true, dat$Y_obs, X_order)
+```
+
+
+
