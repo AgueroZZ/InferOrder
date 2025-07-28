@@ -1,0 +1,215 @@
+---
+title: "Smooth EM in 2D (Additive)"
+author: "Ziang Zhang"
+date: "2025-07-28"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+source("./code/prior_precision.R")
+source("./code/additive_EM.R")
+source("./code/simulate2D_fields.R")
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+```
+
+## Introduction
+
+We consider a smooth EM algorithm where the component means $\mu(t_1,t_2)$ has an additive form as $\mu(t_1, t_2) = f(t_1) + g(t_2)$, where $f$ and $g$ are smooth functions of the 1D coordinates $t_1$ and $t_2$, respectively.
+
+For simplicity, we assume $f$ and $g$ follow independent random walk priors, and are both defined on a equally spaced grid of $K$ points.
+
+## Simulate Data
+
+First, let's simulate some $d=16$-dimensional data from a $20 \times 20$ grid defined on the unit square $[0,1] \times [0,1]$. 
+
+The observation noise is assumed to be Gaussian with standard deviation 0.1 in each dimension.
+
+To make this problem more interesting, let's consider the sampling region follows roughly a donut shape.
+
+```{r}
+funcs <- make_diverse_additive_functions(n_surfaces = 16,
+                                         freq_pool   = c(0.5, 1, 2),
+                                         seed        = 123)
+
+n           <- 100        # grid resolution
+inner_rad   <- 0.2        # inner hole radius
+outer_rad   <- 0.4        # outer radius of donut
+center      <- c(0.5, 0.5)
+xs  <- seq(0, 1, length.out = n)
+ys  <- seq(0, 1, length.out = n)
+grid <- expand.grid(x = xs, y = ys)
+r <- sqrt((grid$x - center[1])^2 + (grid$y - center[2])^2)
+grid_choice <- subset(grid, r > inner_rad & r < outer_rad)
+
+# Quick plot to check
+plot(grid, pch = 16, cex = 0.3, col = "lightgrey",
+     main = "Donut‐shaped Grid")
+points(grid_choice, pch = 16, cex = 0.5, col = "steelblue")
+
+sim <- simulate_2d_processes(
+  f          = funcs,
+  nrow       = 50,
+  ncol       = 50,
+  d          = 16,
+  epsilon_sd = 0.1,
+  grid = grid_choice,
+  seed       = 123
+)
+```
+
+Let's visualize the simulated processes.
+
+```{r}
+df_plot <- cbind(sim$grid, sim$Y)
+df_long <- melt(df_plot, id.vars = c("x", "y"),
+                variable.name = "process",
+                value.name = "value")
+
+ggplot(df_long, aes(x = x, y = y, color = value)) +
+  geom_point() +
+  scale_color_viridis_c(name = "value") +
+  coord_equal() +
+  facet_wrap(~ process, nrow = 4) +
+  labs(
+    title = "Simulated 2D Processes (colored dots)",
+    x = "x",
+    y = "y"
+  ) +
+  theme_minimal()
+```
+
+Now, let's permute the rows of `sim$Y` to avoid any spatial structure in the ordering of the data points.
+
+```{r}
+sim$Y <- sim$Y[sample(nrow(sim$Y)), ]
+```
+
+
+## Fitting RW-2
+
+We will fit the additive smooth EM algorithm using RW2 priors for both $f$ and $g$.
+
+```{r}
+K <- 20
+Q1 <- make_random_walk_precision(K = K, d = ncol(sim$Y), q = 2, lambda = 1e4, ridge = 0)
+Q2 <- make_random_walk_precision(K = K, d = ncol(sim$Y), q = 2, lambda = 1e4, ridge = 1e-10)
+Q_list <- list(Q1, Q2)
+set.seed(123)
+init_params <- make_default_init_add(X = sim$Y, Q_list = Q_list)
+result_RW <- additive_smoothEM(
+  data = sim$Y,
+  Q_list = Q_list,
+  init_params = init_params,
+  max_iter = 100,
+  tol = 1e-4,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)
+plot(result_RW$loglik_trace)
+```
+
+
+```{r}
+mu_list <- result_RW$params$mu
+n_cells <- length(mu_list)   
+K       <- sqrt(n_cells)     
+
+df <- do.call(rbind, lapply(seq_along(mu_list), function(i) {
+  row <- ((i - 1) %/% K) + 1
+  col <- ((i - 1) %%  K) + 1
+  vals <- mu_list[[i]]
+  data.frame(
+    row = row,
+    col = col,
+    dim = factor(1:length(vals)), 
+    value = vals
+  )
+}))
+
+df$col <- df$col/K
+df$row <- df$row/K
+
+ggplot(df, aes(x = col, y = row, fill = value)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "D") +
+  facet_wrap(~ dim, nrow = 4,
+             labeller = labeller(dim = function(x) paste("Dimension", x))) +
+  coord_equal() +
+  labs(
+    x = "column index",
+    y = "row index",
+    fill = "mu value",
+    title = "RW: Estimated mu values on lattice"
+  ) +
+  theme_minimal()
+```
+
+Plot each function:
+
+```{r}
+par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
+for (i in 1:ncol(result_RW$theta[[1]])) {
+  plot(result_RW$theta[[1]][,i], type = 'l', main = paste("Coordinate", i))
+}
+par(mfrow = c(1, 1))
+
+par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
+for (i in 1:ncol(result_RW$theta[[2]])) {
+  plot(result_RW$theta[[2]][,i], type = 'l', main = paste("Coordinate", i))
+}
+par(mfrow = c(1, 1))
+```
+
+Let's take a look at the inferred locations:
+
+```{r}
+K1 <- K; K2 <- K
+
+# 1) Hard‐assign each observation to a latent grid index (1 … K1*K2)
+cluster_assign <- max.col(result_RW$gamma)   
+
+# 2) Build a data.frame of the full latent grid with its (i,j) coordinates
+latent_grid <- expand.grid(i = seq_len(K1), j = seq_len(K2))
+latent_grid$cluster <- seq_len(nrow(latent_grid))  # 1:(K1*K2)
+
+# 3) Map each observation to its latent grid (i,j)
+obs_map <- data.frame(
+  obs     = seq_len(nrow(sim$Y)),
+  cluster = cluster_assign
+)
+assign_df <- merge(obs_map, latent_grid, by = "cluster")
+
+# 4) Compute raw counts per (i,j)
+raw_cnt <- assign_df %>%
+  count(i, j, name = "n_obs")
+
+# 5) Build the complete grid of (i,j)
+full_grid <- expand.grid(i = seq_len(K1), j = seq_len(K2))
+
+# 6) Left‐join counts and fill missing with zero
+cnt_full <- full_grid %>%
+  left_join(raw_cnt, by = c("i", "j")) %>%
+  replace_na(list(n_obs = 0))
+
+# 7) Plot the number of observations per latent grid cell,
+#    normalized to [0,1] for both axes
+ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "D", name = "# obs") +
+  labs(
+    x     = "latent j / K2",
+    y     = "latent i / K1",
+    title = "Observations per Latent Grid Cell"
+  ) +
+  coord_equal() +
+  theme_minimal()
+```
+
+
+Thought the inferred locations are not perfectly matching the donut shape, they still show some "donut-like" structure.
