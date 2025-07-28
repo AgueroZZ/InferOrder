@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2025-07-28" />
+
+<title>Smooth EM in 2D (Additive)</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Inferring latent ordering</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Smooth EM in 2D (Additive)</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2025-07-28</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-07-28
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>InferOrder/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250707code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250707)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250707code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250707)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8d8778f82374b4228e841ab39c2c15c0f07479e4targetblank8d8778fa">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8d8778f82374b4228e841ab39c2c15c0f07479e4" target="_blank">8d8778f</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8d8778f82374b4228e841ab39c2c15c0f07479e4targetblank8d8778fa"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8d8778f82374b4228e841ab39c2c15c0f07479e4" target="_blank">8d8778f</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/figure/
+    Ignored:    analysis/site_libs/
+    Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  code/additive_EM.R
+    Untracked:  various figures/
+
+Unstaged changes:
+    Modified:   analysis/explore_2DSmoothEM.rmd
+    Modified:   code/general_EM.R
+    Modified:   code/simulate2D_fields.R
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/explore_2DSmoothEM_additive.rmd</code>) and HTML
+(<code>docs/explore_2DSmoothEM_additive.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8d8778f82374b4228e841ab39c2c15c0f07479e4/analysis/explore_2DSmoothEM_additive.rmd" target="_blank">8d8778f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_2DSmoothEM_additive.rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
+source(&quot;./code/additive_EM.R&quot;)</code></pre>
+<pre><code>Warning: package &#39;matrixStats&#39; was built under R version 4.3.3</code></pre>
+<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.3.3</code></pre>
+<pre class="r"><code>source(&quot;./code/simulate2D_fields.R&quot;)
+library(tidyverse)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.3.3</code></pre>
+<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.4     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::count()  masks matrixStats::count()
+✖ tidyr::expand() masks Matrix::expand()
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+✖ tidyr::pack()   masks Matrix::pack()
+✖ tidyr::unpack() masks Matrix::unpack()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(reshape2)</code></pre>
+<pre><code>
+Attaching package: &#39;reshape2&#39;
+
+The following object is masked from &#39;package:tidyr&#39;:
+
+    smiths</code></pre>
+<pre class="r"><code>library(tidyr)
+library(dplyr)</code></pre>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>We consider a smooth EM algorithm where the component means <span
+class="math inline">\(\mu(t_1,t_2)\)</span> has an additive form as
+<span class="math inline">\(\mu(t_1, t_2) = f(t_1) + g(t_2)\)</span>,
+where <span class="math inline">\(f\)</span> and <span
+class="math inline">\(g\)</span> are smooth functions of the 1D
+coordinates <span class="math inline">\(t_1\)</span> and <span
+class="math inline">\(t_2\)</span>, respectively.</p>
+<p>For simplicity, we assume <span class="math inline">\(f\)</span> and
+<span class="math inline">\(g\)</span> follow independent random walk
+priors, and are both defined on a equally spaced grid of <span
+class="math inline">\(K\)</span> points.</p>
+</div>
+<div id="simulate-data" class="section level2">
+<h2>Simulate Data</h2>
+<p>First, let’s simulate some <span
+class="math inline">\(d=16\)</span>-dimensional data from a <span
+class="math inline">\(20 \times 20\)</span> grid defined on the unit
+square <span class="math inline">\([0,1] \times [0,1]\)</span>.</p>
+<p>The observation noise is assumed to be Gaussian with standard
+deviation 0.1 in each dimension.</p>
+<p>To make this problem more interesting, let’s consider the sampling
+region follows roughly a donut shape.</p>
+<pre class="r"><code>funcs &lt;- make_diverse_additive_functions(n_surfaces = 16,
+                                         freq_pool   = c(0.5, 1, 2),
+                                         seed        = 123)
+
+n           &lt;- 100        # grid resolution
+inner_rad   &lt;- 0.2        # inner hole radius
+outer_rad   &lt;- 0.4        # outer radius of donut
+center      &lt;- c(0.5, 0.5)
+xs  &lt;- seq(0, 1, length.out = n)
+ys  &lt;- seq(0, 1, length.out = n)
+grid &lt;- expand.grid(x = xs, y = ys)
+r &lt;- sqrt((grid$x - center[1])^2 + (grid$y - center[2])^2)
+grid_choice &lt;- subset(grid, r &gt; inner_rad &amp; r &lt; outer_rad)
+
+# Quick plot to check
+plot(grid, pch = 16, cex = 0.3, col = &quot;lightgrey&quot;,
+     main = &quot;Donut‐shaped Grid&quot;)
+points(grid_choice, pch = 16, cex = 0.5, col = &quot;steelblue&quot;)</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sim &lt;- simulate_2d_processes(
+  f          = funcs,
+  nrow       = 50,
+  ncol       = 50,
+  d          = 16,
+  epsilon_sd = 0.1,
+  grid = grid_choice,
+  seed       = 123
+)</code></pre>
+<p>Let’s visualize the simulated processes.</p>
+<pre class="r"><code>df_plot &lt;- cbind(sim$grid, sim$Y)
+df_long &lt;- melt(df_plot, id.vars = c(&quot;x&quot;, &quot;y&quot;),
+                variable.name = &quot;process&quot;,
+                value.name = &quot;value&quot;)
+
+ggplot(df_long, aes(x = x, y = y, color = value)) +
+  geom_point() +
+  scale_color_viridis_c(name = &quot;value&quot;) +
+  coord_equal() +
+  facet_wrap(~ process, nrow = 4) +
+  labs(
+    title = &quot;Simulated 2D Processes (colored dots)&quot;,
+    x = &quot;x&quot;,
+    y = &quot;y&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, let’s permute the rows of <code>sim$Y</code> to avoid any
+spatial structure in the ordering of the data points.</p>
+<pre class="r"><code>sim$Y &lt;- sim$Y[sample(nrow(sim$Y)), ]</code></pre>
+</div>
+<div id="fitting-rw-2" class="section level2">
+<h2>Fitting RW-2</h2>
+<p>We will fit the additive smooth EM algorithm using RW2 priors for
+both <span class="math inline">\(f\)</span> and <span
+class="math inline">\(g\)</span>.</p>
+<pre class="r"><code>K &lt;- 20
+Q1 &lt;- make_random_walk_precision(K = K, d = ncol(sim$Y), q = 2, lambda = 1e4, ridge = 0)
+Q2 &lt;- make_random_walk_precision(K = K, d = ncol(sim$Y), q = 2, lambda = 1e4, ridge = 1e-10)
+Q_list &lt;- list(Q1, Q2)
+set.seed(123)
+init_params &lt;- make_default_init_add(X = sim$Y, Q_list = Q_list)
+result_RW &lt;- additive_smoothEM(
+  data = sim$Y,
+  Q_list = Q_list,
+  init_params = init_params,
+  max_iter = 100,
+  tol = 1e-4,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iter   1: data_ll = -125973.9102, penalty = -10182.3753, total = -136156.2854
+Iter   2: data_ll = -117327.5569, penalty = 57.7038, total = -117269.8531
+Iter   3: data_ll = -111942.0103, penalty = -1345.2669, total = -113287.2772
+Iter   4: data_ll = -108291.9402, penalty = -2753.8286, total = -111045.7688
+Iter   5: data_ll = -104525.3311, penalty = -4114.0556, total = -108639.3867
+Iter   6: data_ll = -101672.2399, penalty = -4499.4227, total = -106171.6626
+Iter   7: data_ll = -99691.3476, penalty = -4535.9754, total = -104227.3230
+Iter   8: data_ll = -98241.5204, penalty = -4464.7476, total = -102706.2681
+Iter   9: data_ll = -96075.0280, penalty = -4016.2441, total = -100091.2720
+Iter  10: data_ll = -90992.6785, penalty = -3088.0345, total = -94080.7130
+Iter  11: data_ll = -85656.1621, penalty = -3696.9712, total = -89353.1334
+Iter  12: data_ll = -82056.8777, penalty = -5628.7556, total = -87685.6333
+Iter  13: data_ll = -79660.3008, penalty = -7630.3830, total = -87290.6837
+Iter  14: data_ll = -77910.6565, penalty = -9327.6224, total = -87238.2788
+Iter  15: data_ll = -76075.0256, penalty = -10628.6417, total = -86703.6674
+Iter  16: data_ll = -74831.7786, penalty = -12165.0107, total = -86996.7893
+Objective decreased at iter 15 (-86703.6674 → -86996.7893), rolling back and stopping.</code></pre>
+<pre class="r"><code>plot(result_RW$loglik_trace)</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mu_list &lt;- result_RW$params$mu
+n_cells &lt;- length(mu_list)   
+K       &lt;- sqrt(n_cells)     
+
+df &lt;- do.call(rbind, lapply(seq_along(mu_list), function(i) {
+  row &lt;- ((i - 1) %/% K) + 1
+  col &lt;- ((i - 1) %%  K) + 1
+  vals &lt;- mu_list[[i]]
+  data.frame(
+    row = row,
+    col = col,
+    dim = factor(1:length(vals)), 
+    value = vals
+  )
+}))
+
+df$col &lt;- df$col/K
+df$row &lt;- df$row/K
+
+ggplot(df, aes(x = col, y = row, fill = value)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = &quot;D&quot;) +
+  facet_wrap(~ dim, nrow = 4,
+             labeller = labeller(dim = function(x) paste(&quot;Dimension&quot;, x))) +
+  coord_equal() +
+  labs(
+    x = &quot;column index&quot;,
+    y = &quot;row index&quot;,
+    fill = &quot;mu value&quot;,
+    title = &quot;RW: Estimated mu values on lattice&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Plot each function:</p>
+<pre class="r"><code>par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
+for (i in 1:ncol(result_RW$theta[[1]])) {
+  plot(result_RW$theta[[1]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
+}</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))
+
+par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
+for (i in 1:ncol(result_RW$theta[[2]])) {
+  plot(result_RW$theta[[2]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
+}</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>Let’s take a look at the inferred locations:</p>
+<pre class="r"><code>K1 &lt;- K; K2 &lt;- K
+
+# 1) Hard‐assign each observation to a latent grid index (1 … K1*K2)
+cluster_assign &lt;- max.col(result_RW$gamma)   
+
+# 2) Build a data.frame of the full latent grid with its (i,j) coordinates
+latent_grid &lt;- expand.grid(i = seq_len(K1), j = seq_len(K2))
+latent_grid$cluster &lt;- seq_len(nrow(latent_grid))  # 1:(K1*K2)
+
+# 3) Map each observation to its latent grid (i,j)
+obs_map &lt;- data.frame(
+  obs     = seq_len(nrow(sim$Y)),
+  cluster = cluster_assign
+)
+assign_df &lt;- merge(obs_map, latent_grid, by = &quot;cluster&quot;)
+
+# 4) Compute raw counts per (i,j)
+raw_cnt &lt;- assign_df %&gt;%
+  count(i, j, name = &quot;n_obs&quot;)
+
+# 5) Build the complete grid of (i,j)
+full_grid &lt;- expand.grid(i = seq_len(K1), j = seq_len(K2))
+
+# 6) Left‐join counts and fill missing with zero
+cnt_full &lt;- full_grid %&gt;%
+  left_join(raw_cnt, by = c(&quot;i&quot;, &quot;j&quot;)) %&gt;%
+  replace_na(list(n_obs = 0))
+
+# 7) Plot the number of observations per latent grid cell,
+#    normalized to [0,1] for both axes
+ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = &quot;D&quot;, name = &quot;# obs&quot;) +
+  labs(
+    x     = &quot;latent j / K2&quot;,
+    y     = &quot;latent i / K1&quot;,
+    title = &quot;Observations per Latent Grid Cell&quot;
+  ) +
+  coord_equal() +
+  theme_minimal()</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Thought the inferred locations are not perfectly matching the donut
+shape, they still show some “donut-like” structure.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 15.5
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] reshape2_1.4.4    lubridate_1.9.3   forcats_1.0.0     stringr_1.5.1    
+ [5] dplyr_1.1.4       purrr_1.0.4       readr_2.1.5       tidyr_1.3.1      
+ [9] tibble_3.2.1      ggplot2_3.5.2     tidyverse_2.0.0   Matrix_1.6-4     
+[13] mvtnorm_1.3-1     matrixStats_1.4.1 workflowr_1.7.1  
+
+loaded via a namespace (and not attached):
+ [1] sass_0.4.10        generics_0.1.4     stringi_1.8.7      lattice_0.22-6    
+ [5] hms_1.1.3          digest_0.6.37      magrittr_2.0.3     timechange_0.3.0  
+ [9] evaluate_1.0.3     grid_4.3.1         RColorBrewer_1.1-3 fastmap_1.2.0     
+[13] plyr_1.8.9         rprojroot_2.0.4    jsonlite_2.0.0     processx_3.8.6    
+[17] whisker_0.4.1      ps_1.9.1           promises_1.3.3     httr_1.4.7        
+[21] viridisLite_0.4.2  scales_1.4.0       jquerylib_0.1.4    cli_3.6.5         
+[25] rlang_1.1.6        withr_3.0.2        cachem_1.1.0       yaml_2.3.10       
+[29] tools_4.3.1        tzdb_0.5.0         httpuv_1.6.16      vctrs_0.6.5       
+[33] R6_2.6.1           lifecycle_1.0.4    git2r_0.33.0       fs_1.6.6          
+[37] pkgconfig_2.0.3    callr_3.7.6        pillar_1.10.2      bslib_0.9.0       
+[41] later_1.4.2        gtable_0.3.6       glue_1.8.0         Rcpp_1.0.14       
+[45] xfun_0.52          tidyselect_1.2.1   rstudioapi_0.16.0  knitr_1.50        
+[49] farver_2.1.2       htmltools_0.5.8.1  labeling_0.4.3     rmarkdown_2.28    
+[53] compiler_4.3.1     getPass_0.2-4     </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
