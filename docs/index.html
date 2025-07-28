@@ -298,7 +298,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-07-15
+<strong>Last updated:</strong> 2025-07-28
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -345,15 +345,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree601a04b7546bd1bd47ff4948705e842e5edd3426targetblank601a04ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree689ac73b03c7835b1e0c718254b580399085c8b9targetblank689ac73a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/601a04b7546bd1bd47ff4948705e842e5edd3426" target="_blank">601a04b</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/689ac73b03c7835b1e0c718254b580399085c8b9" target="_blank">689ac73</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree601a04b7546bd1bd47ff4948705e842e5edd3426targetblank601a04ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree689ac73b03c7835b1e0c718254b580399085c8b9targetblank689ac73a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -363,7 +363,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/601a04b7546bd1bd47ff4948705e842e5edd3426" target="_blank">601a04b</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/689ac73b03c7835b1e0c718254b580399085c8b9" target="_blank">689ac73</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -382,16 +382,26 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    code/.Rhistory
 
 Untracked files:
-    Untracked:  Smooth_EB.png
-    Untracked:  Smooth_fixed.png
-    Untracked:  analysis/explore_smoothSEM.rmd
+    Untracked:  analysis/explore_trajectory.rmd
+    Untracked:  code/rw2_warmstart.R
+    Untracked:  code/simulate2D_fields.R
     Untracked:  code/smoother_experiment.R
     Untracked:  code/stochasticEM.R
+    Untracked:  explore_permutation.R
+    Untracked:  various figures/
+    Untracked:  warmstart.png
+    Untracked:  without_warmstart.png
 
 Unstaged changes:
     Deleted:    all_celltypes_umap.png
+    Modified:   analysis/explore_pancrea.rmd
+    Modified:   analysis/explore_smoothEM.rmd
+    Modified:   code/general_EM.R
+    Modified:   code/plot_ordering.R
+    Modified:   code/prior_precision.R
 
 </code></pre>
 <p>
@@ -435,6 +445,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/689ac73b03c7835b1e0c718254b580399085c8b9/analysis/index.Rmd" target="_blank">689ac73</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+workflowr::wflow_publish("analysis/index.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/179d35523d1b29889bef7794f7b4db1c5ffbf8da/docs/index.html" target="_blank">179d355</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -608,6 +652,8 @@ factorization method.</li>
 <ul>
 <li><p><a href="explore_smoothEM.html">Exploring smooth-EM
 algorithm.</a></p></li>
+<li><p><a href="explore_2DSmoothEM.html">Exploring smooth-EM algorithm
+on 2D lattice.</a></p></li>
 <li><p><a href="explore_smoothSEM.html">Exploring smooth threshold EM
 algorithm.</a></p></li>
 <li><p><a href="explore_pancrea.html">Inferring latent ordering on
