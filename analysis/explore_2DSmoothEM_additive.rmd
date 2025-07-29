@@ -49,7 +49,7 @@ grid_choice <- subset(grid, r > inner_rad & r < outer_rad)
 
 # Quick plot to check
 plot(grid, pch = 16, cex = 0.3, col = "lightgrey",
-     main = "Donut‐shaped Grid")
+     main = "Donut shaped Grid")
 points(grid_choice, pch = 16, cex = 0.5, col = "steelblue")
 
 sim <- simulate_2d_processes(
