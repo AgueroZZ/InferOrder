@@ -378,7 +378,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-07-27
+<strong>Last updated:</strong> 2025-07-29
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -509,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree47c4b7b4b134879040b907c432263061af6fa1aftargetblank47c4b7ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8fca2ba6597724b42042ffe059ea7709b3f8b3c0targetblank8fca2baa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/47c4b7b4b134879040b907c432263061af6fa1af" target="_blank">47c4b7b</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8fca2ba6597724b42042ffe059ea7709b3f8b3c0" target="_blank">8fca2ba</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree47c4b7b4b134879040b907c432263061af6fa1aftargetblank47c4b7ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8fca2ba6597724b42042ffe059ea7709b3f8b3c0targetblank8fca2baa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -527,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/47c4b7b4b134879040b907c432263061af6fa1af" target="_blank">47c4b7b</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8fca2ba6597724b42042ffe059ea7709b3f8b3c0" target="_blank">8fca2ba</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -546,27 +546,13 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/site_libs/
     Ignored:    code/.Rhistory
 
 Untracked files:
-    Untracked:  analysis/explore_trajectory.rmd
-    Untracked:  code/rw2_warmstart.R
-    Untracked:  code/simulate2D_fields.R
-    Untracked:  code/smoother_experiment.R
-    Untracked:  code/stochasticEM.R
-    Untracked:  explore_permutation.R
     Untracked:  various figures/
-    Untracked:  warmstart.png
-    Untracked:  without_warmstart.png
 
 Unstaged changes:
-    Deleted:    all_celltypes_umap.png
-    Modified:   analysis/explore_pancrea.rmd
-    Modified:   analysis/explore_smoothEM.rmd
-    Modified:   code/general_EM.R
-    Modified:   code/plot_ordering.R
-    Modified:   code/prior_precision.R
+    Modified:   analysis/explore_2DSmoothEM_additive.rmd
 
 </code></pre>
 <p>
@@ -611,6 +597,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8fca2ba6597724b42042ffe059ea7709b3f8b3c0/analysis/explore_2DSmoothEM.rmd" target="_blank">8fca2ba</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-29
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_2DSmoothEM.rmd")
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d54853581fbf38c72c26a1038379584df3c398da/analysis/explore_2DSmoothEM.rmd" target="_blank">d548535</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+exploring additive smoothEM
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/0c66e655e9cf4542c83e1c0889fd5c1eb2e1ed9a/docs/explore_2DSmoothEM.html" target="_blank">0c66e65</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -663,14 +700,35 @@ close to the average of its immediate neighbors:</p>
 \]</span></p>
 <p>This model is sometimes called a Intrinsic Conditional AutoRegressive
 (ICAR) model in spatial statistics.</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.3.3</code></pre>
-<pre class="r"><code>library(reshape2)
-source(&quot;./code/prior_precision.R&quot;)
+<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
 source(&quot;./code/general_EM.R&quot;)</code></pre>
 <pre><code>Warning: package &#39;matrixStats&#39; was built under R version 4.3.3</code></pre>
 <pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.3.3</code></pre>
-<pre class="r"><code>source(&quot;./code/simulate2D_fields.R&quot;)</code></pre>
+<pre class="r"><code>source(&quot;./code/simulate2D_fields.R&quot;)
+library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.3.3</code></pre>
+<pre class="r"><code>library(reshape2)
+library(tidyr)</code></pre>
+<pre><code>
+Attaching package: &#39;tidyr&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:reshape2&#39;:
+
+    smiths</code></pre>
+<pre><code>The following objects are masked from &#39;package:Matrix&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:matrixStats&#39;:
+
+    count</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
 </div>
 <div id="simulate-data" class="section level2">
 <h2>Simulate Data</h2>
@@ -679,18 +737,29 @@ class="math inline">\(d=16\)</span>-dimensional data from a <span
 class="math inline">\(20 \times 20\)</span> grid defined on the unit
 square <span class="math inline">\([0,1] \times [0,1]\)</span>. Each
 dimension is a smooth function of the 2D coordinates <span
-class="math inline">\((x,y)\)</span>. The smooth function is randomly
-simulated from a Matern process with smoothness parameter <span
-class="math inline">\(\nu=2\)</span> and range parameter <span
-class="math inline">\(\rho=0.3\)</span>.</p>
+class="math inline">\((x,y)\)</span>.</p>
+<p>The smooth function is randomly simulated from a Matern process with
+smoothness parameter <span class="math inline">\(\nu=2\)</span> and
+range parameter <span class="math inline">\(\rho=0.3\)</span>.</p>
 <p>The observation noise is assumed to be Gaussian with standard
 deviation 0.1 in each dimension.</p>
-<pre class="r"><code>sim &lt;- simulate_2d_processes(
+<p>To make this problem more interesting, let’s consider the sampling
+region follows roughly a donut shape.</p>
+<pre class="r"><code>n           &lt;- 40        # grid resolution
+inner_rad   &lt;- 0.2        # inner hole radius
+outer_rad   &lt;- 0.4        # outer radius of donut
+center      &lt;- c(0.5, 0.5)
+xs  &lt;- seq(0, 1, length.out = n)
+ys  &lt;- seq(0, 1, length.out = n)
+grid &lt;- expand.grid(x = xs, y = ys)
+r &lt;- sqrt((grid$x - center[1])^2 + (grid$y - center[2])^2)
+grid_choice &lt;- subset(grid, r &gt; inner_rad &amp; r &lt; outer_rad)
+
+sim &lt;- simulate_2d_processes(
   f          = NULL,
-  nrow       = 20,
-  ncol       = 20,
   d          = 16,
   epsilon_sd = 0.1,
+  grid = grid_choice,
   seed       = 123
 )</code></pre>
 <p>Let’s visualize the simulated processes.</p>
@@ -711,6 +780,43 @@ ggplot(df_long, aes(x = x, y = y, color = value)) +
   ) +
   theme_minimal()</code></pre>
 <p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0c66e655e9cf4542c83e1c0889fd5c1eb2e1ed9a/docs/figure/explore_2DSmoothEM.rmd/unnamed-chunk-3-1.png" target="_blank">0c66e65</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, let’s permute the rows of <code>sim$Y</code> to avoid any
 spatial structure in the ordering of the data points.</p>
 <pre class="r"><code>sim$Y &lt;- sim$Y[sample(nrow(sim$Y)), ]</code></pre>
@@ -735,12 +841,13 @@ result_RW1 &lt;- EM_algorithm(
   tol = 1e-2,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration   1: objective = -2561.702202
-Iteration   2: objective = 85.312718
-Iteration   3: objective = 1190.297425
-Iteration   4: objective = 1323.640711
-Iteration   5: objective = 1265.664684
-Objective decreased at iteration 5, final objective = 1323.640711</code></pre>
+<pre><code>Iteration   1: objective = -3065.999866
+Iteration   2: objective = 1995.514246
+Iteration   3: objective = 3927.950144
+Iteration   4: objective = 4181.144349
+Iteration   5: objective = 4240.403516
+Iteration   6: objective = 4223.028485
+Objective decreased at iteration 6, final objective = 4240.403516</code></pre>
 <p>Let’s visualize the smoothed component means <span
 class="math inline">\(\boldsymbol{\mu}_{i,j}\)</span> inferred for each
 dimension.</p>
@@ -776,6 +883,85 @@ ggplot(df, aes(x = col, y = row, fill = value)) +
   ) +
   theme_minimal()</code></pre>
 <p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0c66e655e9cf4542c83e1c0889fd5c1eb2e1ed9a/docs/figure/explore_2DSmoothEM.rmd/unnamed-chunk-6-1.png" target="_blank">0c66e65</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let’s take a look at the inferred locations:</p>
+<pre class="r"><code>K1 &lt;- K; K2 &lt;- K
+
+# 1) Hard‐assign each observation to a latent grid index (1 … K1*K2)
+cluster_assign &lt;- max.col(result_RW1$gamma)   
+
+# 2) Build a data.frame of the full latent grid with its (i,j) coordinates
+latent_grid &lt;- expand.grid(i = seq_len(K1), j = seq_len(K2))
+latent_grid$cluster &lt;- seq_len(nrow(latent_grid))  # 1:(K1*K2)
+
+# 3) Map each observation to its latent grid (i,j)
+obs_map &lt;- data.frame(
+  obs     = seq_len(nrow(sim$Y)),
+  cluster = cluster_assign
+)
+assign_df &lt;- merge(obs_map, latent_grid, by = &quot;cluster&quot;)
+
+# 4) Compute raw counts per (i,j)
+raw_cnt &lt;- assign_df %&gt;%
+  count(i, j, name = &quot;n_obs&quot;)
+
+# 5) Build the complete grid of (i,j)
+full_grid &lt;- expand.grid(i = seq_len(K1), j = seq_len(K2))
+
+# 6) Left‐join counts and fill missing with zero
+cnt_full &lt;- full_grid %&gt;%
+  left_join(raw_cnt, by = c(&quot;i&quot;, &quot;j&quot;)) %&gt;%
+  replace_na(list(n_obs = 0))
+
+# 7) Plot the number of observations per latent grid cell,
+#    normalized to [0,1] for both axes
+ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = &quot;D&quot;, name = &quot;# obs&quot;) +
+  labs(
+    x     = &quot;latent j / K2&quot;,
+    y     = &quot;latent i / K1&quot;,
+    title = &quot;Observations per Latent Grid Cell (RW1)&quot;
+  ) +
+  coord_equal() +
+  theme_minimal()</code></pre>
+<p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="fitting-rw-2" class="section level2">
 <h2>Fitting RW-2</h2>
@@ -796,58 +982,118 @@ result_RW2 &lt;- EM_algorithm(
   tol = 1e-2,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration   1: objective = -2573.002828
-Iteration   2: objective = 411.230905
-Iteration   3: objective = 1929.266446
-Iteration   4: objective = 2778.686467
-Iteration   5: objective = 3220.153731
-Iteration   6: objective = 3349.683606
-Iteration   7: objective = 3465.067608
-Iteration   8: objective = 3570.988315
-Iteration   9: objective = 3640.491903
-Iteration  10: objective = 3733.791383
-Iteration  11: objective = 3784.623223
-Iteration  12: objective = 3814.615299
-Iteration  13: objective = 3853.508041
-Iteration  14: objective = 3877.590108
-Iteration  15: objective = 3902.190908
-Iteration  16: objective = 3916.911378
-Iteration  17: objective = 3926.831889
-Iteration  18: objective = 3936.937386
-Iteration  19: objective = 3943.575415
-Iteration  20: objective = 3947.628422
-Iteration  21: objective = 3950.831605
-Iteration  22: objective = 3952.809038
-Iteration  23: objective = 3954.250504
-Iteration  24: objective = 3954.911058
-Iteration  25: objective = 3955.747507
-Iteration  26: objective = 3957.163466
-Iteration  27: objective = 3959.469539
-Iteration  28: objective = 3961.002209
-Iteration  29: objective = 3961.043414
-Iteration  30: objective = 3961.633672
-Iteration  31: objective = 3963.551634
-Iteration  32: objective = 3965.810061
-Iteration  33: objective = 3967.023087
-Iteration  34: objective = 3967.971619
-Iteration  35: objective = 3968.961456
-Iteration  36: objective = 3970.485997
-Iteration  37: objective = 3973.339568
-Iteration  38: objective = 3976.894843
-Iteration  39: objective = 3979.776615
-Iteration  40: objective = 3984.322139
-Iteration  41: objective = 3989.833733
-Iteration  42: objective = 3991.546737
-Iteration  43: objective = 3991.803110
-Iteration  44: objective = 3991.877905
-Iteration  45: objective = 3991.924859
-Iteration  46: objective = 3992.048410
-Iteration  47: objective = 3992.669670
-Iteration  48: objective = 3994.636475
-Iteration  49: objective = 3996.473027
-Iteration  50: objective = 3996.533830
-Iteration  51: objective = 3996.302249
-Objective decreased at iteration 51, final objective = 3996.533830</code></pre>
+<pre><code>Iteration   1: objective = -3043.615462
+Iteration   2: objective = 2422.411063
+Iteration   3: objective = 4964.252371
+Iteration   4: objective = 5786.619652
+Iteration   5: objective = 6102.369144
+Iteration   6: objective = 6238.463931
+Iteration   7: objective = 6423.085284
+Iteration   8: objective = 6547.058684
+Iteration   9: objective = 6621.702362
+Iteration  10: objective = 6736.318730
+Iteration  11: objective = 6842.538121
+Iteration  12: objective = 6963.444242
+Iteration  13: objective = 7101.270836
+Iteration  14: objective = 7159.605059
+Iteration  15: objective = 7193.137664
+Iteration  16: objective = 7215.351048
+Iteration  17: objective = 7228.590821
+Iteration  18: objective = 7242.049479
+Iteration  19: objective = 7258.397762
+Iteration  20: objective = 7273.652569
+Iteration  21: objective = 7288.868348
+Iteration  22: objective = 7309.378197
+Iteration  23: objective = 7341.153912
+Iteration  24: objective = 7365.357956
+Iteration  25: objective = 7391.575231
+Iteration  26: objective = 7425.674304
+Iteration  27: objective = 7470.089058
+Iteration  28: objective = 7539.089756
+Iteration  29: objective = 7556.858372
+Iteration  30: objective = 7571.906308
+Iteration  31: objective = 7592.984437
+Iteration  32: objective = 7615.301900
+Iteration  33: objective = 7641.127937
+Iteration  34: objective = 7673.124738
+Iteration  35: objective = 7723.648949
+Iteration  36: objective = 7732.684165
+Iteration  37: objective = 7737.651423
+Iteration  38: objective = 7741.146698
+Iteration  39: objective = 7743.183948
+Iteration  40: objective = 7744.497616
+Iteration  41: objective = 7745.757752
+Iteration  42: objective = 7746.988210
+Iteration  43: objective = 7748.027362
+Iteration  44: objective = 7749.011580
+Iteration  45: objective = 7750.127183
+Iteration  46: objective = 7751.240961
+Iteration  47: objective = 7752.175952
+Iteration  48: objective = 7753.155790
+Iteration  49: objective = 7754.766180
+Iteration  50: objective = 7757.612944
+Iteration  51: objective = 7760.651388
+Iteration  52: objective = 7765.213133
+Iteration  53: objective = 7771.382955
+Iteration  54: objective = 7776.405357
+Iteration  55: objective = 7779.062647
+Iteration  56: objective = 7780.614505
+Iteration  57: objective = 7781.706938
+Iteration  58: objective = 7782.815611
+Iteration  59: objective = 7784.381284
+Iteration  60: objective = 7786.876082
+Iteration  61: objective = 7791.404789
+Iteration  62: objective = 7798.388716
+Iteration  63: objective = 7802.977417
+Iteration  64: objective = 7807.066657
+Iteration  65: objective = 7813.413244
+Iteration  66: objective = 7819.293474
+Iteration  67: objective = 7823.134229
+Iteration  68: objective = 7826.988314
+Iteration  69: objective = 7830.456089
+Iteration  70: objective = 7834.403118
+Iteration  71: objective = 7837.321690
+Iteration  72: objective = 7839.065358
+Iteration  73: objective = 7840.096677
+Iteration  74: objective = 7840.613942
+Iteration  75: objective = 7840.985771
+Iteration  76: objective = 7841.417365
+Iteration  77: objective = 7841.946212
+Iteration  78: objective = 7842.619074
+Iteration  79: objective = 7843.663358
+Iteration  80: objective = 7846.140869
+Iteration  81: objective = 7852.120726
+Iteration  82: objective = 7858.791563
+Iteration  83: objective = 7867.352454
+Iteration  84: objective = 7873.509905
+Iteration  85: objective = 7879.137228
+Iteration  86: objective = 7886.281796
+Iteration  87: objective = 7893.128585
+Iteration  88: objective = 7900.801330
+Iteration  89: objective = 7906.362993
+Iteration  90: objective = 7909.614296
+Iteration  91: objective = 7911.951765
+Iteration  92: objective = 7913.823750
+Iteration  93: objective = 7918.953612
+Iteration  94: objective = 7927.353475
+Iteration  95: objective = 7928.874011
+Iteration  96: objective = 7929.927524
+Iteration  97: objective = 7931.028150
+Iteration  98: objective = 7932.087474
+Iteration  99: objective = 7933.496305
+Iteration 100: objective = 7934.983710
+Iteration 101: objective = 7935.781233
+Iteration 102: objective = 7936.294078
+Iteration 103: objective = 7936.563530
+Iteration 104: objective = 7936.697060
+Iteration 105: objective = 7936.806071
+Iteration 106: objective = 7936.928682
+Iteration 107: objective = 7937.158483
+Iteration 108: objective = 7937.972333
+Iteration 109: objective = 7939.522349
+Iteration 110: objective = 7939.692118
+Iteration 111: objective = 7939.697363
+Converged at iteration 111 with objective 7939.697363</code></pre>
 <p>Let’s visualize the smoothed component means <span
 class="math inline">\(\boldsymbol{\mu}_{i,j}\)</span> inferred for each
 dimension.</p>
@@ -883,7 +1129,86 @@ ggplot(df, aes(x = col, y = row, fill = value)) +
     title = &quot;RW2: Estimated mu values on 5×5 lattice&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0c66e655e9cf4542c83e1c0889fd5c1eb2e1ed9a/docs/figure/explore_2DSmoothEM.rmd/unnamed-chunk-9-1.png" target="_blank">0c66e65</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let’s take a look at the inferred locations:</p>
+<pre class="r"><code>K1 &lt;- K; K2 &lt;- K
+
+# 1) Hard‐assign each observation to a latent grid index (1 … K1*K2)
+cluster_assign &lt;- max.col(result_RW2$gamma)   
+
+# 2) Build a data.frame of the full latent grid with its (i,j) coordinates
+latent_grid &lt;- expand.grid(i = seq_len(K1), j = seq_len(K2))
+latent_grid$cluster &lt;- seq_len(nrow(latent_grid))  # 1:(K1*K2)
+
+# 3) Map each observation to its latent grid (i,j)
+obs_map &lt;- data.frame(
+  obs     = seq_len(nrow(sim$Y)),
+  cluster = cluster_assign
+)
+assign_df &lt;- merge(obs_map, latent_grid, by = &quot;cluster&quot;)
+
+# 4) Compute raw counts per (i,j)
+raw_cnt &lt;- assign_df %&gt;%
+  count(i, j, name = &quot;n_obs&quot;)
+
+# 5) Build the complete grid of (i,j)
+full_grid &lt;- expand.grid(i = seq_len(K1), j = seq_len(K2))
+
+# 6) Left‐join counts and fill missing with zero
+cnt_full &lt;- full_grid %&gt;%
+  left_join(raw_cnt, by = c(&quot;i&quot;, &quot;j&quot;)) %&gt;%
+  replace_na(list(n_obs = 0))
+
+# 7) Plot the number of observations per latent grid cell,
+#    normalized to [0,1] for both axes
+ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = &quot;D&quot;, name = &quot;# obs&quot;) +
+  labs(
+    x     = &quot;latent j / K2&quot;,
+    y     = &quot;latent i / K1&quot;,
+    title = &quot;Observations per Latent Grid Cell (RW2)&quot;
+  ) +
+  coord_equal() +
+  theme_minimal()</code></pre>
+<p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="fitting-pca" class="section level2">
 <h2>Fitting PCA</h2>
@@ -918,7 +1243,7 @@ ggplot(df_long, aes(x = PC1, y = PC2, z = value)) +
     y     = &quot;PC2&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_2DSmoothEM.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -946,18 +1271,18 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] Matrix_1.6-4      mvtnorm_1.3-1     matrixStats_1.4.1 reshape2_1.4.4   
-[5] ggplot2_3.5.2     workflowr_1.7.1  
+[1] dplyr_1.1.4       tidyr_1.3.1       reshape2_1.4.4    ggplot2_3.5.2    
+[5] Matrix_1.6-4      mvtnorm_1.3-1     matrixStats_1.4.1 workflowr_1.7.1  
 
 loaded via a namespace (and not attached):
  [1] sass_0.4.10        generics_0.1.4     stringi_1.8.7      lattice_0.22-6    
  [5] digest_0.6.37      magrittr_2.0.3     evaluate_1.0.3     grid_4.3.1        
- [9] RColorBrewer_1.1-3 fastmap_1.2.0      maps_3.4.2         rprojroot_2.0.4   
+ [9] RColorBrewer_1.1-3 maps_3.4.2         fastmap_1.2.0      rprojroot_2.0.4   
 [13] plyr_1.8.9         jsonlite_2.0.0     processx_3.8.6     whisker_0.4.1     
 [17] ps_1.9.1           promises_1.3.3     httr_1.4.7         spam_2.11-0       
-[21] viridisLite_0.4.2  scales_1.4.0       jquerylib_0.1.4    cli_3.6.5         
-[25] rlang_1.1.6        withr_3.0.2        cachem_1.1.0       yaml_2.3.10       
-[29] tools_4.3.1        dplyr_1.1.4        httpuv_1.6.16      vctrs_0.6.5       
+[21] purrr_1.0.4        viridisLite_0.4.2  scales_1.4.0       jquerylib_0.1.4   
+[25] cli_3.6.5          rlang_1.1.6        withr_3.0.2        cachem_1.1.0      
+[29] yaml_2.3.10        tools_4.3.1        httpuv_1.6.16      vctrs_0.6.5       
 [33] R6_2.6.1           lifecycle_1.0.4    git2r_0.33.0       stringr_1.5.1     
 [37] fs_1.6.6           MASS_7.3-60        pkgconfig_2.0.3    callr_3.7.6       
 [41] pillar_1.10.2      bslib_0.9.0        later_1.4.2        gtable_0.3.6      
