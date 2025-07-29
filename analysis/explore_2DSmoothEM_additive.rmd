@@ -27,7 +27,7 @@ For simplicity, we assume $f$ and $g$ follow independent random walk priors, and
 ## Simulate Data
 
 First, let's simulate some $d=16$-dimensional data from a $20 \times 20$ grid defined on the unit square $[0,1] \times [0,1]$. 
-
+Each function is randomly generated as an additive combination of sinusoidal functions with different frequencies.
 The observation noise is assumed to be Gaussian with standard deviation 0.1 in each dimension.
 
 To make this problem more interesting, let's consider the sampling region follows roughly a donut shape.
