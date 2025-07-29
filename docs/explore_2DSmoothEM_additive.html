@@ -509,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreea0ddd50beb051a436ed4fcfb71f24dd78f45d51ctargetblanka0ddd50a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree32e97ce1a22abe836f0d7a35741f0707eea03684targetblank32e97cea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/a0ddd50beb051a436ed4fcfb71f24dd78f45d51c" target="_blank">a0ddd50</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/32e97ce1a22abe836f0d7a35741f0707eea03684" target="_blank">32e97ce</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreea0ddd50beb051a436ed4fcfb71f24dd78f45d51ctargetblanka0ddd50a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree32e97ce1a22abe836f0d7a35741f0707eea03684targetblank32e97cea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -527,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/a0ddd50beb051a436ed4fcfb71f24dd78f45d51c" target="_blank">a0ddd50</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/32e97ce1a22abe836f0d7a35741f0707eea03684" target="_blank">32e97ce</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -549,13 +549,7 @@ Ignored files:
     Ignored:    code/.Rhistory
 
 Untracked files:
-    Untracked:  code/additive_EM.R
     Untracked:  various figures/
-
-Unstaged changes:
-    Modified:   analysis/explore_2DSmoothEM.rmd
-    Modified:   code/general_EM.R
-    Modified:   code/simulate2D_fields.R
 
 </code></pre>
 <p>
@@ -601,6 +595,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/32e97ce1a22abe836f0d7a35741f0707eea03684/analysis/explore_2DSmoothEM_additive.rmd" target="_blank">32e97ce</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_2DSmoothEM_additive.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/7cc44e50f5e8aa6dd04de66c6fca1ac4ee74b791/docs/explore_2DSmoothEM_additive.html" target="_blank">7cc44e5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -720,9 +748,10 @@ class="math inline">\(K\)</span> points.</p>
 <p>First, let’s simulate some <span
 class="math inline">\(d=16\)</span>-dimensional data from a <span
 class="math inline">\(20 \times 20\)</span> grid defined on the unit
-square <span class="math inline">\([0,1] \times [0,1]\)</span>.</p>
-<p>The observation noise is assumed to be Gaussian with standard
-deviation 0.1 in each dimension.</p>
+square <span class="math inline">\([0,1] \times [0,1]\)</span>. Each
+function is randomly generated as an additive combination of sinusoidal
+functions with different frequencies. The observation noise is assumed
+to be Gaussian with standard deviation 0.1 in each dimension.</p>
 <p>To make this problem more interesting, let’s consider the sampling
 region follows roughly a donut shape.</p>
 <pre class="r"><code>funcs &lt;- make_diverse_additive_functions(n_surfaces = 16,
@@ -766,6 +795,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/7cc44e50f5e8aa6dd04de66c6fca1ac4ee74b791/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" target="_blank">7cc44e5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" target="_blank">cedaaab</a>
