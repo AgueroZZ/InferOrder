@@ -509,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree32e97ce1a22abe836f0d7a35741f0707eea03684targetblank32e97cea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreed2504370bf2799bff021098863560b7ce45c03e7targetblankd250437a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/32e97ce1a22abe836f0d7a35741f0707eea03684" target="_blank">32e97ce</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/d2504370bf2799bff021098863560b7ce45c03e7" target="_blank">d250437</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree32e97ce1a22abe836f0d7a35741f0707eea03684targetblank32e97cea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreed2504370bf2799bff021098863560b7ce45c03e7targetblankd250437a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -527,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/32e97ce1a22abe836f0d7a35741f0707eea03684" target="_blank">32e97ce</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/d2504370bf2799bff021098863560b7ce45c03e7" target="_blank">d250437</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -595,6 +595,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d2504370bf2799bff021098863560b7ce45c03e7/analysis/explore_2DSmoothEM_additive.rmd" target="_blank">d250437</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_2DSmoothEM_additive.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/87cd0b7fc4bbd38687b83137cd5e33e102ace056/docs/explore_2DSmoothEM_additive.html" target="_blank">87cd0b7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -768,60 +802,7 @@ grid &lt;- expand.grid(x = xs, y = ys)
 r &lt;- sqrt((grid$x - center[1])^2 + (grid$y - center[2])^2)
 grid_choice &lt;- subset(grid, r &gt; inner_rad &amp; r &lt; outer_rad)
 
-# Quick plot to check
-plot(grid, pch = 16, cex = 0.3, col = &quot;lightgrey&quot;,
-     main = &quot;Donut shaped Grid&quot;)
-points(grid_choice, pch = 16, cex = 0.5, col = &quot;steelblue&quot;)</code></pre>
-<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/7cc44e50f5e8aa6dd04de66c6fca1ac4ee74b791/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" target="_blank">7cc44e5</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-28
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" target="_blank">cedaaab</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-28
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>sim &lt;- simulate_2d_processes(
+sim &lt;- simulate_2d_processes(
   f          = funcs,
   nrow       = 50,
   ncol       = 50,
@@ -830,23 +811,10 @@ Ziang Zhang
   grid = grid_choice,
   seed       = 123
 )</code></pre>
-<p>Let’s visualize the simulated processes.</p>
-<pre class="r"><code>df_plot &lt;- cbind(sim$grid, sim$Y)
-df_long &lt;- melt(df_plot, id.vars = c(&quot;x&quot;, &quot;y&quot;),
-                variable.name = &quot;process&quot;,
-                value.name = &quot;value&quot;)
-
-ggplot(df_long, aes(x = x, y = y, color = value)) +
-  geom_point() +
-  scale_color_viridis_c(name = &quot;value&quot;) +
-  coord_equal() +
-  facet_wrap(~ process, nrow = 4) +
-  labs(
-    title = &quot;Simulated 2D Processes (colored dots)&quot;,
-    x = &quot;x&quot;,
-    y = &quot;y&quot;
-  ) +
-  theme_minimal()</code></pre>
+<p>Let’s visualize the sampling region:</p>
+<pre class="r"><code>plot(grid, pch = 16, cex = 0.3, col = &quot;lightgrey&quot;,
+     main = &quot;Donut shaped Grid&quot;)
+points(grid_choice, pch = 16, cex = 0.5, col = &quot;steelblue&quot;)</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
@@ -885,6 +853,24 @@ Ziang Zhang
 </table>
 </div>
 </div>
+<p>Let’s visualize the simulated processes.</p>
+<pre class="r"><code>df_plot &lt;- cbind(sim$grid, sim$Y)
+df_long &lt;- melt(df_plot, id.vars = c(&quot;x&quot;, &quot;y&quot;),
+                variable.name = &quot;process&quot;,
+                value.name = &quot;value&quot;)
+
+ggplot(df_long, aes(x = x, y = y, color = value)) +
+  geom_point() +
+  scale_color_viridis_c(name = &quot;value&quot;) +
+  coord_equal() +
+  facet_wrap(~ process, nrow = 4) +
+  labs(
+    title = &quot;Simulated 2D Processes (colored dots)&quot;,
+    x = &quot;x&quot;,
+    y = &quot;y&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Now, let’s permute the rows of <code>sim$Y</code> to avoid any
 spatial structure in the ordering of the data points.</p>
 <pre class="r"><code>sim$Y &lt;- sim$Y[sample(nrow(sim$Y)), ]</code></pre>
@@ -927,13 +913,13 @@ Iter  15: data_ll = -76075.0256, penalty = -10628.6417, total = -86703.6674
 Iter  16: data_ll = -74831.7786, penalty = -12165.0107, total = -86996.7893
 Objective decreased at iter 15 (-86703.6674 → -86996.7893), rolling back and stopping.</code></pre>
 <pre class="r"><code>plot(result_RW$loglik_trace)</code></pre>
-<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
-Past versions of unnamed-chunk-5-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div id="fig-unnamed-chunk-6-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -952,7 +938,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-5-1.png" target="_blank">cedaaab</a>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" target="_blank">cedaaab</a>
 </td>
 <td>
 Ziang Zhang
@@ -997,49 +983,6 @@ ggplot(df, aes(x = col, y = row, fill = value)) +
     title = &quot;RW: Estimated mu values on lattice&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" target="_blank">cedaaab</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-28
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Plot each function:</p>
-<pre class="r"><code>par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
-for (i in 1:ncol(result_RW$theta[[1]])) {
-  plot(result_RW$theta[[1]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
-}</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
@@ -1078,19 +1021,18 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>par(mfrow = c(1, 1))
-
-par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
-for (i in 1:ncol(result_RW$theta[[2]])) {
-  plot(result_RW$theta[[2]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
+<p>Plot each function:</p>
+<pre class="r"><code>par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
+for (i in 1:ncol(result_RW$theta[[1]])) {
+  plot(result_RW$theta[[1]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
 }</code></pre>
-<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
-Past versions of unnamed-chunk-7-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div id="fig-unnamed-chunk-8-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1109,7 +1051,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-2.png" target="_blank">cedaaab</a>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" target="_blank">cedaaab</a>
 </td>
 <td>
 Ziang Zhang
@@ -1122,6 +1064,13 @@ Ziang Zhang
 </table>
 </div>
 </div>
+<pre class="r"><code>par(mfrow = c(1, 1))
+
+par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
+for (i in 1:ncol(result_RW$theta[[2]])) {
+  plot(result_RW$theta[[2]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
+}</code></pre>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Let’s take a look at the inferred locations:</p>
 <pre class="r"><code>K1 &lt;- K; K2 &lt;- K
@@ -1164,44 +1113,7 @@ ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
   ) +
   coord_equal() +
   theme_minimal()</code></pre>
-<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" target="_blank">cedaaab</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-28
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Thought the inferred locations are not perfectly matching the donut
 shape, they still show some “donut-like” structure.</p>
 <br>
