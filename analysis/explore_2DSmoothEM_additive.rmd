@@ -47,11 +47,6 @@ grid <- expand.grid(x = xs, y = ys)
 r <- sqrt((grid$x - center[1])^2 + (grid$y - center[2])^2)
 grid_choice <- subset(grid, r > inner_rad & r < outer_rad)
 
-# Quick plot to check
-plot(grid, pch = 16, cex = 0.3, col = "lightgrey",
-     main = "Donut shaped Grid")
-points(grid_choice, pch = 16, cex = 0.5, col = "steelblue")
-
 sim <- simulate_2d_processes(
   f          = funcs,
   nrow       = 50,
@@ -61,6 +56,15 @@ sim <- simulate_2d_processes(
   grid = grid_choice,
   seed       = 123
 )
+```
+
+
+Let's visualize the sampling region:
+
+```{r}
+plot(grid, pch = 16, cex = 0.3, col = "lightgrey",
+     main = "Donut shaped Grid")
+points(grid_choice, pch = 16, cex = 0.5, col = "steelblue")
 ```
 
 Let's visualize the simulated processes.
