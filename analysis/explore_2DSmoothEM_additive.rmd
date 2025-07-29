@@ -49,8 +49,6 @@ grid_choice <- subset(grid, r > inner_rad & r < outer_rad)
 
 sim <- simulate_2d_processes(
   f          = funcs,
-  nrow       = 50,
-  ncol       = 50,
   d          = 16,
   epsilon_sd = 0.1,
   grid = grid_choice,
