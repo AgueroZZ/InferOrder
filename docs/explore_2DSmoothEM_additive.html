@@ -509,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8d8778f82374b4228e841ab39c2c15c0f07479e4targetblank8d8778fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeaa3ef5599688cbd1fb02d2d84cd666bc5aa348a0targetblankaa3ef55a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/8d8778f82374b4228e841ab39c2c15c0f07479e4" target="_blank">8d8778f</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/aa3ef5599688cbd1fb02d2d84cd666bc5aa348a0" target="_blank">aa3ef55</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8d8778f82374b4228e841ab39c2c15c0f07479e4targetblank8d8778fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeaa3ef5599688cbd1fb02d2d84cd666bc5aa348a0targetblankaa3ef55a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -527,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/8d8778f82374b4228e841ab39c2c15c0f07479e4" target="_blank">8d8778f</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/aa3ef5599688cbd1fb02d2d84cd666bc5aa348a0" target="_blank">aa3ef55</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -546,8 +546,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/figure/
-    Ignored:    analysis/site_libs/
     Ignored:    code/.Rhistory
 
 Untracked files:
@@ -608,6 +606,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/aa3ef5599688cbd1fb02d2d84cd666bc5aa348a0/analysis/explore_2DSmoothEM_additive.rmd" target="_blank">aa3ef55</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_2DSmoothEM_additive.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/cedaaab94ad628009cee6e1339bac8254969f082/docs/explore_2DSmoothEM_additive.html" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/8d8778f82374b4228e841ab39c2c15c0f07479e4/analysis/explore_2DSmoothEM_additive.rmd" target="_blank">8d8778f</a>
 </td>
 <td>
@@ -628,36 +660,12 @@ workflowr::wflow_publish("analysis/explore_2DSmoothEM_additive.rmd")
 </div>
 </div>
 <pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
-source(&quot;./code/additive_EM.R&quot;)</code></pre>
-<pre><code>Warning: package &#39;matrixStats&#39; was built under R version 4.3.3</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.3.3</code></pre>
-<pre class="r"><code>source(&quot;./code/simulate2D_fields.R&quot;)
-library(tidyverse)</code></pre>
-<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.3.3</code></pre>
-<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.3.3</code></pre>
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.2     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.4     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::count()  masks matrixStats::count()
-✖ tidyr::expand() masks Matrix::expand()
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-✖ tidyr::pack()   masks Matrix::pack()
-✖ tidyr::unpack() masks Matrix::unpack()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(ggplot2)
-library(reshape2)</code></pre>
-<pre><code>
-Attaching package: &#39;reshape2&#39;
-
-The following object is masked from &#39;package:tidyr&#39;:
-
-    smiths</code></pre>
-<pre class="r"><code>library(tidyr)
+source(&quot;./code/additive_EM.R&quot;)
+source(&quot;./code/simulate2D_fields.R&quot;)
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
 library(dplyr)</code></pre>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
@@ -702,6 +710,43 @@ plot(grid, pch = 16, cex = 0.3, col = &quot;lightgrey&quot;,
      main = &quot;Donut‐shaped Grid&quot;)
 points(grid_choice, pch = 16, cex = 0.5, col = &quot;steelblue&quot;)</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-2-1.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>sim &lt;- simulate_2d_processes(
   f          = funcs,
   nrow       = 50,
@@ -729,6 +774,43 @@ ggplot(df_long, aes(x = x, y = y, color = value)) +
   ) +
   theme_minimal()</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-3-1.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, let’s permute the rows of <code>sim$Y</code> to avoid any
 spatial structure in the ordering of the data points.</p>
 <pre class="r"><code>sim$Y &lt;- sim$Y[sample(nrow(sim$Y)), ]</code></pre>
@@ -772,6 +854,43 @@ Iter  16: data_ll = -74831.7786, penalty = -12165.0107, total = -86996.7893
 Objective decreased at iter 15 (-86703.6674 → -86996.7893), rolling back and stopping.</code></pre>
 <pre class="r"><code>plot(result_RW$loglik_trace)</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-5-1.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>mu_list &lt;- result_RW$params$mu
 n_cells &lt;- length(mu_list)   
 K       &lt;- sqrt(n_cells)     
@@ -805,12 +924,86 @@ ggplot(df, aes(x = col, y = row, fill = value)) +
   ) +
   theme_minimal()</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-6-1.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Plot each function:</p>
 <pre class="r"><code>par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
 for (i in 1:ncol(result_RW$theta[[1]])) {
   plot(result_RW$theta[[1]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
 }</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-1.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))
 
 par(mfrow = c(4, 4), mar = c(2, 2, 2, 1))
@@ -818,6 +1011,43 @@ for (i in 1:ncol(result_RW$theta[[2]])) {
   plot(result_RW$theta[[2]][,i], type = &#39;l&#39;, main = paste(&quot;Coordinate&quot;, i))
 }</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-7-2.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Let’s take a look at the inferred locations:</p>
 <pre class="r"><code>K1 &lt;- K; K2 &lt;- K
@@ -861,6 +1091,43 @@ ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
   coord_equal() +
   theme_minimal()</code></pre>
 <p><img src="figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/cedaaab94ad628009cee6e1339bac8254969f082/docs/figure/explore_2DSmoothEM_additive.rmd/unnamed-chunk-8-1.png" target="_blank">cedaaab</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Thought the inferred locations are not perfectly matching the donut
 shape, they still show some “donut-like” structure.</p>
 <br>
