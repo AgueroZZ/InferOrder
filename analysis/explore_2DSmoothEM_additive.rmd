@@ -7,7 +7,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 source("./code/prior_precision.R")
 source("./code/additive_EM.R")
 source("./code/simulate2D_fields.R")
