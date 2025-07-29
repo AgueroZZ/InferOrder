@@ -238,8 +238,6 @@ make_init <- function(X, ordering_vec, K, assume_EEI = TRUE) {
   list(pi = pi_vec, mu = mu_list, sigma = sigma_list)
 }
 
-
-
 # 1. Cache covariance inverses and log-determinants
 init_cov_cache_fast <- function(params) {
   K <- length(params$pi)
@@ -342,8 +340,6 @@ MSTEP <- function(data, gamma, params, Q_prior = NULL,
   return(list(pi = pi_new, mu = mu_list, sigma = sigma_list))
 }
 
-
-
 # 4. EM wrapper
 EM_algorithm <- function(data, init_params,
                          Q_prior   = NULL,
@@ -426,7 +422,6 @@ EM_algorithm <- function(data, init_params,
       }
     }
   }
-
 
   list(params       = params,
        gamma        = gamma,

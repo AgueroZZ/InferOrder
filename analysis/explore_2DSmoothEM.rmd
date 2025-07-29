@@ -9,7 +9,8 @@ editor_options:
 
 ## Introduction
 
-We consider a smooth EM algorithm where the component means $\boldsymbol{\mu}_{1,1}, \dots, \boldsymbol{\mu}_{K,K}$ are placed on a 2D equally spaced lattice of size $K \times K$. To encourage **spatial smoothness**, we impose a **random walk of order $q$ (RW-$q$)** prior on the means.
+We consider a smooth EM algorithm where the component means $\boldsymbol{\mu}_{1,1}, \dots, \boldsymbol{\mu}_{K,K}$ are placed on a 2D equally spaced lattice of size $K \times K$. 
+To encourage **spatial smoothness**, we impose a **random walk of order $q$ (RW-$q$)** prior on the means.
 
 Let $\boldsymbol{\mu}$ denote the stacked vector of all component means. The prior takes the form:
 

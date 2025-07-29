@@ -1,3 +1,56 @@
+# Generate a list of additive f(x,y) functions
+make_diverse_additive_functions <- function(
+    n_surfaces = 16,
+    freq_pool   = 1:10,
+    min_basis   = 3,
+    max_basis   = 7,
+    seed        = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+
+  # Helper: build one random 1D function
+  make_random_1d <- function() {
+    n_basis    <- sample(min_basis:max_basis, 1)
+    freqs      <- sample(freq_pool, n_basis, replace = TRUE)
+    phases_sin <- runif(n_basis, 0, 2*pi)
+    phases_cos <- runif(n_basis, 0, 2*pi)
+    amps_sin   <- rnorm(n_basis, sd = 1/freqs)
+    amps_cos   <- rnorm(n_basis, sd = 1/freqs)
+    function(t) {
+      t <- pmin(pmax(t, 0), 1)
+      sapply(t, function(tt) {
+        sum( amps_sin * sin(2*pi*freqs*tt + phases_sin) +
+               amps_cos * cos(2*pi*freqs*tt + phases_cos) )
+      })
+    }
+  }
+
+  funcs <- vector("list", n_surfaces)
+  for (m in seq_len(n_surfaces)) {
+    # generate the two components for this surface
+    f1 <- make_random_1d()
+    f2 <- make_random_1d()
+
+    # wrap in local so each closure gets its own copy
+    funcs[[m]] <- local({
+      f1_i <- f1
+      f2_i <- f2
+      function(x, y) {
+        fx <- f1_i(x)
+        fy <- f2_i(y)
+        if (length(x) == length(y)) {
+          fx + fy
+        } else {
+          outer(fx, fy, "+")
+        }
+      }
+    })
+  }
+  funcs
+}
+
+
+
 simulate_2d_processes <- function(f = NULL,
                                   nrow         = 50,
                                   ncol         = 50,
