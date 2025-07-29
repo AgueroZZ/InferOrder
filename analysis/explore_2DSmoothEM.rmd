@@ -29,28 +29,42 @@ $$
 This model is sometimes called a Intrinsic Conditional AutoRegressive (ICAR) model in spatial statistics.
 
 ```{r}
-library(ggplot2)
-library(reshape2)
 source("./code/prior_precision.R")
 source("./code/general_EM.R")
 source("./code/simulate2D_fields.R")
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
 ```
 
 ## Simulate Data
 
 First, let's simulate some $d=16$-dimensional data from a $20 \times 20$ grid defined on the unit square $[0,1] \times [0,1]$. 
 Each dimension is a smooth function of the 2D coordinates $(x,y)$.
+
 The smooth function is randomly simulated from a Matern process with smoothness parameter $\nu=2$ and range parameter $\rho=0.3$.
 
 The observation noise is assumed to be Gaussian with standard deviation 0.1 in each dimension.
 
+To make this problem more interesting, let's consider the sampling region follows roughly a donut shape.
+
 ```{r}
+n           <- 40        # grid resolution
+inner_rad   <- 0.2        # inner hole radius
+outer_rad   <- 0.4        # outer radius of donut
+center      <- c(0.5, 0.5)
+xs  <- seq(0, 1, length.out = n)
+ys  <- seq(0, 1, length.out = n)
+grid <- expand.grid(x = xs, y = ys)
+r <- sqrt((grid$x - center[1])^2 + (grid$y - center[2])^2)
+grid_choice <- subset(grid, r > inner_rad & r < outer_rad)
+
 sim <- simulate_2d_processes(
   f          = NULL,
-  nrow       = 20,
-  ncol       = 20,
   d          = 16,
   epsilon_sd = 0.1,
+  grid = grid_choice,
   seed       = 123
 )
 ```
@@ -141,6 +155,50 @@ ggplot(df, aes(x = col, y = row, fill = value)) +
   theme_minimal()
 ```
 
+Let's take a look at the inferred locations:
+
+```{r}
+K1 <- K; K2 <- K
+
+# 1) Hard‐assign each observation to a latent grid index (1 … K1*K2)
+cluster_assign <- max.col(result_RW1$gamma)   
+
+# 2) Build a data.frame of the full latent grid with its (i,j) coordinates
+latent_grid <- expand.grid(i = seq_len(K1), j = seq_len(K2))
+latent_grid$cluster <- seq_len(nrow(latent_grid))  # 1:(K1*K2)
+
+# 3) Map each observation to its latent grid (i,j)
+obs_map <- data.frame(
+  obs     = seq_len(nrow(sim$Y)),
+  cluster = cluster_assign
+)
+assign_df <- merge(obs_map, latent_grid, by = "cluster")
+
+# 4) Compute raw counts per (i,j)
+raw_cnt <- assign_df %>%
+  count(i, j, name = "n_obs")
+
+# 5) Build the complete grid of (i,j)
+full_grid <- expand.grid(i = seq_len(K1), j = seq_len(K2))
+
+# 6) Left‐join counts and fill missing with zero
+cnt_full <- full_grid %>%
+  left_join(raw_cnt, by = c("i", "j")) %>%
+  replace_na(list(n_obs = 0))
+
+# 7) Plot the number of observations per latent grid cell,
+#    normalized to [0,1] for both axes
+ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "D", name = "# obs") +
+  labs(
+    x     = "latent j / K2",
+    y     = "latent i / K1",
+    title = "Observations per Latent Grid Cell (RW1)"
+  ) +
+  coord_equal() +
+  theme_minimal()
+```
 
 
 
@@ -200,6 +258,53 @@ ggplot(df, aes(x = col, y = row, fill = value)) +
     fill = "mu value",
     title = "RW2: Estimated mu values on 5×5 lattice"
   ) +
+  theme_minimal()
+```
+
+
+
+Let's take a look at the inferred locations:
+
+```{r}
+K1 <- K; K2 <- K
+
+# 1) Hard‐assign each observation to a latent grid index (1 … K1*K2)
+cluster_assign <- max.col(result_RW2$gamma)   
+
+# 2) Build a data.frame of the full latent grid with its (i,j) coordinates
+latent_grid <- expand.grid(i = seq_len(K1), j = seq_len(K2))
+latent_grid$cluster <- seq_len(nrow(latent_grid))  # 1:(K1*K2)
+
+# 3) Map each observation to its latent grid (i,j)
+obs_map <- data.frame(
+  obs     = seq_len(nrow(sim$Y)),
+  cluster = cluster_assign
+)
+assign_df <- merge(obs_map, latent_grid, by = "cluster")
+
+# 4) Compute raw counts per (i,j)
+raw_cnt <- assign_df %>%
+  count(i, j, name = "n_obs")
+
+# 5) Build the complete grid of (i,j)
+full_grid <- expand.grid(i = seq_len(K1), j = seq_len(K2))
+
+# 6) Left‐join counts and fill missing with zero
+cnt_full <- full_grid %>%
+  left_join(raw_cnt, by = c("i", "j")) %>%
+  replace_na(list(n_obs = 0))
+
+# 7) Plot the number of observations per latent grid cell,
+#    normalized to [0,1] for both axes
+ggplot(cnt_full, aes(x = j / K2, y = i / K1, fill = n_obs)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "D", name = "# obs") +
+  labs(
+    x     = "latent j / K2",
+    y     = "latent i / K1",
+    title = "Observations per Latent Grid Cell (RW2)"
+  ) +
+  coord_equal() +
   theme_minimal()
 ```
 
