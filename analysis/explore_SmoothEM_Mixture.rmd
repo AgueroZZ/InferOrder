@@ -204,6 +204,8 @@ set.seed(123)
 res <- two_ordering_smoothEM(
   X = X, K = 50,
   modelName = "EEI",
+  init_method = "pca",
+  init_coord_assign = rep(c(1,2), each = ncol(X) / 2),
   make_Q_prior = make_random_walk_precision,
   lambda_vec = c(50, 50),
   relative_lambda = TRUE,
@@ -237,7 +239,7 @@ for (i in 1:length(res$result1$params$mu[[1]])) {
        cex = 0.5,
        main = paste("Coordinate", all_coordinates_1[index]), 
        xlab = "discretized t1", ylab = paste("mu"))
-  points(t2, 
+  points(t1, 
          X[, permut_cols == all_coordinates_1[index]], 
          col = rgb(1, 0.75, 0.8, alpha = 0.8),
          cex = 0.2)
@@ -258,7 +260,7 @@ for (i in 1:length(res$result2$params$mu[[1]])) {
        main = paste("Coordinate", all_coordinates_2[index]), 
        xlab = "discretized t2", ylab = paste("mu"))
   
-  points((10-t1), type = 'p',
+  points((10 - t2), type = 'p',
          X[, permut_cols == all_coordinates_2[index]], 
          col = rgb(1, 0.75, 0.8, alpha = 0.8),
          cex = 0.2)
@@ -330,20 +332,22 @@ Take a look at the unordered structure plot:
 plot_structure(Loadings)
 ```
 
-Apply the smooth EM algorithm to infer the latent orderings:
+
+Here it is natural to expect the cell-type factors to evolve more smoothly than the batch-type factors. Therefore, when applying the smooth EM algorithm, we will use the second order random walk prior for the first latent space, and the first order random walk prior for the second latent space.
 
 ```{r}
-set.seed(123)
 resPancreas <- two_ordering_smoothEM(
-  X = Loadings, K = 100,
+  X = Loadings, K = 50,
+  init_method = "pca",
+  init_coord_assign = rep(c(1,2), each = ncol(Loadings) / 2),
   modelName = "EEI",
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(400, 50),
+  lambda_vec = c(50, 50),
   relative_lambda = TRUE,
-  rw_order_vec = c(2, 1),
+  rw_order_vec = c(2, 2),
   reassign_by = "posterior",
   max_iter = 100,
-  max_iter_EM = 300,
+  max_iter_EM = 1,
   verbose = TRUE
 )
 ```
@@ -353,42 +357,6 @@ Let's check the inferred latent orderings.
 ```{r}
 sort(permut_cols[resPancreas$J1])
 sort(permut_cols[resPancreas$J2])
-```
-
-All the cell-type factors are assigned to the first latent ordering, and (almost) all the batch-type factors are assigned to the second latent ordering, except for the 14th factor, which is assigned to the first latent ordering.
-
-
-Take a look at each inferred function in the first latent ordering:
-
-```{r}
-all_coordinates_1 <- permut_cols[resPancreas$J1]
-par(mfrow = c(2, 4))
-for (i in 1:8) {
-  index <- order(all_coordinates_1)[i]
-  mean_vec <- sapply(resPancreas$result1$params$mu, function(mu_k) mu_k[[index]])
-  plot((1:100)/100, mean_vec, type = 'o',
-       cex = 0.5,
-       main = paste("Factor", all_coordinates_1[index]), 
-       xlab = "discretized t1", ylab = paste("mu"))
-}
-par(mfrow = c(1, 1))
-```
-
-
-Take a look at each inferred function in the second latent ordering:
-
-```{r}
-all_coordinates_2 <- permut_cols[resPancreas$J2]
-par(mfrow = c(2, 4))
-for (i in 1:length(resPancreas$result2$params$mu[[1]])) {
-  index <- order(all_coordinates_2)[i]
-  mean_vec <- sapply(resPancreas$result2$params$mu, function(mu_k) mu_k[[index]])
-  plot((1:100)/100, mean_vec, type = 'o',
-       cex = 0.5,
-       main = paste("Factor", all_coordinates_2[index]), 
-       xlab = "discretized t2", ylab = paste("mu"))
-}
-par(mfrow = c(1, 1))
 ```
 
 
