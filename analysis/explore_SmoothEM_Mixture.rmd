@@ -222,7 +222,7 @@ The first 8 coordinates are correctly assigned to one partition, and the second 
 Let's visualize the inferred $\boldsymbol{\mu}^{(1)}$:
 
 ```{r}
-all_coordinates_1 <- permut_cols[res$coord_assign == 1]
+all_coordinates_1 <- permut_cols[res$coord_assign == 2]
 par(mfrow = c(2, 4))
 for (i in 1:length(res$result1$params$mu[[1]])) {
   index <- order(all_coordinates_1)[i]
@@ -238,7 +238,7 @@ par(mfrow = c(1, 1))
 Also visualize the inferred $\boldsymbol{\mu}^{(2)}$:
 
 ```{r}
-all_coordinates_2 <- permut_cols[res$coord_assign == 2]
+all_coordinates_2 <- permut_cols[res$coord_assign == 1]
 par(mfrow = c(2, 4))
 for (i in 1:length(res$result2$params$mu[[1]])) {
   index <- order(all_coordinates_2)[i]
