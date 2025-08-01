@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree275d0d3260fc0b6e39239a2a9b581674106a7160targetblank275d0d3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree087d8d27beaf1175c8039b08a578807da230ab54targetblank087d8d2a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/275d0d3260fc0b6e39239a2a9b581674106a7160" target="_blank">275d0d3</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/087d8d27beaf1175c8039b08a578807da230ab54" target="_blank">087d8d2</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree275d0d3260fc0b6e39239a2a9b581674106a7160targetblank275d0d3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree087d8d27beaf1175c8039b08a578807da230ab54targetblank087d8d2a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/275d0d3260fc0b6e39239a2a9b581674106a7160" target="_blank">275d0d3</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/087d8d27beaf1175c8039b08a578807da230ab54" target="_blank">087d8d2</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,6 +547,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/figure/
     Ignored:    code/.Rhistory
 
 Untracked files:
@@ -600,6 +601,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/087d8d27beaf1175c8039b08a578807da230ab54/analysis/explore_SmoothEM_Mixture.rmd" target="_blank">087d8d2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/explore_SmoothEM_Mixture.html" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1103,6 +1138,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-1.png" target="_blank">0fdf6de</a>
 </td>
 <td>
@@ -1162,6 +1208,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-2.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-2.png" target="_blank">0fdf6de</a>
 </td>
 <td>
@@ -1195,6 +1252,8 @@ class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>.</p>
 res &lt;- two_ordering_smoothEM(
   X = X, K = 50,
   modelName = &quot;EEI&quot;,
+  init_method = &quot;pca&quot;,
+  init_coord_assign = rep(c(1,2), each = ncol(X) / 2),
   make_Q_prior = make_random_walk_precision,
   lambda_vec = c(50, 50),
   relative_lambda = TRUE,
@@ -1205,13 +1264,12 @@ res &lt;- two_ordering_smoothEM(
   verbose = TRUE
 )</code></pre>
 <pre><code>Iteration  1: reassigned 6 coordinates (J1 = 8, J2 = 8)
-Iteration  2: reassigned 2 coordinates (J1 = 6, J2 = 10)
-Iteration  3: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
+Iteration  2: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
 <pre class="r"><code>sort(permut_cols[res$J1])</code></pre>
-<pre><code>[1]  9 10 11 12 13 14 15 16</code></pre>
-<pre class="r"><code>sort(permut_cols[res$J2])</code></pre>
 <pre><code>[1] 1 2 3 4 5 6 7 8</code></pre>
+<pre class="r"><code>sort(permut_cols[res$J2])</code></pre>
+<pre><code>[1]  9 10 11 12 13 14 15 16</code></pre>
 <p>The first 8 coordinates are correctly assigned to one partition, and
 the second 8 coordinates are assigned to the other partition.</p>
 <p>Let’s visualize the inferred <span
@@ -1225,7 +1283,7 @@ for (i in 1:length(res$result1$params$mu[[1]])) {
        cex = 0.5,
        main = paste(&quot;Coordinate&quot;, all_coordinates_1[index]), 
        xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;))
-  points(t2, 
+  points(t1, 
          X[, permut_cols == all_coordinates_1[index]], 
          col = rgb(1, 0.75, 0.8, alpha = 0.8),
          cex = 0.2)
@@ -1253,6 +1311,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/a58de040d6bfe54f87df2c0e241207a9304ba362/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">a58de04</a>
@@ -1314,7 +1383,7 @@ for (i in 1:length(res$result2$params$mu[[1]])) {
        main = paste(&quot;Coordinate&quot;, all_coordinates_2[index]), 
        xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;))
   
-  points((10-t1), type = &#39;p&#39;,
+  points((10 - t2), type = &#39;p&#39;,
          X[, permut_cols == all_coordinates_2[index]], 
          col = rgb(1, 0.75, 0.8, alpha = 0.8),
          cex = 0.2)
@@ -1342,6 +1411,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/a58de040d6bfe54f87df2c0e241207a9304ba362/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">a58de04</a>
@@ -1396,18 +1476,129 @@ will take a look at the unordered data matrix.</p>
 <pre class="r"><code>rownames(X) &lt;- paste0(&quot;Cell&quot;, 1:nrow(X))
 plot_structure(X)</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-8-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, let’s order them based on the first latent ordering:</p>
 <pre class="r"><code>position_1 &lt;- apply(res$Gamma1, 1, which.max)
 X_J1 &lt;- X[, res$J1]
 X_J1_order &lt;- order(position_1)
 plot_structure(X_J1, order = rownames(X_J1)[X_J1_order])</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-9-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>As well as the second latent ordering:</p>
 <pre class="r"><code>position_2 &lt;- apply(res$Gamma2, 1, which.max)
 X_J2 &lt;- X[, res$J2]
 X_J2_order &lt;- order(position_2)
 plot_structure(X_J2, order = rownames(X_J2)[X_J2_order])</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-10-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="application-to-pancreas-dataset" class="section level2">
 <h2><strong>Application to Pancreas dataset</strong></h2>
@@ -1439,60 +1630,70 @@ Loadings &lt;- Loadings[, permut_cols]</code></pre>
 <p>Take a look at the unordered structure plot:</p>
 <pre class="r"><code>plot_structure(Loadings)</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Apply the smooth EM algorithm to infer the latent orderings:</p>
-<pre class="r"><code>set.seed(123)
-resPancreas &lt;- two_ordering_smoothEM(
-  X = Loadings, K = 100,
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-13-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here it is natural to expect the cell-type factors to evolve more
+smoothly than the batch-type factors. Therefore, when applying the
+smooth EM algorithm, we will use the second order random walk prior for
+the first latent space, and the first order random walk prior for the
+second latent space.</p>
+<pre class="r"><code>resPancreas &lt;- two_ordering_smoothEM(
+  X = Loadings, K = 50,
+  init_method = &quot;pca&quot;,
+  init_coord_assign = rep(c(1,2), each = ncol(Loadings) / 2),
   modelName = &quot;EEI&quot;,
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(400, 50),
+  lambda_vec = c(50, 50),
   relative_lambda = TRUE,
-  rw_order_vec = c(2, 1),
+  rw_order_vec = c(2, 2),
   reassign_by = &quot;posterior&quot;,
   max_iter = 100,
-  max_iter_EM = 300,
+  max_iter_EM = 1,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration  1: reassigned 2 coordinates (J1 = 8, J2 = 8)
-Iteration  2: reassigned 1 coordinates (J1 = 10, J2 = 6)
-Iteration  3: reassigned 0 coordinates (J1 = 11, J2 = 5)</code></pre>
+<pre><code>Iteration  1: reassigned 3 coordinates (J1 = 8, J2 = 8)
+Iteration  2: reassigned 2 coordinates (J1 = 5, J2 = 11)
+Iteration  3: reassigned 0 coordinates (J1 = 5, J2 = 11)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
 <pre class="r"><code>sort(permut_cols[resPancreas$J1])</code></pre>
-<pre><code> [1]  2  5  7  9 10 11 12 13 14 15 16</code></pre>
+<pre><code>[1]  1  9 11 13 16</code></pre>
 <pre class="r"><code>sort(permut_cols[resPancreas$J2])</code></pre>
-<pre><code>[1] 1 3 4 6 8</code></pre>
-<p>All the cell-type factors are assigned to the first latent ordering,
-and (almost) all the batch-type factors are assigned to the second
-latent ordering, except for the 14th factor, which is assigned to the
-first latent ordering.</p>
-<p>Take a look at each inferred function in the first latent
-ordering:</p>
-<pre class="r"><code>all_coordinates_1 &lt;- permut_cols[resPancreas$J1]
-par(mfrow = c(2, 4))
-for (i in 1:8) {
-  index &lt;- order(all_coordinates_1)[i]
-  mean_vec &lt;- sapply(resPancreas$result1$params$mu, function(mu_k) mu_k[[index]])
-  plot((1:100)/100, mean_vec, type = &#39;o&#39;,
-       cex = 0.5,
-       main = paste(&quot;Factor&quot;, all_coordinates_1[index]), 
-       xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;))
-}</code></pre>
-<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
-<p>Take a look at each inferred function in the second latent
-ordering:</p>
-<pre class="r"><code>all_coordinates_2 &lt;- permut_cols[resPancreas$J2]
-par(mfrow = c(2, 4))
-for (i in 1:length(resPancreas$result2$params$mu[[1]])) {
-  index &lt;- order(all_coordinates_2)[i]
-  mean_vec &lt;- sapply(resPancreas$result2$params$mu, function(mu_k) mu_k[[index]])
-  plot((1:100)/100, mean_vec, type = &#39;o&#39;,
-       cex = 0.5,
-       main = paste(&quot;Factor&quot;, all_coordinates_2[index]), 
-       xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;))
-}
-par(mfrow = c(1, 1))</code></pre>
-<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> [1]  2  3  4  5  6  7  8 10 12 14 15</code></pre>
 <p>Let’s take a look at the structure plot ordered by each latent
 ordering.</p>
 <pre class="r"><code>position_1 &lt;- apply(resPancreas$Gamma1, 1, which.max)
@@ -1500,26 +1701,100 @@ Loadings_J1 &lt;- Loadings[, resPancreas$J1]
 Loadings_J1_order &lt;- order(position_1)
 plot_structure(Loadings_J1, order = rownames(Loadings_J1)[Loadings_J1_order],
                plot_name = &quot;Ordered by Latent Ordering 1&quot;)</code></pre>
-<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_highlight_types(type_vec = celltype,
                      subset_types = unique(celltype),
                      order_vec = rownames(Loadings_J1)[Loadings_J1_order],
                      other_color = &quot;white&quot;
                      )</code></pre>
-<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>As well as the second latent ordering:</p>
 <pre class="r"><code>position_2 &lt;- apply(resPancreas$Gamma2, 1, which.max)
 Loadings_J2 &lt;- Loadings[, resPancreas$J2]
 Loadings_J2_order &lt;- order(position_2)
 plot_structure(Loadings_J2, order = rownames(Loadings_J2)[Loadings_J2_order],
                plot_name = &quot;Ordered by Latent Ordering 2&quot;)</code></pre>
-<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
+Past versions of unnamed-chunk-17-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b4251d5a88689f50a307449a7a69b584c95c1a71/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-1.png" target="_blank">b4251d5</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_highlight_types(type_vec = batchtype,
                      subset_types = unique(batchtype),
                      order_vec = rownames(Loadings_J2)[Loadings_J2_order],
                      other_color = &quot;white&quot;
                      )</code></pre>
-<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
