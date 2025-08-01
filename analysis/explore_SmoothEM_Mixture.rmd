@@ -43,10 +43,7 @@ Our target is to obtain the partitions $\mathcal{J}_1$ and $\mathcal{J}_2$, the 
 
 ## An Iterative Algorithm
 
-If the partition $\mathcal{J}_1$ and $\mathcal{J}_2$ are known, we can apply the standard smooth EM algorithm to estimate the parameters in each partition separately.  
-However, the partition is unknown, and there are $2^D$ possible partitions, which is computationally infeasible to exhaustively search for large $D$.
-
-Therefore, we propose the following iterative algorithm that jointly infers the partition and the model parameters in a greedy manner.
+If the partition $\mathcal{J}_1$ and $\mathcal{J}_2$ are known, we can apply the standard smooth EM algorithm to estimate the parameters in each partition separately. However, the partition is unknown, and there are $2^D$ possible partitions, which is computationally infeasible to exhaustively search for large $D$. Therefore, we propose the following iterative algorithm that jointly infers the partition and the model parameters in a greedy manner.
 
 Let $\mathcal{J}_1^{(t)}$ and $\mathcal{J}_2^{(t)}$ denote the partition at iteration $t$. Each iteration then proceeds in three steps:
 
@@ -72,8 +69,7 @@ Here the most important quantities are $\boldsymbol{\Gamma}^{(j)}$, which essent
 
 Each coordinate $j \in \{1, \dots, D\}$ is re-assigned to either partition $\mathcal{J}_1$ or $\mathcal{J}_2$ based on the current position matrices $\boldsymbol{\Gamma}^{(1)}$ and $\boldsymbol{\Gamma}^{(2)}$, to optimize the log-posterior density of the data under each model.
 
-Let $\boldsymbol{X}_{.j} \in \mathbb{R}^N$ denote the $j$th column of the data matrix.  
-For each $j$, we compute the (negative) log-posterior density under each ordering:
+Let $\boldsymbol{X}_{.j} \in \mathbb{R}^N$ denote the $j$th column of the data matrix. For each $j$, we compute the (negative) log-posterior density under each ordering:
 \[
 \mathcal{E}_j^{(1)} = \text{negative posterior under ordering 1}, \quad \mathcal{E}_j^{(2)} = \text{negative posterior under ordering 2}.
 \]
@@ -156,11 +152,15 @@ matern_cov <- function(t, range = 0.5, smoothness = 2.5, variance = 1.0) {
 Sigma1 <- matern_cov(matrix(t1, ncol = 1))
 X1 <- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma1)
 X1 <- t(X1)  # Make it N x 8
+# Make X1 positive
+X1 <- X1 + abs(min(X1))  # Shift to make all values positive
 
 # Generate second 8 coordinates (dependent on t2)
 Sigma2 <- matern_cov(matrix(t2, ncol = 1))
 X2 <- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma2)
 X2 <- t(X2)  # Make it N x 8
+# Make X2 positive
+X2 <- X2 + abs(min(X2))  # Shift to make all values positive
 
 X <- cbind(X1, X2)  # Combine the two sets of coordinates
 # permute the columns
@@ -201,7 +201,7 @@ res <- two_ordering_smoothEM(
   X = X, K = 50,
   modelName = "EEI",
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(10, 10),
+  lambda_vec = c(20, 20),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = "posterior",
@@ -222,13 +222,15 @@ The first 8 coordinates are correctly assigned to one partition, and the second 
 Let's visualize the inferred $\boldsymbol{\mu}^{(1)}$:
 
 ```{r}
+all_coordinates_1 <- permut_cols[res$coord_assign == 1]
 par(mfrow = c(2, 4))
 for (i in 1:length(res$result1$params$mu[[1]])) {
-  mean_vec <- sapply(res$result1$params$mu, function(mu_k) mu_k[[i]])
-  plot(1:50, mean_vec, 
-       cex = 0.3,
-       main = paste("Coordinate", i), 
-       xlab = "discretized t1", ylab = paste("mu", i))
+  index <- order(all_coordinates_1)[i]
+  mean_vec <- sapply(res$result1$params$mu, function(mu_k) mu_k[[index]])
+  plot(1:50, mean_vec, type = 'o',
+       cex = 0.5,
+       main = paste("Coordinate", all_coordinates_1[index]), 
+       xlab = "discretized t1", ylab = paste("mu"))
 }
 par(mfrow = c(1, 1))
 ```
@@ -236,13 +238,15 @@ par(mfrow = c(1, 1))
 Also visualize the inferred $\boldsymbol{\mu}^{(2)}$:
 
 ```{r}
+all_coordinates_2 <- permut_cols[res$coord_assign == 2]
 par(mfrow = c(2, 4))
 for (i in 1:length(res$result2$params$mu[[1]])) {
-  mean_vec <- sapply(res$result2$params$mu, function(mu_k) mu_k[[i]])
-  plot(1:50, mean_vec, 
-       cex = 0.3,
-       main = paste("Coordinate", i), 
-       xlab = "discretized t2", ylab = paste("mu", i))
+  index <- order(all_coordinates_2)[i]
+  mean_vec <- sapply(res$result2$params$mu, function(mu_k) mu_k[[index]])
+  plot(1:50, mean_vec, type = 'o',
+       cex = 0.5,
+       main = paste("Coordinate", all_coordinates_2[index]), 
+       xlab = "discretized t2", ylab = paste("mu"))
 }
 par(mfrow = c(1, 1))
 ```
