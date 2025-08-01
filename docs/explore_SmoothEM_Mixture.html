@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeff3f13fc01ceb289a3203eb9cea206444bdc4331targetblankff3f13fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8249f14ebfd252a3e8fa28da34f16f80f996a5e9targetblank8249f14a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/ff3f13fc01ceb289a3203eb9cea206444bdc4331" target="_blank">ff3f13f</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8249f14ebfd252a3e8fa28da34f16f80f996a5e9" target="_blank">8249f14</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeff3f13fc01ceb289a3203eb9cea206444bdc4331targetblankff3f13fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8249f14ebfd252a3e8fa28da34f16f80f996a5e9targetblank8249f14a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/ff3f13fc01ceb289a3203eb9cea206444bdc4331" target="_blank">ff3f13f</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8249f14ebfd252a3e8fa28da34f16f80f996a5e9" target="_blank">8249f14</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -600,6 +600,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8249f14ebfd252a3e8fa28da34f16f80f996a5e9/analysis/explore_SmoothEM_Mixture.rmd" target="_blank">8249f14</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/8b58637523b8fb11b49895529baaba189fe77ee7/docs/explore_SmoothEM_Mixture.html" target="_blank">8b58637</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -748,16 +782,28 @@ class="math display">\[
 \mathcal{E}_j^{(2)} = \text{negative posterior under ordering 2}.
 \]</span></p>
 <p>Specifically, the negative log-posterior density for ordering <span
-class="math inline">\(j\)</span> is given by: <span
+class="math inline">\(a\)</span> is given by: <span
 class="math display">\[
-\mathcal{E}_j =
-\underbrace{\frac{1}{2 \sigma_j^2} \left\| \boldsymbol{X}_{.j} -
-\boldsymbol{\Gamma} \boldsymbol{\mu}_j \right\|^2}_{\text{data fit}}
-+ \underbrace{\frac{1}{2} \boldsymbol{\mu}_j^\top \boldsymbol{Q}
-\boldsymbol{\mu}_j}_{\text{smoothness penalty}}
-+ \underbrace{\frac{1}{2} \log \det \left( \frac{1}{\sigma_j^2}
-\boldsymbol{\Gamma}^\top \boldsymbol{\Gamma} + \boldsymbol{Q}
-\right)}_{\text{normalizing constant}}.
+\mathcal{E}_j^{(a)} =
+\underbrace{
+\sum_{i=1}^N \sum_{k=1}^{K_a} \Gamma_{ik}^{(a)}
+\frac{\left(\mathbf{X}_{ij} - \mu_{jk}^{(a)}\right)^2}{2\,
+(\sigma_j^{(a)})^2}
+}_{\text{data fit}}
+\;+\;
+\underbrace{
+\sum_{i=1}^N \sum_{k=1}^{K_a} \Gamma_{ik}^{(a)}
+\frac{1}{2} \log\left(2\pi\, (\sigma_j^{(a)})^2\right)
+}_{\text{obs. norm. const.}}
+\;+\;
+\underbrace{
+\frac{1}{2} (\boldsymbol{\mu}_j^{(a)})^\top Q^{(a)}
+\boldsymbol{\mu}_j^{(a)}
+}_{\text{smoothness penalty}}
+\;+\;
+\underbrace{
+\frac{K_a}{2} \log(2\pi) - \frac{1}{2} \log \det(Q^{(a)})
+}_{\text{prior norm. const.}}.
 \]</span></p>
 <p>We then update the assignment as follows: <span
 class="math display">\[
@@ -840,6 +886,43 @@ for (i in 1:8) {
        xlab = &quot;t1&quot;, ylab = paste(&quot;X1[&quot;, i, &quot;]&quot;))
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-1.png" target="_blank">8b58637</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1,1))
 
 # Plot the second 8 coordinates
@@ -851,6 +934,43 @@ for (i in 1:8) {
        xlab = &quot;t2&quot;, ylab = paste(&quot;X2[&quot;, i, &quot;]&quot;))
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-2.png" target="_blank">8b58637</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1,1))</code></pre>
 <p>Let’s apply the smooth EM algorithm to infer the two latent
 orderings, with the second order random walk prior for <span
@@ -887,6 +1007,43 @@ for (i in 1:length(res$result1$params$mu[[1]])) {
        xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;, i))
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">8b58637</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Also visualize the inferred <span
 class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>:</p>
@@ -899,6 +1056,43 @@ for (i in 1:length(res$result2$params$mu[[1]])) {
        xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;, i))
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">8b58637</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <br>
 <p>
