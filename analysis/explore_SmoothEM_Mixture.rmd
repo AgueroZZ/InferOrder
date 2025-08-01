@@ -201,7 +201,7 @@ res <- two_ordering_smoothEM(
   X = X, K = 50,
   modelName = "EEI",
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(20, 20),
+  lambda_vec = c(50, 50),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = "posterior",
