@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree6c8b619a3ab1c92a9087d90baf3e830162361dd0targetblank6c8b619a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree275d0d3260fc0b6e39239a2a9b581674106a7160targetblank275d0d3a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/6c8b619a3ab1c92a9087d90baf3e830162361dd0" target="_blank">6c8b619</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/275d0d3260fc0b6e39239a2a9b581674106a7160" target="_blank">275d0d3</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree6c8b619a3ab1c92a9087d90baf3e830162361dd0targetblank6c8b619a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree275d0d3260fc0b6e39239a2a9b581674106a7160targetblank275d0d3a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/6c8b619a3ab1c92a9087d90baf3e830162361dd0" target="_blank">6c8b619</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/275d0d3260fc0b6e39239a2a9b581674106a7160" target="_blank">275d0d3</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,7 +547,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/site_libs/
     Ignored:    code/.Rhistory
 
 Untracked files:
@@ -601,6 +600,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/275d0d3260fc0b6e39239a2a9b581674106a7160/analysis/explore_SmoothEM_Mixture.rmd" target="_blank">275d0d3</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/a58de040d6bfe54f87df2c0e241207a9304ba362/docs/explore_SmoothEM_Mixture.html" target="_blank">a58de04</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -813,7 +846,7 @@ workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
 </div>
 </div>
 <div id="problem-setup" class="section level2">
-<h2>Problem Setup</h2>
+<h2><strong>Problem Setup</strong></h2>
 <p>We consider the following problem.</p>
 <p>Let <span class="math inline">\(\boldsymbol{x}_i \in
 \mathbb{R}^D\)</span> denote observation <span
@@ -868,7 +901,7 @@ class="math inline">\(\boldsymbol{\mu}^{(1)}(\cdot)\)</span> and <span
 class="math inline">\(\boldsymbol{\mu}^{(2)}(\cdot)\)</span>.</p>
 </div>
 <div id="an-iterative-algorithm" class="section level2">
-<h2>An Iterative Algorithm</h2>
+<h2><strong>An Iterative Algorithm</strong></h2>
 <p>If the partition <span class="math inline">\(\mathcal{J}_1\)</span>
 and <span class="math inline">\(\mathcal{J}_2\)</span> are known, we can
 apply the standard smooth EM algorithm to estimate the parameters in
@@ -968,10 +1001,11 @@ assignments.</p>
 </div>
 </div>
 <div id="simulation" class="section level2">
-<h2>Simulation</h2>
+<h2><strong>Simulation</strong></h2>
 <pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
 source(&quot;./code/general_EM.R&quot;)
 source(&quot;./code/two_ordering_smoothEM.R&quot;)
+source(&quot;./code/plot_ordering.R&quot;)
 library(tidyverse)
 library(ggplot2)
 library(reshape2)
@@ -995,18 +1029,18 @@ class="math inline">\(t^{(2)}\)</span>.</li>
 <p>The data matrix consists of <span class="math inline">\(N =
 1000\)</span> observations. For each latent ordering <span
 class="math inline">\(t^{(j)}\)</span>, we sample <span
-class="math inline">\(t^{(j)}_i \sim \text{Uniform}(0, 1)\)</span>
+class="math inline">\(t^{(j)}_i \sim \text{Uniform}(0, 10)\)</span>
 independently for <span class="math inline">\(i = 1, \dots, N\)</span>,
 and generate the smooth function in each coordinate as independent
 Matérn processes.</p>
 <p>Below we construct the data:</p>
 <pre class="r"><code>N &lt;- 1000; D &lt;- 16
 set.seed(1234)
-t1 &lt;- runif(1000, min = 0, max = 1)
-t2 &lt;- runif(1000, min = 0, max = 1)
+t1 &lt;- runif(1000, min = 0, max = 10)
+t2 &lt;- runif(1000, min = 0, max = 10)
 
 # GP kernel function using Matern
-matern_cov &lt;- function(t, range = 0.5, smoothness = 2.5, variance = 1.0) {
+matern_cov &lt;- function(t, range = 5, smoothness = 2.5, variance = 3.0) {
   dists &lt;- rdist(t, t)
   cov_mat &lt;- Matern(dists, range = range, smoothness = smoothness)
   cov_mat * variance
@@ -1017,19 +1051,22 @@ Sigma1 &lt;- matern_cov(matrix(t1, ncol = 1))
 X1 &lt;- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma1)
 X1 &lt;- t(X1)  # Make it N x 8
 # Make X1 positive
-X1 &lt;- X1 + abs(min(X1))  # Shift to make all values positive
+X1 &lt;- X1 + abs(min(X1)) + 1  # Shift to make all values positive
 
 # Generate second 8 coordinates (dependent on t2)
 Sigma2 &lt;- matern_cov(matrix(t2, ncol = 1))
 X2 &lt;- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma2)
 X2 &lt;- t(X2)  # Make it N x 8
 # Make X2 positive
-X2 &lt;- X2 + abs(min(X2))  # Shift to make all values positive
+X2 &lt;- X2 + abs(min(X2)) + 1  # Shift to make all values positive
 
 X &lt;- cbind(X1, X2)  # Combine the two sets of coordinates
 # permute the columns
 permut_cols &lt;- sample(1:16, 16)
-X &lt;- X[, permut_cols]  # Permute the columns of X</code></pre>
+X &lt;- X[, permut_cols]  # Permute the columns of X
+
+# Add some noise
+X &lt;- X + matrix(rnorm(N * D, mean = 0, sd = 0.05), nrow = N, ncol = D)</code></pre>
 <p>Let’s visualize the generated data against the latent orderings <span
 class="math inline">\(t^{(1)}\)</span> and <span
 class="math inline">\(t^{(2)}\)</span>.</p>
@@ -1164,27 +1201,34 @@ res &lt;- two_ordering_smoothEM(
   rw_order_vec = c(2, 2),
   reassign_by = &quot;posterior&quot;,
   max_iter = 100,
+  max_iter_EM = 200,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration  1: reassigned 4 coordinates (J1 = 8, J2 = 8)
-Iteration  2: reassigned 6 coordinates (J1 = 10, J2 = 6)
+<pre><code>Iteration  1: reassigned 6 coordinates (J1 = 8, J2 = 8)
+Iteration  2: reassigned 2 coordinates (J1 = 6, J2 = 10)
 Iteration  3: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
-<pre class="r"><code>res$coord_assign[order(permut_cols)]</code></pre>
-<pre><code> [1] 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1</code></pre>
+<pre class="r"><code>sort(permut_cols[res$J1])</code></pre>
+<pre><code>[1]  9 10 11 12 13 14 15 16</code></pre>
+<pre class="r"><code>sort(permut_cols[res$J2])</code></pre>
+<pre><code>[1] 1 2 3 4 5 6 7 8</code></pre>
 <p>The first 8 coordinates are correctly assigned to one partition, and
 the second 8 coordinates are assigned to the other partition.</p>
 <p>Let’s visualize the inferred <span
 class="math inline">\(\boldsymbol{\mu}^{(1)}\)</span>:</p>
-<pre class="r"><code>all_coordinates_1 &lt;- permut_cols[res$coord_assign == 2]
+<pre class="r"><code>all_coordinates_1 &lt;- permut_cols[res$J1]
 par(mfrow = c(2, 4))
 for (i in 1:length(res$result1$params$mu[[1]])) {
   index &lt;- order(all_coordinates_1)[i]
   mean_vec &lt;- sapply(res$result1$params$mu, function(mu_k) mu_k[[index]])
-  plot(1:50, mean_vec, type = &#39;o&#39;,
+  plot((1:50)/5, mean_vec, type = &#39;o&#39;,
        cex = 0.5,
        main = paste(&quot;Coordinate&quot;, all_coordinates_1[index]), 
        xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;))
+  points(t2, 
+         X[, permut_cols == all_coordinates_1[index]], 
+         col = rgb(1, 0.75, 0.8, alpha = 0.8),
+         cex = 0.2)
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1209,6 +1253,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/a58de040d6bfe54f87df2c0e241207a9304ba362/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">a58de04</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/6095b41463f4a3771cca216107b79f94d14d76fe/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">6095b41</a>
@@ -1249,15 +1304,20 @@ Ziang Zhang
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Also visualize the inferred <span
 class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>:</p>
-<pre class="r"><code>all_coordinates_2 &lt;- permut_cols[res$coord_assign == 1]
+<pre class="r"><code>all_coordinates_2 &lt;- permut_cols[res$J2]
 par(mfrow = c(2, 4))
 for (i in 1:length(res$result2$params$mu[[1]])) {
   index &lt;- order(all_coordinates_2)[i]
   mean_vec &lt;- sapply(res$result2$params$mu, function(mu_k) mu_k[[index]])
-  plot(1:50, mean_vec, type = &#39;o&#39;,
+  plot((1:50)/5, mean_vec, type = &#39;o&#39;,
        cex = 0.5,
        main = paste(&quot;Coordinate&quot;, all_coordinates_2[index]), 
        xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;))
+  
+  points((10-t1), type = &#39;p&#39;,
+         X[, permut_cols == all_coordinates_2[index]], 
+         col = rgb(1, 0.75, 0.8, alpha = 0.8),
+         cex = 0.2)
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1282,6 +1342,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/a58de040d6bfe54f87df2c0e241207a9304ba362/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">a58de04</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/6095b41463f4a3771cca216107b79f94d14d76fe/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">6095b41</a>
@@ -1320,6 +1391,135 @@ Ziang Zhang
 </div>
 </div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>Finally, let’s try to examine the structure plot. To start with, we
+will take a look at the unordered data matrix.</p>
+<pre class="r"><code>rownames(X) &lt;- paste0(&quot;Cell&quot;, 1:nrow(X))
+plot_structure(X)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, let’s order them based on the first latent ordering:</p>
+<pre class="r"><code>position_1 &lt;- apply(res$Gamma1, 1, which.max)
+X_J1 &lt;- X[, res$J1]
+X_J1_order &lt;- order(position_1)
+plot_structure(X_J1, order = rownames(X_J1)[X_J1_order])</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As well as the second latent ordering:</p>
+<pre class="r"><code>position_2 &lt;- apply(res$Gamma2, 1, which.max)
+X_J2 &lt;- X[, res$J2]
+X_J2_order &lt;- order(position_2)
+plot_structure(X_J2, order = rownames(X_J2)[X_J2_order])</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="application-to-pancreas-dataset" class="section level2">
+<h2><strong>Application to Pancreas dataset</strong></h2>
+<p>Now, let’s see how this approach applies to the pancreas dataset, to
+distinguish between cell-type factors and batch-type factors.</p>
+<pre class="r"><code>library(tibble)
+library(Rtsne)
+library(umap)
+set.seed(1)
+load(&quot;./data/loading_order/pancreas_factors.rdata&quot;)
+load(&quot;./data/loading_order/pancreas.rdata&quot;)
+cell_type_factors &lt;- c(3,8,9,12,17,18,20,21)
+batch_type_factors &lt;- c(1, 2, 4, 5, 6, 7, 11, 22)
+all_factors &lt;- c(cell_type_factors, batch_type_factors)
+cells &lt;- subsample_cell_types(sample_info$celltype,n = 500)
+Loadings &lt;- fl_snmf_ldf$L[cells,all_factors]
+celltype &lt;- as.character(sample_info$celltype[cells])
+names(celltype) &lt;- rownames(Loadings)
+batchtype &lt;- as.character(sample_info$tech[cells])
+names(batchtype) &lt;- rownames(Loadings)</code></pre>
+<p>Based on the visual assessment from <a
+href="https://stephenslab.github.io/single-cell-jamboree/pancreas_factors.html">this
+analysis</a>, we select the first 8 factors to be cell-type factors, and
+the remaining 8 factors to be batch-type factors.</p>
+<p>Let’s permute the columns of the loading matrix to make it
+unordered:</p>
+<pre class="r"><code>permut_cols &lt;- sample(1:ncol(Loadings), ncol(Loadings))
+Loadings &lt;- Loadings[, permut_cols]</code></pre>
+<p>Take a look at the unordered structure plot:</p>
+<pre class="r"><code>plot_structure(Loadings)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Apply the smooth EM algorithm to infer the latent orderings:</p>
+<pre class="r"><code>set.seed(123)
+resPancreas &lt;- two_ordering_smoothEM(
+  X = Loadings, K = 100,
+  modelName = &quot;EEI&quot;,
+  make_Q_prior = make_random_walk_precision,
+  lambda_vec = c(400, 50),
+  relative_lambda = TRUE,
+  rw_order_vec = c(2, 1),
+  reassign_by = &quot;posterior&quot;,
+  max_iter = 100,
+  max_iter_EM = 300,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration  1: reassigned 2 coordinates (J1 = 8, J2 = 8)
+Iteration  2: reassigned 1 coordinates (J1 = 10, J2 = 6)
+Iteration  3: reassigned 0 coordinates (J1 = 11, J2 = 5)</code></pre>
+<p>Let’s check the inferred latent orderings.</p>
+<pre class="r"><code>sort(permut_cols[resPancreas$J1])</code></pre>
+<pre><code> [1]  2  5  7  9 10 11 12 13 14 15 16</code></pre>
+<pre class="r"><code>sort(permut_cols[resPancreas$J2])</code></pre>
+<pre><code>[1] 1 3 4 6 8</code></pre>
+<p>All the cell-type factors are assigned to the first latent ordering,
+and (almost) all the batch-type factors are assigned to the second
+latent ordering, except for the 14th factor, which is assigned to the
+first latent ordering.</p>
+<p>Take a look at each inferred function in the first latent
+ordering:</p>
+<pre class="r"><code>all_coordinates_1 &lt;- permut_cols[resPancreas$J1]
+par(mfrow = c(2, 4))
+for (i in 1:8) {
+  index &lt;- order(all_coordinates_1)[i]
+  mean_vec &lt;- sapply(resPancreas$result1$params$mu, function(mu_k) mu_k[[index]])
+  plot((1:100)/100, mean_vec, type = &#39;o&#39;,
+       cex = 0.5,
+       main = paste(&quot;Factor&quot;, all_coordinates_1[index]), 
+       xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;))
+}</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>Take a look at each inferred function in the second latent
+ordering:</p>
+<pre class="r"><code>all_coordinates_2 &lt;- permut_cols[resPancreas$J2]
+par(mfrow = c(2, 4))
+for (i in 1:length(resPancreas$result2$params$mu[[1]])) {
+  index &lt;- order(all_coordinates_2)[i]
+  mean_vec &lt;- sapply(resPancreas$result2$params$mu, function(mu_k) mu_k[[index]])
+  plot((1:100)/100, mean_vec, type = &#39;o&#39;,
+       cex = 0.5,
+       main = paste(&quot;Factor&quot;, all_coordinates_2[index]), 
+       xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;))
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Let’s take a look at the structure plot ordered by each latent
+ordering.</p>
+<pre class="r"><code>position_1 &lt;- apply(resPancreas$Gamma1, 1, which.max)
+Loadings_J1 &lt;- Loadings[, resPancreas$J1]
+Loadings_J1_order &lt;- order(position_1)
+plot_structure(Loadings_J1, order = rownames(Loadings_J1)[Loadings_J1_order],
+               plot_name = &quot;Ordered by Latent Ordering 1&quot;)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = unique(celltype),
+                     order_vec = rownames(Loadings_J1)[Loadings_J1_order],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As well as the second latent ordering:</p>
+<pre class="r"><code>position_2 &lt;- apply(resPancreas$Gamma2, 1, which.max)
+Loadings_J2 &lt;- Loadings[, resPancreas$J2]
+Loadings_J2_order &lt;- order(position_2)
+plot_structure(Loadings_J2, order = rownames(Loadings_J2)[Loadings_J2_order],
+               plot_name = &quot;Ordered by Latent Ordering 2&quot;)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = batchtype,
+                     subset_types = unique(batchtype),
+                     order_vec = rownames(Loadings_J2)[Loadings_J2_order],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1347,27 +1547,29 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] fields_16.2       viridisLite_0.4.2 spam_2.11-0       MASS_7.3-60      
- [5] reshape2_1.4.4    lubridate_1.9.3   forcats_1.0.0     stringr_1.5.1    
- [9] dplyr_1.1.4       purrr_1.0.4       readr_2.1.5       tidyr_1.3.1      
-[13] tibble_3.2.1      ggplot2_3.5.2     tidyverse_2.0.0   Matrix_1.6-4     
-[17] mvtnorm_1.3-1     matrixStats_1.4.1 workflowr_1.7.1  
+ [1] umap_0.2.10.0     Rtsne_0.17        fields_16.2       viridisLite_0.4.2
+ [5] spam_2.11-0       MASS_7.3-60       reshape2_1.4.4    lubridate_1.9.3  
+ [9] forcats_1.0.0     stringr_1.5.1     dplyr_1.1.4       purrr_1.0.4      
+[13] readr_2.1.5       tidyr_1.3.1       tibble_3.2.1      tidyverse_2.0.0  
+[17] ggplot2_3.5.2     Matrix_1.6-4      mvtnorm_1.3-1     matrixStats_1.4.1
+[21] workflowr_1.7.1  
 
 loaded via a namespace (and not attached):
- [1] sass_0.4.10        generics_0.1.4     stringi_1.8.7      lattice_0.22-6    
- [5] hms_1.1.3          digest_0.6.37      magrittr_2.0.3     timechange_0.3.0  
- [9] evaluate_1.0.3     grid_4.3.1         RColorBrewer_1.1-3 maps_3.4.2        
-[13] fastmap_1.2.0      plyr_1.8.9         rprojroot_2.0.4    jsonlite_2.0.0    
-[17] processx_3.8.6     whisker_0.4.1      ps_1.9.1           promises_1.3.3    
-[21] httr_1.4.7         scales_1.4.0       jquerylib_0.1.4    cli_3.6.5         
-[25] rlang_1.1.6        withr_3.0.2        cachem_1.1.0       yaml_2.3.10       
-[29] tools_4.3.1        tzdb_0.5.0         httpuv_1.6.16      vctrs_0.6.5       
-[33] R6_2.6.1           lifecycle_1.0.4    git2r_0.33.0       fs_1.6.6          
-[37] pkgconfig_2.0.3    callr_3.7.6        pillar_1.10.2      bslib_0.9.0       
-[41] later_1.4.2        gtable_0.3.6       glue_1.8.0         Rcpp_1.0.14       
-[45] xfun_0.52          tidyselect_1.2.1   rstudioapi_0.16.0  knitr_1.50        
-[49] farver_2.1.2       htmltools_0.5.8.1  rmarkdown_2.28     dotCall64_1.2     
-[53] compiler_4.3.1     getPass_0.2-4     </code></pre>
+ [1] dotCall64_1.2      gtable_0.3.6       xfun_0.52          bslib_0.9.0       
+ [5] processx_3.8.6     lattice_0.22-6     callr_3.7.6        tzdb_0.5.0        
+ [9] vctrs_0.6.5        tools_4.3.1        ps_1.9.1           generics_0.1.4    
+[13] pkgconfig_2.0.3    RColorBrewer_1.1-3 lifecycle_1.0.4    compiler_4.3.1    
+[17] farver_2.1.2       git2r_0.33.0       getPass_0.2-4      httpuv_1.6.16     
+[21] htmltools_0.5.8.1  maps_3.4.2         sass_0.4.10        yaml_2.3.10       
+[25] later_1.4.2        pillar_1.10.2      jquerylib_0.1.4    whisker_0.4.1     
+[29] openssl_2.2.2      cachem_1.1.0       RSpectra_0.16-2    tidyselect_1.2.1  
+[33] digest_0.6.37      stringi_1.8.7      labeling_0.4.3     rprojroot_2.0.4   
+[37] fastmap_1.2.0      grid_4.3.1         cli_3.6.5          magrittr_2.0.3    
+[41] withr_3.0.2        scales_1.4.0       promises_1.3.3     timechange_0.3.0  
+[45] rmarkdown_2.28     httr_1.4.7         reticulate_1.42.0  png_0.1-8         
+[49] askpass_1.2.1      hms_1.1.3          evaluate_1.0.3     knitr_1.50        
+[53] rlang_1.1.6        Rcpp_1.0.14        glue_1.8.0         rstudioapi_0.16.0 
+[57] jsonlite_2.0.0     R6_2.6.1           plyr_1.8.9         fs_1.6.6          </code></pre>
 </div>
 </div>
 </div>
