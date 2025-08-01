@@ -1,0 +1,236 @@
+---
+title: "Smooth EM algorithm with mixture of two latent orderings"
+author: "Ziang Zhang"
+date: "2025-07-31"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Problem Setup
+
+We consider the following problem.
+
+Let $\boldsymbol{x}_i \in \mathbb{R}^D$ denote observation $i$ (e.g., a cell), where $D$ is the total number of coordinates (e.g., genes).
+The data matrix $\mathbf{X} \in \mathbb{R}^{N \times D}$ contains $N$ observations, each with $D$ coordinates.
+
+We define a partition of the coordinates into two disjoint subsets:
+$$
+\mathcal{J}_1, \mathcal{J}_2 \subseteq \{1, \dots, D\}, \quad \mathcal{J}_1 \cup \mathcal{J}_2 = \{1, \dots, D\}, \quad \mathcal{J}_1 \cap \mathcal{J}_2 = \emptyset.
+$$
+
+Hence, each vector $\boldsymbol{x}_i$ can be decomposed as
+$$
+\boldsymbol{x}_i = \left( \boldsymbol{x}_i^{(1)}, \boldsymbol{x}_i^{(2)} \right),
+$$
+where 
+$$
+\boldsymbol{x}_i^{(1)} = (x_{ij})_{j \in \mathcal{J}_1} \in \mathbb{R}^{|\mathcal{J}_1|}, \quad 
+\boldsymbol{x}_i^{(2)} = (x_{ij})_{j \in \mathcal{J}_2} \in \mathbb{R}^{|\mathcal{J}_2|}.
+$$
+
+For each partition $j \in \{1,2\}$, we assume a smooth latent structure such that
+$$
+\boldsymbol{x}_i^{(j)} \mid z_i^{(j)} \sim \mathcal{N}\left( \boldsymbol{\mu}^{(j)}(z_i^{(j)}),\; \boldsymbol{\Sigma}^{(j)} \right), \quad z_i^{(j)} \in \{1, \dots, K_j\}.
+$$
+
+Here, $z_i^{(j)}$ is a discretized latent index representing the position of observation $i$ along the latent ordering $j$. 
+The function $\boldsymbol{\mu}^{(j)}(\cdot)$ defines a smooth mean curve over $K_j$ grid points. 
+The covariance matrix $\boldsymbol{\Sigma}^{(j)}$ is typically assumed to follow a shared and diagonal structure (i.e., EEI) for simplicity.
+
+Our target is to obtain the partitions $\mathcal{J}_1$ and $\mathcal{J}_2$, the latent orderings $z_i^{(1)}$ and $z_i^{(2)}$ (through each assignment matrix $\boldsymbol{\Gamma}^{(j)}$), and the smooth mean curves $\boldsymbol{\mu}^{(1)}(\cdot)$ and $\boldsymbol{\mu}^{(2)}(\cdot)$.
+
+
+## An Iterative Algorithm
+
+If the partition $\mathcal{J}_1$ and $\mathcal{J}_2$ are known, we can apply the standard smooth EM algorithm to estimate the parameters in each partition separately.  
+However, the partition is unknown, and there are $2^D$ possible partitions, which is computationally infeasible to exhaustively search for large $D$.
+
+Therefore, we propose the following iterative algorithm that jointly infers the partition and the model parameters in a greedy manner.
+
+Let $\mathcal{J}_1^{(t)}$ and $\mathcal{J}_2^{(t)}$ denote the partition at iteration $t$. Each iteration then proceeds in three steps:
+
+### Step 1: Coordinate Initialization
+
+We initialize a partition of the coordinates into two groups, for example by random assignment:
+\[
+\mathcal{J}_1^{(0)} \cup \mathcal{J}_2^{(0)} = \{1, \dots, D\}, \quad \mathcal{J}_1^{(0)} \cap \mathcal{J}_2^{(0)} = \emptyset.
+\]
+
+### Step 2: Fit Two Smooth EM Models
+
+Given the current partition $\mathcal{J}_1^{(t)}, \mathcal{J}_2^{(t)}$, we fit two separate smooth EM models to the data:
+
+- For coordinates in $\mathcal{J}_1^{(t)}$, fit a $K_1$-component smooth mixture model and estimate $(\boldsymbol{\Gamma}^{(1)}, \boldsymbol{\mu}^{(1)}, \boldsymbol{\Sigma}^{(1)})$;
+- For coordinates in $\mathcal{J}_2^{(t)}$, fit a $K_2$-component smooth mixture model and estimate $(\boldsymbol{\Gamma}^{(2)}, \boldsymbol{\mu}^{(2)}, \boldsymbol{\Sigma}^{(2)})$.
+
+Each of these models can be solved using our current smooth EM algorithm, under a specified prior (e.g., random walk).
+
+Here the most important quantities are $\boldsymbol{\Gamma}^{(j)}$, which essentially represent the latent positions of the observations along the latent ordering $j$.
+
+### Step 3: Re-assign Coordinates via Posterior Optimization
+
+Each coordinate $j \in \{1, \dots, D\}$ is re-assigned to either partition $\mathcal{J}_1$ or $\mathcal{J}_2$ based on the current position matrices $\boldsymbol{\Gamma}^{(1)}$ and $\boldsymbol{\Gamma}^{(2)}$, to optimize the log-posterior density of the data under each model.
+
+Let $\boldsymbol{X}_{.j} \in \mathbb{R}^N$ denote the $j$th column of the data matrix.  
+For each $j$, we compute the (negative) log-posterior density under each ordering:
+\[
+\mathcal{E}_j^{(1)} = \text{negative posterior under ordering 1}, \quad \mathcal{E}_j^{(2)} = \text{negative posterior under ordering 2}.
+\]
+
+Specifically, the negative log-posterior density for ordering $j$ is given by:
+\[
+\mathcal{E}_j = 
+\underbrace{\frac{1}{2 \sigma_j^2} \left\| \boldsymbol{X}_{.j} - \boldsymbol{\Gamma} \boldsymbol{\mu}_j \right\|^2}_{\text{data fit}} 
++ \underbrace{\frac{1}{2} \boldsymbol{\mu}_j^\top \boldsymbol{Q} \boldsymbol{\mu}_j}_{\text{smoothness penalty}} 
++ \underbrace{\frac{1}{2} \log \det \left( \frac{1}{\sigma_j^2} \boldsymbol{\Gamma}^\top \boldsymbol{\Gamma} + \boldsymbol{Q} \right)}_{\text{normalizing constant}}.
+\]
+
+We then update the assignment as follows:
+\[
+j \in \mathcal{J}_1^{(t+1)} \quad \text{if} \quad \mathcal{E}_j^{(1)} < \mathcal{E}_j^{(2)}, \quad 
+j \in \mathcal{J}_2^{(t+1)} \quad \text{otherwise}.
+\]
+
+This procedure is iterated until convergence of the coordinate assignments.
+
+
+
+## Simulation
+
+
+```{r warning=FALSE, message=FALSE}
+source("./code/prior_precision.R")
+source("./code/general_EM.R")
+source("./code/two_ordering_smoothEM.R")
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+library(MASS)
+library(fields)  # for rdist and Matern
+```
+
+
+In this experiment, we generate synthetic data with **two distinct latent orderings**, each affecting a disjoint subset of the coordinates.
+
+Specifically, we consider $D = 16$ coordinates, partitioned as follows:
+
+- The first $8$ coordinates are generated as smooth functions of a latent variable $t^{(1)}$;
+- The remaining $8$ coordinates are generated as smooth functions of another latent variable $t^{(2)}$.
+
+The data matrix consists of $N = 1000$ observations. For each latent ordering $t^{(j)}$, we sample $t^{(j)}_i \sim \text{Uniform}(0, 1)$ independently for $i = 1, \dots, N$, and generate the smooth function in each coordinate as independent Matérn processes.
+
+Below we construct the data:
+
+```{r}
+N <- 1000; D <- 16
+set.seed(1234)
+t1 <- runif(1000, min = 0, max = 1)
+t2 <- runif(1000, min = 0, max = 1)
+
+# GP kernel function using Matern
+matern_cov <- function(t, range = 0.5, smoothness = 2.5, variance = 1.0) {
+  dists <- rdist(t, t)
+  cov_mat <- Matern(dists, range = range, smoothness = smoothness)
+  cov_mat * variance
+}
+
+# Generate first 8 coordinates (dependent on t1)
+Sigma1 <- matern_cov(matrix(t1, ncol = 1))
+X1 <- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma1)
+X1 <- t(X1)  # Make it N x 8
+
+# Generate second 8 coordinates (dependent on t2)
+Sigma2 <- matern_cov(matrix(t2, ncol = 1))
+X2 <- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma2)
+X2 <- t(X2)  # Make it N x 8
+
+X <- cbind(X1, X2)  # Combine the two sets of coordinates
+# permute the columns
+permut_cols <- sample(1:16, 16)
+X <- X[, permut_cols]  # Permute the columns of X
+```
+
+
+Let's visualize the generated data against the latent orderings $t^{(1)}$ and $t^{(2)}$.
+
+```{r}
+# Plot the first 8 coordinates
+par(mfrow = c(2,4))
+for (i in 1:8) {
+  plot(t1, X1[, i], 
+       cex = 0.3,
+       main = paste("Coordinate", i), 
+       xlab = "t1", ylab = paste("X1[", i, "]"))
+}
+par(mfrow = c(1,1))
+
+# Plot the second 8 coordinates
+par(mfrow = c(2,4))
+for (i in 1:8) {
+  plot(t2, X2[, i], 
+       cex = 0.3,
+       main = paste("Coordinate", i + 8), 
+       xlab = "t2", ylab = paste("X2[", i, "]"))
+}
+par(mfrow = c(1,1))
+```
+
+Let's apply the smooth EM algorithm to infer the two latent orderings, with the second order random walk prior for $\boldsymbol{\mu}^{(1)}$ and $\boldsymbol{\mu}^{(2)}$.
+
+```{r}
+set.seed(123)
+res <- two_ordering_smoothEM(
+  X = X, K = 50,
+  modelName = "EEI",
+  make_Q_prior = make_random_walk_precision,
+  lambda_vec = c(10, 10),
+  relative_lambda = TRUE,
+  rw_order_vec = c(2, 2),
+  reassign_by = "posterior",
+  max_iter = 100,
+  verbose = TRUE
+)
+```
+
+Let's check the inferred latent orderings.
+
+```{r}
+res$coord_assign[order(permut_cols)]
+```
+
+The first 8 coordinates are correctly assigned to one partition, and the second 8 coordinates are assigned to the other partition.
+
+
+Let's visualize the inferred $\boldsymbol{\mu}^{(1)}$:
+
+```{r}
+par(mfrow = c(2, 4))
+for (i in 1:length(res$result1$params$mu[[1]])) {
+  mean_vec <- sapply(res$result1$params$mu, function(mu_k) mu_k[[i]])
+  plot(1:50, mean_vec, 
+       cex = 0.3,
+       main = paste("Coordinate", i), 
+       xlab = "discretized t1", ylab = paste("mu", i))
+}
+par(mfrow = c(1, 1))
+```
+
+Also visualize the inferred $\boldsymbol{\mu}^{(2)}$:
+
+```{r}
+par(mfrow = c(2, 4))
+for (i in 1:length(res$result2$params$mu[[1]])) {
+  mean_vec <- sapply(res$result2$params$mu, function(mu_k) mu_k[[i]])
+  plot(1:50, mean_vec, 
+       cex = 0.3,
+       main = paste("Coordinate", i), 
+       xlab = "discretized t2", ylab = paste("mu", i))
+}
+par(mfrow = c(1, 1))
+```
+
+
+
