@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree563dbc11b831ca5bafd669af414fc4aa996c6cb9targetblank563dbc1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreefa43d768ce86829ede57d13d7daaeaa6827a8bedtargetblankfa43d76a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/563dbc11b831ca5bafd669af414fc4aa996c6cb9" target="_blank">563dbc1</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/fa43d768ce86829ede57d13d7daaeaa6827a8bed" target="_blank">fa43d76</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree563dbc11b831ca5bafd669af414fc4aa996c6cb9targetblank563dbc1a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreefa43d768ce86829ede57d13d7daaeaa6827a8bedtargetblankfa43d76a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/563dbc11b831ca5bafd669af414fc4aa996c6cb9" target="_blank">563dbc1</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/fa43d768ce86829ede57d13d7daaeaa6827a8bed" target="_blank">fa43d76</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,7 +547,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/site_libs/
     Ignored:    code/.Rhistory
 
 Untracked files:
@@ -601,6 +600,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/fa43d768ce86829ede57d13d7daaeaa6827a8bed/analysis/explore_SmoothEM_Mixture.rmd" target="_blank">fa43d76</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/b1aaef72b2226330dcb0a38925d3704e823cd358/docs/explore_SmoothEM_Mixture.html" target="_blank">b1aaef7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -770,13 +803,12 @@ class="math inline">\(\boldsymbol{\mu}^{(2)}(\cdot)\)</span>.</p>
 <p>If the partition <span class="math inline">\(\mathcal{J}_1\)</span>
 and <span class="math inline">\(\mathcal{J}_2\)</span> are known, we can
 apply the standard smooth EM algorithm to estimate the parameters in
-each partition separately.<br />
-However, the partition is unknown, and there are <span
-class="math inline">\(2^D\)</span> possible partitions, which is
-computationally infeasible to exhaustively search for large <span
-class="math inline">\(D\)</span>.</p>
-<p>Therefore, we propose the following iterative algorithm that jointly
-infers the partition and the model parameters in a greedy manner.</p>
+each partition separately. However, the partition is unknown, and there
+are <span class="math inline">\(2^D\)</span> possible partitions, which
+is computationally infeasible to exhaustively search for large <span
+class="math inline">\(D\)</span>. Therefore, we propose the following
+iterative algorithm that jointly infers the partition and the model
+parameters in a greedy manner.</p>
 <p>Let <span class="math inline">\(\mathcal{J}_1^{(t)}\)</span> and
 <span class="math inline">\(\mathcal{J}_2^{(t)}\)</span> denote the
 partition at iteration <span class="math inline">\(t\)</span>. Each
@@ -826,10 +858,9 @@ class="math inline">\(\boldsymbol{\Gamma}^{(2)}\)</span>, to optimize
 the log-posterior density of the data under each model.</p>
 <p>Let <span class="math inline">\(\boldsymbol{X}_{.j} \in
 \mathbb{R}^N\)</span> denote the <span
-class="math inline">\(j\)</span>th column of the data matrix.<br />
-For each <span class="math inline">\(j\)</span>, we compute the
-(negative) log-posterior density under each ordering: <span
-class="math display">\[
+class="math inline">\(j\)</span>th column of the data matrix. For each
+<span class="math inline">\(j\)</span>, we compute the (negative)
+log-posterior density under each ordering: <span class="math display">\[
 \mathcal{E}_j^{(1)} = \text{negative posterior under ordering 1}, \quad
 \mathcal{E}_j^{(2)} = \text{negative posterior under ordering 2}.
 \]</span></p>
@@ -916,11 +947,15 @@ matern_cov &lt;- function(t, range = 0.5, smoothness = 2.5, variance = 1.0) {
 Sigma1 &lt;- matern_cov(matrix(t1, ncol = 1))
 X1 &lt;- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma1)
 X1 &lt;- t(X1)  # Make it N x 8
+# Make X1 positive
+X1 &lt;- X1 + abs(min(X1))  # Shift to make all values positive
 
 # Generate second 8 coordinates (dependent on t2)
 Sigma2 &lt;- matern_cov(matrix(t2, ncol = 1))
 X2 &lt;- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma2)
 X2 &lt;- t(X2)  # Make it N x 8
+# Make X2 positive
+X2 &lt;- X2 + abs(min(X2))  # Shift to make all values positive
 
 X &lt;- cbind(X1, X2)  # Combine the two sets of coordinates
 # permute the columns
@@ -1033,15 +1068,15 @@ res &lt;- two_ordering_smoothEM(
   X = X, K = 50,
   modelName = &quot;EEI&quot;,
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(10, 10),
+  lambda_vec = c(20, 20),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = &quot;posterior&quot;,
   max_iter = 100,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration  1: reassigned 5 coordinates (J1 = 8, J2 = 8)
-Iteration  2: reassigned 3 coordinates (J1 = 5, J2 = 11)
+<pre><code>Iteration  1: reassigned 4 coordinates (J1 = 8, J2 = 8)
+Iteration  2: reassigned 4 coordinates (J1 = 6, J2 = 10)
 Iteration  3: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
 <pre class="r"><code>res$coord_assign[order(permut_cols)]</code></pre>
@@ -1050,13 +1085,15 @@ Iteration  3: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
 the second 8 coordinates are assigned to the other partition.</p>
 <p>Let’s visualize the inferred <span
 class="math inline">\(\boldsymbol{\mu}^{(1)}\)</span>:</p>
-<pre class="r"><code>par(mfrow = c(2, 4))
+<pre class="r"><code>all_coordinates_1 &lt;- permut_cols[res$coord_assign == 1]
+par(mfrow = c(2, 4))
 for (i in 1:length(res$result1$params$mu[[1]])) {
-  mean_vec &lt;- sapply(res$result1$params$mu, function(mu_k) mu_k[[i]])
-  plot(1:50, mean_vec, 
-       cex = 0.3,
-       main = paste(&quot;Coordinate&quot;, i), 
-       xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;, i))
+  index &lt;- order(all_coordinates_1)[i]
+  mean_vec &lt;- sapply(res$result1$params$mu, function(mu_k) mu_k[[index]])
+  plot(1:50, mean_vec, type = &#39;o&#39;,
+       cex = 0.5,
+       main = paste(&quot;Coordinate&quot;, all_coordinates_1[index]), 
+       xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;))
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1099,13 +1136,15 @@ Ziang Zhang
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Also visualize the inferred <span
 class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>:</p>
-<pre class="r"><code>par(mfrow = c(2, 4))
+<pre class="r"><code>all_coordinates_2 &lt;- permut_cols[res$coord_assign == 2]
+par(mfrow = c(2, 4))
 for (i in 1:length(res$result2$params$mu[[1]])) {
-  mean_vec &lt;- sapply(res$result2$params$mu, function(mu_k) mu_k[[i]])
-  plot(1:50, mean_vec, 
-       cex = 0.3,
-       main = paste(&quot;Coordinate&quot;, i), 
-       xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;, i))
+  index &lt;- order(all_coordinates_2)[i]
+  mean_vec &lt;- sapply(res$result2$params$mu, function(mu_k) mu_k[[index]])
+  plot(1:50, mean_vec, type = &#39;o&#39;,
+       cex = 0.5,
+       main = paste(&quot;Coordinate&quot;, all_coordinates_2[index]), 
+       xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;))
 }</code></pre>
 <p><img src="figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
