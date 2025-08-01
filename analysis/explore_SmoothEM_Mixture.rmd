@@ -78,13 +78,28 @@ For each $j$, we compute the (negative) log-posterior density under each orderin
 \mathcal{E}_j^{(1)} = \text{negative posterior under ordering 1}, \quad \mathcal{E}_j^{(2)} = \text{negative posterior under ordering 2}.
 \]
 
-Specifically, the negative log-posterior density for ordering $j$ is given by:
+Specifically, the negative log-posterior density for ordering $a$ is given by:
 \[
-\mathcal{E}_j = 
-\underbrace{\frac{1}{2 \sigma_j^2} \left\| \boldsymbol{X}_{.j} - \boldsymbol{\Gamma} \boldsymbol{\mu}_j \right\|^2}_{\text{data fit}} 
-+ \underbrace{\frac{1}{2} \boldsymbol{\mu}_j^\top \boldsymbol{Q} \boldsymbol{\mu}_j}_{\text{smoothness penalty}} 
-+ \underbrace{\frac{1}{2} \log \det \left( \frac{1}{\sigma_j^2} \boldsymbol{\Gamma}^\top \boldsymbol{\Gamma} + \boldsymbol{Q} \right)}_{\text{normalizing constant}}.
+\mathcal{E}_j^{(a)} = 
+\underbrace{
+\sum_{i=1}^N \sum_{k=1}^{K_a} \Gamma_{ik}^{(a)} 
+\frac{\left(\mathbf{X}_{ij} - \mu_{jk}^{(a)}\right)^2}{2\, (\sigma_j^{(a)})^2}
+}_{\text{data fit}}
+\;+\;
+\underbrace{
+\sum_{i=1}^N \sum_{k=1}^{K_a} \Gamma_{ik}^{(a)} 
+\frac{1}{2} \log\left(2\pi\, (\sigma_j^{(a)})^2\right)
+}_{\text{obs. norm. const.}}
+\;+\;
+\underbrace{
+\frac{1}{2} (\boldsymbol{\mu}_j^{(a)})^\top Q^{(a)} \boldsymbol{\mu}_j^{(a)}
+}_{\text{smoothness penalty}}
+\;+\;
+\underbrace{
+\frac{K_a}{2} \log(2\pi) - \frac{1}{2} \log \det(Q^{(a)})
+}_{\text{prior norm. const.}}.
 \]
+
 
 We then update the assignment as follows:
 \[
