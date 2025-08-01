@@ -20,7 +20,7 @@ The inferred ordering could be used
 
 + [Exploring smooth-EM algorithm.](explore_smoothEM.html)
 
-+ [Exploring smooth-EM algorithm with the mixture of two latent orderings.](explore_smoothEM_Mixture.html)
++ [Exploring smooth-EM algorithm with the mixture of two latent orderings.](explore_SmoothEM_Mixture.html)
 
 
 + [Exploring smooth-EM algorithm on 2D lattice.](explore_2DSmoothEM.html)
