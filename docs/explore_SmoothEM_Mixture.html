@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreefa43d768ce86829ede57d13d7daaeaa6827a8bedtargetblankfa43d76a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreee8fa00c80b8fbe3852390e1b2ab7a68dfec75eabtargetblanke8fa00ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/fa43d768ce86829ede57d13d7daaeaa6827a8bed" target="_blank">fa43d76</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/e8fa00c80b8fbe3852390e1b2ab7a68dfec75eab" target="_blank">e8fa00c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreefa43d768ce86829ede57d13d7daaeaa6827a8bedtargetblankfa43d76a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreee8fa00c80b8fbe3852390e1b2ab7a68dfec75eabtargetblanke8fa00ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/fa43d768ce86829ede57d13d7daaeaa6827a8bed" target="_blank">fa43d76</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/e8fa00c80b8fbe3852390e1b2ab7a68dfec75eab" target="_blank">e8fa00c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -600,6 +600,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e8fa00c80b8fbe3852390e1b2ab7a68dfec75eab/analysis/explore_SmoothEM_Mixture.rmd" target="_blank">e8fa00c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/explore_SmoothEM_Mixture.html" target="_blank">0fdf6de</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -997,6 +1031,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-1.png" target="_blank">0fdf6de</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-1.png" target="_blank">8b58637</a>
 </td>
 <td>
@@ -1045,6 +1090,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-2.png" target="_blank">0fdf6de</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-3-2.png" target="_blank">8b58637</a>
 </td>
 <td>
@@ -1068,7 +1124,7 @@ res &lt;- two_ordering_smoothEM(
   X = X, K = 50,
   modelName = &quot;EEI&quot;,
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(20, 20),
+  lambda_vec = c(50, 50),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = &quot;posterior&quot;,
@@ -1076,7 +1132,7 @@ res &lt;- two_ordering_smoothEM(
   verbose = TRUE
 )</code></pre>
 <pre><code>Iteration  1: reassigned 4 coordinates (J1 = 8, J2 = 8)
-Iteration  2: reassigned 4 coordinates (J1 = 6, J2 = 10)
+Iteration  2: reassigned 6 coordinates (J1 = 10, J2 = 6)
 Iteration  3: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
 <pre class="r"><code>res$coord_assign[order(permut_cols)]</code></pre>
@@ -1118,6 +1174,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">0fdf6de</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">8b58637</a>
@@ -1169,6 +1236,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/0fdf6de4af7c0fd1e5e385d91d511efc90b3e95a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">0fdf6de</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/8b58637523b8fb11b49895529baaba189fe77ee7/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">8b58637</a>
