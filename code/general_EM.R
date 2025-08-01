@@ -171,7 +171,7 @@ logsumexp <- function(x) {
 }
 
 # Generate default initialization parameters for GMM
-make_default_init <- function(X, K) {
+make_default_init <- function(X, K, ordering = TRUE) {
   d <- ncol(X)
   mins <- apply(X, 2, min)
   maxs <- apply(X, 2, max)
@@ -181,14 +181,17 @@ make_default_init <- function(X, K) {
     sigma = lapply(1:K, function(k) diag(d))
   )
 
-  # sort by the pivot mu (i.e. the mu with largest range)
-  pivot_index <- which.max(apply(do.call(rbind, output$mu), 2, function(mu) max(mu) - min(mu)))
+  if(ordering){
+    # sort by the pivot mu (i.e. the mu with largest range)
+    pivot_index <- which.max(apply(do.call(rbind, output$mu), 2, function(mu) max(mu) - min(mu)))
 
-  mu_first <- sapply(output$mu, function(mu) mu[pivot_index])
-  order_idx <- order(mu_first)
-  output$pi    <- output$pi[order_idx]
-  output$mu    <- output$mu[order_idx]
-  output$sigma <- output$sigma[order_idx]
+    mu_first <- sapply(output$mu, function(mu) mu[pivot_index])
+    order_idx <- order(mu_first)
+    output$pi    <- output$pi[order_idx]
+    output$mu    <- output$mu[order_idx]
+    output$sigma <- output$sigma[order_idx]
+  }
+
   return(output)
 }
 
