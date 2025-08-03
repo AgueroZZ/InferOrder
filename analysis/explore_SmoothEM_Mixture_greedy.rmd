@@ -1,0 +1,330 @@
+---
+title: "Smooth EM algorithm with mixture of two latent orderings (Greedy Version)"
+author: "Ziang Zhang"
+date: "2025-08-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## **Problem Setup**
+
+We consider the same problem describe in [this analysis](https://aguerozz.github.io/InferOrder/explore_SmoothEM_Mixture.html).
+
+
+## **Greedy-Initialized Iterative Algorithm**
+
+When the partition $\boldsymbol{\mathcal{J}}_1$ and $\boldsymbol{\mathcal{J}}_2$ is known, we can fit two smooth mixture models independently using the smooth EM algorithm. However, the partition is unknown in practice, and there are $2^D$ possible ways to assign $D$ coordinates, making exhaustive search infeasible. 
+We therefore propose a greedy-initialized iterative algorithm to jointly infer both the partition and the model parameters.
+
+The algorithm consists of two phases:
+
+---
+
+### **Greedy Initialization**
+
+We begin by selecting two seed coordinates that are expected to define distinct latent orderings:
+
+- First, we identify the coordinate ($j_1 \in [D]$) with the largest marginal variance, and use it to initialize the first latent ordering $\boldsymbol{\Gamma}^{(1)}$ via the smooth EM algorithm.
+- Second, we evaluate the **log-posterior density** of all remaining coordinates under this first ordering and choose the one with the lowest log-posterior density (i.e., least well explained) to seed the second ordering $\boldsymbol{\Gamma}^{(2)}$ ($j_2 \in [D]$).
+- For each remaining coordinate $j \in \{1,\dots,D\} \setminus \{j_1, j_2\}$, we evaluate its log-posterior density under both $\boldsymbol{\Gamma}^{(1)}$ and $\boldsymbol{\Gamma}^{(2)}$, and assign it to the ordering with higher log-posterior density (i.e., lower negative log-posterior). After each assignment, we refit the corresponding $\boldsymbol{\Gamma}^{(a)}$ using the updated coordinate subset.
+
+This greedy phase results in an initial partition $\boldsymbol{\mathcal{J}}_1^{(0)}$ and $\boldsymbol{\mathcal{J}}_2^{(0)}$ and associated latent position matrices $\boldsymbol{\Gamma}^{(1)}$ and $\boldsymbol{\Gamma}^{(2)}$.
+
+---
+
+### **Iterative Backfitting**
+
+Given the initialization from the greedy phase, we iteratively refine the partition and model parameters using the same approach described [here](https://aguerozz.github.io/InferOrder/explore_SmoothEM_Mixture.html).
+
+### **Convergence Criteria**
+
+This backfitting procedure is repeated until the coordinate assignment stabilizes, i.e., when no coordinates change their assignment between two consecutive iterations. The final model parameters are estimated based on the converged partition.
+
+Typically, the backfitting procedure converges within a few iterations, as the greedy initialization provides a good starting point. 
+
+---
+
+## **Simulation**
+
+```{r warning=FALSE, message=FALSE}
+source("./code/prior_precision.R")
+source("./code/general_EM_perCoordinate.R")
+source("./code/two_ordering_EM_greedy.R")
+source("./code/plot_ordering.R")
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+library(MASS)
+library(matrixStats) 
+library(fields)  # for rdist and Matern
+```
+
+
+In this experiment, we generate synthetic data with **two distinct latent orderings**, each affecting a disjoint subset of the coordinates.
+
+Specifically, we consider $D = 16$ coordinates, partitioned as follows:
+
+- The first $8$ coordinates are generated as smooth functions of a latent variable $t^{(1)}$;
+- The remaining $8$ coordinates are generated as smooth functions of another latent variable $t^{(2)}$.
+
+The data matrix consists of $N = 1000$ observations. For each latent ordering $t^{(j)}$, we sample $t^{(j)}_i \sim \text{Uniform}(0, 10)$ independently for $i = 1, \dots, N$, and generate the smooth function in each coordinate as independent Matérn processes.
+
+Below we construct the data:
+
+```{r}
+N <- 1000; D <- 16
+set.seed(1234)
+t1 <- runif(1000, min = 0, max = 10)
+t2 <- runif(1000, min = 0, max = 10)
+
+# GP kernel function using Matern
+matern_cov <- function(t, range = 5, smoothness = 2.5, variance = 3.0) {
+  dists <- rdist(t, t)
+  cov_mat <- Matern(dists, range = range, smoothness = smoothness)
+  cov_mat * variance
+}
+
+# Generate first 8 coordinates (dependent on t1)
+Sigma1 <- matern_cov(matrix(t1, ncol = 1))
+X1 <- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma1)
+X1 <- t(X1)  # Make it N x 8
+# Make X1 positive
+X1 <- X1 + abs(min(X1)) + 1  # Shift to make all values positive
+
+# Generate second 8 coordinates (dependent on t2)
+Sigma2 <- matern_cov(matrix(t2, ncol = 1))
+X2 <- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma2)
+X2 <- t(X2)  # Make it N x 8
+# Make X2 positive
+X2 <- X2 + abs(min(X2)) + 1  # Shift to make all values positive
+
+X <- cbind(X1, X2)  # Combine the two sets of coordinates
+# permute the columns
+permut_cols <- sample(1:16, 16)
+X <- X[, permut_cols]  # Permute the columns of X
+
+# Add some noise
+X <- X + matrix(rnorm(N * D, mean = 0, sd = 0.05), nrow = N, ncol = D)
+```
+
+
+Let's visualize the generated data against the latent orderings $t^{(1)}$ and $t^{(2)}$.
+
+```{r}
+# Plot the first 8 coordinates
+par(mfrow = c(2,4))
+for (i in 1:8) {
+  plot(t1, X1[, i], 
+       cex = 0.3,
+       main = paste("Coordinate", i), 
+       xlab = "t1", ylab = paste("X1[", i, "]"))
+}
+par(mfrow = c(1,1))
+
+# Plot the second 8 coordinates
+par(mfrow = c(2,4))
+for (i in 1:8) {
+  plot(t2, X2[, i], 
+       cex = 0.3,
+       main = paste("Coordinate", i + 8), 
+       xlab = "t2", ylab = paste("X2[", i, "]"))
+}
+par(mfrow = c(1,1))
+```
+
+Let's apply the smooth EM algorithm to infer the two latent orderings, with the second order random walk prior for $\boldsymbol{\mu}^{(1)}$ and $\boldsymbol{\mu}^{(2)}$.
+
+```{r}
+set.seed(1234)
+res <- two_ordering_smoothEM(
+  X = X, K = 50,
+  init_method = "pca",
+  greedy = TRUE,
+  make_Q_prior = make_random_walk_precision,
+  lambda_vec = c(50, 50),
+  relative_lambda = TRUE,
+  rw_order_vec = c(2, 2),
+  reassign_by = "posterior",
+  max_iter = 100,
+  max_iter_EM = 200,
+  verbose = TRUE
+)
+```
+
+Let's check the inferred latent orderings.
+
+```{r}
+sort(permut_cols[res$J1])
+sort(permut_cols[res$J2])
+```
+
+The first 8 coordinates are correctly assigned to one partition, and the second 8 coordinates are assigned to the other partition.
+
+
+Let's visualize the inferred $\boldsymbol{\mu}^{(1)}$:
+
+```{r}
+all_coordinates_1 <- permut_cols[res$J2]
+par(mfrow = c(2, 4))
+for (i in 1:length(res$result2$params$mu[[1]])) {
+  index <- order(all_coordinates_1)[i]
+  mean_vec <- sapply(res$result2$params$mu, function(mu_k) mu_k[[index]])
+  plot((1:50)/5, mean_vec, type = 'o',
+       cex = 0.5,
+       main = paste("Coordinate", all_coordinates_1[index]), 
+       xlab = "discretized t1", ylab = paste("mu"))
+  points(t1, 
+         X[, permut_cols == all_coordinates_1[index]], 
+         col = rgb(1, 0.75, 0.8, alpha = 0.8),
+         cex = 0.2)
+}
+par(mfrow = c(1, 1))
+```
+
+Also visualize the inferred $\boldsymbol{\mu}^{(2)}$:
+
+```{r}
+all_coordinates_2 <- permut_cols[res$J1]
+par(mfrow = c(2, 4))
+for (i in 1:length(res$result1$params$mu[[1]])) {
+  index <- order(all_coordinates_2)[i]
+  mean_vec <- sapply(res$result1$params$mu, function(mu_k) mu_k[[index]])
+  plot((1:50)/5, mean_vec, type = 'o',
+       cex = 0.5,
+       main = paste("Coordinate", all_coordinates_2[index]), 
+       xlab = "discretized t2", ylab = paste("mu"))
+  
+  points((10 - t2), type = 'p',
+         X[, permut_cols == all_coordinates_2[index]], 
+         col = rgb(1, 0.75, 0.8, alpha = 0.8),
+         cex = 0.2)
+}
+par(mfrow = c(1, 1))
+```
+
+Finally, let's try to examine the structure plot. To start with, we will take a look at the unordered data matrix.
+
+```{r}
+rownames(X) <- paste0("Cell", 1:nrow(X))
+plot_structure(X)
+```
+
+Now, let's order them based on the first latent ordering:
+
+```{r}
+position_1 <- apply(res$Gamma1, 1, which.max)
+X_J1 <- X[, res$J1]
+X_J1_order <- order(position_1)
+plot_structure(X_J1, order = rownames(X_J1)[X_J1_order])
+```
+
+As well as the second latent ordering:
+
+```{r}
+position_2 <- apply(res$Gamma2, 1, which.max)
+X_J2 <- X[, res$J2]
+X_J2_order <- order(position_2)
+plot_structure(X_J2, order = rownames(X_J2)[X_J2_order])
+```
+
+
+
+## **Application to Pancreas dataset**
+
+Now, let's see how this approach applies to the pancreas dataset, to distinguish between cell-type factors and batch-type factors.
+
+```{r warning=FALSE, message=FALSE}
+library(tibble)
+library(Rtsne)
+library(umap)
+set.seed(1)
+load("./data/loading_order/pancreas_factors.rdata")
+load("./data/loading_order/pancreas.rdata")
+cell_type_factors <- c(3, 8, 9, 12, 17, 18, 20, 21)
+batch_type_factors <- c(1, 2, 4, 5, 6, 7, 11, 22)
+all_factors <- c(cell_type_factors, batch_type_factors)
+cells <- subsample_cell_types(sample_info$celltype,n = 500)
+Loadings <- fl_snmf_ldf$L[cells,all_factors]
+celltype <- as.character(sample_info$celltype[cells])
+names(celltype) <- rownames(Loadings)
+batchtype <- as.character(sample_info$tech[cells])
+names(batchtype) <- rownames(Loadings)
+```
+
+Based on the visual assessment from [this analysis](https://stephenslab.github.io/single-cell-jamboree/pancreas_factors.html), we select the first 8 factors to be cell-type factors, and the remaining 8 factors to be batch-type factors.
+
+Take a look at the unordered structure plot:
+
+```{r}
+plot_structure(Loadings)
+```
+
+
+Apply the smooth EM algorithm to infer the two latent orderings, with the second order random walk prior for $\boldsymbol{\mu}^{(1)}$ and $\boldsymbol{\mu}^{(2)}$.
+
+Before we run the algorithm, we standardize the data by columns to ensure each loading factor has the same scale. 
+
+```{r}
+# standardize by columns
+Loadings <- scale(Loadings, center = FALSE, scale = TRUE)
+
+resPancreas <- two_ordering_smoothEM(
+  X = Loadings, K = 100,
+  init_method = "pca",
+  greedy = TRUE,
+  make_Q_prior = make_random_walk_precision,
+  lambda_vec = c(300, 100),
+  relative_lambda = TRUE,
+  rw_order_vec = c(2, 2),
+  reassign_by = "posterior",
+  max_iter = 100,
+  max_iter_EM = 100,
+  verbose = TRUE
+)
+```
+
+Let's check the inferred latent orderings.
+
+```{r}
+resPancreas$J1
+resPancreas$J2
+```
+
+
+Let's take a look at the structure plot ordered by each latent ordering.
+
+```{r}
+position_1 <- apply(resPancreas$Gamma1, 1, which.max)
+Loadings_J1 <- Loadings[, resPancreas$J1]
+Loadings_J1_order <- order(position_1)
+plot_structure(Loadings_J1, order = rownames(Loadings_J1)[Loadings_J1_order],
+               plot_name = "Ordered by Latent Ordering 1")
+plot_highlight_types(type_vec = batchtype,
+                     subset_types = unique(batchtype),
+                     order_vec = rownames(Loadings_J1)[Loadings_J1_order],
+                     other_color = "white"
+                     )
+```
+
+
+As well as the second latent ordering:
+
+```{r}
+position_2 <- apply(resPancreas$Gamma2, 1, which.max)
+Loadings_J2 <- Loadings[, resPancreas$J2]
+Loadings_J2_order <- order(position_2)
+plot_structure(Loadings_J2, order = rownames(Loadings_J2)[Loadings_J2_order],
+               plot_name = "Ordered by Latent Ordering 2")
+plot_highlight_types(type_vec = celltype,
+                     subset_types = unique(celltype),
+                     order_vec = rownames(Loadings_J2)[Loadings_J2_order],
+                     other_color = "white"
+                     )
+```
+
+
+
+
