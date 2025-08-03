@@ -83,8 +83,7 @@ Specifically, the negative log-posterior density for ordering $a$ is given by:
 }_{\text{data fit}}
 \;+\;
 \underbrace{
-\sum_{i=1}^N \sum_{k=1}^{K_a} \Gamma_{ik}^{(a)} 
-\log\left(\sigma_j^{(a)}\right)
+N \log\left(\sigma_j^{(a)}\right)
 }_{\text{obs. norm. const.}}
 \;+\;
 \underbrace{
