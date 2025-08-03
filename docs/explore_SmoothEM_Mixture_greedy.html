@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2025-08-03" />
+
+<title>Smooth EM algorithm with mixture of two latent orderings (Greedy Version)</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Inferring latent ordering</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Smooth EM algorithm with mixture of two
+latent orderings (Greedy Version)</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2025-08-03</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-08-03
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>InferOrder/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250707code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250707)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250707code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250707)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb79319cdb4732becde3cea98adfc53c486ab59d5targetblankb79319ca">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/b79319cdb4732becde3cea98adfc53c486ab59d5" target="_blank">b79319c</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb79319cdb4732becde3cea98adfc53c486ab59d5targetblankb79319ca"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/InferOrder/tree/b79319cdb4732becde3cea98adfc53c486ab59d5" target="_blank">b79319c</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  code/explore_permutation.R
+    Untracked:  code/general_EM_perCoordinate.R
+    Untracked:  code/two_ordering_EM_greedy.R
+    Untracked:  code/visualize_AdditiveEM.R
+    Untracked:  various figures/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
+    Deleted:    explore_permutation.R
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/explore_SmoothEM_Mixture_greedy.rmd</code>) and HTML
+(<code>docs/explore_SmoothEM_Mixture_greedy.html</code>) files. If
+you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table
+below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b79319cdb4732becde3cea98adfc53c486ab59d5/analysis/explore_SmoothEM_Mixture_greedy.rmd" target="_blank">b79319c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-03
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture_greedy.rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="problem-setup" class="section level2">
+<h2><strong>Problem Setup</strong></h2>
+<p>We consider the same problem describe in <a
+href="https://aguerozz.github.io/InferOrder/explore_SmoothEM_Mixture.html">this
+analysis</a>.</p>
+</div>
+<div id="greedy-initialized-iterative-algorithm" class="section level2">
+<h2><strong>Greedy-Initialized Iterative Algorithm</strong></h2>
+<p>When the partition <span
+class="math inline">\(\boldsymbol{\mathcal{J}}_1\)</span> and <span
+class="math inline">\(\boldsymbol{\mathcal{J}}_2\)</span> is known, we
+can fit two smooth mixture models independently using the smooth EM
+algorithm. However, the partition is unknown in practice, and there are
+<span class="math inline">\(2^D\)</span> possible ways to assign <span
+class="math inline">\(D\)</span> coordinates, making exhaustive search
+infeasible. We therefore propose a greedy-initialized iterative
+algorithm to jointly infer both the partition and the model
+parameters.</p>
+<p>The algorithm consists of two phases:</p>
+<hr />
+<div id="greedy-initialization" class="section level3">
+<h3><strong>Greedy Initialization</strong></h3>
+<p>We begin by selecting two seed coordinates that are expected to
+define distinct latent orderings:</p>
+<ul>
+<li>First, we identify the coordinate (<span class="math inline">\(j_1
+\in [D]\)</span>) with the largest marginal variance, and use it to
+initialize the first latent ordering <span
+class="math inline">\(\boldsymbol{\Gamma}^{(1)}\)</span> via the smooth
+EM algorithm.</li>
+<li>Second, we evaluate the <strong>log-posterior density</strong> of
+all remaining coordinates under this first ordering and choose the one
+with the lowest log-posterior density (i.e., least well explained) to
+seed the second ordering <span
+class="math inline">\(\boldsymbol{\Gamma}^{(2)}\)</span> (<span
+class="math inline">\(j_2 \in [D]\)</span>).</li>
+<li>For each remaining coordinate <span class="math inline">\(j \in
+\{1,\dots,D\} \setminus \{j_1, j_2\}\)</span>, we evaluate its
+log-posterior density under both <span
+class="math inline">\(\boldsymbol{\Gamma}^{(1)}\)</span> and <span
+class="math inline">\(\boldsymbol{\Gamma}^{(2)}\)</span>, and assign it
+to the ordering with higher log-posterior density (i.e., lower negative
+log-posterior). After each assignment, we refit the corresponding <span
+class="math inline">\(\boldsymbol{\Gamma}^{(a)}\)</span> using the
+updated coordinate subset.</li>
+</ul>
+<p>This greedy phase results in an initial partition <span
+class="math inline">\(\boldsymbol{\mathcal{J}}_1^{(0)}\)</span> and
+<span class="math inline">\(\boldsymbol{\mathcal{J}}_2^{(0)}\)</span>
+and associated latent position matrices <span
+class="math inline">\(\boldsymbol{\Gamma}^{(1)}\)</span> and <span
+class="math inline">\(\boldsymbol{\Gamma}^{(2)}\)</span>.</p>
+<hr />
+</div>
+<div id="iterative-backfitting" class="section level3">
+<h3><strong>Iterative Backfitting</strong></h3>
+<p>Given the initialization from the greedy phase, we iteratively refine
+the partition and model parameters using the same approach described <a
+href="https://aguerozz.github.io/InferOrder/explore_SmoothEM_Mixture.html">here</a>.</p>
+</div>
+<div id="convergence-criteria" class="section level3">
+<h3><strong>Convergence Criteria</strong></h3>
+<p>This backfitting procedure is repeated until the coordinate
+assignment stabilizes, i.e., when no coordinates change their assignment
+between two consecutive iterations. The final model parameters are
+estimated based on the converged partition.</p>
+<p>Typically, the backfitting procedure converges within a few
+iterations, as the greedy initialization provides a good starting
+point.</p>
+<hr />
+</div>
+</div>
+<div id="simulation" class="section level2">
+<h2><strong>Simulation</strong></h2>
+<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
+source(&quot;./code/general_EM_perCoordinate.R&quot;)
+source(&quot;./code/two_ordering_EM_greedy.R&quot;)
+source(&quot;./code/plot_ordering.R&quot;)
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+library(MASS)
+library(matrixStats) 
+library(fields)  # for rdist and Matern</code></pre>
+<p>In this experiment, we generate synthetic data with <strong>two
+distinct latent orderings</strong>, each affecting a disjoint subset of
+the coordinates.</p>
+<p>Specifically, we consider <span class="math inline">\(D = 16\)</span>
+coordinates, partitioned as follows:</p>
+<ul>
+<li>The first <span class="math inline">\(8\)</span> coordinates are
+generated as smooth functions of a latent variable <span
+class="math inline">\(t^{(1)}\)</span>;</li>
+<li>The remaining <span class="math inline">\(8\)</span> coordinates are
+generated as smooth functions of another latent variable <span
+class="math inline">\(t^{(2)}\)</span>.</li>
+</ul>
+<p>The data matrix consists of <span class="math inline">\(N =
+1000\)</span> observations. For each latent ordering <span
+class="math inline">\(t^{(j)}\)</span>, we sample <span
+class="math inline">\(t^{(j)}_i \sim \text{Uniform}(0, 10)\)</span>
+independently for <span class="math inline">\(i = 1, \dots, N\)</span>,
+and generate the smooth function in each coordinate as independent
+Matérn processes.</p>
+<p>Below we construct the data:</p>
+<pre class="r"><code>N &lt;- 1000; D &lt;- 16
+set.seed(1234)
+t1 &lt;- runif(1000, min = 0, max = 10)
+t2 &lt;- runif(1000, min = 0, max = 10)
+
+# GP kernel function using Matern
+matern_cov &lt;- function(t, range = 5, smoothness = 2.5, variance = 3.0) {
+  dists &lt;- rdist(t, t)
+  cov_mat &lt;- Matern(dists, range = range, smoothness = smoothness)
+  cov_mat * variance
+}
+
+# Generate first 8 coordinates (dependent on t1)
+Sigma1 &lt;- matern_cov(matrix(t1, ncol = 1))
+X1 &lt;- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma1)
+X1 &lt;- t(X1)  # Make it N x 8
+# Make X1 positive
+X1 &lt;- X1 + abs(min(X1)) + 1  # Shift to make all values positive
+
+# Generate second 8 coordinates (dependent on t2)
+Sigma2 &lt;- matern_cov(matrix(t2, ncol = 1))
+X2 &lt;- mvrnorm(n = 8, mu = rep(0, N), Sigma = Sigma2)
+X2 &lt;- t(X2)  # Make it N x 8
+# Make X2 positive
+X2 &lt;- X2 + abs(min(X2)) + 1  # Shift to make all values positive
+
+X &lt;- cbind(X1, X2)  # Combine the two sets of coordinates
+# permute the columns
+permut_cols &lt;- sample(1:16, 16)
+X &lt;- X[, permut_cols]  # Permute the columns of X
+
+# Add some noise
+X &lt;- X + matrix(rnorm(N * D, mean = 0, sd = 0.05), nrow = N, ncol = D)</code></pre>
+<p>Let’s visualize the generated data against the latent orderings <span
+class="math inline">\(t^{(1)}\)</span> and <span
+class="math inline">\(t^{(2)}\)</span>.</p>
+<pre class="r"><code># Plot the first 8 coordinates
+par(mfrow = c(2,4))
+for (i in 1:8) {
+  plot(t1, X1[, i], 
+       cex = 0.3,
+       main = paste(&quot;Coordinate&quot;, i), 
+       xlab = &quot;t1&quot;, ylab = paste(&quot;X1[&quot;, i, &quot;]&quot;))
+}</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1,1))
+
+# Plot the second 8 coordinates
+par(mfrow = c(2,4))
+for (i in 1:8) {
+  plot(t2, X2[, i], 
+       cex = 0.3,
+       main = paste(&quot;Coordinate&quot;, i + 8), 
+       xlab = &quot;t2&quot;, ylab = paste(&quot;X2[&quot;, i, &quot;]&quot;))
+}</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1,1))</code></pre>
+<p>Let’s apply the smooth EM algorithm to infer the two latent
+orderings, with the second order random walk prior for <span
+class="math inline">\(\boldsymbol{\mu}^{(1)}\)</span> and <span
+class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>.</p>
+<pre class="r"><code>set.seed(1234)
+res &lt;- two_ordering_smoothEM(
+  X = X, K = 50,
+  init_method = &quot;pca&quot;,
+  greedy = TRUE,
+  make_Q_prior = make_random_walk_precision,
+  lambda_vec = c(50, 50),
+  relative_lambda = TRUE,
+  rw_order_vec = c(2, 2),
+  reassign_by = &quot;posterior&quot;,
+  max_iter = 100,
+  max_iter_EM = 200,
+  verbose = TRUE
+)</code></pre>
+<pre><code>[Greedy Init] seed coordinates: j1 = 1, j2 = 12
+[Greedy Iter 1] coord 2 assigned to ordering 1 (E1=-1691.579, E2=-85.901)
+[Greedy Iter 2] coord 3 assigned to ordering 2 (E1=-945.726, E2=-1624.671)
+[Greedy Iter 3] coord 4 assigned to ordering 2 (E1=352.152, E2=315.388)
+[Greedy Iter 4] coord 5 assigned to ordering 2 (E1=823.841, E2=446.687)
+[Greedy Iter 5] coord 6 assigned to ordering 2 (E1=309.619, E2=-810.341)
+[Greedy Iter 6] coord 7 assigned to ordering 1 (E1=-1127.672, E2=45.210)
+[Greedy Iter 7] coord 8 assigned to ordering 2 (E1=-634.839, E2=-1126.759)
+[Greedy Iter 8] coord 9 assigned to ordering 1 (E1=-1107.245, E2=638.059)
+[Greedy Iter 9] coord 10 assigned to ordering 2 (E1=1108.767, E2=-36.165)
+[Greedy Iter 10] coord 11 assigned to ordering 1 (E1=-1646.953, E2=-1172.909)
+[Greedy Iter 11] coord 13 assigned to ordering 1 (E1=-1568.396, E2=-524.873)
+[Greedy Iter 12] coord 14 assigned to ordering 2 (E1=916.294, E2=-775.262)
+[Greedy Iter 13] coord 15 assigned to ordering 1 (E1=-611.652, E2=-2.878)
+[Greedy Iter 14] coord 16 assigned to ordering 1 (E1=-1714.331, E2=-865.123)
+[Greedy Init Completed] ordering1 size = 8, ordering2 size = 8
+[Backfitting  1] reassigned 0 coords (J1=8, J2=8)</code></pre>
+<p>Let’s check the inferred latent orderings.</p>
+<pre class="r"><code>sort(permut_cols[res$J1])</code></pre>
+<pre><code>[1]  9 10 11 12 13 14 15 16</code></pre>
+<pre class="r"><code>sort(permut_cols[res$J2])</code></pre>
+<pre><code>[1] 1 2 3 4 5 6 7 8</code></pre>
+<p>The first 8 coordinates are correctly assigned to one partition, and
+the second 8 coordinates are assigned to the other partition.</p>
+<p>Let’s visualize the inferred <span
+class="math inline">\(\boldsymbol{\mu}^{(1)}\)</span>:</p>
+<pre class="r"><code>all_coordinates_1 &lt;- permut_cols[res$J2]
+par(mfrow = c(2, 4))
+for (i in 1:length(res$result2$params$mu[[1]])) {
+  index &lt;- order(all_coordinates_1)[i]
+  mean_vec &lt;- sapply(res$result2$params$mu, function(mu_k) mu_k[[index]])
+  plot((1:50)/5, mean_vec, type = &#39;o&#39;,
+       cex = 0.5,
+       main = paste(&quot;Coordinate&quot;, all_coordinates_1[index]), 
+       xlab = &quot;discretized t1&quot;, ylab = paste(&quot;mu&quot;))
+  points(t1, 
+         X[, permut_cols == all_coordinates_1[index]], 
+         col = rgb(1, 0.75, 0.8, alpha = 0.8),
+         cex = 0.2)
+}</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>Also visualize the inferred <span
+class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>:</p>
+<pre class="r"><code>all_coordinates_2 &lt;- permut_cols[res$J1]
+par(mfrow = c(2, 4))
+for (i in 1:length(res$result1$params$mu[[1]])) {
+  index &lt;- order(all_coordinates_2)[i]
+  mean_vec &lt;- sapply(res$result1$params$mu, function(mu_k) mu_k[[index]])
+  plot((1:50)/5, mean_vec, type = &#39;o&#39;,
+       cex = 0.5,
+       main = paste(&quot;Coordinate&quot;, all_coordinates_2[index]), 
+       xlab = &quot;discretized t2&quot;, ylab = paste(&quot;mu&quot;))
+  
+  points((10 - t2), type = &#39;p&#39;,
+         X[, permut_cols == all_coordinates_2[index]], 
+         col = rgb(1, 0.75, 0.8, alpha = 0.8),
+         cex = 0.2)
+}</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>Finally, let’s try to examine the structure plot. To start with, we
+will take a look at the unordered data matrix.</p>
+<pre class="r"><code>rownames(X) &lt;- paste0(&quot;Cell&quot;, 1:nrow(X))
+plot_structure(X)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, let’s order them based on the first latent ordering:</p>
+<pre class="r"><code>position_1 &lt;- apply(res$Gamma1, 1, which.max)
+X_J1 &lt;- X[, res$J1]
+X_J1_order &lt;- order(position_1)
+plot_structure(X_J1, order = rownames(X_J1)[X_J1_order])</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As well as the second latent ordering:</p>
+<pre class="r"><code>position_2 &lt;- apply(res$Gamma2, 1, which.max)
+X_J2 &lt;- X[, res$J2]
+X_J2_order &lt;- order(position_2)
+plot_structure(X_J2, order = rownames(X_J2)[X_J2_order])</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="application-to-pancreas-dataset" class="section level2">
+<h2><strong>Application to Pancreas dataset</strong></h2>
+<p>Now, let’s see how this approach applies to the pancreas dataset, to
+distinguish between cell-type factors and batch-type factors.</p>
+<pre class="r"><code>library(tibble)
+library(Rtsne)
+library(umap)
+set.seed(1)
+load(&quot;./data/loading_order/pancreas_factors.rdata&quot;)
+load(&quot;./data/loading_order/pancreas.rdata&quot;)
+cell_type_factors &lt;- c(3, 8, 9, 12, 17, 18, 20, 21)
+batch_type_factors &lt;- c(1, 2, 4, 5, 6, 7, 11, 22)
+all_factors &lt;- c(cell_type_factors, batch_type_factors)
+cells &lt;- subsample_cell_types(sample_info$celltype,n = 500)
+Loadings &lt;- fl_snmf_ldf$L[cells,all_factors]
+celltype &lt;- as.character(sample_info$celltype[cells])
+names(celltype) &lt;- rownames(Loadings)
+batchtype &lt;- as.character(sample_info$tech[cells])
+names(batchtype) &lt;- rownames(Loadings)</code></pre>
+<p>Based on the visual assessment from <a
+href="https://stephenslab.github.io/single-cell-jamboree/pancreas_factors.html">this
+analysis</a>, we select the first 8 factors to be cell-type factors, and
+the remaining 8 factors to be batch-type factors.</p>
+<p>Take a look at the unordered structure plot:</p>
+<pre class="r"><code>plot_structure(Loadings)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Apply the smooth EM algorithm to infer the two latent orderings, with
+the second order random walk prior for <span
+class="math inline">\(\boldsymbol{\mu}^{(1)}\)</span> and <span
+class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>.</p>
+<p>Before we run the algorithm, we standardize the data by columns to
+ensure each loading factor has the same scale.</p>
+<pre class="r"><code># standardize by columns
+Loadings &lt;- scale(Loadings, center = FALSE, scale = TRUE)
+
+resPancreas &lt;- two_ordering_smoothEM(
+  X = Loadings, K = 100,
+  init_method = &quot;pca&quot;,
+  greedy = TRUE,
+  make_Q_prior = make_random_walk_precision,
+  lambda_vec = c(300, 100),
+  relative_lambda = TRUE,
+  rw_order_vec = c(2, 2),
+  reassign_by = &quot;posterior&quot;,
+  max_iter = 100,
+  max_iter_EM = 100,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Warning: did not converge in 10 iterations</code></pre>
+<pre><code>[Greedy Init] seed coordinates: j1 = 15, j2 = 4</code></pre>
+<pre><code>Warning: did not converge in 10 iterations</code></pre>
+<pre><code>[Greedy Iter 1] coord 1 assigned to ordering 2 (E1=5013.791, E2=4714.738)
+[Greedy Iter 2] coord 2 assigned to ordering 2 (E1=5189.899, E2=4951.570)
+[Greedy Iter 3] coord 3 assigned to ordering 2 (E1=4349.791, E2=3722.612)
+[Greedy Iter 4] coord 5 assigned to ordering 2 (E1=4596.334, E2=3905.171)
+[Greedy Iter 5] coord 6 assigned to ordering 2 (E1=5517.930, E2=5402.844)
+[Greedy Iter 6] coord 7 assigned to ordering 2 (E1=5595.923, E2=5590.563)
+[Greedy Iter 7] coord 8 assigned to ordering 2 (E1=5084.698, E2=4198.921)
+[Greedy Iter 8] coord 9 assigned to ordering 2 (E1=467.445, E2=45.809)
+[Greedy Iter 9] coord 10 assigned to ordering 2 (E1=2332.177, E2=1763.868)
+[Greedy Iter 10] coord 11 assigned to ordering 2 (E1=4445.647, E2=3399.362)
+[Greedy Iter 11] coord 12 assigned to ordering 1 (E1=4685.610, E2=4834.528)
+[Greedy Iter 12] coord 13 assigned to ordering 1 (E1=4019.838, E2=4215.080)
+[Greedy Iter 13] coord 14 assigned to ordering 2 (E1=5099.846, E2=4596.844)
+[Greedy Iter 14] coord 16 assigned to ordering 1 (E1=2863.803, E2=3456.579)
+[Greedy Init Completed] ordering1 size = 4, ordering2 size = 12
+[Backfitting  1] reassigned 0 coords (J1=4, J2=12)</code></pre>
+<p>Let’s check the inferred latent orderings.</p>
+<pre class="r"><code>resPancreas$J1</code></pre>
+<pre><code>[1] 12 13 15 16</code></pre>
+<pre class="r"><code>resPancreas$J2</code></pre>
+<pre><code> [1]  1  2  3  4  5  6  7  8  9 10 11 14</code></pre>
+<p>Let’s take a look at the structure plot ordered by each latent
+ordering.</p>
+<pre class="r"><code>position_1 &lt;- apply(resPancreas$Gamma1, 1, which.max)
+Loadings_J1 &lt;- Loadings[, resPancreas$J1]
+Loadings_J1_order &lt;- order(position_1)
+plot_structure(Loadings_J1, order = rownames(Loadings_J1)[Loadings_J1_order],
+               plot_name = &quot;Ordered by Latent Ordering 1&quot;)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = batchtype,
+                     subset_types = unique(batchtype),
+                     order_vec = rownames(Loadings_J1)[Loadings_J1_order],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As well as the second latent ordering:</p>
+<pre class="r"><code>position_2 &lt;- apply(resPancreas$Gamma2, 1, which.max)
+Loadings_J2 &lt;- Loadings[, resPancreas$J2]
+Loadings_J2_order &lt;- order(position_2)
+plot_structure(Loadings_J2, order = rownames(Loadings_J2)[Loadings_J2_order],
+               plot_name = &quot;Ordered by Latent Ordering 2&quot;)</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = unique(celltype),
+                     order_vec = rownames(Loadings_J2)[Loadings_J2_order],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_SmoothEM_Mixture_greedy.rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 15.5
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] umap_0.2.10.0     Rtsne_0.17        fields_16.2       viridisLite_0.4.2
+ [5] spam_2.11-0       matrixStats_1.4.1 MASS_7.3-60       reshape2_1.4.4   
+ [9] lubridate_1.9.3   forcats_1.0.0     stringr_1.5.1     dplyr_1.1.4      
+[13] purrr_1.0.4       readr_2.1.5       tidyr_1.3.1       tibble_3.2.1     
+[17] tidyverse_2.0.0   ggplot2_3.5.2     workflowr_1.7.1  
+
+loaded via a namespace (and not attached):
+ [1] dotCall64_1.2      gtable_0.3.6       xfun_0.52          bslib_0.9.0       
+ [5] processx_3.8.6     lattice_0.22-6     callr_3.7.6        tzdb_0.5.0        
+ [9] vctrs_0.6.5        tools_4.3.1        ps_1.9.1           generics_0.1.4    
+[13] pkgconfig_2.0.3    Matrix_1.6-4       RColorBrewer_1.1-3 lifecycle_1.0.4   
+[17] compiler_4.3.1     farver_2.1.2       git2r_0.33.0       getPass_0.2-4     
+[21] httpuv_1.6.16      htmltools_0.5.8.1  maps_3.4.2         sass_0.4.10       
+[25] yaml_2.3.10        later_1.4.2        pillar_1.10.2      jquerylib_0.1.4   
+[29] whisker_0.4.1      openssl_2.2.2      cachem_1.1.0       RSpectra_0.16-2   
+[33] tidyselect_1.2.1   digest_0.6.37      stringi_1.8.7      labeling_0.4.3    
+[37] rprojroot_2.0.4    fastmap_1.2.0      grid_4.3.1         cli_3.6.5         
+[41] magrittr_2.0.3     withr_3.0.2        scales_1.4.0       promises_1.3.3    
+[45] timechange_0.3.0   rmarkdown_2.28     httr_1.4.7         reticulate_1.42.0 
+[49] png_0.1-8          askpass_1.2.1      hms_1.1.3          evaluate_1.0.3    
+[53] knitr_1.50         rlang_1.1.6        Rcpp_1.0.14        glue_1.8.0        
+[57] rstudioapi_0.16.0  jsonlite_2.0.0     R6_2.6.1           plyr_1.8.9        
+[61] fs_1.6.6          </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
