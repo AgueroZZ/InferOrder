@@ -341,7 +341,7 @@ resPancreas <- two_ordering_smoothEM(
   init_coord_assign = rep(c(1,2), each = ncol(Loadings) / 2),
   modelName = "EEI",
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(50, 50),
+  lambda_vec = c(500, 300),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = "posterior",
