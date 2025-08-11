@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreef133227a5fa58aad25dadbbd71b95a6a299f897ctargetblankf133227a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb9b4ee1189590d38248c4a1ea2e62e4e335dd104targetblankb9b4ee1a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/f133227a5fa58aad25dadbbd71b95a6a299f897c" target="_blank">f133227</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/b9b4ee1189590d38248c4a1ea2e62e4e335dd104" target="_blank">b9b4ee1</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreef133227a5fa58aad25dadbbd71b95a6a299f897ctargetblankf133227a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb9b4ee1189590d38248c4a1ea2e62e4e335dd104targetblankb9b4ee1a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/f133227a5fa58aad25dadbbd71b95a6a299f897c" target="_blank">f133227</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/b9b4ee1189590d38248c4a1ea2e62e4e335dd104" target="_blank">b9b4ee1</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,7 +547,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/site_libs/
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
 
@@ -605,6 +604,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b9b4ee1189590d38248c4a1ea2e62e4e335dd104/analysis/explore_smoothEM.rmd" target="_blank">b9b4ee1</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_smoothEM.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/explore_smoothEM.html" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1377,6 +1410,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/figure/explore_smoothEM.rmd/unnamed-chunk-9-1.png" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/39443d1451d5f89be1512d24572f20fcd66e9e4c/docs/figure/explore_smoothEM.rmd/unnamed-chunk-9-1.png" target="_blank">39443d1</a>
 </td>
 <td>
@@ -1428,7 +1472,7 @@ precision parameter that controls the smoothness of the mean sequence.
 Larger values of <span class="math inline">\(\lambda\)</span> enforce
 stronger smoothness by penalizing large differences between successive
 component means.</p>
-<pre class="r"><code>Q_prior_RW1 &lt;- make_random_walk_precision(K=20, d=2, lambda = 10)
+<pre class="r"><code>Q_prior_RW1 &lt;- make_random_walk_precision(K=20, d=2, lambda = 5)
 result_RW1 &lt;- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_RW1,
@@ -1437,93 +1481,52 @@ result_RW1 &lt;- EM_algorithm(
   modelName = &quot;EEI&quot;,
   relative_lambda = T,
   rank_deficiency = 1,
-  iterate_once = F,
+  iterate_once = T,
   tol = 1e-3,
   verbose = TRUE
 )</code></pre>
-<pre><code>  MSTEP inner iter 1: Δμ=6.676e+00, ΔΣ=5.493e-01
-  MSTEP inner iter 2: Δμ=2.665e-15, ΔΣ=3.553e-15
-Iteration   1: penLogLik = -1505.263694, ELBO = -1584.816400
-  MSTEP inner iter 1: Δμ=3.851e+00, ΔΣ=1.098e-01
-  MSTEP inner iter 2: Δμ=3.553e-15, ΔΣ=1.554e-15
-Iteration   2: penLogLik = -1457.475847, ELBO = -1462.993902
-  MSTEP inner iter 1: Δμ=4.618e+00, ΔΣ=4.986e-03
-  MSTEP inner iter 2: Δμ=7.105e-15, ΔΣ=1.110e-15
-Iteration   3: penLogLik = -1455.432413, ELBO = -1455.650753
-  MSTEP inner iter 1: Δμ=5.364e+00, ΔΣ=1.099e-03
-  MSTEP inner iter 2: Δμ=3.553e-15, ΔΣ=7.772e-16
-Iteration   4: penLogLik = -1455.038004, ELBO = -1455.225460
-  MSTEP inner iter 1: Δμ=5.358e+00, ΔΣ=7.819e-04
-  MSTEP inner iter 2: Δμ=2.665e-15, ΔΣ=9.992e-16
-Iteration   5: penLogLik = -1454.677971, ELBO = -1454.851745
-  MSTEP inner iter 1: Δμ=5.350e+00, ΔΣ=4.654e-04
-  MSTEP inner iter 2: Δμ=3.553e-15, ΔΣ=3.331e-16
-Iteration   6: penLogLik = -1454.332771, ELBO = -1454.502355
-  MSTEP inner iter 1: Δμ=5.342e+00, ΔΣ=2.829e-04
-  MSTEP inner iter 2: Δμ=5.329e-15, ΔΣ=8.882e-16
-Iteration   7: penLogLik = -1453.979381, ELBO = -1454.156734
-  MSTEP inner iter 1: Δμ=5.331e+00, ΔΣ=3.356e-04
-  MSTEP inner iter 2: Δμ=3.109e-15, ΔΣ=2.109e-15
-Iteration   8: penLogLik = -1453.590009, ELBO = -1453.789350
-  MSTEP inner iter 1: Δμ=5.317e+00, ΔΣ=4.065e-04
-  MSTEP inner iter 2: Δμ=2.220e-15, ΔΣ=1.554e-15
-Iteration   9: penLogLik = -1453.130450, ELBO = -1453.369576
-  MSTEP inner iter 1: Δμ=5.301e+00, ΔΣ=5.058e-04
-  MSTEP inner iter 2: Δμ=4.885e-15, ΔΣ=1.332e-15
-Iteration  10: penLogLik = -1452.553639, ELBO = -1452.857781
-  MSTEP inner iter 1: Δμ=5.281e+00, ΔΣ=6.512e-04
-  MSTEP inner iter 2: Δμ=5.773e-15, ΔΣ=1.943e-15
-Iteration  11: penLogLik = -1451.785103, ELBO = -1452.195289
-  MSTEP inner iter 1: Δμ=5.251e+00, ΔΣ=8.765e-04
-  MSTEP inner iter 2: Δμ=2.665e-15, ΔΣ=2.442e-15
-Iteration  12: penLogLik = -1450.690135, ELBO = -1451.282149
-  MSTEP inner iter 1: Δμ=5.214e+00, ΔΣ=1.255e-03
-  MSTEP inner iter 2: Δμ=4.441e-15, ΔΣ=1.665e-15
-Iteration  13: penLogLik = -1448.990568, ELBO = -1449.923503
-  MSTEP inner iter 1: Δμ=5.279e+00, ΔΣ=1.965e-03
-  MSTEP inner iter 2: Δμ=4.441e-15, ΔΣ=1.665e-16
-Iteration  14: penLogLik = -1446.021506, ELBO = -1447.679243
-  MSTEP inner iter 1: Δμ=5.300e+00, ΔΣ=3.529e-03
-  MSTEP inner iter 2: Δμ=5.329e-15, ΔΣ=2.220e-16
-Iteration  15: penLogLik = -1439.958630, ELBO = -1443.365759
-  MSTEP inner iter 1: Δμ=5.097e+00, ΔΣ=7.647e-03
-  MSTEP inner iter 2: Δμ=1.066e-14, ΔΣ=2.442e-15
-Iteration  16: penLogLik = -1426.877815, ELBO = -1433.433092
-  MSTEP inner iter 1: Δμ=4.520e+00, ΔΣ=1.189e-02
-  MSTEP inner iter 2: Δμ=9.770e-15, ΔΣ=1.166e-15
-Iteration  17: penLogLik = -1416.249723, ELBO = -1417.782920
-  MSTEP inner iter 1: Δμ=4.443e+00, ΔΣ=1.405e-03
-  MSTEP inner iter 2: Δμ=6.661e-15, ΔΣ=5.551e-17
-Iteration  18: penLogLik = -1415.818238, ELBO = -1415.882441
-  MSTEP inner iter 1: Δμ=4.438e+00, ΔΣ=8.146e-05
-  MSTEP inner iter 2: Δμ=1.066e-14, ΔΣ=4.441e-16
-Iteration  19: penLogLik = -1415.727738, ELBO = -1415.764517
-  MSTEP inner iter 1: Δμ=5.435e+00, ΔΣ=4.335e-05
-  MSTEP inner iter 2: Δμ=1.599e-14, ΔΣ=3.608e-15
-Iteration  20: penLogLik = -1415.676713, ELBO = -1415.697215
-  MSTEP inner iter 1: Δμ=5.462e+00, ΔΣ=2.374e-05
-  MSTEP inner iter 2: Δμ=7.994e-15, ΔΣ=2.776e-16
-Iteration  21: penLogLik = -1415.648715, ELBO = -1415.659886
-  MSTEP inner iter 1: Δμ=5.462e+00, ΔΣ=1.278e-05
-  MSTEP inner iter 2: Δμ=1.688e-14, ΔΣ=1.277e-15
-Iteration  22: penLogLik = -1415.633594, ELBO = -1415.639603
-  MSTEP inner iter 1: Δμ=5.462e+00, ΔΣ=6.814e-06
-  MSTEP inner iter 2: Δμ=5.329e-15, ΔΣ=1.776e-15
-Iteration  23: penLogLik = -1415.625498, ELBO = -1415.628708
-  MSTEP inner iter 1: Δμ=5.461e+00, ΔΣ=3.611e-06
-  MSTEP inner iter 2: Δμ=1.421e-14, ΔΣ=2.665e-15
-Iteration  24: penLogLik = -1415.621183, ELBO = -1415.622892
-  MSTEP inner iter 1: Δμ=5.461e+00, ΔΣ=1.907e-06
-  MSTEP inner iter 2: Δμ=2.132e-14, ΔΣ=1.665e-15
-Iteration  25: penLogLik = -1415.618890, ELBO = -1415.619798
-  MSTEP inner iter 1: Δμ=5.461e+00, ΔΣ=1.004e-06
-  MSTEP inner iter 2: Δμ=2.132e-14, ΔΣ=3.497e-15
-Iteration  26: penLogLik = -1415.617672, ELBO = -1415.618154
-  MSTEP inner iter 1: Δμ=5.461e+00, ΔΣ=5.275e-07
-  MSTEP inner iter 2: Δμ=1.688e-14, ΔΣ=1.776e-15
-Iteration  27: penLogLik = -1415.617025, ELBO = -1415.617281
-Converged at iteration 27 with ELBO -1415.617281
-Final pLoglik: -1415.617025</code></pre>
+<pre><code>Iteration   1: penLogLik = -1397.471604, ELBO = -1474.393000
+Iteration   2: penLogLik = -1343.197731, ELBO = -1350.902827
+Iteration   3: penLogLik = -1335.356921, ELBO = -1335.597164
+Iteration   4: penLogLik = -1335.249480, ELBO = -1335.291874
+Iteration   5: penLogLik = -1335.154147, ELBO = -1335.204650
+Iteration   6: penLogLik = -1335.028143, ELBO = -1335.096644
+Iteration   7: penLogLik = -1334.850487, ELBO = -1334.948245
+Iteration   8: penLogLik = -1334.590706, ELBO = -1334.734915
+Iteration   9: penLogLik = -1334.200575, ELBO = -1334.418653
+Iteration  10: penLogLik = -1333.603596, ELBO = -1333.938972
+Iteration  11: penLogLik = -1332.680964, ELBO = -1333.200648
+Iteration  12: penLogLik = -1331.254833, ELBO = -1332.057919
+Iteration  13: penLogLik = -1329.072346, ELBO = -1330.297024
+Iteration  14: penLogLik = -1325.797519, ELBO = -1327.621958
+Iteration  15: penLogLik = -1321.028312, ELBO = -1323.654018
+Iteration  16: penLogLik = -1314.392496, ELBO = -1317.976549
+Iteration  17: penLogLik = -1305.849487, ELBO = -1310.316339
+Iteration  18: penLogLik = -1296.302253, ELBO = -1301.021227
+Iteration  19: penLogLik = -1287.962527, ELBO = -1291.724861
+Iteration  20: penLogLik = -1282.864914, ELBO = -1284.915342
+Iteration  21: penLogLik = -1280.662512, ELBO = -1281.491511
+Iteration  22: penLogLik = -1279.752242, ELBO = -1280.124319
+Iteration  23: penLogLik = -1279.158185, ELBO = -1279.444104
+Iteration  24: penLogLik = -1278.517222, ELBO = -1278.851730
+Iteration  25: penLogLik = -1277.650532, ELBO = -1278.115236
+Iteration  26: penLogLik = -1276.340241, ELBO = -1277.053664
+Iteration  27: penLogLik = -1274.127785, ELBO = -1275.349831
+Iteration  28: penLogLik = -1269.806822, ELBO = -1272.213202
+Iteration  29: penLogLik = -1260.083554, ELBO = -1265.216413
+Iteration  30: penLogLik = -1246.216519, ELBO = -1249.797612
+Iteration  31: penLogLik = -1244.844690, ELBO = -1244.954631
+Iteration  32: penLogLik = -1244.708788, ELBO = -1244.761824
+Iteration  33: penLogLik = -1244.639606, ELBO = -1244.666193
+Iteration  34: penLogLik = -1244.605725, ELBO = -1244.618588
+Iteration  35: penLogLik = -1244.589551, ELBO = -1244.595653
+Iteration  36: penLogLik = -1244.581930, ELBO = -1244.584796
+Iteration  37: penLogLik = -1244.578360, ELBO = -1244.579701
+Iteration  38: penLogLik = -1244.576693, ELBO = -1244.577319
+Iteration  39: penLogLik = -1244.575916, ELBO = -1244.576208
+Iteration  40: penLogLik = -1244.575554, ELBO = -1244.575690
+Converged at iteration 40 with ELBO -1244.575690
+Final pLoglik: -1244.575554</code></pre>
 <pre class="r"><code>plot(result_RW1$elbo_trace, col=&quot;blue&quot;, type=&quot;l&quot;, 
      cex = 0.1,
      xlab=&quot;Iteration&quot;, ylab=&quot;ELBO&quot;,
@@ -1554,6 +1557,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/figure/explore_smoothEM.rmd/unnamed-chunk-10-1.png" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/39443d1451d5f89be1512d24572f20fcd66e9e4c/docs/figure/explore_smoothEM.rmd/unnamed-chunk-10-1.png" target="_blank">39443d1</a>
@@ -1608,6 +1622,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/figure/explore_smoothEM.rmd/unnamed-chunk-11-1.png" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/39443d1451d5f89be1512d24572f20fcd66e9e4c/docs/figure/explore_smoothEM.rmd/unnamed-chunk-11-1.png" target="_blank">39443d1</a>
@@ -1679,7 +1704,7 @@ operator. The scalar precision parameter <span
 class="math inline">\(\lambda\)</span> controls the smoothness of the
 sequence, with larger values enforcing stronger penalization of
 curvature.</p>
-<pre class="r"><code>Q_prior_rw2 &lt;- make_random_walk_precision(K = 20, d = 2, q=2, lambda=400, ridge = 0)
+<pre class="r"><code>Q_prior_rw2 &lt;- make_random_walk_precision(K = 20, d = 2, q=2, lambda=4, ridge = 0)
 result_rw2 &lt;- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2,
@@ -1691,37 +1716,27 @@ result_rw2 &lt;- EM_algorithm(
   tol = 1e-3,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration   1: penLogLik = -1311.827385, ELBO = -1492.644733
-Iteration   2: penLogLik = -1234.681714, ELBO = -1239.092177
-Iteration   3: penLogLik = -1224.867329, ELBO = -1230.307295
-Iteration   4: penLogLik = -1206.128004, ELBO = -1216.401760
-Iteration   5: penLogLik = -1177.772353, ELBO = -1190.314216
-Iteration   6: penLogLik = -1164.109819, ELBO = -1166.394535
-Iteration   7: penLogLik = -1163.316015, ELBO = -1163.376728
-Iteration   8: penLogLik = -1163.255870, ELBO = -1163.280228
-Iteration   9: penLogLik = -1163.214017, ELBO = -1163.233405
-Iteration  10: penLogLik = -1163.180281, ELBO = -1163.195958
-Iteration  11: penLogLik = -1163.152945, ELBO = -1163.165662
-Iteration  12: penLogLik = -1163.130731, ELBO = -1163.141076
-Iteration  13: penLogLik = -1163.112633, ELBO = -1163.121069
-Iteration  14: penLogLik = -1163.097853, ELBO = -1163.104749
-Iteration  15: penLogLik = -1163.085759, ELBO = -1163.091406
-Iteration  16: penLogLik = -1163.075841, ELBO = -1163.080475
-Iteration  17: penLogLik = -1163.067695, ELBO = -1163.071504
-Iteration  18: penLogLik = -1163.060992, ELBO = -1163.064128
-Iteration  19: penLogLik = -1163.055468, ELBO = -1163.058054
-Iteration  20: penLogLik = -1163.050909, ELBO = -1163.053044
-Iteration  21: penLogLik = -1163.047141, ELBO = -1163.048907
-Iteration  22: penLogLik = -1163.044022, ELBO = -1163.045484
-Iteration  23: penLogLik = -1163.041438, ELBO = -1163.042650
-Iteration  24: penLogLik = -1163.039294, ELBO = -1163.040300
-Iteration  25: penLogLik = -1163.037512, ELBO = -1163.038349
-Iteration  26: penLogLik = -1163.036030, ELBO = -1163.036726
-Iteration  27: penLogLik = -1163.034795, ELBO = -1163.035376
-Iteration  28: penLogLik = -1163.033765, ELBO = -1163.034249
-Iteration  29: penLogLik = -1163.032904, ELBO = -1163.033309
-Converged at iteration 29 with ELBO -1163.033309
-Final pLoglik: -1163.032904</code></pre>
+<pre><code>Iteration   1: penLogLik = -1228.864491, ELBO = -1317.243244
+Iteration   2: penLogLik = -1169.277436, ELBO = -1174.472174
+Iteration   3: penLogLik = -1150.463888, ELBO = -1159.502236
+Iteration   4: penLogLik = -1134.666463, ELBO = -1137.828496
+Iteration   5: penLogLik = -1124.928923, ELBO = -1130.778590
+Iteration   6: penLogLik = -1107.664206, ELBO = -1117.766065
+Iteration   7: penLogLik = -1078.984091, ELBO = -1095.196448
+Iteration   8: penLogLik = -1037.467949, ELBO = -1059.048989
+Iteration   9: penLogLik = -995.609475, ELBO = -1013.620009
+Iteration  10: penLogLik = -977.426550, ELBO = -982.545679
+Iteration  11: penLogLik = -974.930041, ELBO = -975.502373
+Iteration  12: penLogLik = -974.686719, ELBO = -974.747052
+Iteration  13: penLogLik = -974.657665, ELBO = -974.665613
+Iteration  14: penLogLik = -974.652589, ELBO = -974.654303
+Iteration  15: penLogLik = -974.650658, ELBO = -974.651496
+Iteration  16: penLogLik = -974.649288, ELBO = -974.649939
+Iteration  17: penLogLik = -974.648113, ELBO = -974.648682
+Iteration  18: penLogLik = -974.647062, ELBO = -974.647574
+Iteration  19: penLogLik = -974.646111, ELBO = -974.646575
+Converged at iteration 19 with ELBO -974.646575
+Final pLoglik: -974.646111</code></pre>
 <pre class="r"><code>plot(result_rw2$elbo_trace, col=&quot;blue&quot;, type=&quot;l&quot;, 
      cex = 0.1,
      xlab=&quot;Iteration&quot;, ylab=&quot;ELBO&quot;,
@@ -1752,6 +1767,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/figure/explore_smoothEM.rmd/unnamed-chunk-12-1.png" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/39443d1451d5f89be1512d24572f20fcd66e9e4c/docs/figure/explore_smoothEM.rmd/unnamed-chunk-12-1.png" target="_blank">39443d1</a>
@@ -1801,6 +1827,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/figure/explore_smoothEM.rmd/unnamed-chunk-13-1.png" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/39443d1451d5f89be1512d24572f20fcd66e9e4c/docs/figure/explore_smoothEM.rmd/unnamed-chunk-13-1.png" target="_blank">39443d1</a>
@@ -1944,6 +1981,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/d36f40c75d96804e2a8d5282932b99b1f114ea09/docs/figure/explore_smoothEM.rmd/unnamed-chunk-15-1.png" target="_blank">d36f40c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/39443d1451d5f89be1512d24572f20fcd66e9e4c/docs/figure/explore_smoothEM.rmd/unnamed-chunk-15-1.png" target="_blank">39443d1</a>
