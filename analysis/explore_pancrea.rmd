@@ -102,7 +102,6 @@ Just as a comparison, let's see how does the result look like when we order the 
 ```{r}
 set.seed(123)
 # Random initialization
-init_params <- make_default_init(Loadings, K=100)
 tsne <- Rtsne(Loadings, dims = 1, perplexity = 50, verbose = TRUE, check_duplicates = FALSE, theta = 0.5, pca = TRUE, Y_init = matrix(-PC1, nrow = nrow(Loadings), ncol = 1))
 tsne_metric <- tsne$Y[,1]
 tsne_order <- order(tsne_metric)
@@ -340,7 +339,6 @@ result_RW1 <- EM_algorithm(
   modelName = "EEI",
   tol = 1e-3,
   relative_lambda = TRUE,
-  permutation = TRUE,
   verbose = TRUE
 )
 result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max)
@@ -367,7 +365,7 @@ Next, we will try the RW2 prior in the smooth-EM algorithm.
 
 ```{r}
 set.seed(1234)
-Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 300, q=2, ridge = 0)
+Q_prior_RW2 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 500, q=2, ridge = 0)
 # Random initialization
 init_params <- make_default_init(Loadings, K=100)
 # # Initialize based on the other ordering metric
@@ -376,11 +374,16 @@ result_RW2 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 200,
+  max_iter = 50,
   modelName = "EEI",
   tol = 1e-3,
+  iterate_once = TRUE,
+  # max_inner = 5,
+  # inner_tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = 2 * ncol(Loadings),
+  nugget = 0,
   relative_lambda = TRUE,
-  permutation = TRUE,
   verbose = TRUE
 )
 # hard threshold the gamma matrix to get the clustering
@@ -388,6 +391,12 @@ result_RW2$clustering <- apply(result_RW2$gamma, 1, which.max)
 loadings_order_RW2 <- order(result_RW2$clustering)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
 ```
+
+```{r}
+plot(result_RW2$elbo_trace, type = "o", cex = 0.1)
+points(result_RW2$loglik_trace, col = "red", type = "o", cex = 0.1)
+```
+
 
 ```{r}
 plot_highlight_types(type_vec = celltype,
