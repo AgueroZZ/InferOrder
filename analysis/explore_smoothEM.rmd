@@ -250,6 +250,7 @@ result_RW1 <- EM_algorithm(
   max_iter = 100,
   modelName = "EEI",
   relative_lambda = T,
+  rank_deficiency = 1,
   iterate_once = F,
   tol = 1e-3,
   verbose = TRUE
@@ -311,6 +312,7 @@ result_rw2 <- EM_algorithm(
   max_iter = 100,
   modelName = "EEI",
   relative_lambda = TRUE,
+  rank_deficiency = 2,
   tol = 1e-3,
   verbose = TRUE
 )
