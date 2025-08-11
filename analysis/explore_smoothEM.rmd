@@ -242,7 +242,7 @@ where \(\lambda\) is a scalar precision parameter that controls the smoothness o
 
 
 ```{r}
-Q_prior_RW1 <- make_random_walk_precision(K=20, d=2, lambda = 10)
+Q_prior_RW1 <- make_random_walk_precision(K=20, d=2, lambda = 5)
 result_RW1 <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_RW1,
@@ -251,7 +251,7 @@ result_RW1 <- EM_algorithm(
   modelName = "EEI",
   relative_lambda = T,
   rank_deficiency = 1,
-  iterate_once = F,
+  iterate_once = T,
   tol = 1e-3,
   verbose = TRUE
 )
@@ -304,7 +304,7 @@ Next, we consider a second-order random walk (RW2) prior on the component means,
 where \(\Delta^2 \boldsymbol{\mu}_k\) denotes the second-order difference operator. The scalar precision parameter \(\lambda\) controls the smoothness of the sequence, with larger values enforcing stronger penalization of curvature.
 
 ```{r}
-Q_prior_rw2 <- make_random_walk_precision(K = 20, d = 2, q=2, lambda=400, ridge = 0)
+Q_prior_rw2 <- make_random_walk_precision(K = 20, d = 2, q=2, lambda=4, ridge = 0)
 result_rw2 <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2,
