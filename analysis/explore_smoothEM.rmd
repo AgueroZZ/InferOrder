@@ -249,10 +249,18 @@ result_RW1 <- EM_algorithm(
   init_params = init_params,
   max_iter = 100,
   modelName = "EEI",
+  relative_lambda = T,
+  iterate_once = F,
   tol = 1e-3,
-  verbose = TRUE,
-  permutation = TRUE
+  verbose = TRUE
 )
+plot(result_RW1$elbo_trace, col="blue", type="l", 
+     cex = 0.1,
+     xlab="Iteration", ylab="ELBO",
+     main="ELBO Trace for RW1 Prior")
+lines(result_RW1$loglik_trace, col="red", 
+      cex = 0.1,
+      type = "l", lty = "dashed")
 ```
 
 
@@ -302,10 +310,17 @@ result_rw2 <- EM_algorithm(
   init_params = init_params,
   max_iter = 100,
   modelName = "EEI",
+  relative_lambda = TRUE,
   tol = 1e-3,
-  verbose = TRUE,
-  permutation = TRUE
+  verbose = TRUE
 )
+plot(result_rw2$elbo_trace, col="blue", type="l", 
+     cex = 0.1,
+     xlab="Iteration", ylab="ELBO",
+     main="ELBO Trace for RW2 Prior")
+lines(result_rw2$loglik_trace, col="red", 
+      cex = 0.1,
+      type = "l", lty = "dashed")
 ```
 
 ```{r}
