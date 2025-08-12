@@ -208,6 +208,8 @@ res <- two_ordering_smoothEM(
   make_Q_prior = make_random_walk_precision,
   lambda_vec = c(50, 50),
   relative_lambda = TRUE,
+  iterate_once = TRUE,
+  rank_deficiency = 2,
   rw_order_vec = c(2, 2),
   reassign_by = "posterior",
   max_iter = 100,
@@ -335,19 +337,23 @@ plot_structure(Loadings)
 Apply the smooth EM algorithm to infer the two latent orderings, with the second order random walk prior for $\boldsymbol{\mu}^{(1)}$ and $\boldsymbol{\mu}^{(2)}$.
 
 ```{r}
+# standardize
+Loadings <- scale(Loadings, center = FALSE, scale = TRUE)
+
 resPancreas <- two_ordering_smoothEM(
   X = Loadings, K = 50,
   init_method = "pca",
   init_coord_assign = rep(c(1,2), each = ncol(Loadings) / 2),
   modelName = "EEI",
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(500, 300),
+  lambda_vec = c(500, 500),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = "posterior",
-  max_iter = 100,
-  max_iter_EM = 1,
-  verbose = TRUE
+  iterate_once = TRUE,
+  rank_deficiency = (2 * ncol(Loadings)),
+  max_iter_EM = 200,
+  verbose = TRUE, verbose_EM = TRUE
 )
 ```
 
