@@ -379,7 +379,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-08-11
+<strong>Last updated:</strong> 2025-08-12
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree2c51ca9b5bd2ca5b6d29c49359be8e8fe20c489ftargetblank2c51ca9a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree48a84d0e6742b5727b96735838f1d8da43b51f23targetblank48a84d0a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/2c51ca9b5bd2ca5b6d29c49359be8e8fe20c489f" target="_blank">2c51ca9</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/48a84d0e6742b5727b96735838f1d8da43b51f23" target="_blank">48a84d0</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree2c51ca9b5bd2ca5b6d29c49359be8e8fe20c489ftargetblank2c51ca9a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree48a84d0e6742b5727b96735838f1d8da43b51f23targetblank48a84d0a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/2c51ca9b5bd2ca5b6d29c49359be8e8fe20c489f" target="_blank">2c51ca9</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/48a84d0e6742b5727b96735838f1d8da43b51f23" target="_blank">48a84d0</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,6 +547,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/site_libs/
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
 
@@ -559,6 +560,9 @@ Unstaged changes:
     Modified:   code/general_EM.R
     Modified:   code/general_EM_obs.R
     Modified:   code/two_ordering_EM_greedy.R
+    Modified:   code/two_ordering_smoothEM.R
+    Deleted:    warmstart.png
+    Deleted:    without_warmstart.png
 
 </code></pre>
 <p>
@@ -604,6 +608,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/48a84d0e6742b5727b96735838f1d8da43b51f23/analysis/explore_SmoothEM_Mixture.rmd" target="_blank">48a84d0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-12
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_SmoothEM_Mixture.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/explore_SmoothEM_Mixture.html" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1361,13 +1399,815 @@ res &lt;- two_ordering_smoothEM(
   make_Q_prior = make_random_walk_precision,
   lambda_vec = c(50, 50),
   relative_lambda = TRUE,
+  iterate_once = TRUE,
+  rank_deficiency = 2,
   rw_order_vec = c(2, 2),
   reassign_by = &quot;posterior&quot;,
   max_iter = 100,
   max_iter_EM = 200,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration  1: reassigned 6 coordinates (J1 = 8, J2 = 8)
+<pre><code>Iteration   1: penLogLik = 2379.623230, ELBO = 1469.549431
+Iteration   2: penLogLik = 3613.984673, ELBO = 3252.639979
+Iteration   3: penLogLik = 4101.933633, ELBO = 3907.146647
+Iteration   4: penLogLik = 4426.771538, ELBO = 4287.754821
+Iteration   5: penLogLik = 4636.341453, ELBO = 4549.735871
+Iteration   6: penLogLik = 4767.366605, ELBO = 4712.816689
+Iteration   7: penLogLik = 4842.447156, ELBO = 4811.661318
+Iteration   8: penLogLik = 4891.375518, ELBO = 4868.882954
+Iteration   9: penLogLik = 4932.120587, ELBO = 4912.426999
+Iteration  10: penLogLik = 4970.132097, ELBO = 4951.600489
+Iteration  11: penLogLik = 5004.075554, ELBO = 4988.043810
+Iteration  12: penLogLik = 5031.314595, ELBO = 5018.633355
+Iteration  13: penLogLik = 5052.866610, ELBO = 5042.714819
+Iteration  14: penLogLik = 5070.875038, ELBO = 5062.217377
+Iteration  15: penLogLik = 5087.277289, ELBO = 5079.179319
+Iteration  16: penLogLik = 5104.014528, ELBO = 5095.488046
+Iteration  17: penLogLik = 5123.724155, ELBO = 5113.288329
+Iteration  18: penLogLik = 5151.689118, ELBO = 5136.294624
+Iteration  19: penLogLik = 5191.702994, ELBO = 5171.838581
+Iteration  20: penLogLik = 5225.802171, ELBO = 5211.003691
+Iteration  21: penLogLik = 5254.198900, ELBO = 5240.644246
+Iteration  22: penLogLik = 5278.468030, ELBO = 5267.324440
+Iteration  23: penLogLik = 5296.851639, ELBO = 5288.624789
+Iteration  24: penLogLik = 5310.636788, ELBO = 5304.227000
+Iteration  25: penLogLik = 5322.159867, ELBO = 5316.627610
+Iteration  26: penLogLik = 5332.268068, ELBO = 5327.397194
+Iteration  27: penLogLik = 5341.074668, ELBO = 5336.849314
+Iteration  28: penLogLik = 5348.600086, ELBO = 5345.004189
+Iteration  29: penLogLik = 5354.953153, ELBO = 5351.919357
+Iteration  30: penLogLik = 5360.330550, ELBO = 5357.753819
+Iteration  31: penLogLik = 5364.962226, ELBO = 5362.727696
+Iteration  32: penLogLik = 5369.070131, ELBO = 5367.069977
+Iteration  33: penLogLik = 5372.855077, ELBO = 5370.991959
+Iteration  34: penLogLik = 5376.502702, ELBO = 5374.685188
+Iteration  35: penLogLik = 5380.198076, ELBO = 5378.333051
+Iteration  36: penLogLik = 5384.135847, ELBO = 5382.125473
+Iteration  37: penLogLik = 5388.498591, ELBO = 5386.257983
+Iteration  38: penLogLik = 5393.363002, ELBO = 5390.877693
+Iteration  39: penLogLik = 5398.562271, ELBO = 5395.951455
+Iteration  40: penLogLik = 5403.711532, ELBO = 5401.177888
+Iteration  41: penLogLik = 5408.480370, ELBO = 5406.161785
+Iteration  42: penLogLik = 5412.767286, ELBO = 5410.687249
+Iteration  43: penLogLik = 5416.620095, ELBO = 5414.745745
+Iteration  44: penLogLik = 5420.124425, ELBO = 5418.412570
+Iteration  45: penLogLik = 5423.364937, ELBO = 5421.774362
+Iteration  46: penLogLik = 5426.417458, ELBO = 5424.911850
+Iteration  47: penLogLik = 5429.345035, ELBO = 5427.894808
+Iteration  48: penLogLik = 5432.196001, ELBO = 5430.778953
+Iteration  49: penLogLik = 5435.004519, ELBO = 5433.605265
+Iteration  50: penLogLik = 5437.793435, ELBO = 5436.401724
+Iteration  51: penLogLik = 5440.579227, ELBO = 5439.187237
+Iteration  52: penLogLik = 5443.378599, ELBO = 5441.977503
+Iteration  53: penLogLik = 5446.216244, ELBO = 5444.792195
+Iteration  54: penLogLik = 5449.134689, ELBO = 5447.663545
+Iteration  55: penLogLik = 5452.208937, ELBO = 5450.648272
+Iteration  56: penLogLik = 5455.567988, ELBO = 5453.845931
+Iteration  57: penLogLik = 5459.415296, ELBO = 5457.422948
+Iteration  58: penLogLik = 5463.997031, ELBO = 5461.619838
+Iteration  59: penLogLik = 5469.373706, ELBO = 5466.640665
+Iteration  60: penLogLik = 5475.040543, ELBO = 5472.284250
+Iteration  61: penLogLik = 5480.100101, ELBO = 5477.757723
+Iteration  62: penLogLik = 5483.986079, ELBO = 5482.231726
+Iteration  63: penLogLik = 5486.882053, ELBO = 5485.555949
+Iteration  64: penLogLik = 5489.112918, ELBO = 5488.090265
+Iteration  65: penLogLik = 5490.834828, ELBO = 5490.040086
+Iteration  66: penLogLik = 5492.214086, ELBO = 5491.562182
+Iteration  67: penLogLik = 5493.394651, ELBO = 5492.824600
+Iteration  68: penLogLik = 5494.459285, ELBO = 5493.938894
+Iteration  69: penLogLik = 5495.448819, ELBO = 5494.962147
+Iteration  70: penLogLik = 5496.383816, ELBO = 5495.922481
+Iteration  71: penLogLik = 5497.275648, ELBO = 5496.834793
+Iteration  72: penLogLik = 5498.131285, ELBO = 5497.707822
+Iteration  73: penLogLik = 5498.955442, ELBO = 5498.547216
+Iteration  74: penLogLik = 5499.751629, ELBO = 5499.356992
+Iteration  75: penLogLik = 5500.522736, ELBO = 5500.140294
+Iteration  76: penLogLik = 5501.271373, ELBO = 5500.899841
+Iteration  77: penLogLik = 5502.000076, ELBO = 5501.638184
+Iteration  78: penLogLik = 5502.711436, ELBO = 5502.357877
+Iteration  79: penLogLik = 5503.408174, ELBO = 5503.061568
+Iteration  80: penLogLik = 5504.093192, ELBO = 5503.752065
+Iteration  81: penLogLik = 5504.769598, ELBO = 5504.432369
+Iteration  82: penLogLik = 5505.440736, ELBO = 5505.105705
+Iteration  83: penLogLik = 5506.110207, ELBO = 5505.775540
+Iteration  84: penLogLik = 5506.781897, ELBO = 5506.445615
+Iteration  85: penLogLik = 5507.460006, ELBO = 5507.119971
+Iteration  86: penLogLik = 5508.149062, ELBO = 5507.802971
+Iteration  87: penLogLik = 5508.853910, ELBO = 5508.499306
+Iteration  88: penLogLik = 5509.579641, ELBO = 5509.213959
+Iteration  89: penLogLik = 5510.331433, ELBO = 5509.952094
+Iteration  90: penLogLik = 5511.114247, ELBO = 5510.718826
+Iteration  91: penLogLik = 5511.932370, ELBO = 5511.518852
+Iteration  92: penLogLik = 5512.788799, ELBO = 5512.355895
+Iteration  93: penLogLik = 5513.684555, ELBO = 5513.232049
+Iteration  94: penLogLik = 5514.618118, ELBO = 5514.147113
+Iteration  95: penLogLik = 5515.585219, ELBO = 5515.098185
+Iteration  96: penLogLik = 5516.579199, ELBO = 5516.079711
+Iteration  97: penLogLik = 5517.591931, ELBO = 5517.084152
+Iteration  98: penLogLik = 5518.615024, ELBO = 5518.103098
+Iteration  99: penLogLik = 5519.640841, ELBO = 5519.128440
+Iteration 100: penLogLik = 5520.662953, ELBO = 5520.153133
+Iteration 101: penLogLik = 5521.675990, ELBO = 5521.171327
+Iteration 102: penLogLik = 5522.675180, ELBO = 5522.178012
+Iteration 103: penLogLik = 5523.656010, ELBO = 5523.168560
+Iteration 104: penLogLik = 5524.614347, ELBO = 5524.138596
+Iteration 105: penLogLik = 5525.547073, ELBO = 5525.084387
+Iteration 106: penLogLik = 5526.453054, ELBO = 5526.003678
+Iteration 107: penLogLik = 5527.334129, ELBO = 5526.896713
+Iteration 108: penLogLik = 5528.195914, ELBO = 5527.767143
+Iteration 109: penLogLik = 5529.048381, ELBO = 5528.622708
+Iteration 110: penLogLik = 5529.906390, ELBO = 5529.475763
+Iteration 111: penLogLik = 5530.790483, ELBO = 5530.343901
+Iteration 112: penLogLik = 5531.728171, ELBO = 5531.250985
+Iteration 113: penLogLik = 5532.755857, ELBO = 5532.228762
+Iteration 114: penLogLik = 5533.921069, ELBO = 5533.319062
+Iteration 115: penLogLik = 5535.283462, ELBO = 5534.575798
+Iteration 116: penLogLik = 5536.909477, ELBO = 5536.063883
+Iteration 117: penLogLik = 5538.848440, ELBO = 5537.846563
+Iteration 118: penLogLik = 5541.078254, ELBO = 5539.945821
+Iteration 119: penLogLik = 5543.451445, ELBO = 5542.278542
+Iteration 120: penLogLik = 5545.718367, ELBO = 5544.634673
+Iteration 121: penLogLik = 5547.626901, ELBO = 5546.746345
+Iteration 122: penLogLik = 5549.065262, ELBO = 5548.412973
+Iteration 123: penLogLik = 5550.124869, ELBO = 5549.637425
+Iteration 124: penLogLik = 5550.953067, ELBO = 5550.563599
+Iteration 125: penLogLik = 5551.642977, ELBO = 5551.314014
+Iteration 126: penLogLik = 5552.239863, ELBO = 5551.953305
+Iteration 127: penLogLik = 5552.766548, ELBO = 5552.512659
+Iteration 128: penLogLik = 5553.237818, ELBO = 5553.009646
+Iteration 129: penLogLik = 5553.666189, ELBO = 5553.457605
+Iteration 130: penLogLik = 5554.063028, ELBO = 5553.868556
+Iteration 131: penLogLik = 5554.438046, ELBO = 5554.253153
+Iteration 132: penLogLik = 5554.798886, ELBO = 5554.620093
+Iteration 133: penLogLik = 5555.151199, ELBO = 5554.975970
+Iteration 134: penLogLik = 5555.499027, ELBO = 5555.325557
+Iteration 135: penLogLik = 5555.845239, ELBO = 5555.672243
+Iteration 136: penLogLik = 5556.191886, ELBO = 5556.018437
+Iteration 137: penLogLik = 5556.540456, ELBO = 5556.365878
+Iteration 138: penLogLik = 5556.892036, ELBO = 5556.715834
+Iteration 139: penLogLik = 5557.247402, ELBO = 5557.069225
+Iteration 140: penLogLik = 5557.607072, ELBO = 5557.426693
+Iteration 141: penLogLik = 5557.971331, ELBO = 5557.788636
+Iteration 142: penLogLik = 5558.340245, ELBO = 5558.155229
+Iteration 143: penLogLik = 5558.713669, ELBO = 5558.526430
+Iteration 144: penLogLik = 5559.091258, ELBO = 5558.901992
+Iteration 145: penLogLik = 5559.472495, ELBO = 5559.281481
+Iteration 146: penLogLik = 5559.856715, ELBO = 5559.664301
+Iteration 147: penLogLik = 5560.243151, ELBO = 5560.049729
+Iteration 148: penLogLik = 5560.630986, ELBO = 5560.436968
+Iteration 149: penLogLik = 5561.019409, ELBO = 5560.825194
+Iteration 150: penLogLik = 5561.407672, ELBO = 5561.213623
+Iteration 151: penLogLik = 5561.795147, ELBO = 5561.601560
+Iteration 152: penLogLik = 5562.181359, ELBO = 5561.988449
+Iteration 153: penLogLik = 5562.566029, ELBO = 5562.373910
+Iteration 154: penLogLik = 5562.949084, ELBO = 5562.757765
+Iteration 155: penLogLik = 5563.330665, ELBO = 5563.140049
+Iteration 156: penLogLik = 5563.711128, ELBO = 5563.521011
+Iteration 157: penLogLik = 5564.091035, ELBO = 5563.901111
+Iteration 158: penLogLik = 5564.471143, ELBO = 5564.281009
+Iteration 159: penLogLik = 5564.852395, ELBO = 5564.661558
+Iteration 160: penLogLik = 5565.235912, ELBO = 5565.043789
+Iteration 161: penLogLik = 5565.622992, ELBO = 5565.428914
+Iteration 162: penLogLik = 5566.015103, ELBO = 5565.818314
+Iteration 163: penLogLik = 5566.413888, ELBO = 5566.213545
+Iteration 164: penLogLik = 5566.821169, ELBO = 5566.616340
+Iteration 165: penLogLik = 5567.238935, ELBO = 5567.028606
+Iteration 166: penLogLik = 5567.669339, ELBO = 5567.452416
+Iteration 167: penLogLik = 5568.114653, ELBO = 5567.889989
+Iteration 168: penLogLik = 5568.577209, ELBO = 5568.343638
+Iteration 169: penLogLik = 5569.059283, ELBO = 5568.815686
+Iteration 170: penLogLik = 5569.562928, ELBO = 5569.308323
+Iteration 171: penLogLik = 5570.089742, ELBO = 5569.823406
+Iteration 172: penLogLik = 5570.640581, ELBO = 5570.362200
+Iteration 173: penLogLik = 5571.215270, ELBO = 5570.925081
+Iteration 174: penLogLik = 5571.812365, ELBO = 5571.511260
+Iteration 175: penLogLik = 5572.429062, ELBO = 5572.118609
+Iteration 176: penLogLik = 5573.061333, ELBO = 5572.743678
+Iteration 177: penLogLik = 5573.704314, ELBO = 5573.381959
+Iteration 178: penLogLik = 5574.352853, ELBO = 5574.028365
+Iteration 179: penLogLik = 5575.002083, ELBO = 5574.677824
+Iteration 180: penLogLik = 5575.647840, ELBO = 5575.325784
+Iteration 181: penLogLik = 5576.286812, ELBO = 5575.968507
+Iteration 182: penLogLik = 5576.916443, ELBO = 5576.603086
+Iteration 183: penLogLik = 5577.534673, ELBO = 5577.227251
+Iteration 184: penLogLik = 5578.139650, ELBO = 5577.839078
+Iteration 185: penLogLik = 5578.729519, ELBO = 5578.436733
+Iteration 186: penLogLik = 5579.302331, ELBO = 5579.018317
+Iteration 187: penLogLik = 5579.856079, ELBO = 5579.581841
+Iteration 188: penLogLik = 5580.388817, ELBO = 5580.125307
+Iteration 189: penLogLik = 5580.898825, ELBO = 5580.646863
+Iteration 190: penLogLik = 5581.384773, ELBO = 5581.144965
+Iteration 191: penLogLik = 5581.845840, ELBO = 5581.618527
+Iteration 192: penLogLik = 5582.281767, ELBO = 5582.067007
+Iteration 193: penLogLik = 5582.692854, ELBO = 5582.490431
+Iteration 194: penLogLik = 5583.079895, ELBO = 5582.889356
+Iteration 195: penLogLik = 5583.444085, ELBO = 5583.264791
+Iteration 196: penLogLik = 5583.786911, ELBO = 5583.618089
+Iteration 197: penLogLik = 5584.110052, ELBO = 5583.950846
+Iteration 198: penLogLik = 5584.415291, ELBO = 5584.264802
+Iteration 199: penLogLik = 5584.704447, ELBO = 5584.561765
+Iteration 200: penLogLik = 5584.979331, ELBO = 5584.843553
+Iteration   1: penLogLik = 1826.292131, ELBO = 1238.045658
+Iteration   2: penLogLik = 2805.519333, ELBO = 2418.598854
+Iteration   3: penLogLik = 3517.171417, ELBO = 3198.470133
+Iteration   4: penLogLik = 4184.843365, ELBO = 3942.380820
+Iteration   5: penLogLik = 4483.807400, ELBO = 4372.679932
+Iteration   6: penLogLik = 4618.922390, ELBO = 4569.289572
+Iteration   7: penLogLik = 4679.534977, ELBO = 4654.931047
+Iteration   8: penLogLik = 4722.241462, ELBO = 4701.565791
+Iteration   9: penLogLik = 4759.239670, ELBO = 4743.060243
+Iteration  10: penLogLik = 4780.554226, ELBO = 4771.745286
+Iteration  11: penLogLik = 4793.369910, ELBO = 4787.814878
+Iteration  12: penLogLik = 4801.935789, ELBO = 4798.139576
+Iteration  13: penLogLik = 4808.115640, ELBO = 4805.294002
+Iteration  14: penLogLik = 4812.949948, ELBO = 4810.683055
+Iteration  15: penLogLik = 4816.999814, ELBO = 4815.060556
+Iteration  16: penLogLik = 4820.582930, ELBO = 4818.840991
+Iteration  17: penLogLik = 4823.888035, ELBO = 4822.264168
+Iteration  18: penLogLik = 4827.037109, ELBO = 4825.477198
+Iteration  19: penLogLik = 4830.126107, ELBO = 4828.583891
+Iteration  20: penLogLik = 4833.251309, ELBO = 4831.677715
+Iteration  21: penLogLik = 4836.518264, ELBO = 4834.859937
+Iteration  22: penLogLik = 4840.025455, ELBO = 4838.236847
+Iteration  23: penLogLik = 4843.818655, ELBO = 4841.888139
+Iteration  24: penLogLik = 4847.836539, ELBO = 4845.811319
+Iteration  25: penLogLik = 4851.906243, ELBO = 4849.883223
+Iteration  26: penLogLik = 4855.831523, ELBO = 4853.902811
+Iteration  27: penLogLik = 4859.504965, ELBO = 4857.708671
+Iteration  28: penLogLik = 4862.923872, ELBO = 4861.252778
+Iteration  29: penLogLik = 4866.112190, ELBO = 4864.558103
+Iteration  30: penLogLik = 4869.044871, ELBO = 4867.630040
+Iteration  31: penLogLik = 4871.632634, ELBO = 4870.407058
+Iteration  32: penLogLik = 4873.780332, ELBO = 4872.783184
+Iteration  33: penLogLik = 4875.474588, ELBO = 4874.694774
+Iteration  34: penLogLik = 4876.800372, ELBO = 4876.184864
+Iteration  35: penLogLik = 4877.875784, ELBO = 4877.367345
+Iteration  36: penLogLik = 4878.794847, ELBO = 4878.352857
+Iteration  37: penLogLik = 4879.616093, ELBO = 4879.216443
+Iteration  38: penLogLik = 4880.372911, ELBO = 4880.001884
+Iteration  39: penLogLik = 4881.084621, ELBO = 4880.734075
+Iteration  40: penLogLik = 4881.763238, ELBO = 4881.427925
+Iteration  41: penLogLik = 4882.416913, ELBO = 4882.093160
+Iteration  42: penLogLik = 4883.051577, ELBO = 4882.736656
+Iteration  43: penLogLik = 4883.671720, ELBO = 4883.363546
+Iteration  44: penLogLik = 4884.280781, ELBO = 4883.977758
+Iteration  45: penLogLik = 4884.881344, ELBO = 4884.582282
+Iteration  46: penLogLik = 4885.475258, ELBO = 4885.179324
+Iteration  47: penLogLik = 4886.063701, ELBO = 4885.770388
+Iteration  48: penLogLik = 4886.647248, ELBO = 4886.356344
+Iteration  49: penLogLik = 4887.225929, ELBO = 4886.937483
+Iteration  50: penLogLik = 4887.799309, ELBO = 4887.513591
+Iteration  51: penLogLik = 4888.366591, ELBO = 4888.084039
+Iteration  52: penLogLik = 4888.926734, ELBO = 4888.647889
+Iteration  53: penLogLik = 4889.478580, ELBO = 4889.204027
+Iteration  54: penLogLik = 4890.020979, ELBO = 4889.751284
+Iteration  55: penLogLik = 4890.552882, ELBO = 4890.288553
+Iteration  56: penLogLik = 4891.073392, ELBO = 4890.814856
+Iteration  57: penLogLik = 4891.581770, ELBO = 4891.329378
+Iteration  58: penLogLik = 4892.077393, ELBO = 4891.831447
+Iteration  59: penLogLik = 4892.559691, ELBO = 4892.320476
+Iteration  60: penLogLik = 4893.028079, ELBO = 4892.795895
+Iteration  61: penLogLik = 4893.481898, ELBO = 4893.257086
+Iteration  62: penLogLik = 4893.920388, ELBO = 4893.703341
+Iteration  63: penLogLik = 4894.342703, ELBO = 4894.133853
+Iteration  64: penLogLik = 4894.747951, ELBO = 4894.547744
+Iteration  65: penLogLik = 4895.135267, ELBO = 4894.944125
+Iteration  66: penLogLik = 4895.503896, ELBO = 4895.322177
+Iteration  67: penLogLik = 4895.853279, ELBO = 4895.681231
+Iteration  68: penLogLik = 4896.183115, ELBO = 4896.020851
+Iteration  69: penLogLik = 4896.493402, ELBO = 4896.340884
+Iteration  70: penLogLik = 4896.784446, ELBO = 4896.641481
+Iteration  71: penLogLik = 4897.056842, ELBO = 4896.923098
+Iteration  72: penLogLik = 4897.311430, ELBO = 4897.186460
+Iteration  73: penLogLik = 4897.549242, ELBO = 4897.432509
+Iteration  74: penLogLik = 4897.771442, ELBO = 4897.662353
+Iteration  75: penLogLik = 4897.979270, ELBO = 4897.877199
+Iteration  76: penLogLik = 4898.173991, ELBO = 4898.078306
+Iteration  77: penLogLik = 4898.356860, ELBO = 4898.266937
+Iteration  78: penLogLik = 4898.529092, ELBO = 4898.444331
+Iteration  79: penLogLik = 4898.691846, ELBO = 4898.611676
+Iteration  80: penLogLik = 4898.846219, ELBO = 4898.770100
+Iteration  81: penLogLik = 4898.993237, ELBO = 4898.920665
+Iteration  82: penLogLik = 4899.133864, ELBO = 4899.064365
+Iteration  83: penLogLik = 4899.269003, ELBO = 4899.202133
+Iteration  84: penLogLik = 4899.399506, ELBO = 4899.334846
+Iteration  85: penLogLik = 4899.526184, ELBO = 4899.463334
+Iteration  86: penLogLik = 4899.649812, ELBO = 4899.588387
+Iteration  87: penLogLik = 4899.771141, ELBO = 4899.710769
+Iteration  88: penLogLik = 4899.890904, ELBO = 4899.831220
+Iteration  89: penLogLik = 4900.009828, ELBO = 4899.950470
+Iteration  90: penLogLik = 4900.128637, ELBO = 4900.069243
+Iteration  91: penLogLik = 4900.248060, ELBO = 4900.188264
+Iteration  92: penLogLik = 4900.368831, ELBO = 4900.308265
+Iteration  93: penLogLik = 4900.491693, ELBO = 4900.429986
+Iteration  94: penLogLik = 4900.617398, ELBO = 4900.554174
+Iteration  95: penLogLik = 4900.746697, ELBO = 4900.681580
+Iteration  96: penLogLik = 4900.880329, ELBO = 4900.812952
+Iteration  97: penLogLik = 4901.019011, ELBO = 4900.949020
+Iteration  98: penLogLik = 4901.163408, ELBO = 4901.090479
+Iteration  99: penLogLik = 4901.314110, ELBO = 4901.237959
+Iteration 100: penLogLik = 4901.471597, ELBO = 4901.392001
+Iteration 101: penLogLik = 4901.636202, ELBO = 4901.553014
+Iteration 102: penLogLik = 4901.808079, ELBO = 4901.721246
+Iteration 103: penLogLik = 4901.987169, ELBO = 4901.896747
+Iteration 104: penLogLik = 4902.173196, ELBO = 4902.079351
+Iteration 105: penLogLik = 4902.365667, ELBO = 4902.268669
+Iteration 106: penLogLik = 4902.563910, ELBO = 4902.464112
+Iteration 107: penLogLik = 4902.767137, ELBO = 4902.664941
+Iteration 108: penLogLik = 4902.974533, ELBO = 4902.870344
+Iteration 109: penLogLik = 4903.185352, ELBO = 4903.079528
+Iteration 110: penLogLik = 4903.399004, ELBO = 4903.291814
+Iteration 111: penLogLik = 4903.615121, ELBO = 4903.506719
+Iteration 112: penLogLik = 4903.833580, ELBO = 4903.723998
+Iteration 113: penLogLik = 4904.054483, ELBO = 4903.943645
+Iteration 114: penLogLik = 4904.278111, ELBO = 4904.165859
+Iteration 115: penLogLik = 4904.504852, ELBO = 4904.390985
+Iteration 116: penLogLik = 4904.735135, ELBO = 4904.619438
+Iteration 117: penLogLik = 4904.969376, ELBO = 4904.851646
+Iteration 118: penLogLik = 4905.207948, ELBO = 4905.088008
+Iteration 119: penLogLik = 4905.451169, ELBO = 4905.328868
+Iteration 120: penLogLik = 4905.699311, ELBO = 4905.574519
+Iteration 121: penLogLik = 4905.952621, ELBO = 4905.825217
+Iteration 122: penLogLik = 4906.211341, ELBO = 4906.081205
+Iteration 123: penLogLik = 4906.475738, ELBO = 4906.342734
+Iteration 124: penLogLik = 4906.746116, ELBO = 4906.610087
+Iteration 125: penLogLik = 4907.022835, ELBO = 4906.883595
+Iteration 126: penLogLik = 4907.306311, ELBO = 4907.163646
+Iteration 127: penLogLik = 4907.597014, ELBO = 4907.450683
+Iteration 128: penLogLik = 4907.895447, ELBO = 4907.745197
+Iteration 129: penLogLik = 4908.202128, ELBO = 4908.047702
+Iteration 130: penLogLik = 4908.517546, ELBO = 4908.358706
+Iteration 131: penLogLik = 4908.842114, ELBO = 4908.678668
+Iteration 132: penLogLik = 4909.176115, ELBO = 4909.007943
+Iteration 133: penLogLik = 4909.519629, ELBO = 4909.346721
+Iteration 134: penLogLik = 4909.872469, ELBO = 4909.694957
+Iteration 135: penLogLik = 4910.234118, ELBO = 4910.052307
+Iteration 136: penLogLik = 4910.603671, ELBO = 4910.418064
+Iteration 137: penLogLik = 4910.979811, ELBO = 4910.791118
+Iteration 138: penLogLik = 4911.360811, ELBO = 4911.169944
+Iteration 139: penLogLik = 4911.744577, ELBO = 4911.552622
+Iteration 140: penLogLik = 4912.128742, ELBO = 4911.936906
+Iteration 141: penLogLik = 4912.510782, ELBO = 4912.320335
+Iteration 142: penLogLik = 4912.888176, ELBO = 4912.700364
+Iteration 143: penLogLik = 4913.258556, ELBO = 4913.074530
+Iteration 144: penLogLik = 4913.619856, ELBO = 4913.440599
+Iteration 145: penLogLik = 4913.970418, ELBO = 4913.796699
+Iteration 146: penLogLik = 4914.309064, ELBO = 4914.141406
+Iteration 147: penLogLik = 4914.635115, ELBO = 4914.473794
+Iteration 148: penLogLik = 4914.948376, ELBO = 4914.793430
+Iteration 149: penLogLik = 4915.249084, ELBO = 4915.100343
+Iteration 150: penLogLik = 4915.537843, ELBO = 4915.394963
+Iteration 151: penLogLik = 4915.815551, ELBO = 4915.678050
+Iteration 152: penLogLik = 4916.083341, ELBO = 4915.950626
+Iteration 153: penLogLik = 4916.342523, ELBO = 4916.213919
+Iteration 154: penLogLik = 4916.594551, ELBO = 4916.469312
+Iteration 155: penLogLik = 4916.841007, ELBO = 4916.718325
+Iteration 156: penLogLik = 4917.083598, ELBO = 4916.962600
+Iteration 157: penLogLik = 4917.324172, ELBO = 4917.203910
+Iteration 158: penLogLik = 4917.564740, ELBO = 4917.444180
+Iteration 159: penLogLik = 4917.807504, ELBO = 4917.685513
+Iteration 160: penLogLik = 4918.054875, ELBO = 4917.930212
+Iteration 161: penLogLik = 4918.309464, ELBO = 4918.180792
+Iteration 162: penLogLik = 4918.574032, ELBO = 4918.439949
+Iteration 163: penLogLik = 4918.851390, ELBO = 4918.710488
+Iteration 164: penLogLik = 4919.144252, ELBO = 4918.995196
+Iteration 165: penLogLik = 4919.455103, ELBO = 4919.296690
+Iteration 166: penLogLik = 4919.786170, ELBO = 4919.617321
+Iteration 167: penLogLik = 4920.139586, ELBO = 4919.959231
+Iteration 168: penLogLik = 4920.517814, ELBO = 4920.324647
+Iteration 169: penLogLik = 4920.924222, ELBO = 4920.716395
+Iteration 170: penLogLik = 4921.363677, ELBO = 4921.138515
+Iteration 171: penLogLik = 4921.842972, ELBO = 4921.596790
+Iteration 172: penLogLik = 4922.370952, ELBO = 4922.099043
+Iteration 173: penLogLik = 4922.958256, ELBO = 4922.655086
+Iteration 174: penLogLik = 4923.616467, ELBO = 4923.276204
+Iteration 175: penLogLik = 4924.356375, ELBO = 4923.973906
+Iteration 176: penLogLik = 4925.185039, ELBO = 4924.757613
+Iteration 177: penLogLik = 4926.101786, ELBO = 4925.631111
+Iteration 178: penLogLik = 4927.094317, ELBO = 4926.588346
+Iteration 179: penLogLik = 4928.137318, ELBO = 4927.610404
+Iteration 180: penLogLik = 4929.195942, ELBO = 4928.666342
+Iteration 181: penLogLik = 4930.233988, ELBO = 4929.719325
+Iteration 182: penLogLik = 4931.222935, ELBO = 4930.735937
+Iteration 183: penLogLik = 4932.147013, ELBO = 4931.693755
+Iteration 184: penLogLik = 4933.002579, ELBO = 4932.583488
+Iteration 185: penLogLik = 4933.793909, ELBO = 4933.406115
+Iteration 186: penLogLik = 4934.528661, ELBO = 4934.168132
+Iteration 187: penLogLik = 4935.214861, ELBO = 4934.877659
+Iteration 188: penLogLik = 4935.859615, ELBO = 4935.542340
+Iteration 189: penLogLik = 4936.468946, ELBO = 4936.168714
+Iteration 190: penLogLik = 4937.048095, ELBO = 4936.762359
+Iteration 191: penLogLik = 4937.601870, ELBO = 4937.328261
+Iteration 192: penLogLik = 4938.134858, ELBO = 4937.871099
+Iteration 193: penLogLik = 4938.651477, ELBO = 4938.395379
+Iteration 194: penLogLik = 4939.155915, ELBO = 4938.905418
+Iteration 195: penLogLik = 4939.652002, ELBO = 4939.405246
+Iteration 196: penLogLik = 4940.143067, ELBO = 4939.898463
+Iteration 197: penLogLik = 4940.631786, ELBO = 4940.388095
+Iteration 198: penLogLik = 4941.120038, ELBO = 4940.876438
+Iteration 199: penLogLik = 4941.608774, ELBO = 4941.364923
+Iteration 200: penLogLik = 4942.097896, ELBO = 4941.853989
+Iteration  1: reassigned 6 coordinates (J1 = 8, J2 = 8)
+Iteration   1: penLogLik = 10963.231968, ELBO = 10449.101606
+Iteration   2: penLogLik = 11229.966771, ELBO = 11179.881580
+Iteration   3: penLogLik = 11252.470103, ELBO = 11240.465719
+Iteration   4: penLogLik = 11266.445897, ELBO = 11260.682037
+Iteration   5: penLogLik = 11262.031122, ELBO = 11259.040111
+Iteration   6: penLogLik = 11300.292158, ELBO = 11298.612252
+Iteration   7: penLogLik = 11279.925349, ELBO = 11278.877840
+Iteration   8: penLogLik = 11281.555509, ELBO = 11280.845080
+Iteration   9: penLogLik = 11293.860828, ELBO = 11293.352422
+Iteration  10: penLogLik = 11283.350536, ELBO = 11282.970920
+Iteration  11: penLogLik = 11306.767159, ELBO = 11306.468994
+Iteration  12: penLogLik = 11295.802479, ELBO = 11295.551019
+Iteration  13: penLogLik = 11296.260393, ELBO = 11296.026165
+Iteration  14: penLogLik = 11285.514309, ELBO = 11285.265667
+Iteration  15: penLogLik = 11308.826666, ELBO = 11308.522151
+Iteration  16: penLogLik = 11298.279645, ELBO = 11297.867662
+Iteration  17: penLogLik = 11299.382909, ELBO = 11298.811549
+Iteration  18: penLogLik = 11300.667206, ELBO = 11299.889420
+Iteration  19: penLogLik = 11314.089330, ELBO = 11313.053194
+Iteration  20: penLogLik = 11305.555960, ELBO = 11303.951409
+Iteration  21: penLogLik = 11321.452481, ELBO = 11319.091048
+Iteration  22: penLogLik = 11313.115258, ELBO = 11312.011092
+Iteration  23: penLogLik = 11314.122697, ELBO = 11313.842029
+Iteration  24: penLogLik = 11302.968112, ELBO = 11302.815641
+Iteration  25: penLogLik = 11314.567008, ELBO = 11314.445563
+Iteration  26: penLogLik = 11314.807217, ELBO = 11314.700761
+Iteration  27: penLogLik = 11303.625975, ELBO = 11303.528911
+Iteration  28: penLogLik = 11315.186765, ELBO = 11315.096388
+Iteration  29: penLogLik = 11315.288516, ELBO = 11315.203415
+Iteration  30: penLogLik = 11315.578015, ELBO = 11315.497453
+Iteration  31: penLogLik = 11315.603863, ELBO = 11315.527461
+Iteration  32: penLogLik = 11304.369509, ELBO = 11304.297076
+Iteration  33: penLogLik = 11315.969050, ELBO = 11315.900487
+Iteration  34: penLogLik = 11316.242710, ELBO = 11316.177957
+Iteration  35: penLogLik = 11316.255642, ELBO = 11316.194646
+Iteration  36: penLogLik = 11316.384602, ELBO = 11316.327299
+Iteration  37: penLogLik = 11316.422171, ELBO = 11316.368478
+Iteration  38: penLogLik = 11316.572177, ELBO = 11316.521988
+Iteration  39: penLogLik = 11316.634282, ELBO = 11316.587470
+Iteration  40: penLogLik = 11328.160332, ELBO = 11328.116749
+Iteration  41: penLogLik = 11305.570438, ELBO = 11305.529921
+Iteration  42: penLogLik = 11328.319671, ELBO = 11328.282042
+Iteration  43: penLogLik = 11317.125516, ELBO = 11317.090593
+Iteration  44: penLogLik = 11317.106905, ELBO = 11317.074499
+Iteration  45: penLogLik = 11317.079392, ELBO = 11317.049315
+Iteration  46: penLogLik = 11305.868378, ELBO = 11305.840445
+Iteration  47: penLogLik = 11305.902546, ELBO = 11305.876578
+Iteration  48: penLogLik = 11305.817832, ELBO = 11305.793659
+Iteration  49: penLogLik = 11317.238982, ELBO = 11317.216442
+Iteration  50: penLogLik = 11305.909764, ELBO = 11305.888706
+Iteration  51: penLogLik = 11317.380390, ELBO = 11317.360675
+Iteration  52: penLogLik = 11328.844074, ELBO = 11328.825574
+Iteration  53: penLogLik = 11294.691831, ELBO = 11294.674428
+Iteration  54: penLogLik = 11306.116599, ELBO = 11306.100187
+Iteration  55: penLogLik = 11328.944298, ELBO = 11328.928781
+Iteration  56: penLogLik = 11317.522773, ELBO = 11317.508066
+Iteration  57: penLogLik = 11317.499054, ELBO = 11317.485080
+Iteration  58: penLogLik = 11306.128066, ELBO = 11306.114757
+Iteration  59: penLogLik = 11317.656499, ELBO = 11317.643794
+Iteration  60: penLogLik = 11317.591855, ELBO = 11317.579699
+Iteration  61: penLogLik = 11317.708106, ELBO = 11317.696453
+Iteration  62: penLogLik = 11317.708968, ELBO = 11317.697775
+Iteration  63: penLogLik = 11306.308708, ELBO = 11306.297937
+Iteration  64: penLogLik = 11317.734561, ELBO = 11317.724180
+Iteration  65: penLogLik = 11317.691952, ELBO = 11317.681932
+Iteration  66: penLogLik = 11306.513648, ELBO = 11306.503962
+Iteration  67: penLogLik = 11317.726222, ELBO = 11317.716848
+Iteration  68: penLogLik = 11306.329329, ELBO = 11306.320248
+Iteration  69: penLogLik = 11317.762064, ELBO = 11317.753257
+Iteration  70: penLogLik = 11329.280830, ELBO = 11329.272281
+Iteration  71: penLogLik = 11306.551610, ELBO = 11306.543304
+Iteration  72: penLogLik = 11318.085546, ELBO = 11318.077471
+Iteration  73: penLogLik = 11329.329701, ELBO = 11329.321845
+Iteration  74: penLogLik = 11295.063634, ELBO = 11295.055987
+Iteration  75: penLogLik = 11317.848734, ELBO = 11317.841287
+Iteration  76: penLogLik = 11306.388521, ELBO = 11306.381265
+Iteration  77: penLogLik = 11317.951967, ELBO = 11317.944894
+Iteration  78: penLogLik = 11317.914380, ELBO = 11317.907482
+Iteration  79: penLogLik = 11329.416455, ELBO = 11329.409726
+Iteration  80: penLogLik = 11306.566167, ELBO = 11306.559601
+Iteration  81: penLogLik = 11306.698719, ELBO = 11306.692311
+Iteration  82: penLogLik = 11317.996212, ELBO = 11317.989955
+Iteration  83: penLogLik = 11329.467500, ELBO = 11329.461390
+Iteration  84: penLogLik = 11295.285332, ELBO = 11295.279363
+Iteration  85: penLogLik = 11306.597109, ELBO = 11306.591278
+Iteration  86: penLogLik = 11318.039405, ELBO = 11318.033707
+Iteration  87: penLogLik = 11329.513948, ELBO = 11329.508380
+Iteration  88: penLogLik = 11306.634796, ELBO = 11306.629353
+Iteration  89: penLogLik = 11318.108430, ELBO = 11318.103109
+Iteration  90: penLogLik = 11318.054906, ELBO = 11318.049703
+Iteration  91: penLogLik = 11318.046932, ELBO = 11318.041844
+Iteration  92: penLogLik = 11306.696231, ELBO = 11306.691254
+Iteration  93: penLogLik = 11306.719042, ELBO = 11306.714174
+Iteration  94: penLogLik = 11318.137502, ELBO = 11318.132740
+Iteration  95: penLogLik = 11318.091226, ELBO = 11318.086567
+Iteration  96: penLogLik = 11318.180247, ELBO = 11318.175688
+Iteration  97: penLogLik = 11329.613283, ELBO = 11329.608821
+Iteration  98: penLogLik = 11318.266320, ELBO = 11318.261952
+Iteration  99: penLogLik = 11318.129671, ELBO = 11318.125396
+Iteration 100: penLogLik = 11306.762738, ELBO = 11306.758553
+Iteration 101: penLogLik = 11295.569668, ELBO = 11295.565570
+Iteration 102: penLogLik = 11318.166454, ELBO = 11318.162442
+Iteration 103: penLogLik = 11318.231870, ELBO = 11318.227941
+Iteration 104: penLogLik = 11306.820516, ELBO = 11306.816668
+Iteration 105: penLogLik = 11306.883169, ELBO = 11306.879400
+Iteration 106: penLogLik = 11329.686089, ELBO = 11329.682396
+Iteration 107: penLogLik = 11306.738946, ELBO = 11306.735328
+Iteration 108: penLogLik = 11329.700502, ELBO = 11329.696957
+Iteration 109: penLogLik = 11318.304892, ELBO = 11318.301418
+Iteration 110: penLogLik = 11318.206423, ELBO = 11318.203019
+Iteration 111: penLogLik = 11306.792667, ELBO = 11306.789330
+Iteration 112: penLogLik = 11318.251611, ELBO = 11318.248340
+Iteration 113: penLogLik = 11329.734088, ELBO = 11329.730881
+Iteration 114: penLogLik = 11318.372281, ELBO = 11318.369137
+Iteration 115: penLogLik = 11306.879930, ELBO = 11306.876846
+Iteration 116: penLogLik = 11306.923180, ELBO = 11306.920156
+Iteration 117: penLogLik = 11307.141906, ELBO = 11307.138940
+Iteration 118: penLogLik = 11318.283714, ELBO = 11318.280805
+Iteration 119: penLogLik = 11318.371201, ELBO = 11318.368347
+Iteration 120: penLogLik = 11306.897538, ELBO = 11306.894738
+Iteration 121: penLogLik = 11306.967227, ELBO = 11306.964479
+Iteration 122: penLogLik = 11329.786837, ELBO = 11329.784141
+Iteration 123: penLogLik = 11329.792159, ELBO = 11329.789513
+Iteration 124: penLogLik = 11318.286817, ELBO = 11318.284219
+Iteration 125: penLogLik = 11307.083472, ELBO = 11307.080921
+Iteration 126: penLogLik = 11318.302231, ELBO = 11318.299727
+Iteration 127: penLogLik = 11306.964875, ELBO = 11306.962416
+Iteration 128: penLogLik = 11329.817345, ELBO = 11329.814931
+Iteration 129: penLogLik = 11318.487065, ELBO = 11318.484693
+Iteration 130: penLogLik = 11318.344099, ELBO = 11318.341769
+Iteration 131: penLogLik = 11318.327215, ELBO = 11318.324926
+Iteration 132: penLogLik = 11318.489543, ELBO = 11318.487294
+Iteration 133: penLogLik = 11307.025277, ELBO = 11307.023067
+Iteration 134: penLogLik = 11295.825628, ELBO = 11295.823457
+Iteration 135: penLogLik = 11318.390801, ELBO = 11318.388667
+Iteration 136: penLogLik = 11307.331372, ELBO = 11307.329275
+Iteration 137: penLogLik = 11318.501292, ELBO = 11318.499230
+Iteration 138: penLogLik = 11306.983882, ELBO = 11306.981855
+Iteration 139: penLogLik = 11329.865455, ELBO = 11329.863461
+Iteration 140: penLogLik = 11318.564280, ELBO = 11318.562319
+Iteration 141: penLogLik = 11318.538764, ELBO = 11318.536835
+Iteration 142: penLogLik = 11318.383054, ELBO = 11318.381157
+Iteration 143: penLogLik = 11318.397156, ELBO = 11318.395290
+Iteration 144: penLogLik = 11307.034925, ELBO = 11307.033089
+Iteration 145: penLogLik = 11329.888153, ELBO = 11329.886347
+Iteration 146: penLogLik = 11318.432662, ELBO = 11318.430884
+Iteration 147: penLogLik = 11318.605159, ELBO = 11318.603408
+Iteration 148: penLogLik = 11318.389922, ELBO = 11318.388199
+Iteration 149: penLogLik = 11318.480752, ELBO = 11318.479056
+Iteration 150: penLogLik = 11318.426435, ELBO = 11318.424765
+Iteration 151: penLogLik = 11295.969458, ELBO = 11295.967813
+Iteration 152: penLogLik = 11307.072817, ELBO = 11307.071197
+Iteration 153: penLogLik = 11307.242283, ELBO = 11307.240688
+Iteration 154: penLogLik = 11329.918385, ELBO = 11329.916814
+Iteration 155: penLogLik = 11307.190907, ELBO = 11307.189358
+Iteration 156: penLogLik = 11318.503947, ELBO = 11318.502422
+Iteration 157: penLogLik = 11318.510654, ELBO = 11318.509151
+Iteration 158: penLogLik = 11307.066547, ELBO = 11307.065066
+Iteration 159: penLogLik = 11307.120940, ELBO = 11307.119480
+Iteration 160: penLogLik = 11318.540478, ELBO = 11318.539039
+Iteration 161: penLogLik = 11307.132106, ELBO = 11307.130687
+Iteration 162: penLogLik = 11318.472104, ELBO = 11318.470705
+Iteration 163: penLogLik = 11307.059724, ELBO = 11307.058345
+Iteration 164: penLogLik = 11307.071261, ELBO = 11307.069900
+Iteration 165: penLogLik = 11318.520783, ELBO = 11318.519441
+Iteration 166: penLogLik = 11318.556456, ELBO = 11318.555133
+Iteration 167: penLogLik = 11307.183990, ELBO = 11307.182683
+Iteration 168: penLogLik = 11318.528874, ELBO = 11318.527585
+Iteration 169: penLogLik = 11318.586440, ELBO = 11318.585168
+Iteration 170: penLogLik = 11329.963175, ELBO = 11329.961921
+Iteration 171: penLogLik = 11318.523479, ELBO = 11318.522240
+Iteration 172: penLogLik = 11318.476610, ELBO = 11318.475387
+Iteration 173: penLogLik = 11329.970540, ELBO = 11329.969333
+Iteration 174: penLogLik = 11329.972932, ELBO = 11329.971740
+Iteration 175: penLogLik = 11318.563956, ELBO = 11318.562779
+Iteration 176: penLogLik = 11329.977627, ELBO = 11329.976465
+Iteration 177: penLogLik = 11318.618216, ELBO = 11318.617068
+Iteration 178: penLogLik = 11295.666422, ELBO = 11295.665289
+Iteration 179: penLogLik = 11307.147578, ELBO = 11307.146458
+Iteration 180: penLogLik = 11307.197381, ELBO = 11307.196275
+Iteration 181: penLogLik = 11307.195821, ELBO = 11307.194728
+Iteration 182: penLogLik = 11318.487791, ELBO = 11318.486711
+Iteration 183: penLogLik = 11307.149709, ELBO = 11307.148642
+Iteration 184: penLogLik = 11318.508589, ELBO = 11318.507534
+Iteration 185: penLogLik = 11307.036568, ELBO = 11307.035525
+Iteration 186: penLogLik = 11318.522427, ELBO = 11318.521396
+Iteration 187: penLogLik = 11318.519163, ELBO = 11318.518143
+Iteration 188: penLogLik = 11318.518161, ELBO = 11318.517153
+Iteration 189: penLogLik = 11318.677038, ELBO = 11318.676041
+Iteration 190: penLogLik = 11307.309377, ELBO = 11307.308391
+Iteration 191: penLogLik = 11318.560263, ELBO = 11318.559288
+Iteration 192: penLogLik = 11307.353330, ELBO = 11307.352365
+Iteration 193: penLogLik = 11318.549671, ELBO = 11318.548717
+Iteration 194: penLogLik = 11318.545756, ELBO = 11318.544812
+Iteration 195: penLogLik = 11318.585264, ELBO = 11318.584330
+Iteration 196: penLogLik = 11295.865729, ELBO = 11295.864805
+Iteration 197: penLogLik = 11318.677269, ELBO = 11318.676355
+Iteration 198: penLogLik = 11330.022584, ELBO = 11330.021679
+Iteration 199: penLogLik = 11307.138745, ELBO = 11307.137849
+Iteration 200: penLogLik = 11330.026162, ELBO = 11330.025275
+Iteration   1: penLogLik = 9772.342500, ELBO = 8777.637002
+Iteration   2: penLogLik = 10862.884495, ELBO = 10616.479074
+Iteration   3: penLogLik = 11068.580558, ELBO = 10994.335095
+Iteration   4: penLogLik = 11173.927069, ELBO = 11136.262023
+Iteration   5: penLogLik = 11213.142255, ELBO = 11192.078585
+Iteration   6: penLogLik = 11242.964080, ELBO = 11230.044828
+Iteration   7: penLogLik = 11239.129745, ELBO = 11230.610070
+Iteration   8: penLogLik = 11286.222706, ELBO = 11280.606939
+Iteration   9: penLogLik = 11283.022667, ELBO = 11279.380194
+Iteration  10: penLogLik = 11288.536137, ELBO = 11286.065810
+Iteration  11: penLogLik = 11303.927044, ELBO = 11302.068492
+Iteration  12: penLogLik = 11307.135485, ELBO = 11305.607170
+Iteration  13: penLogLik = 11298.430202, ELBO = 11297.111402
+Iteration  14: penLogLik = 11300.947660, ELBO = 11299.779195
+Iteration  15: penLogLik = 11314.454461, ELBO = 11313.395941
+Iteration  16: penLogLik = 11293.587353, ELBO = 11292.605545
+Iteration  17: penLogLik = 11318.340595, ELBO = 11317.408519
+Iteration  18: penLogLik = 11297.330671, ELBO = 11296.428148
+Iteration  19: penLogLik = 11310.436408, ELBO = 11309.549522
+Iteration  20: penLogLik = 11312.262091, ELBO = 11311.381811
+Iteration  21: penLogLik = 11325.460922, ELBO = 11324.581741
+Iteration  22: penLogLik = 11327.222981, ELBO = 11326.342219
+Iteration  23: penLogLik = 11306.202931, ELBO = 11305.320913
+Iteration  24: penLogLik = 11307.859900, ELBO = 11306.980692
+Iteration  25: penLogLik = 11320.993806, ELBO = 11320.125743
+Iteration  26: penLogLik = 11334.210091, ELBO = 11333.365204
+Iteration  27: penLogLik = 11324.420056, ELBO = 11323.611951
+Iteration  28: penLogLik = 11325.897316, ELBO = 11325.137921
+Iteration  29: penLogLik = 11338.846561, ELBO = 11338.142964
+Iteration  30: penLogLik = 11328.731136, ELBO = 11328.083857
+Iteration  31: penLogLik = 11318.626638, ELBO = 11318.029988
+Iteration  32: penLogLik = 11342.533385, ELBO = 11341.977569
+Iteration  33: penLogLik = 11320.862704, ELBO = 11320.336559
+Iteration  34: penLogLik = 11333.424700, ELBO = 11332.917806
+Iteration  35: penLogLik = 11334.156559, ELBO = 11333.659822
+Iteration  36: penLogLik = 11346.625862, ELBO = 11346.130521
+Iteration  37: penLogLik = 11336.165667, ELBO = 11335.661699
+Iteration  38: penLogLik = 11325.918597, ELBO = 11325.393424
+Iteration  39: penLogLik = 11338.434186, ELBO = 11337.871451
+Iteration  40: penLogLik = 11339.509737, ELBO = 11338.887789
+Iteration  41: penLogLik = 11352.391490, ELBO = 11351.682796
+Iteration  42: penLogLik = 11353.998040, ELBO = 11353.173083
+Iteration  43: penLogLik = 11355.880992, ELBO = 11354.917173
+Iteration  44: penLogLik = 11358.071539, ELBO = 11356.957428
+Iteration  45: penLogLik = 11360.572756, ELBO = 11359.313403
+Iteration  46: penLogLik = 11351.813446, ELBO = 11350.465728
+Iteration  47: penLogLik = 11366.028686, ELBO = 11364.728505
+Iteration  48: penLogLik = 11357.018090, ELBO = 11355.906404
+Iteration  49: penLogLik = 11370.364474, ELBO = 11369.478467
+Iteration  50: penLogLik = 11349.143076, ELBO = 11348.412874
+Iteration  51: penLogLik = 11350.341661, ELBO = 11349.694385
+Iteration  52: penLogLik = 11363.038187, ELBO = 11362.438589
+Iteration  53: penLogLik = 11352.849592, ELBO = 11352.289780
+Iteration  54: penLogLik = 11365.243367, ELBO = 11364.728754
+Iteration  55: penLogLik = 11366.287357, ELBO = 11365.791670
+Iteration  56: penLogLik = 11356.111707, ELBO = 11355.552568
+Iteration  57: penLogLik = 11380.259612, ELBO = 11379.453755
+Iteration  58: penLogLik = 11359.818566, ELBO = 11358.534693
+Iteration  59: penLogLik = 11385.765846, ELBO = 11384.224485
+Iteration  60: penLogLik = 11377.385973, ELBO = 11375.993250
+Iteration  61: penLogLik = 11391.336672, ELBO = 11390.087309
+Iteration  62: penLogLik = 11382.763017, ELBO = 11381.244221
+Iteration  63: penLogLik = 11397.283482, ELBO = 11395.866451
+Iteration  64: penLogLik = 11376.685138, ELBO = 11375.642708
+Iteration  65: penLogLik = 11401.689271, ELBO = 11400.661018
+Iteration  66: penLogLik = 11392.943098, ELBO = 11391.523678
+Iteration  67: penLogLik = 11407.934107, ELBO = 11406.235881
+Iteration  68: penLogLik = 11388.818524, ELBO = 11387.067738
+Iteration  69: penLogLik = 11416.904202, ELBO = 11414.194023
+Iteration  70: penLogLik = 11412.352439, ELBO = 11408.740847
+Iteration  71: penLogLik = 11427.863541, ELBO = 11421.044236
+Iteration  72: penLogLik = 11442.983183, ELBO = 11437.250168
+Iteration  73: penLogLik = 11449.192520, ELBO = 11447.067700
+Iteration  74: penLogLik = 11450.924151, ELBO = 11450.060624
+Iteration  75: penLogLik = 11441.781558, ELBO = 11440.810060
+Iteration  76: penLogLik = 11453.861349, ELBO = 11453.578460
+Iteration  77: penLogLik = 11431.727231, ELBO = 11431.429665
+Iteration  78: penLogLik = 11432.267618, ELBO = 11431.932367
+Iteration  79: penLogLik = 11444.267755, ELBO = 11443.890301
+Iteration  80: penLogLik = 11456.525581, ELBO = 11456.110837
+Iteration  81: penLogLik = 11468.888527, ELBO = 11468.451605
+Iteration  82: penLogLik = 11458.428834, ELBO = 11457.992646
+Iteration  83: penLogLik = 11459.078093, ELBO = 11458.666875
+Iteration  84: penLogLik = 11459.868145, ELBO = 11459.499812
+Iteration  85: penLogLik = 11460.556443, ELBO = 11460.238376
+Iteration  86: penLogLik = 11461.205139, ELBO = 11460.935201
+Iteration  87: penLogLik = 11473.042540, ELBO = 11472.813145
+Iteration  88: penLogLik = 11450.832126, ELBO = 11450.634146
+Iteration  89: penLogLik = 11473.812051, ELBO = 11473.637103
+Iteration  90: penLogLik = 11462.858310, ELBO = 11462.699599
+Iteration  91: penLogLik = 11474.436219, ELBO = 11474.288572
+Iteration  92: penLogLik = 11463.279936, ELBO = 11463.139540
+Iteration  93: penLogLik = 11474.993343, ELBO = 11474.857434
+Iteration  94: penLogLik = 11452.508004, ELBO = 11452.374602
+Iteration  95: penLogLik = 11464.063410, ELBO = 11463.931125
+Iteration  96: penLogLik = 11452.816396, ELBO = 11452.684285
+Iteration  97: penLogLik = 11464.607819, ELBO = 11464.475291
+Iteration  98: penLogLik = 11476.320081, ELBO = 11476.186833
+Iteration  99: penLogLik = 11465.145098, ELBO = 11465.011060
+Iteration 100: penLogLik = 11454.074009, ELBO = 11453.939304
+Iteration 101: penLogLik = 11454.262652, ELBO = 11454.127559
+Iteration 102: penLogLik = 11466.080407, ELBO = 11465.945331
+Iteration 103: penLogLik = 11466.295373, ELBO = 11466.160810
+Iteration 104: penLogLik = 11477.933232, ELBO = 11477.799745
+Iteration 105: penLogLik = 11455.331699, ELBO = 11455.199891
+Iteration 106: penLogLik = 11455.609084, ELBO = 11455.479576
+Iteration 107: penLogLik = 11444.555077, ELBO = 11444.428489
+Iteration 108: penLogLik = 11467.513388, ELBO = 11467.390318
+Iteration 109: penLogLik = 11467.784789, ELBO = 11467.665797
+Iteration 110: penLogLik = 11468.099110, ELBO = 11467.984695
+Iteration 111: penLogLik = 11468.148971, ELBO = 11468.039554
+Iteration 112: penLogLik = 11456.980481, ELBO = 11456.876392
+Iteration 113: penLogLik = 11468.560069, ELBO = 11468.461531
+Iteration 114: penLogLik = 11468.796418, ELBO = 11468.703549
+Iteration 115: penLogLik = 11469.048899, ELBO = 11468.961704
+Iteration 116: penLogLik = 11469.183127, ELBO = 11469.101510
+Iteration 117: penLogLik = 11469.368249, ELBO = 11469.292016
+Iteration 118: penLogLik = 11480.895239, ELBO = 11480.824109
+Iteration 119: penLogLik = 11458.252223, ELBO = 11458.185837
+Iteration 120: penLogLik = 11469.714611, ELBO = 11469.652535
+Iteration 121: penLogLik = 11469.932683, ELBO = 11469.874408
+Iteration 122: penLogLik = 11470.082761, ELBO = 11470.027696
+Iteration 123: penLogLik = 11458.873585, ELBO = 11458.821047
+Iteration 124: penLogLik = 11470.100548, ELBO = 11470.049755
+Iteration 125: penLogLik = 11470.248059, ELBO = 11470.198157
+Iteration 126: penLogLik = 11470.421102, ELBO = 11470.371282
+Iteration 127: penLogLik = 11459.158939, ELBO = 11459.108724
+Iteration 128: penLogLik = 11459.187274, ELBO = 11459.136992
+Iteration 129: penLogLik = 11459.260006, ELBO = 11459.211153
+Iteration 130: penLogLik = 11482.188935, ELBO = 11482.143783
+Iteration 131: penLogLik = 11470.783727, ELBO = 11470.744026
+Iteration 132: penLogLik = 11470.911827, ELBO = 11470.877811
+Iteration 133: penLogLik = 11482.405491, ELBO = 11482.376178
+Iteration 134: penLogLik = 11482.459249, ELBO = 11482.433351
+Iteration 135: penLogLik = 11471.022299, ELBO = 11470.998774
+Iteration 136: penLogLik = 11471.072648, ELBO = 11471.050799
+Iteration 137: penLogLik = 11482.594052, ELBO = 11482.573445
+Iteration 138: penLogLik = 11471.188470, ELBO = 11471.168830
+Iteration 139: penLogLik = 11459.901391, ELBO = 11459.882536
+Iteration 140: penLogLik = 11482.708645, ELBO = 11482.690445
+Iteration 141: penLogLik = 11482.744210, ELBO = 11482.726563
+Iteration 142: penLogLik = 11471.289838, ELBO = 11471.272659
+Iteration 143: penLogLik = 11459.887827, ELBO = 11459.871043
+Iteration 144: penLogLik = 11471.403346, ELBO = 11471.386891
+Iteration 145: penLogLik = 11482.878129, ELBO = 11482.861943
+Iteration 146: penLogLik = 11482.910177, ELBO = 11482.894204
+Iteration 147: penLogLik = 11471.611900, ELBO = 11471.596090
+Iteration 148: penLogLik = 11459.986669, ELBO = 11459.970974
+Iteration 149: penLogLik = 11483.004603, ELBO = 11482.988978
+Iteration 150: penLogLik = 11483.035805, ELBO = 11483.020210
+Iteration 151: penLogLik = 11471.652766, ELBO = 11471.637163
+Iteration 152: penLogLik = 11471.700087, ELBO = 11471.684443
+Iteration 153: penLogLik = 11471.753581, ELBO = 11471.737865
+Iteration 154: penLogLik = 11471.689824, ELBO = 11471.674009
+Iteration 155: penLogLik = 11471.807257, ELBO = 11471.791321
+Iteration 156: penLogLik = 11471.945064, ELBO = 11471.928988
+Iteration 157: penLogLik = 11460.399739, ELBO = 11460.383509
+Iteration 158: penLogLik = 11460.470952, ELBO = 11460.454558
+Iteration 159: penLogLik = 11483.323275, ELBO = 11483.306711
+Iteration 160: penLogLik = 11471.936437, ELBO = 11471.919703
+Iteration 161: penLogLik = 11471.887935, ELBO = 11471.871036
+Iteration 162: penLogLik = 11483.424417, ELBO = 11483.407360
+Iteration 163: penLogLik = 11483.458751, ELBO = 11483.441550
+Iteration 164: penLogLik = 11483.493350, ELBO = 11483.476021
+Iteration 165: penLogLik = 11460.866803, ELBO = 11460.849367
+Iteration 166: penLogLik = 11460.837658, ELBO = 11460.820137
+Iteration 167: penLogLik = 11483.598317, ELBO = 11483.580737
+Iteration 168: penLogLik = 11483.633534, ELBO = 11483.615920
+Iteration 169: penLogLik = 11483.668775, ELBO = 11483.651156
+Iteration 170: penLogLik = 11472.240829, ELBO = 11472.223232
+Iteration 171: penLogLik = 11472.306664, ELBO = 11472.289115
+Iteration 172: penLogLik = 11472.285278, ELBO = 11472.267803
+Iteration 173: penLogLik = 11472.323309, ELBO = 11472.305930
+Iteration 174: penLogLik = 11460.959990, ELBO = 11460.942729
+Iteration 175: penLogLik = 11472.432968, ELBO = 11472.415843
+Iteration 176: penLogLik = 11472.562783, ELBO = 11472.545808
+Iteration 177: penLogLik = 11472.483157, ELBO = 11472.466343
+Iteration 178: penLogLik = 11472.559314, ELBO = 11472.542670
+Iteration 179: penLogLik = 11461.138623, ELBO = 11461.122154
+Iteration 180: penLogLik = 11484.044643, ELBO = 11484.028351
+Iteration 181: penLogLik = 11472.673014, ELBO = 11472.656899
+Iteration 182: penLogLik = 11472.626269, ELBO = 11472.610326
+Iteration 183: penLogLik = 11461.246471, ELBO = 11461.230695
+Iteration 184: penLogLik = 11484.171886, ELBO = 11484.156268
+Iteration 185: penLogLik = 11461.359238, ELBO = 11461.343769
+Iteration 186: penLogLik = 11484.233626, ELBO = 11484.218295
+Iteration 187: penLogLik = 11472.781513, ELBO = 11472.766306
+Iteration 188: penLogLik = 11484.294344, ELBO = 11484.279248
+Iteration 189: penLogLik = 11472.844016, ELBO = 11472.829015
+Iteration 190: penLogLik = 11461.452476, ELBO = 11461.437555
+Iteration 191: penLogLik = 11473.043180, ELBO = 11473.028321
+Iteration 192: penLogLik = 11473.022123, ELBO = 11473.007309
+Iteration 193: penLogLik = 11484.443235, ELBO = 11484.428447
+Iteration 194: penLogLik = 11472.977037, ELBO = 11472.962255
+Iteration 195: penLogLik = 11473.066648, ELBO = 11473.051850
+Iteration 196: penLogLik = 11473.032656, ELBO = 11473.017818
+Iteration 197: penLogLik = 11484.561777, ELBO = 11484.546871
+Iteration 198: penLogLik = 11473.160417, ELBO = 11473.145412
+Iteration 199: penLogLik = 11484.621911, ELBO = 11484.606769
+Iteration 200: penLogLik = 11473.290476, ELBO = 11473.275151
 Iteration  2: reassigned 0 coordinates (J1 = 8, J2 = 8)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
 <pre class="r"><code>sort(permut_cols[res$J1])</code></pre>
@@ -1415,6 +2255,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/428107027bb940c60c2cccc2e486b27f44d1366a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-6-1.png" target="_blank">4281070</a>
@@ -1526,6 +2377,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/428107027bb940c60c2cccc2e486b27f44d1366a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-7-1.png" target="_blank">4281070</a>
@@ -1669,6 +2531,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-9-1.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/428107027bb940c60c2cccc2e486b27f44d1366a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-9-1.png" target="_blank">4281070</a>
 </td>
 <td>
@@ -1721,6 +2594,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-10-1.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/428107027bb940c60c2cccc2e486b27f44d1366a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-10-1.png" target="_blank">4281070</a>
@@ -1819,28 +2703,831 @@ Ziang Zhang
 the second order random walk prior for <span
 class="math inline">\(\boldsymbol{\mu}^{(1)}\)</span> and <span
 class="math inline">\(\boldsymbol{\mu}^{(2)}\)</span>.</p>
-<pre class="r"><code>resPancreas &lt;- two_ordering_smoothEM(
+<pre class="r"><code># standardize
+Loadings &lt;- scale(Loadings, center = FALSE, scale = TRUE)
+
+resPancreas &lt;- two_ordering_smoothEM(
   X = Loadings, K = 50,
   init_method = &quot;pca&quot;,
   init_coord_assign = rep(c(1,2), each = ncol(Loadings) / 2),
   modelName = &quot;EEI&quot;,
   make_Q_prior = make_random_walk_precision,
-  lambda_vec = c(500, 300),
+  lambda_vec = c(500, 500),
   relative_lambda = TRUE,
   rw_order_vec = c(2, 2),
   reassign_by = &quot;posterior&quot;,
-  max_iter = 100,
-  max_iter_EM = 1,
-  verbose = TRUE
+  iterate_once = TRUE,
+  rank_deficiency = (2 * ncol(Loadings)),
+  max_iter_EM = 200,
+  verbose = TRUE, verbose_EM = TRUE
 )</code></pre>
-<pre><code>Iteration  1: reassigned 4 coordinates (J1 = 8, J2 = 8)
-Iteration  2: reassigned 1 coordinates (J1 = 6, J2 = 10)
-Iteration  3: reassigned 0 coordinates (J1 = 5, J2 = 11)</code></pre>
+<pre><code>Iteration   1: penLogLik = -29588.539789, ELBO = -30255.543410
+Iteration   2: penLogLik = -28651.911873, ELBO = -29127.179975
+Iteration   3: penLogLik = -26976.812023, ELBO = -27747.087068
+Iteration   4: penLogLik = -25501.834998, ELBO = -26105.382378
+Iteration   5: penLogLik = -24166.123901, ELBO = -24670.900129
+Iteration   6: penLogLik = -23237.294864, ELBO = -23579.207685
+Iteration   7: penLogLik = -22597.788916, ELBO = -22876.995482
+Iteration   8: penLogLik = -22113.625394, ELBO = -22302.339945
+Iteration   9: penLogLik = -21714.919219, ELBO = -21908.004398
+Iteration  10: penLogLik = -21288.195695, ELBO = -21477.910447
+Iteration  11: penLogLik = -20911.797802, ELBO = -21082.804842
+Iteration  12: penLogLik = -20558.693818, ELBO = -20716.711151
+Iteration  13: penLogLik = -20274.785758, ELBO = -20394.191706
+Iteration  14: penLogLik = -20081.012195, ELBO = -20161.968770
+Iteration  15: penLogLik = -19937.537879, ELBO = -20002.318016
+Iteration  16: penLogLik = -19809.077575, ELBO = -19870.852054
+Iteration  17: penLogLik = -19667.647767, ELBO = -19737.806706
+Iteration  18: penLogLik = -19514.752816, ELBO = -19584.493159
+Iteration  19: penLogLik = -19407.718928, ELBO = -19447.919125
+Iteration  20: penLogLik = -19354.264554, ELBO = -19376.338412
+Iteration  21: penLogLik = -19313.857917, ELBO = -19333.552049
+Iteration  22: penLogLik = -19267.953730, ELBO = -19291.894030
+Iteration  23: penLogLik = -19209.947026, ELBO = -19240.120105
+Iteration  24: penLogLik = -19135.623239, ELBO = -19173.671206
+Iteration  25: penLogLik = -19048.805824, ELBO = -19090.624693
+Iteration  26: penLogLik = -18971.241755, ELBO = -19004.771993
+Iteration  27: penLogLik = -18921.057112, ELBO = -18941.293684
+Iteration  28: penLogLik = -18892.705301, ELBO = -18904.410114
+Iteration  29: penLogLik = -18874.400632, ELBO = -18882.574957
+Iteration  30: penLogLik = -18860.055614, ELBO = -18866.702276
+Iteration  31: penLogLik = -18847.998886, ELBO = -18853.683422
+Iteration  32: penLogLik = -18836.813378, ELBO = -18842.355068
+Iteration  33: penLogLik = -18824.455783, ELBO = -18830.845883
+Iteration  34: penLogLik = -18809.015021, ELBO = -18817.162472
+Iteration  35: penLogLik = -18788.478248, ELBO = -18799.394112
+Iteration  36: penLogLik = -18760.322319, ELBO = -18775.291713
+Iteration  37: penLogLik = -18721.526190, ELBO = -18741.944457
+Iteration  38: penLogLik = -18670.802825, ELBO = -18696.629277
+Iteration  39: penLogLik = -18613.241177, ELBO = -18640.869933
+Iteration  40: penLogLik = -18560.809678, ELBO = -18584.145494
+Iteration  41: penLogLik = -18521.546586, ELBO = -18538.718153
+Iteration  42: penLogLik = -18490.473548, ELBO = -18505.012489
+Iteration  43: penLogLik = -18461.229944, ELBO = -18475.856597
+Iteration  44: penLogLik = -18431.954373, ELBO = -18446.120987
+Iteration  45: penLogLik = -18403.238059, ELBO = -18417.575749
+Iteration  46: penLogLik = -18373.654452, ELBO = -18387.762036
+Iteration  47: penLogLik = -18346.907870, ELBO = -18359.972710
+Iteration  48: penLogLik = -18319.330394, ELBO = -18333.050516
+Iteration  49: penLogLik = -18290.058387, ELBO = -18304.544000
+Iteration  50: penLogLik = -18259.401328, ELBO = -18274.477136
+Iteration  51: penLogLik = -18227.209752, ELBO = -18243.146433
+Iteration  52: penLogLik = -18191.162123, ELBO = -18209.480903
+Iteration  53: penLogLik = -18145.685343, ELBO = -18169.508205
+Iteration  54: penLogLik = -18081.477001, ELBO = -18115.652497
+Iteration  55: penLogLik = -17986.494387, ELBO = -18036.392212
+Iteration  56: penLogLik = -17860.493291, ELBO = -17921.673256
+Iteration  57: penLogLik = -17746.340064, ELBO = -17792.887620
+Iteration  58: penLogLik = -17688.832079, ELBO = -17708.553282
+Iteration  59: penLogLik = -17669.243423, ELBO = -17676.085669
+Iteration  60: penLogLik = -17662.072514, ELBO = -17665.151093
+Iteration  61: penLogLik = -17650.067181, ELBO = -17658.129203
+Iteration  62: penLogLik = -17642.382400, ELBO = -17644.248486
+Iteration  63: penLogLik = -17640.928591, ELBO = -17641.414847
+Iteration  64: penLogLik = -17640.320336, ELBO = -17640.568505
+Iteration  65: penLogLik = -17639.950137, ELBO = -17640.116250
+Iteration  66: penLogLik = -17639.670160, ELBO = -17639.803723
+Iteration  67: penLogLik = -17639.414348, ELBO = -17639.543661
+Iteration  68: penLogLik = -17639.128134, ELBO = -17639.281221
+Iteration  69: penLogLik = -17638.739343, ELBO = -17638.957072
+Iteration  70: penLogLik = -17638.120716, ELBO = -17638.478844
+Iteration  71: penLogLik = -17637.004510, ELBO = -17637.666867
+Iteration  72: penLogLik = -17634.769703, ELBO = -17636.118425
+Iteration  73: penLogLik = -17630.071174, ELBO = -17632.890987
+Iteration  74: penLogLik = -17621.227517, ELBO = -17626.250451
+Iteration  75: penLogLik = -17608.947953, ELBO = -17615.276391
+Iteration  76: penLogLik = -17597.108515, ELBO = -17602.584374
+Iteration  77: penLogLik = -17588.722341, ELBO = -17592.295041
+Iteration  78: penLogLik = -17583.684465, ELBO = -17585.777091
+Iteration  79: penLogLik = -17580.650760, ELBO = -17581.943569
+Iteration  80: penLogLik = -17578.594156, ELBO = -17579.518207
+Iteration  81: penLogLik = -17576.915484, ELBO = -17577.721791
+Iteration  82: penLogLik = -17575.184091, ELBO = -17576.076649
+Iteration  83: penLogLik = -17572.890148, ELBO = -17574.147498
+Iteration  84: penLogLik = -17569.174773, ELBO = -17571.275269
+Iteration  85: penLogLik = -17563.121507, ELBO = -17566.401431
+Iteration  86: penLogLik = -17555.510220, ELBO = -17559.328502
+Iteration  87: penLogLik = -17545.449283, ELBO = -17551.143705
+Iteration  88: penLogLik = -17523.006387, ELBO = -17536.393379
+Iteration  89: penLogLik = -17489.608693, ELBO = -17502.111863
+Iteration  90: penLogLik = -17480.613220, ELBO = -17482.218150
+Iteration  91: penLogLik = -17479.076783, ELBO = -17479.680950
+Iteration  92: penLogLik = -17477.915433, ELBO = -17478.508687
+Iteration  93: penLogLik = -17476.371852, ELBO = -17477.249929
+Iteration  94: penLogLik = -17473.785524, ELBO = -17475.281612
+Iteration  95: penLogLik = -17470.231713, ELBO = -17472.073899
+Iteration  96: penLogLik = -17467.155198, ELBO = -17468.528623
+Iteration  97: penLogLik = -17465.238824, ELBO = -17466.055851
+Iteration  98: penLogLik = -17464.040916, ELBO = -17464.568161
+Iteration  99: penLogLik = -17463.222708, ELBO = -17463.586940
+Iteration 100: penLogLik = -17462.666583, ELBO = -17462.912325
+Iteration 101: penLogLik = -17462.294996, ELBO = -17462.460725
+Iteration 102: penLogLik = -17462.034392, ELBO = -17462.153683
+Iteration 103: penLogLik = -17461.834457, ELBO = -17461.928599
+Iteration 104: penLogLik = -17461.666048, ELBO = -17461.747271
+Iteration 105: penLogLik = -17461.512354, ELBO = -17461.587822
+Iteration 106: penLogLik = -17461.363347, ELBO = -17461.437369
+Iteration 107: penLogLik = -17461.213238, ELBO = -17461.288223
+Iteration 108: penLogLik = -17461.059594, ELBO = -17461.136348
+Iteration 109: penLogLik = -17460.903098, ELBO = -17460.980922
+Iteration 110: penLogLik = -17460.747053, ELBO = -17460.824087
+Iteration 111: penLogLik = -17460.595923, ELBO = -17460.670006
+Iteration 112: penLogLik = -17460.453043, ELBO = -17460.522882
+Iteration 113: penLogLik = -17460.318669, ELBO = -17460.384646
+Iteration 114: penLogLik = -17460.189384, ELBO = -17460.253651
+Iteration 115: penLogLik = -17460.058544, ELBO = -17460.124758
+Iteration 116: penLogLik = -17459.916399, ELBO = -17459.989828
+Iteration 117: penLogLik = -17459.748233, ELBO = -17459.837078
+Iteration 118: penLogLik = -17459.527792, ELBO = -17459.647344
+Iteration 119: penLogLik = -17459.199154, ELBO = -17459.382974
+Iteration 120: penLogLik = -17458.631098, ELBO = -17458.958272
+Iteration 121: penLogLik = -17457.543942, ELBO = -17458.172226
+Iteration 122: penLogLik = -17455.698843, ELBO = -17456.685403
+Iteration 123: penLogLik = -17453.721046, ELBO = -17454.629453
+Iteration 124: penLogLik = -17452.310953, ELBO = -17452.936295
+Iteration 125: penLogLik = -17451.351813, ELBO = -17451.783667
+Iteration 126: penLogLik = -17450.669500, ELBO = -17450.983443
+Iteration 127: penLogLik = -17450.134562, ELBO = -17450.389942
+Iteration 128: penLogLik = -17449.645775, ELBO = -17449.889557
+Iteration 129: penLogLik = -17449.118572, ELBO = -17449.391198
+Iteration 130: penLogLik = -17448.478729, ELBO = -17448.814480
+Iteration 131: penLogLik = -17447.700777, ELBO = -17448.098893
+Iteration 132: penLogLik = -17446.929899, ELBO = -17447.286965
+Iteration 133: penLogLik = -17446.454830, ELBO = -17446.636431
+Iteration 134: penLogLik = -17446.290617, ELBO = -17446.343912
+Iteration 135: penLogLik = -17446.246453, ELBO = -17446.261108
+Iteration 136: penLogLik = -17446.230918, ELBO = -17446.236937
+Iteration 137: penLogLik = -17446.221875, ELBO = -17446.225933
+Iteration 138: penLogLik = -17446.214104, ELBO = -17446.217855
+Iteration 139: penLogLik = -17446.206138, ELBO = -17446.210078
+Iteration 140: penLogLik = -17446.197486, ELBO = -17446.201794
+Iteration 141: penLogLik = -17446.187935, ELBO = -17446.192698
+Iteration 142: penLogLik = -17446.177353, ELBO = -17446.182630
+Iteration 143: penLogLik = -17446.165629, ELBO = -17446.171471
+Iteration 144: penLogLik = -17446.152663, ELBO = -17446.159119
+Iteration 145: penLogLik = -17446.138366, ELBO = -17446.145476
+Iteration 146: penLogLik = -17446.122654, ELBO = -17446.130456
+Iteration 147: penLogLik = -17446.105464, ELBO = -17446.113986
+Iteration 148: penLogLik = -17446.086755, ELBO = -17446.096011
+Iteration 149: penLogLik = -17446.066513, ELBO = -17446.076505
+Iteration 150: penLogLik = -17446.044765, ELBO = -17446.055472
+Iteration 151: penLogLik = -17446.021577, ELBO = -17446.032960
+Iteration 152: penLogLik = -17445.997068, ELBO = -17446.009060
+Iteration 153: penLogLik = -17445.971406, ELBO = -17445.983916
+Iteration 154: penLogLik = -17445.944810, ELBO = -17445.957724
+Iteration 155: penLogLik = -17445.917547, ELBO = -17445.930728
+Iteration 156: penLogLik = -17445.889924, ELBO = -17445.903218
+Iteration 157: penLogLik = -17445.862274, ELBO = -17445.875515
+Iteration 158: penLogLik = -17445.834942, ELBO = -17445.847962
+Iteration 159: penLogLik = -17445.808265, ELBO = -17445.820904
+Iteration 160: penLogLik = -17445.782560, ELBO = -17445.794668
+Iteration 161: penLogLik = -17445.758104, ELBO = -17445.769556
+Iteration 162: penLogLik = -17445.735124, ELBO = -17445.745818
+Iteration 163: penLogLik = -17445.713788, ELBO = -17445.723654
+Iteration 164: penLogLik = -17445.694204, ELBO = -17445.703200
+Iteration 165: penLogLik = -17445.676421, ELBO = -17445.684535
+Iteration 166: penLogLik = -17445.660434, ELBO = -17445.667677
+Iteration 167: penLogLik = -17445.646193, ELBO = -17445.652599
+Iteration 168: penLogLik = -17445.633611, ELBO = -17445.639228
+Iteration 169: penLogLik = -17445.622577, ELBO = -17445.627465
+Iteration 170: penLogLik = -17445.612961, ELBO = -17445.617187
+Iteration 171: penLogLik = -17445.604627, ELBO = -17445.608260
+Iteration 172: penLogLik = -17445.597435, ELBO = -17445.600543
+Iteration 173: penLogLik = -17445.591251, ELBO = -17445.593900
+Iteration 174: penLogLik = -17445.585946, ELBO = -17445.588198
+Iteration 175: penLogLik = -17445.581401, ELBO = -17445.583312
+Iteration 176: penLogLik = -17445.577509, ELBO = -17445.579131
+Iteration 177: penLogLik = -17445.574175, ELBO = -17445.575552
+Iteration 178: penLogLik = -17445.571315, ELBO = -17445.572485
+Iteration 179: penLogLik = -17445.568854, ELBO = -17445.569852
+Iteration 180: penLogLik = -17445.566729, ELBO = -17445.567584
+Iteration 181: penLogLik = -17445.564888, ELBO = -17445.565623
+Iteration 182: penLogLik = -17445.563283, ELBO = -17445.563920
+Iteration 183: penLogLik = -17445.561876, ELBO = -17445.562432
+Iteration 184: penLogLik = -17445.560635, ELBO = -17445.561124
+Iteration 185: penLogLik = -17445.559533, ELBO = -17445.559967
+Iteration 186: penLogLik = -17445.558548, ELBO = -17445.558936
+Iteration 187: penLogLik = -17445.557659, ELBO = -17445.558010
+Iteration 188: penLogLik = -17445.556853, ELBO = -17445.557172
+Iteration 189: penLogLik = -17445.556115, ELBO = -17445.556409
+Iteration 190: penLogLik = -17445.555436, ELBO = -17445.555708
+Iteration 191: penLogLik = -17445.554807, ELBO = -17445.555061
+Iteration 192: penLogLik = -17445.554219, ELBO = -17445.554459
+Iteration 193: penLogLik = -17445.553669, ELBO = -17445.553895
+Iteration 194: penLogLik = -17445.553149, ELBO = -17445.553365
+Iteration 195: penLogLik = -17445.552657, ELBO = -17445.552864
+Iteration 196: penLogLik = -17445.552189, ELBO = -17445.552387
+Iteration 197: penLogLik = -17445.551742, ELBO = -17445.551933
+Iteration 198: penLogLik = -17445.551313, ELBO = -17445.551498
+Iteration 199: penLogLik = -17445.550902, ELBO = -17445.551081
+Iteration 200: penLogLik = -17445.550505, ELBO = -17445.550679
+Iteration   1: penLogLik = -26171.619633, ELBO = -27620.929343
+Iteration   2: penLogLik = -24173.348487, ELBO = -24955.575512
+Iteration   3: penLogLik = -23111.035372, ELBO = -23460.218146
+Iteration   4: penLogLik = -22708.872501, ELBO = -22848.448744
+Iteration   5: penLogLik = -22522.753476, ELBO = -22598.416947
+Iteration   6: penLogLik = -22393.739232, ELBO = -22452.951846
+Iteration   7: penLogLik = -22277.752081, ELBO = -22325.061419
+Iteration   8: penLogLik = -22211.421363, ELBO = -22238.935802
+Iteration   9: penLogLik = -22166.414968, ELBO = -22186.484841
+Iteration  10: penLogLik = -22128.677545, ELBO = -22146.461052
+Iteration  11: penLogLik = -22094.270155, ELBO = -22110.409980
+Iteration  12: penLogLik = -22063.585235, ELBO = -22077.949036
+Iteration  13: penLogLik = -22033.977886, ELBO = -22048.717320
+Iteration  14: penLogLik = -21992.634916, ELBO = -22016.251991
+Iteration  15: penLogLik = -21908.143268, ELBO = -21955.289752
+Iteration  16: penLogLik = -21809.912229, ELBO = -21855.975284
+Iteration  17: penLogLik = -21724.450073, ELBO = -21765.300252
+Iteration  18: penLogLik = -21648.337888, ELBO = -21684.140345
+Iteration  19: penLogLik = -21579.275865, ELBO = -21612.453992
+Iteration  20: penLogLik = -21513.027343, ELBO = -21544.957939
+Iteration  21: penLogLik = -21448.801855, ELBO = -21479.750261
+Iteration  22: penLogLik = -21386.523180, ELBO = -21416.438997
+Iteration  23: penLogLik = -21326.996845, ELBO = -21355.469676
+Iteration  24: penLogLik = -21271.650939, ELBO = -21297.766458
+Iteration  25: penLogLik = -21223.868938, ELBO = -21245.797840
+Iteration  26: penLogLik = -21186.235472, ELBO = -21203.117123
+Iteration  27: penLogLik = -21158.841932, ELBO = -21170.923835
+Iteration  28: penLogLik = -21139.813572, ELBO = -21148.204884
+Iteration  29: penLogLik = -21126.467747, ELBO = -21132.471404
+Iteration  30: penLogLik = -21116.124682, ELBO = -21120.970664
+Iteration  31: penLogLik = -21106.910908, ELBO = -21111.388619
+Iteration  32: penLogLik = -21097.592317, ELBO = -21102.262066
+Iteration  33: penLogLik = -21086.960062, ELBO = -21092.455642
+Iteration  34: penLogLik = -21074.140985, ELBO = -21080.572769
+Iteration  35: penLogLik = -21060.518670, ELBO = -21067.318818
+Iteration  36: penLogLik = -21045.703464, ELBO = -21053.065449
+Iteration  37: penLogLik = -21030.272509, ELBO = -21037.760004
+Iteration  38: penLogLik = -21015.523098, ELBO = -21022.465465
+Iteration  39: penLogLik = -21002.766520, ELBO = -21008.589448
+Iteration  40: penLogLik = -20992.637904, ELBO = -20997.174608
+Iteration  41: penLogLik = -20984.778309, ELBO = -20988.349848
+Iteration  42: penLogLik = -20977.538350, ELBO = -20981.176601
+Iteration  43: penLogLik = -20969.307223, ELBO = -20973.102261
+Iteration  44: penLogLik = -20963.938843, ELBO = -20966.309621
+Iteration  45: penLogLik = -20959.619507, ELBO = -20961.707917
+Iteration  46: penLogLik = -20955.573130, ELBO = -20957.552110
+Iteration  47: penLogLik = -20951.644750, ELBO = -20953.574281
+Iteration  48: penLogLik = -20947.803545, ELBO = -20949.687065
+Iteration  49: penLogLik = -20944.084422, ELBO = -20945.900457
+Iteration  50: penLogLik = -20940.542650, ELBO = -20942.263413
+Iteration  51: penLogLik = -20937.231529, ELBO = -20938.832131
+Iteration  52: penLogLik = -20934.190544, ELBO = -20935.653977
+Iteration  53: penLogLik = -20931.439850, ELBO = -20932.758969
+Iteration  54: penLogLik = -20928.979992, ELBO = -20930.157018
+Iteration  55: penLogLik = -20926.795461, ELBO = -20927.839853
+Iteration  56: penLogLik = -20924.860047, ELBO = -20925.785768
+Iteration  57: penLogLik = -20923.142099, ELBO = -20923.965146
+Iteration  58: penLogLik = -20921.608626, ELBO = -20922.345205
+Iteration  59: penLogLik = -20920.227946, ELBO = -20920.893358
+Iteration  60: penLogLik = -20918.971056, ELBO = -20919.579174
+Iteration  61: penLogLik = -20917.812016, ELBO = -20918.375202
+Iteration  62: penLogLik = -20916.727557, ELBO = -20917.256949
+Iteration  63: penLogLik = -20915.695918, ELBO = -20916.202109
+Iteration  64: penLogLik = -20914.694632, ELBO = -20915.188921
+Iteration  65: penLogLik = -20913.696461, ELBO = -20914.193159
+Iteration  66: penLogLik = -20912.662150, ELBO = -20913.182616
+Iteration  67: penLogLik = -20911.530008, ELBO = -20912.107803
+Iteration  68: penLogLik = -20910.217364, ELBO = -20910.893105
+Iteration  69: penLogLik = -20908.698870, ELBO = -20909.465140
+Iteration  70: penLogLik = -20907.175226, ELBO = -20907.899077
+Iteration  71: penLogLik = -20905.937729, ELBO = -20906.499327
+Iteration  72: penLogLik = -20904.995039, ELBO = -20905.431143
+Iteration  73: penLogLik = -20904.210532, ELBO = -20904.586438
+Iteration  74: penLogLik = -20903.503567, ELBO = -20903.849023
+Iteration  75: penLogLik = -20902.843157, ELBO = -20903.168923
+Iteration  76: penLogLik = -20902.216632, ELBO = -20902.527326
+Iteration  77: penLogLik = -20901.617379, ELBO = -20901.915671
+Iteration  78: penLogLik = -20901.040847, ELBO = -20901.328769
+Iteration  79: penLogLik = -20900.483422, ELBO = -20900.762604
+Iteration  80: penLogLik = -20899.943165, ELBO = -20900.214177
+Iteration  81: penLogLik = -20899.422058, ELBO = -20899.683170
+Iteration  82: penLogLik = -20898.926783, ELBO = -20899.174097
+Iteration  83: penLogLik = -20898.464078, ELBO = -20898.694513
+Iteration  84: penLogLik = -20898.035210, ELBO = -20898.248722
+Iteration  85: penLogLik = -20897.637009, ELBO = -20897.835339
+Iteration  86: penLogLik = -20897.265768, ELBO = -20897.450678
+Iteration  87: penLogLik = -20896.918792, ELBO = -20897.091577
+Iteration  88: penLogLik = -20896.594207, ELBO = -20896.755813
+Iteration  89: penLogLik = -20896.290546, ELBO = -20896.441737
+Iteration  90: penLogLik = -20896.006525, ELBO = -20896.147969
+Iteration  91: penLogLik = -20895.740946, ELBO = -20895.873255
+Iteration  92: penLogLik = -20895.492666, ELBO = -20895.616417
+Iteration  93: penLogLik = -20895.260593, ELBO = -20895.376331
+Iteration  94: penLogLik = -20895.043685, ELBO = -20895.151927
+Iteration  95: penLogLik = -20894.840949, ELBO = -20894.942184
+Iteration  96: penLogLik = -20894.651446, ELBO = -20894.746136
+Iteration  97: penLogLik = -20894.474285, ELBO = -20894.562866
+Iteration  98: penLogLik = -20894.308628, ELBO = -20894.391513
+Iteration  99: penLogLik = -20894.153686, ELBO = -20894.231261
+Iteration 100: penLogLik = -20894.008713, ELBO = -20894.081344
+Iteration 101: penLogLik = -20893.873006, ELBO = -20893.941038
+Iteration 102: penLogLik = -20893.745897, ELBO = -20893.809661
+Iteration 103: penLogLik = -20893.626751, ELBO = -20893.686559
+Iteration 104: penLogLik = -20893.514950, ELBO = -20893.571110
+Iteration 105: penLogLik = -20893.409891, ELBO = -20893.462702
+Iteration 106: penLogLik = -20893.310967, ELBO = -20893.360734
+Iteration 107: penLogLik = -20893.217554, ELBO = -20893.264592
+Iteration 108: penLogLik = -20893.128990, ELBO = -20893.173634
+Iteration 109: penLogLik = -20893.044553, ELBO = -20893.087171
+Iteration 110: penLogLik = -20892.963442, ELBO = -20893.004443
+Iteration 111: penLogLik = -20892.884762, ELBO = -20892.924599
+Iteration 112: penLogLik = -20892.807532, ELBO = -20892.846696
+Iteration 113: penLogLik = -20892.730745, ELBO = -20892.769724
+Iteration 114: penLogLik = -20892.653482, ELBO = -20892.692694
+Iteration 115: penLogLik = -20892.575130, ELBO = -20892.614805
+Iteration 116: penLogLik = -20892.495640, ELBO = -20892.535689
+Iteration 117: penLogLik = -20892.415755, ELBO = -20892.455680
+Iteration 118: penLogLik = -20892.337020, ELBO = -20892.375954
+Iteration 119: penLogLik = -20892.261479, ELBO = -20892.298389
+Iteration 120: penLogLik = -20892.191124, ELBO = -20892.225105
+Iteration 121: penLogLik = -20892.127340, ELBO = -20892.157861
+Iteration 122: penLogLik = -20892.070637, ELBO = -20892.097614
+Iteration 123: penLogLik = -20892.020738, ELBO = -20892.044437
+Iteration 124: penLogLik = -20891.976866, ELBO = -20891.997741
+Iteration 125: penLogLik = -20891.938066, ELBO = -20891.956608
+Iteration 126: penLogLik = -20891.903417, ELBO = -20891.920071
+Iteration 127: penLogLik = -20891.872142, ELBO = -20891.887265
+Iteration 128: penLogLik = -20891.843624, ELBO = -20891.857492
+Iteration 129: penLogLik = -20891.817396, ELBO = -20891.830214
+Iteration 130: penLogLik = -20891.793103, ELBO = -20891.805024
+Iteration 131: penLogLik = -20891.770478, ELBO = -20891.781618
+Iteration 132: penLogLik = -20891.749316, ELBO = -20891.759764
+Iteration 133: penLogLik = -20891.729455, ELBO = -20891.739280
+Iteration 134: penLogLik = -20891.710764, ELBO = -20891.720024
+Iteration 135: penLogLik = -20891.693136, ELBO = -20891.701879
+Iteration 136: penLogLik = -20891.676480, ELBO = -20891.684746
+Iteration 137: penLogLik = -20891.660717, ELBO = -20891.668543
+Iteration 138: penLogLik = -20891.645779, ELBO = -20891.653196
+Iteration 139: penLogLik = -20891.631605, ELBO = -20891.638642
+Iteration 140: penLogLik = -20891.618140, ELBO = -20891.624822
+Iteration 141: penLogLik = -20891.605336, ELBO = -20891.611687
+Iteration 142: penLogLik = -20891.593148, ELBO = -20891.599188
+Iteration 143: penLogLik = -20891.581535, ELBO = -20891.587285
+Iteration 144: penLogLik = -20891.570460, ELBO = -20891.575939
+Iteration 145: penLogLik = -20891.559891, ELBO = -20891.565114
+Iteration 146: penLogLik = -20891.549796, ELBO = -20891.554778
+Iteration 147: penLogLik = -20891.540148, ELBO = -20891.544903
+Iteration 148: penLogLik = -20891.530920, ELBO = -20891.535461
+Iteration 149: penLogLik = -20891.522089, ELBO = -20891.526429
+Iteration 150: penLogLik = -20891.513635, ELBO = -20891.517783
+Iteration 151: penLogLik = -20891.505538, ELBO = -20891.509504
+Iteration 152: penLogLik = -20891.497779, ELBO = -20891.501573
+Iteration 153: penLogLik = -20891.490343, ELBO = -20891.493973
+Iteration 154: penLogLik = -20891.483216, ELBO = -20891.486689
+Iteration 155: penLogLik = -20891.476383, ELBO = -20891.479706
+Iteration 156: penLogLik = -20891.469832, ELBO = -20891.473012
+Iteration 157: penLogLik = -20891.463552, ELBO = -20891.466595
+Iteration 158: penLogLik = -20891.457532, ELBO = -20891.460443
+Iteration 159: penLogLik = -20891.451763, ELBO = -20891.454547
+Iteration 160: penLogLik = -20891.446235, ELBO = -20891.448898
+Iteration 161: penLogLik = -20891.440941, ELBO = -20891.443486
+Iteration 162: penLogLik = -20891.435871, ELBO = -20891.438303
+Iteration 163: penLogLik = -20891.431019, ELBO = -20891.433342
+Iteration 164: penLogLik = -20891.426377, ELBO = -20891.428595
+Iteration 165: penLogLik = -20891.421938, ELBO = -20891.424055
+Iteration 166: penLogLik = -20891.417696, ELBO = -20891.419715
+Iteration 167: penLogLik = -20891.413644, ELBO = -20891.415569
+Iteration 168: penLogLik = -20891.409776, ELBO = -20891.411610
+Iteration 169: penLogLik = -20891.406085, ELBO = -20891.407831
+Iteration 170: penLogLik = -20891.402567, ELBO = -20891.404228
+Iteration 171: penLogLik = -20891.399213, ELBO = -20891.400794
+Iteration 172: penLogLik = -20891.396020, ELBO = -20891.397522
+Iteration 173: penLogLik = -20891.392981, ELBO = -20891.394407
+Iteration 174: penLogLik = -20891.390090, ELBO = -20891.391444
+Iteration 175: penLogLik = -20891.387341, ELBO = -20891.388627
+Iteration 176: penLogLik = -20891.384730, ELBO = -20891.385949
+Iteration 177: penLogLik = -20891.382250, ELBO = -20891.383406
+Iteration 178: penLogLik = -20891.379897, ELBO = -20891.380992
+Iteration 179: penLogLik = -20891.377665, ELBO = -20891.378701
+Iteration 180: penLogLik = -20891.375549, ELBO = -20891.376530
+Iteration 181: penLogLik = -20891.373544, ELBO = -20891.374471
+Iteration 182: penLogLik = -20891.371644, ELBO = -20891.372521
+Iteration 183: penLogLik = -20891.369846, ELBO = -20891.370675
+Iteration 184: penLogLik = -20891.368144, ELBO = -20891.368927
+Iteration 185: penLogLik = -20891.366534, ELBO = -20891.367274
+Iteration 186: penLogLik = -20891.365012, ELBO = -20891.365710
+Iteration 187: penLogLik = -20891.363572, ELBO = -20891.364231
+Iteration 188: penLogLik = -20891.362212, ELBO = -20891.362833
+Iteration 189: penLogLik = -20891.360926, ELBO = -20891.361513
+Iteration 190: penLogLik = -20891.359712, ELBO = -20891.360265
+Iteration 191: penLogLik = -20891.358566, ELBO = -20891.359087
+Iteration 192: penLogLik = -20891.357483, ELBO = -20891.357975
+Iteration 193: penLogLik = -20891.356461, ELBO = -20891.356924
+Iteration 194: penLogLik = -20891.355497, ELBO = -20891.355933
+Iteration 195: penLogLik = -20891.354587, ELBO = -20891.354998
+Iteration 196: penLogLik = -20891.353728, ELBO = -20891.354115
+Iteration 197: penLogLik = -20891.352917, ELBO = -20891.353282
+Iteration 198: penLogLik = -20891.352153, ELBO = -20891.352497
+Iteration 199: penLogLik = -20891.351432, ELBO = -20891.351756
+Iteration 200: penLogLik = -20891.350752, ELBO = -20891.351057
+Iteration  1: reassigned 1 coordinates (J1 = 8, J2 = 8)
+Iteration   1: penLogLik = -24793.761174, ELBO = -25872.211716
+Iteration   2: penLogLik = -22067.239118, ELBO = -22989.287469
+Iteration   3: penLogLik = -20798.728027, ELBO = -21213.088479
+Iteration   4: penLogLik = -20068.099415, ELBO = -20358.867457
+Iteration   5: penLogLik = -19468.377735, ELBO = -19731.133686
+Iteration   6: penLogLik = -19058.656764, ELBO = -19212.880181
+Iteration   7: penLogLik = -18783.703364, ELBO = -18914.840444
+Iteration   8: penLogLik = -18441.906980, ELBO = -18605.992189
+Iteration   9: penLogLik = -18188.556665, ELBO = -18283.912553
+Iteration  10: penLogLik = -18025.676378, ELBO = -18098.697448
+Iteration  11: penLogLik = -17863.166071, ELBO = -17943.334304
+Iteration  12: penLogLik = -17644.382258, ELBO = -17761.676226
+Iteration  13: penLogLik = -17375.466811, ELBO = -17486.562099
+Iteration  14: penLogLik = -17222.447410, ELBO = -17284.259638
+Iteration  15: penLogLik = -17116.609453, ELBO = -17162.975944
+Iteration  16: penLogLik = -17024.579066, ELBO = -17069.245366
+Iteration  17: penLogLik = -16918.297353, ELBO = -16972.515041
+Iteration  18: penLogLik = -16771.969951, ELBO = -16849.363599
+Iteration  19: penLogLik = -16577.757026, ELBO = -16667.418792
+Iteration  20: penLogLik = -16438.503168, ELBO = -16496.700133
+Iteration  21: penLogLik = -16336.033437, ELBO = -16380.762226
+Iteration  22: penLogLik = -16261.775018, ELBO = -16294.339399
+Iteration  23: penLogLik = -16200.034710, ELBO = -16230.092159
+Iteration  24: penLogLik = -16125.201596, ELBO = -16165.338356
+Iteration  25: penLogLik = -16004.446595, ELBO = -16070.679111
+Iteration  26: penLogLik = -15873.602090, ELBO = -15921.695178
+Iteration  27: penLogLik = -15819.203637, ELBO = -15840.627925
+Iteration  28: penLogLik = -15770.301034, ELBO = -15794.200136
+Iteration  29: penLogLik = -15719.964812, ELBO = -15745.198323
+Iteration  30: penLogLik = -15662.568629, ELBO = -15690.139428
+Iteration  31: penLogLik = -15611.377909, ELBO = -15634.291709
+Iteration  32: penLogLik = -15570.677067, ELBO = -15589.204610
+Iteration  33: penLogLik = -15532.034081, ELBO = -15551.358124
+Iteration  34: penLogLik = -15483.838284, ELBO = -15509.235479
+Iteration  35: penLogLik = -15412.110097, ELBO = -15451.117480
+Iteration  36: penLogLik = -15298.299903, ELBO = -15357.858237
+Iteration  37: penLogLik = -15185.859764, ELBO = -15230.981213
+Iteration  38: penLogLik = -15110.861232, ELBO = -15145.493560
+Iteration  39: penLogLik = -15041.854229, ELBO = -15074.582673
+Iteration  40: penLogLik = -14975.566719, ELBO = -15007.608501
+Iteration  41: penLogLik = -14903.412278, ELBO = -14940.196439
+Iteration  42: penLogLik = -14826.701324, ELBO = -14861.209190
+Iteration  43: penLogLik = -14768.619717, ELBO = -14792.901924
+Iteration  44: penLogLik = -14729.029236, ELBO = -14748.251510
+Iteration  45: penLogLik = -14680.165523, ELBO = -14707.420221
+Iteration  46: penLogLik = -14585.186486, ELBO = -14640.436517
+Iteration  47: penLogLik = -14459.043854, ELBO = -14512.570445
+Iteration  48: penLogLik = -14392.165166, ELBO = -14416.350277
+Iteration  49: penLogLik = -14366.357824, ELBO = -14376.879194
+Iteration  50: penLogLik = -14349.905260, ELBO = -14357.436823
+Iteration  51: penLogLik = -14335.905308, ELBO = -14342.699288
+Iteration  52: penLogLik = -14321.615367, ELBO = -14328.836130
+Iteration  53: penLogLik = -14305.142889, ELBO = -14313.651616
+Iteration  54: penLogLik = -14284.730567, ELBO = -14295.432415
+Iteration  55: penLogLik = -14257.309983, ELBO = -14272.078621
+Iteration  56: penLogLik = -14214.335504, ELBO = -14238.438700
+Iteration  57: penLogLik = -14145.356313, ELBO = -14180.818273
+Iteration  58: penLogLik = -14089.651423, ELBO = -14109.785860
+Iteration  59: penLogLik = -14067.525399, ELBO = -14075.842148
+Iteration  60: penLogLik = -14056.172644, ELBO = -14061.000580
+Iteration  61: penLogLik = -14048.878915, ELBO = -14052.109980
+Iteration  62: penLogLik = -14043.513023, ELBO = -14046.019457
+Iteration  63: penLogLik = -14038.799688, ELBO = -14041.129677
+Iteration  64: penLogLik = -14031.856553, ELBO = -14036.292380
+Iteration  65: penLogLik = -14020.627655, ELBO = -14025.671156
+Iteration  66: penLogLik = -14012.655409, ELBO = -14016.580120
+Iteration  67: penLogLik = -14004.225662, ELBO = -14008.519749
+Iteration  68: penLogLik = -13994.665473, ELBO = -13999.583277
+Iteration  69: penLogLik = -13983.538133, ELBO = -13989.260957
+Iteration  70: penLogLik = -13970.520097, ELBO = -13977.237051
+Iteration  71: penLogLik = -13954.778608, ELBO = -13962.967401
+Iteration  72: penLogLik = -13935.979205, ELBO = -13945.519321
+Iteration  73: penLogLik = -13915.523180, ELBO = -13925.760340
+Iteration  74: penLogLik = -13892.802377, ELBO = -13904.400930
+Iteration  75: penLogLik = -13865.624112, ELBO = -13879.739540
+Iteration  76: penLogLik = -13829.627031, ELBO = -13849.051316
+Iteration  77: penLogLik = -13772.734391, ELBO = -13804.378918
+Iteration  78: penLogLik = -13693.963442, ELBO = -13730.914249
+Iteration  79: penLogLik = -13644.045328, ELBO = -13662.062643
+Iteration  80: penLogLik = -13624.370258, ELBO = -13631.886166
+Iteration  81: penLogLik = -13614.587975, ELBO = -13618.758911
+Iteration  82: penLogLik = -13607.730562, ELBO = -13610.986101
+Iteration  83: penLogLik = -13601.526342, ELBO = -13604.497365
+Iteration  84: penLogLik = -13596.710931, ELBO = -13598.817408
+Iteration  85: penLogLik = -13593.645267, ELBO = -13595.004449
+Iteration  86: penLogLik = -13591.400996, ELBO = -13592.460645
+Iteration  87: penLogLik = -13589.439487, ELBO = -13590.400454
+Iteration  88: penLogLik = -13587.497821, ELBO = -13588.485584
+Iteration  89: penLogLik = -13584.808142, ELBO = -13586.425614
+Iteration  90: penLogLik = -13579.427576, ELBO = -13582.509515
+Iteration  91: penLogLik = -13575.094035, ELBO = -13576.822979
+Iteration  92: penLogLik = -13572.100451, ELBO = -13573.574011
+Iteration  93: penLogLik = -13569.018121, ELBO = -13570.588336
+Iteration  94: penLogLik = -13565.612228, ELBO = -13567.358119
+Iteration  95: penLogLik = -13561.801411, ELBO = -13563.753941
+Iteration  96: penLogLik = -13557.556506, ELBO = -13559.725075
+Iteration  97: penLogLik = -13552.882372, ELBO = -13555.260437
+Iteration  98: penLogLik = -13547.809855, ELBO = -13550.379488
+Iteration  99: penLogLik = -13542.377714, ELBO = -13545.120696
+Iteration 100: penLogLik = -13536.594960, ELBO = -13539.514521
+Iteration 101: penLogLik = -13530.370300, ELBO = -13533.531801
+Iteration 102: penLogLik = -13523.359457, ELBO = -13526.982185
+Iteration 103: penLogLik = -13514.600963, ELBO = -13519.271296
+Iteration 104: penLogLik = -13502.061237, ELBO = -13508.911615
+Iteration 105: penLogLik = -13482.588514, ELBO = -13493.334223
+Iteration 106: penLogLik = -13453.078168, ELBO = -13468.775241
+Iteration 107: penLogLik = -13410.941144, ELBO = -13433.704522
+Iteration 108: penLogLik = -13359.128756, ELBO = -13381.076982
+Iteration 109: penLogLik = -13332.725963, ELBO = -13344.072683
+Iteration 110: penLogLik = -13314.315540, ELBO = -13322.748504
+Iteration 111: penLogLik = -13299.973464, ELBO = -13306.699784
+Iteration 112: penLogLik = -13287.825906, ELBO = -13293.626065
+Iteration 113: penLogLik = -13277.313568, ELBO = -13282.330478
+Iteration 114: penLogLik = -13267.868903, ELBO = -13272.477322
+Iteration 115: penLogLik = -13258.372303, ELBO = -13263.153704
+Iteration 116: penLogLik = -13247.961454, ELBO = -13253.247484
+Iteration 117: penLogLik = -13236.174696, ELBO = -13242.184960
+Iteration 118: penLogLik = -13222.459896, ELBO = -13229.490363
+Iteration 119: penLogLik = -13206.108296, ELBO = -13214.513583
+Iteration 120: penLogLik = -13186.421361, ELBO = -13196.512454
+Iteration 121: penLogLik = -13163.032226, ELBO = -13174.893422
+Iteration 122: penLogLik = -13136.498641, ELBO = -13149.662727
+Iteration 123: penLogLik = -13109.067094, ELBO = -13122.176434
+Iteration 124: penLogLik = -13084.638109, ELBO = -13095.698110
+Iteration 125: penLogLik = -13066.640417, ELBO = -13074.320406
+Iteration 126: penLogLik = -13055.437057, ELBO = -13060.047472
+Iteration 127: penLogLik = -13048.910238, ELBO = -13051.616906
+Iteration 128: penLogLik = -13044.850463, ELBO = -13046.614244
+Iteration 129: penLogLik = -13041.826208, ELBO = -13043.243711
+Iteration 130: penLogLik = -13038.945635, ELBO = -13040.391542
+Iteration 131: penLogLik = -13035.744007, ELBO = -13037.383514
+Iteration 132: penLogLik = -13031.980590, ELBO = -13033.948124
+Iteration 133: penLogLik = -13027.052260, ELBO = -13029.715339
+Iteration 134: penLogLik = -13019.908517, ELBO = -13023.825472
+Iteration 135: penLogLik = -13009.043625, ELBO = -13014.982450
+Iteration 136: penLogLik = -12993.833689, ELBO = -13001.633940
+Iteration 137: penLogLik = -12979.148922, ELBO = -12985.594051
+Iteration 138: penLogLik = -12970.967820, ELBO = -12974.051715
+Iteration 139: penLogLik = -12967.560473, ELBO = -12968.865506
+Iteration 140: penLogLik = -12966.057545, ELBO = -12966.657765
+Iteration 141: penLogLik = -12965.288909, ELBO = -12965.611104
+Iteration 142: penLogLik = -12964.838218, ELBO = -12965.033272
+Iteration 143: penLogLik = -12964.548352, ELBO = -12964.676996
+Iteration 144: penLogLik = -12964.323967, ELBO = -12964.436428
+Iteration 145: penLogLik = -12963.852469, ELBO = -12964.187425
+Iteration 146: penLogLik = -12962.089920, ELBO = -12963.198203
+Iteration 147: penLogLik = -12960.680518, ELBO = -12961.087973
+Iteration 148: penLogLik = -12960.233593, ELBO = -12960.439165
+Iteration 149: penLogLik = -12959.829602, ELBO = -12960.027010
+Iteration 150: penLogLik = -12959.492321, ELBO = -12959.634375
+Iteration 151: penLogLik = -12959.323300, ELBO = -12959.387305
+Iteration 152: penLogLik = -12959.231712, ELBO = -12959.275099
+Iteration 153: penLogLik = -12959.138112, ELBO = -12959.188760
+Iteration 154: penLogLik = -12959.004935, ELBO = -12959.080397
+Iteration 155: penLogLik = -12958.787484, ELBO = -12958.913096
+Iteration 156: penLogLik = -12958.414407, ELBO = -12958.630655
+Iteration 157: penLogLik = -12957.780184, ELBO = -12958.144317
+Iteration 158: penLogLik = -12956.765041, ELBO = -12957.334273
+Iteration 159: penLogLik = -12955.317343, ELBO = -12956.096254
+Iteration 160: penLogLik = -12953.583478, ELBO = -12954.460682
+Iteration 161: penLogLik = -12951.920328, ELBO = -12952.698992
+Iteration 162: penLogLik = -12950.656158, ELBO = -12951.202828
+Iteration 163: penLogLik = -12949.861977, ELBO = -12950.184428
+Iteration 164: penLogLik = -12949.414441, ELBO = -12949.589747
+Iteration 165: penLogLik = -12949.168591, ELBO = -12949.263852
+Iteration 166: penLogLik = -12949.029869, ELBO = -12949.083882
+Iteration 167: penLogLik = -12948.947955, ELBO = -12948.980247
+Iteration 168: penLogLik = -12948.897310, ELBO = -12948.917586
+Iteration 169: penLogLik = -12948.864680, ELBO = -12948.877962
+Iteration 170: penLogLik = -12948.842885, ELBO = -12948.851907
+Iteration 171: penLogLik = -12948.827862, ELBO = -12948.834188
+Iteration 172: penLogLik = -12948.817217, ELBO = -12948.821776
+Iteration 173: penLogLik = -12948.809487, ELBO = -12948.812855
+Iteration 174: penLogLik = -12948.803749, ELBO = -12948.806293
+Iteration 175: penLogLik = -12948.799406, ELBO = -12948.801366
+Iteration 176: penLogLik = -12948.796055, ELBO = -12948.797594
+Iteration 177: penLogLik = -12948.793426, ELBO = -12948.794655
+Iteration 178: penLogLik = -12948.791326, ELBO = -12948.792325
+Iteration 179: penLogLik = -12948.789622, ELBO = -12948.790447
+Iteration 180: penLogLik = -12948.788216, ELBO = -12948.788907
+Iteration 181: penLogLik = -12948.787037, ELBO = -12948.787625
+Iteration 182: penLogLik = -12948.786033, ELBO = -12948.786539
+Iteration 183: penLogLik = -12948.785163, ELBO = -12948.785607
+Iteration 184: penLogLik = -12948.784399, ELBO = -12948.784792
+Iteration 185: penLogLik = -12948.783718, ELBO = -12948.784070
+Iteration 186: penLogLik = -12948.783101, ELBO = -12948.783421
+Iteration 187: penLogLik = -12948.782536, ELBO = -12948.782830
+Iteration 188: penLogLik = -12948.782011, ELBO = -12948.782284
+Iteration 189: penLogLik = -12948.781518, ELBO = -12948.781774
+Iteration 190: penLogLik = -12948.781049, ELBO = -12948.781292
+Iteration 191: penLogLik = -12948.780599, ELBO = -12948.780832
+Iteration 192: penLogLik = -12948.780163, ELBO = -12948.780387
+Iteration 193: penLogLik = -12948.779737, ELBO = -12948.779955
+Iteration 194: penLogLik = -12948.779316, ELBO = -12948.779530
+Iteration 195: penLogLik = -12948.778898, ELBO = -12948.779110
+Iteration 196: penLogLik = -12948.778478, ELBO = -12948.778690
+Iteration 197: penLogLik = -12948.778056, ELBO = -12948.778268
+Iteration 198: penLogLik = -12948.777626, ELBO = -12948.777841
+Iteration 199: penLogLik = -12948.777187, ELBO = -12948.777406
+Iteration 200: penLogLik = -12948.776735, ELBO = -12948.776960
+Iteration   1: penLogLik = -30984.717043, ELBO = -32892.162109
+Iteration   2: penLogLik = -28083.282326, ELBO = -29119.568812
+Iteration   3: penLogLik = -26843.398821, ELBO = -27253.779815
+Iteration   4: penLogLik = -26308.541572, ELBO = -26514.886364
+Iteration   5: penLogLik = -26011.807545, ELBO = -26132.543966
+Iteration   6: penLogLik = -25827.068684, ELBO = -25905.247057
+Iteration   7: penLogLik = -25698.507358, ELBO = -25755.621286
+Iteration   8: penLogLik = -25597.779435, ELBO = -25644.328350
+Iteration   9: penLogLik = -25510.214373, ELBO = -25551.773890
+Iteration  10: penLogLik = -25429.841784, ELBO = -25468.311990
+Iteration  11: penLogLik = -25355.301906, ELBO = -25390.679788
+Iteration  12: penLogLik = -25289.848782, ELBO = -25320.131157
+Iteration  13: penLogLik = -25236.690905, ELBO = -25260.802015
+Iteration  14: penLogLik = -25195.544451, ELBO = -25214.026449
+Iteration  15: penLogLik = -25165.493784, ELBO = -25178.808430
+Iteration  16: penLogLik = -25143.720511, ELBO = -25153.573456
+Iteration  17: penLogLik = -25126.883782, ELBO = -25134.643009
+Iteration  18: penLogLik = -25113.356978, ELBO = -25119.641612
+Iteration  19: penLogLik = -25102.204047, ELBO = -25107.440222
+Iteration  20: penLogLik = -25092.587170, ELBO = -25097.176627
+Iteration  21: penLogLik = -25083.770785, ELBO = -25088.052288
+Iteration  22: penLogLik = -25075.197704, ELBO = -25079.418352
+Iteration  23: penLogLik = -25066.490741, ELBO = -25070.812167
+Iteration  24: penLogLik = -25057.429922, ELBO = -25061.938602
+Iteration  25: penLogLik = -25047.945941, ELBO = -25052.653422
+Iteration  26: penLogLik = -25038.132670, ELBO = -25042.968268
+Iteration  27: penLogLik = -25028.258379, ELBO = -25033.066713
+Iteration  28: penLogLik = -25018.741635, ELBO = -25023.302450
+Iteration  29: penLogLik = -25010.063659, ELBO = -25014.144242
+Iteration  30: penLogLik = -25002.629676, ELBO = -25006.055552
+Iteration  31: penLogLik = -24996.646581, ELBO = -24999.352048
+Iteration  32: penLogLik = -24992.089204, ELBO = -24994.118075
+Iteration  33: penLogLik = -24988.762007, ELBO = -24990.227158
+Iteration  34: penLogLik = -24986.398619, ELBO = -24987.433314
+Iteration  35: penLogLik = -24984.740807, ELBO = -24985.465840
+Iteration  36: penLogLik = -24983.577154, ELBO = -24984.087618
+Iteration  37: penLogLik = -24982.750799, ELBO = -24983.115581
+Iteration  38: penLogLik = -24982.152057, ELBO = -24982.418637
+Iteration  39: penLogLik = -24981.706860, ELBO = -24981.907042
+Iteration  40: penLogLik = -24981.366139, ELBO = -24981.520911
+Iteration  41: penLogLik = -24981.097643, ELBO = -24981.220791
+Iteration  42: penLogLik = -24980.880175, ELBO = -24980.980778
+Iteration  43: penLogLik = -24980.699714, ELBO = -24980.783799
+Iteration  44: penLogLik = -24980.546865, ELBO = -24980.618495
+Iteration  45: penLogLik = -24980.415230, ELBO = -24980.477194
+Iteration  46: penLogLik = -24980.300349, ELBO = -24980.354608
+Iteration  47: penLogLik = -24980.199035, ELBO = -24980.247005
+Iteration  48: penLogLik = -24980.108949, ELBO = -24980.151681
+Iteration  49: penLogLik = -24980.028319, ELBO = -24980.066615
+Iteration  50: penLogLik = -24979.955769, ELBO = -24979.990261
+Iteration  51: penLogLik = -24979.890201, ELBO = -24979.921395
+Iteration  52: penLogLik = -24979.830721, ELBO = -24979.859034
+Iteration  53: penLogLik = -24979.776585, ELBO = -24979.802364
+Iteration  54: penLogLik = -24979.727169, ELBO = -24979.750708
+Iteration  55: penLogLik = -24979.681936, ELBO = -24979.703488
+Iteration  56: penLogLik = -24979.640427, ELBO = -24979.660208
+Iteration  57: penLogLik = -24979.602242, ELBO = -24979.620443
+Iteration  58: penLogLik = -24979.567034, ELBO = -24979.583820
+Iteration  59: penLogLik = -24979.534498, ELBO = -24979.550012
+Iteration  60: penLogLik = -24979.504365, ELBO = -24979.518736
+Iteration  61: penLogLik = -24979.476399, ELBO = -24979.489738
+Iteration  62: penLogLik = -24979.450391, ELBO = -24979.462798
+Iteration  63: penLogLik = -24979.426155, ELBO = -24979.437718
+Iteration  64: penLogLik = -24979.403526, ELBO = -24979.414325
+Iteration  65: penLogLik = -24979.382359, ELBO = -24979.392462
+Iteration  66: penLogLik = -24979.362523, ELBO = -24979.371992
+Iteration  67: penLogLik = -24979.343901, ELBO = -24979.352792
+Iteration  68: penLogLik = -24979.326389, ELBO = -24979.334751
+Iteration  69: penLogLik = -24979.309894, ELBO = -24979.317772
+Iteration  70: penLogLik = -24979.294333, ELBO = -24979.301767
+Iteration  71: penLogLik = -24979.279630, ELBO = -24979.286655
+Iteration  72: penLogLik = -24979.265717, ELBO = -24979.272366
+Iteration  73: penLogLik = -24979.252534, ELBO = -24979.258835
+Iteration  74: penLogLik = -24979.240025, ELBO = -24979.246005
+Iteration  75: penLogLik = -24979.228140, ELBO = -24979.233823
+Iteration  76: penLogLik = -24979.216835, ELBO = -24979.222242
+Iteration  77: penLogLik = -24979.206068, ELBO = -24979.211219
+Iteration  78: penLogLik = -24979.195803, ELBO = -24979.200714
+Iteration  79: penLogLik = -24979.186004, ELBO = -24979.190693
+Iteration  80: penLogLik = -24979.176641, ELBO = -24979.181123
+Iteration  81: penLogLik = -24979.167687, ELBO = -24979.171974
+Iteration  82: penLogLik = -24979.159114, ELBO = -24979.163219
+Iteration  83: penLogLik = -24979.150899, ELBO = -24979.154833
+Iteration  84: penLogLik = -24979.143021, ELBO = -24979.146795
+Iteration  85: penLogLik = -24979.135459, ELBO = -24979.139082
+Iteration  86: penLogLik = -24979.128194, ELBO = -24979.131676
+Iteration  87: penLogLik = -24979.121211, ELBO = -24979.124558
+Iteration  88: penLogLik = -24979.114492, ELBO = -24979.117713
+Iteration  89: penLogLik = -24979.108024, ELBO = -24979.111126
+Iteration  90: penLogLik = -24979.101793, ELBO = -24979.104782
+Iteration  91: penLogLik = -24979.095786, ELBO = -24979.098668
+Iteration  92: penLogLik = -24979.089992, ELBO = -24979.092772
+Iteration  93: penLogLik = -24979.084400, ELBO = -24979.087084
+Iteration  94: penLogLik = -24979.078999, ELBO = -24979.081591
+Iteration  95: penLogLik = -24979.073781, ELBO = -24979.076286
+Iteration  96: penLogLik = -24979.068736, ELBO = -24979.071159
+Iteration  97: penLogLik = -24979.063857, ELBO = -24979.066200
+Iteration  98: penLogLik = -24979.059134, ELBO = -24979.061403
+Iteration  99: penLogLik = -24979.054562, ELBO = -24979.056759
+Iteration 100: penLogLik = -24979.050134, ELBO = -24979.052262
+Iteration 101: penLogLik = -24979.045842, ELBO = -24979.047905
+Iteration 102: penLogLik = -24979.041682, ELBO = -24979.043682
+Iteration 103: penLogLik = -24979.037647, ELBO = -24979.039587
+Iteration 104: penLogLik = -24979.033731, ELBO = -24979.035614
+Iteration 105: penLogLik = -24979.029931, ELBO = -24979.031759
+Iteration 106: penLogLik = -24979.026241, ELBO = -24979.028016
+Iteration 107: penLogLik = -24979.022656, ELBO = -24979.024381
+Iteration 108: penLogLik = -24979.019173, ELBO = -24979.020849
+Iteration 109: penLogLik = -24979.015787, ELBO = -24979.017417
+Iteration 110: penLogLik = -24979.012494, ELBO = -24979.014080
+Iteration 111: penLogLik = -24979.009292, ELBO = -24979.010834
+Iteration 112: penLogLik = -24979.006175, ELBO = -24979.007676
+Iteration 113: penLogLik = -24979.003142, ELBO = -24979.004604
+Iteration 114: penLogLik = -24979.000189, ELBO = -24979.001612
+Iteration 115: penLogLik = -24978.997313, ELBO = -24978.998699
+Iteration 116: penLogLik = -24978.994511, ELBO = -24978.995862
+Iteration 117: penLogLik = -24978.991781, ELBO = -24978.993097
+Iteration 118: penLogLik = -24978.989119, ELBO = -24978.990403
+Iteration 119: penLogLik = -24978.986524, ELBO = -24978.987776
+Iteration 120: penLogLik = -24978.983994, ELBO = -24978.985215
+Iteration 121: penLogLik = -24978.981525, ELBO = -24978.982716
+Iteration 122: penLogLik = -24978.979116, ELBO = -24978.980278
+Iteration 123: penLogLik = -24978.976765, ELBO = -24978.977899
+Iteration 124: penLogLik = -24978.974469, ELBO = -24978.975577
+Iteration 125: penLogLik = -24978.972228, ELBO = -24978.973310
+Iteration 126: penLogLik = -24978.970038, ELBO = -24978.971096
+Iteration 127: penLogLik = -24978.967899, ELBO = -24978.968933
+Iteration 128: penLogLik = -24978.965809, ELBO = -24978.966819
+Iteration 129: penLogLik = -24978.963766, ELBO = -24978.964754
+Iteration 130: penLogLik = -24978.961769, ELBO = -24978.962735
+Iteration 131: penLogLik = -24978.959817, ELBO = -24978.960761
+Iteration 132: penLogLik = -24978.957907, ELBO = -24978.958830
+Iteration 133: penLogLik = -24978.956039, ELBO = -24978.956942
+Iteration 134: penLogLik = -24978.954211, ELBO = -24978.955095
+Iteration 135: penLogLik = -24978.952422, ELBO = -24978.953287
+Iteration 136: penLogLik = -24978.950671, ELBO = -24978.951518
+Iteration 137: penLogLik = -24978.948957, ELBO = -24978.949786
+Iteration 138: penLogLik = -24978.947278, ELBO = -24978.948090
+Iteration 139: penLogLik = -24978.945634, ELBO = -24978.946430
+Iteration 140: penLogLik = -24978.944024, ELBO = -24978.944803
+Iteration 141: penLogLik = -24978.942446, ELBO = -24978.943210
+Iteration 142: penLogLik = -24978.940900, ELBO = -24978.941649
+Iteration 143: penLogLik = -24978.939385, ELBO = -24978.940119
+Iteration 144: penLogLik = -24978.937899, ELBO = -24978.938619
+Iteration 145: penLogLik = -24978.936443, ELBO = -24978.937149
+Iteration 146: penLogLik = -24978.935015, ELBO = -24978.935707
+Iteration 147: penLogLik = -24978.933614, ELBO = -24978.934293
+Iteration 148: penLogLik = -24978.932240, ELBO = -24978.932907
+Iteration 149: penLogLik = -24978.930893, ELBO = -24978.931546
+Iteration 150: penLogLik = -24978.929570, ELBO = -24978.930212
+Iteration 151: penLogLik = -24978.928272, ELBO = -24978.928902
+Iteration 152: penLogLik = -24978.926998, ELBO = -24978.927616
+Iteration 153: penLogLik = -24978.925747, ELBO = -24978.926354
+Iteration 154: penLogLik = -24978.924519, ELBO = -24978.925115
+Iteration 155: penLogLik = -24978.923313, ELBO = -24978.923899
+Iteration 156: penLogLik = -24978.922129, ELBO = -24978.922704
+Iteration 157: penLogLik = -24978.920965, ELBO = -24978.921530
+Iteration 158: penLogLik = -24978.919822, ELBO = -24978.920377
+Iteration 159: penLogLik = -24978.918699, ELBO = -24978.919245
+Iteration 160: penLogLik = -24978.917595, ELBO = -24978.918132
+Iteration 161: penLogLik = -24978.916510, ELBO = -24978.917038
+Iteration 162: penLogLik = -24978.915444, ELBO = -24978.915962
+Iteration 163: penLogLik = -24978.914396, ELBO = -24978.914905
+Iteration 164: penLogLik = -24978.913365, ELBO = -24978.913866
+Iteration 165: penLogLik = -24978.912351, ELBO = -24978.912844
+Iteration 166: penLogLik = -24978.911354, ELBO = -24978.911839
+Iteration 167: penLogLik = -24978.910373, ELBO = -24978.910850
+Iteration 168: penLogLik = -24978.909408, ELBO = -24978.909878
+Iteration 169: penLogLik = -24978.908459, ELBO = -24978.908921
+Iteration 170: penLogLik = -24978.907525, ELBO = -24978.907980
+Iteration 171: penLogLik = -24978.906605, ELBO = -24978.907053
+Iteration 172: penLogLik = -24978.905700, ELBO = -24978.906141
+Iteration 173: penLogLik = -24978.904810, ELBO = -24978.905244
+Iteration 174: penLogLik = -24978.903932, ELBO = -24978.904360
+Iteration 175: penLogLik = -24978.903069, ELBO = -24978.903490
+Iteration 176: penLogLik = -24978.902218, ELBO = -24978.902633
+Iteration 177: penLogLik = -24978.901381, ELBO = -24978.901789
+Iteration 178: penLogLik = -24978.900556, ELBO = -24978.900958
+Iteration 179: penLogLik = -24978.899743, ELBO = -24978.900140
+Iteration 180: penLogLik = -24978.898942, ELBO = -24978.899333
+Iteration 181: penLogLik = -24978.898153, ELBO = -24978.898539
+Iteration 182: penLogLik = -24978.897376, ELBO = -24978.897755
+Iteration 183: penLogLik = -24978.896610, ELBO = -24978.896984
+Iteration 184: penLogLik = -24978.895854, ELBO = -24978.896223
+Iteration 185: penLogLik = -24978.895110, ELBO = -24978.895473
+Iteration 186: penLogLik = -24978.894376, ELBO = -24978.894734
+Iteration 187: penLogLik = -24978.893652, ELBO = -24978.894006
+Iteration 188: penLogLik = -24978.892938, ELBO = -24978.893287
+Iteration 189: penLogLik = -24978.892234, ELBO = -24978.892578
+Iteration 190: penLogLik = -24978.891540, ELBO = -24978.891879
+Iteration 191: penLogLik = -24978.890855, ELBO = -24978.891190
+Iteration 192: penLogLik = -24978.890179, ELBO = -24978.890510
+Iteration 193: penLogLik = -24978.889513, ELBO = -24978.889839
+Iteration 194: penLogLik = -24978.888855, ELBO = -24978.889177
+Iteration 195: penLogLik = -24978.888206, ELBO = -24978.888524
+Iteration 196: penLogLik = -24978.887565, ELBO = -24978.887879
+Iteration 197: penLogLik = -24978.886933, ELBO = -24978.887243
+Iteration 198: penLogLik = -24978.886309, ELBO = -24978.886615
+Iteration 199: penLogLik = -24978.885693, ELBO = -24978.885995
+Iteration 200: penLogLik = -24978.885084, ELBO = -24978.885383
+Iteration  2: reassigned 0 coordinates (J1 = 7, J2 = 9)</code></pre>
 <p>Let’s check the inferred latent orderings.</p>
 <pre class="r"><code>sort(permut_cols[resPancreas$J1])</code></pre>
-<pre><code>[1]  1  9 11 13 16</code></pre>
+<pre><code>[1]  1  7  8  9 13 15 16</code></pre>
 <pre class="r"><code>sort(permut_cols[resPancreas$J2])</code></pre>
-<pre><code> [1]  2  3  4  5  6  7  8 10 12 14 15</code></pre>
+<pre><code>[1]  2  3  4  5  6 10 11 12 14</code></pre>
 <p>Let’s take a look at the structure plot ordered by each latent
 ordering.</p>
 <pre class="r"><code>position_1 &lt;- apply(resPancreas$Gamma1, 1, which.max)
@@ -1871,6 +3558,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-1.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/428107027bb940c60c2cccc2e486b27f44d1366a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-1.png" target="_blank">4281070</a>
@@ -1925,6 +3623,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-2.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/edeca0db6f37eaab9e90ead89e21e2041892e3ff/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-16-2.png" target="_blank">edeca0d</a>
@@ -1982,6 +3691,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-1.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/428107027bb940c60c2cccc2e486b27f44d1366a/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-1.png" target="_blank">4281070</a>
 </td>
 <td>
@@ -2034,6 +3754,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/492722ccdb7b25f1974a28918fa80654a1582cdc/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-2.png" target="_blank">492722c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/edeca0db6f37eaab9e90ead89e21e2041892e3ff/docs/figure/explore_SmoothEM_Mixture.rmd/unnamed-chunk-17-2.png" target="_blank">edeca0d</a>
