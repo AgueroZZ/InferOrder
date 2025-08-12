@@ -209,7 +209,7 @@ res <- two_ordering_smoothEM(
   lambda_vec = c(50, 50),
   relative_lambda = TRUE,
   iterate_once = TRUE,
-  rank_deficiency = 2,
+  rank_deficiency = (2 * ncol(X)),
   rw_order_vec = c(2, 2),
   reassign_by = "posterior",
   max_iter = 100,
