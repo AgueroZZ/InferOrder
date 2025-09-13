@@ -335,6 +335,7 @@ result_RW1 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW1,
   init_params = init_params,
+  rank_deficiency = ncol(Loadings),
   max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
@@ -345,6 +346,19 @@ result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max)
 loadings_order_RW1 <- order(result_RW1$clustering)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])
 ```
+
+
+```{r}
+plot(result_RW1$elbo_trace, type = 'l', pch=19,
+     cex=0.5, col='blue', lty=1,
+     xlab = "Iteration", ylab = "ELBO",
+     main = "ELBO Trace")
+lines(result_RW1$loglik_trace, col='orange', 
+      lty=2,
+      lwd=2)
+```
+
+
 
 ```{r}
 plot_highlight_types(type_vec = celltype,
@@ -378,8 +392,6 @@ result_RW2 <- EM_algorithm(
   modelName = "EEI",
   tol = 1e-3,
   iterate_once = TRUE,
-  # max_inner = 5,
-  # inner_tol = 1e-3,
   eigen_tol = 0,
   rank_deficiency = 2 * ncol(Loadings),
   nugget = 0,
@@ -393,10 +405,14 @@ plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
 ```
 
 ```{r}
-plot(result_RW2$elbo_trace, type = "o", cex = 0.1)
-points(result_RW2$loglik_trace, col = "red", type = "o", cex = 0.1)
+plot(result_RW2$elbo_trace, type = 'l', pch=19,
+     cex=0.5, col='blue', lty=1,
+     xlab = "Iteration", ylab = "ELBO",
+     main = "ELBO Trace")
+lines(result_RW2$loglik_trace, col='orange', 
+      lty=2,
+      lwd=2)
 ```
-
 
 ```{r}
 plot_highlight_types(type_vec = celltype,
