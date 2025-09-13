@@ -250,7 +250,7 @@ result_RW1 <- EM_algorithm(
   max_iter = 100,
   modelName = "EEI",
   relative_lambda = T,
-  rank_deficiency = 1,
+  rank_deficiency = (1 * ncol(sim$X)),
   iterate_once = T,
   tol = 1e-3,
   verbose = TRUE
@@ -312,7 +312,7 @@ result_rw2 <- EM_algorithm(
   max_iter = 100,
   modelName = "EEI",
   relative_lambda = TRUE,
-  rank_deficiency = 2,
+  rank_deficiency = (2 * ncol(sim$X)),
   tol = 1e-3,
   verbose = TRUE
 )
@@ -349,6 +349,7 @@ Q_prior_rw2_strong <- EM_algorithm(
   data = sim$X,
   Q_prior = Q_prior_rw2_strong,
   init_params = init_params,
+  rank_deficiency = (2 * ncol(sim$X)),
   max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
