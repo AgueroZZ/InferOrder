@@ -1,0 +1,150 @@
+---
+title: "Connection Between EM and SmoothEM"
+author: "Ziang Zhang"
+date: "2025-09-17"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+header-includes:
+  - \usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+  - \theoremstyle{plain}
+  - \newtheorem{theorem}{Theorem}
+  - \theoremstyle{remark}
+  - \newtheorem*{remark}{Remark}
+  - \newcommand{\KL}{\mathrm{KL}}
+  - \newcommand{\given}{\,\middle|\,}
+---
+## Connection Between EM and SmoothEM
+
+Like the classical EM algorithm, the SmoothEM algorithm monotonically increases a posterior objective and hence converges to a local optimum.
+
+### Theorem (Monotonicity of SmoothEM)
+
+Let $\hat{\mathbf{U}}^{(i)}$ denote the estimate of the mean vectors at the $i$th iteration. Then
+\[
+P\!\big(\hat{\mathbf{U}}^{(i)} \mid \mathbf{X}\big) \;\ge\; 
+P\!\big(\hat{\mathbf{U}}^{(i-1)} \mid \mathbf{X}\big).
+\]
+
+
+### Proof
+
+Define the (unnormalized) log-posterior of $\mathbf{U}$ given $\mathbf{X}$ as
+\[
+I(\mathbf{U}) \;=\; \log P(\mathbf{X}\mid \mathbf{U}) \;+\; \log P(\mathbf{U}).
+\]
+
+At iteration $i$, define the evidence lower bound (ELBO) as
+\[
+\mathrm{ELBO}^{(i)}(\mathbf{U})
+\;=\;
+\mathbb{E}_{\mathbf{Z}\mid \mathbf{X},\,\hat{\mathbf{U}}^{(i-1)}}
+\!\left[ \log P(\mathbf{X},\mathbf{Z}\mid \mathbf{U}) \right].
+\]
+
+**Step 1. Variational lower bound.**  
+For any distribution $q(\mathbf{z})$ and parameter $\mathbf{U}$, Jensen’s inequality gives
+\[
+\log P(\mathbf{X}\mid \mathbf{U})
+=
+\mathbb{E}_{q(\mathbf{z})}\!\left[\log P(\mathbf{X},\mathbf{z}\mid \mathbf{U})\right]
++
+\KL\!\left(q(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid \mathbf{X},\mathbf{U})\right).
+\]
+Define the surrogate objective at iteration $i$:
+\[
+\tilde{I}(\mathbf{U})
+\;=\;
+\mathrm{ELBO}^{(i)}(\mathbf{U}) + \log P(\mathbf{U}),
+\]
+which satisfies $\tilde{I}(\mathbf{U}) \le I(\mathbf{U})$ for all $\mathbf{U}$.
+
+**Step 2. E-step.**  
+Set
+\[
+q^{(i)}(\mathbf{z})
+=
+P(\mathbf{z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)}).
+\]
+Then by the lemma below,
+\[
+\KL\!\left(q^{(i)}(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)})\right)=0,
+\quad\Rightarrow\quad
+\tilde{I}(\hat{\mathbf{U}}^{(i-1)}) = I(\hat{\mathbf{U}}^{(i-1)}).
+\]
+
+**Step 3. M-step.**  
+Update
+\[
+\hat{\mathbf{U}}^{(i)} = \arg\max_{\mathbf{U}} \tilde{I}(\mathbf{U}),
+\]
+so that
+\[
+\tilde{I}(\hat{\mathbf{U}}^{(i)}) \;\ge\; \tilde{I}(\hat{\mathbf{U}}^{(i-1)}).
+\]
+
+**Step 4. Combine.**  
+By construction,
+\[
+I(\hat{\mathbf{U}}^{(i)})
+\;\ge\;
+\tilde{I}(\hat{\mathbf{U}}^{(i)})
+\;\ge\;
+\tilde{I}(\hat{\mathbf{U}}^{(i-1)})
+=
+I(\hat{\mathbf{U}}^{(i-1)}).
+\]
+Thus, SmoothEM monotonically increases the posterior objective. $\blacksquare$
+
+### Remark
+
+The argument mirrors standard EM. SmoothEM simply adds a **smoothness prior** via $\log P(\mathbf{U})$, so the target changes from the log-likelihood $\log P(\mathbf{X}\mid \mathbf{U})$ to the log-posterior $I(\mathbf{U})$. The monotonicity proof is unchanged.
+
+
+
+-------
+
+
+### Lemma (Variational Lower Bound Decomposition)
+
+For any distribution $q(\mathbf{z})$, the marginal likelihood can be decomposed as
+\[
+\log P(\mathbf{X}\mid \mathbf{U})
+= \mathrm{ELBO}(q,\mathbf{U})
++ \mathrm{KL}\!\big(q(\mathbf{z}) \,\|\, P(\mathbf{z}\mid \mathbf{X},\mathbf{U})\big),
+\]
+where
+\[
+\mathrm{ELBO}(q,\mathbf{U})
+= \mathbb{E}_{q(\mathbf{z})}\!\big[\log P(\mathbf{X},\mathbf{z}\mid \mathbf{U}) - \log q(\mathbf{z})\big].
+\]
+
+---
+
+**Proof.**
+
+Start from the marginal likelihood:
+\[
+\log P(\mathbf{X}\mid \mathbf{U})
+= \log \frac{P(\mathbf{X}, \mathbf{z} \mid \mathbf{U})}{P(\mathbf{z}\mid \mathbf{X}, \mathbf{U})} = \log \frac{P(\mathbf{X}, \mathbf{z} \mid \mathbf{U})}{q(\mathbf{z})} \frac{q(\mathbf{z})}{P(\mathbf{z}\mid \mathbf{X}, \mathbf{U})}.
+\]
+
+
+Therefore with expectation over any distribution $q(\mathbf{z})$:
+\[
+\begin{aligned}
+\log P(\mathbf{X}\mid \mathbf{U})
+&= \mathbb{E}_{q(\mathbf{z})}\!\left[\log P(\mathbf{X}\mid \mathbf{U})\right] \\
+&= \mathbb{E}_{q(\mathbf{z})}\!\left[\log \frac{P(\mathbf{X},\mathbf{z}\mid \mathbf{U})}{P(\mathbf{z}\mid \mathbf{X},\mathbf{U})}\right] \\
+&= \mathbb{E}_{q(\mathbf{z})}\!\left[\log \frac{P(\mathbf{X},\mathbf{z}\mid \mathbf{U})}{q(\mathbf{z})} \cdot \frac{q(\mathbf{z})}{P(\mathbf{z}\mid \mathbf{X},\mathbf{U})}\right] \\
+&= \mathbb{E}_{q(\mathbf{z})}\!\left[\log \frac{P(\mathbf{X},\mathbf{z}\mid \mathbf{U})}{q(\mathbf{z})}\right]
++ \mathbb{E}_{q(\mathbf{z})}\!\left[\log \frac{q(\mathbf{z})}{P(\mathbf{z}\mid \mathbf{X},\mathbf{U})}\right] \\
+&= \mathrm{ELBO}(q,\mathbf{U})
++ \mathrm{KL}\!\big(q(\mathbf{z}) \,\|\, P(\mathbf{z}\mid \mathbf{X},\mathbf{U})\big).
+\end{aligned}
+\]
+
+This establishes the decomposition. $\blacksquare$
+
+
+
