@@ -15,6 +15,9 @@ The inferred ordering could be used
 - to quantify the distance between two observations;
 - as side information to assist in covariate-adjusted matrix factorization method.
 
+**Overview of Smooth-EM algorithm:**
+
++ [Connection with standard EM algorithm.](monotonicity.html)
 
 **Analyses:**
 
