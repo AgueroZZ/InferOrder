@@ -257,7 +257,7 @@ Try obtaining the ordering based on principal curve.
 
 ```{r}
 library(princurve)
-pc_fit <- principal_curve(as.matrix(Loadings), maxit = 100, smoother = "smooth_spline", thresh = 1e-10)
+pc_fit <- principal_curve(as.matrix(Loadings), maxit = 1000, smoother = "smooth_spline", thresh = 1e-5)
 pc_score <- pc_fit$lambda
 names(pc_score) <- rownames(Loadings)
 pc_order <- order(pc_score)
@@ -360,15 +360,14 @@ Now, let's try the smooth-EM algorithm with a first order random walk prior.
 ```{r}
 set.seed(123)
 q <- 1
-Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 50, q=q, ridge = 0)
-# Initalize based on the tSNE metric
-init_params <- make_init(X = Loadings, ordering_vec = PC1, K = 100)
+Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=q, ridge = 0)
+init_params <- make_init(X = Loadings, ordering_vec = PC1 , K = 100)
 result_RW1 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW1,
   init_params = init_params,
   rank_deficiency = q * ncol(Loadings),
-  max_iter = 50,
+  max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
   relative_lambda = TRUE,
@@ -418,7 +417,6 @@ Q_prior_RW2 <- make_random_walk_precision(K=100,
                                           q = q, 
                                           ridge = 0)
 
-# Initialize based on the other ordering metric
 init_params <- make_init(X = Loadings, ordering_vec = PC1, K = 100)
 result_RW2 <- EM_algorithm(
   data = Loadings,
