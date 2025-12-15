@@ -15,7 +15,7 @@
 
 <title>Infering latent ordering from the pancrea dataset</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -379,7 +379,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-09-13
+<strong>Last updated:</strong> 2025-12-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -397,7 +397,7 @@ title="This is the local directory in which the code in this file was executed."
 This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
 analysis was created with <a
   href="https://github.com/workflowr/workflowr">workflowr</a> (version
-1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
 that were applied when the results were created. The <em>Past
 versions</em> tab lists the development history.
 </p>
@@ -510,15 +510,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreec5538e19176e066e86097b8732f1433fe04c36betargetblankc5538e1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8d45b49db06af549103b4cb3d03f7b7893e33f6atargetblank8d45b49a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/c5538e19176e066e86097b8732f1433fe04c36be" target="_blank">c5538e1</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8d45b49db06af549103b4cb3d03f7b7893e33f6a" target="_blank">8d45b49</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreec5538e19176e066e86097b8732f1433fe04c36betargetblankc5538e1a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree8d45b49db06af549103b4cb3d03f7b7893e33f6atargetblank8d45b49a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -528,7 +528,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/c5538e19176e066e86097b8732f1433fe04c36be" target="_blank">c5538e1</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/8d45b49db06af549103b4cb3d03f7b7893e33f6a" target="_blank">8d45b49</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -548,18 +548,30 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
+    Ignored:    analysis/figure/
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
 
 Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  analysis/explore_SmoothEM_Mixture_backward.rmd
+    Untracked:  analysis/presentation_figures.rmd
     Untracked:  code/general_EM_perCoordinate_obs.R
+    Untracked:  code/kriging.R
+    Untracked:  code/pivoting_coordinate.R
+    Untracked:  code/two_ordering_EM_backward.R
     Untracked:  code/two_ordering_EM_greedy_obs.R
     Untracked:  debug.R
+    Untracked:  j.Rmd
+    Untracked:  j.html
+    Untracked:  pcurve_iterations.gif
+    Untracked:  pcurve_iterations_with_projection.gif
     Untracked:  various figures/
 
 Unstaged changes:
     Modified:   analysis/explore_SmoothEM_Mixture_greedy.rmd
     Modified:   analysis/explore_trajectory.rmd
+    Modified:   analysis/kriging.rmd
     Modified:   code/general_EM.R
     Modified:   code/general_EM_obs.R
     Modified:   code/general_EM_perCoordinate.R
@@ -611,6 +623,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/8d45b49db06af549103b4cb3d03f7b7893e33f6a/analysis/explore_pancrea.rmd" target="_blank">8d45b49</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_pancrea.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/7cd1cc77a1425685cd8b8e457228c43abaddf40c/docs/explore_pancrea.html" target="_blank">7cd1cc7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-09-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -903,9 +949,8 @@ considering only the factors that are most relevant to the cell types,
 and only a subset of cells with a specific batch type (inDrop3).</p>
 <pre class="r"><code>library(tibble)
 library(tidyr)
-library(ggplot2)</code></pre>
-<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.3.3</code></pre>
-<pre class="r"><code>library(Rtsne)
+library(ggplot2)
+library(Rtsne)
 library(umap)
 set.seed(1)
 source(&quot;./code/plot_ordering.R&quot;)
@@ -1074,15 +1119,15 @@ Ziang Zhang
 </div>
 </div>
 <p>Take a look at the ordering metric versus the cell types.</p>
-<pre class="r"><code># highlights &lt;- c(&quot;acinar&quot;,&quot;ductal&quot;,&quot;delta&quot;,&quot;gamma&quot;, &quot;macrophage&quot;, &quot;endothelial&quot;)
-highlights &lt;- unique(celltype)
+<pre class="r"><code>highlights &lt;- unique(celltype)
 PC1 &lt;- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+order_PC1 &lt;- order(PC1)
 plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
-                     ordering_metric = PC1,
+                     # ordering_metric = PC1,
+                     order_vec = rownames(Loadings)[order_PC1],
                      other_color = &quot;white&quot;
                      )</code></pre>
-<pre><code>Warning: `position_stack()` requires non-overlapping x intervals.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -1155,21 +1200,16 @@ Ziang Zhang
 </div>
 </div>
 <p>Here the x-axis represents the latent ordering of each cell, and the
-color represents its cell type. Based on this figure, it appears the
-first PC distinguishes between (delta, gamma) and (acinar, ductal).
-However, the ordering could not tell the difference between delta and
-gamma. Also, the ordering could not distinguish the macrophage from
-other cell types.</p>
+color represents its cell type.</p>
 <p>We could also take a look at the distribution of the latent ordering
 metric for each cell type.</p>
-<pre class="r"><code>distribution_highlight_types(
+<pre class="r"><code>highlights &lt;- c(&quot;acinar&quot;,&quot;ductal&quot;,&quot;delta&quot;,&quot;gamma&quot;, &quot;macrophage&quot;, &quot;endothelial&quot;)
+distribution_highlight_types(
   type_vec        = celltype,
   subset_types    = highlights,
   ordering_metric = PC1,
   density         = FALSE
 )</code></pre>
-<pre><code>Warning: Groups with fewer than two datapoints have been dropped.
-ℹ Set `drop = FALSE` to consider such groups for position adjustment purposes.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -1336,12 +1376,13 @@ Ziang Zhang
 </div>
 <p>Just based on the structure plot, it seems like the ordering is
 producing more structured results than the first PC.</p>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
-                     ordering_metric = tsne_metric,
+                     # ordering_metric = tsne_metric,
+                     order_vec = rownames(Loadings)[tsne_order],
                      other_color = &quot;white&quot;
                      )</code></pre>
-<pre><code>Warning: `position_stack()` requires non-overlapping x intervals.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -1413,14 +1454,13 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>distribution_highlight_types(
+<pre class="r"><code>highlights &lt;- c(&quot;acinar&quot;,&quot;ductal&quot;,&quot;delta&quot;,&quot;gamma&quot;, &quot;macrophage&quot;, &quot;endothelial&quot;)
+distribution_highlight_types(
   type_vec        = celltype,
   subset_types    = highlights,
   ordering_metric = tsne_metric,
   density         = FALSE
 )</code></pre>
-<pre><code>Warning: Groups with fewer than two datapoints have been dropped.
-ℹ Set `drop = FALSE` to consider such groups for position adjustment purposes.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -1507,9 +1547,7 @@ Ziang Zhang
 interpretation, the structure produced by this ordering matches the cell
 types much better than the first PC ordering. The distribution of the
 ordering metric also shows a clear <strong>compact separation</strong>
-between the cell types, which is not the case for the first PC. In
-particular, the macrophage and endothelial cells are now clearly
-separated from the other cell types.</p>
+between the cell types, which is not the case for the first PC.</p>
 <p>However, tSNE’s metric only preserves the local structure of the
 data, and there is no guarantee that the global distance between the
 points is preserved in the tSNE metric (e.g. the distance between two
@@ -1562,12 +1600,13 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
-                     ordering_metric = umap_metric,
+                     # ordering_metric = umap_metric,
+                     order_vec = rownames(Loadings)[umap_order],
                      other_color = &quot;white&quot;
                      )</code></pre>
-<pre><code>Warning: `position_stack()` requires non-overlapping x intervals.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
@@ -1639,14 +1678,13 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>distribution_highlight_types(
+<pre class="r"><code>highlights &lt;- c(&quot;acinar&quot;,&quot;ductal&quot;,&quot;delta&quot;,&quot;gamma&quot;, &quot;macrophage&quot;, &quot;endothelial&quot;)
+distribution_highlight_types(
   type_vec        = celltype,
   subset_types    = highlights,
   ordering_metric = umap_metric,
   density         = FALSE
 )</code></pre>
-<pre><code>Warning: Groups with fewer than two datapoints have been dropped.
-ℹ Set `drop = FALSE` to consider such groups for position adjustment purposes.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
@@ -1729,15 +1767,8 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>UMAP can also provide very clear separation between the cell types.
-However, just like tSNE, it does not have a clear probabilistic
-interpretation. Furthermore, the global ordering structure from UMAP
-seems to conflict with the global ordering structure from the tSNE. In
-the tSNE ordering, acinar is next to delta, which is next to
-endothelial, where as in the UMAP ordering, acinar is next to
-endothelial, which is next to delta.</p>
-<p>The separation of macrophage is not as clear as in the tSNE
-ordering.</p>
+<p>Visually the structure plot ordered by UMAP is not as good as
+tSNE.</p>
 </div>
 <div id="hierarchical-clustering" class="section level3">
 <h3>Hierarchical Clustering</h3>
@@ -1787,7 +1818,8 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
                      order_vec = rownames(Loadings)[hc_order],
                      other_color = &quot;white&quot;
@@ -1863,14 +1895,13 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>distribution_highlight_types(
+<pre class="r"><code>highlights &lt;- c(&quot;acinar&quot;,&quot;ductal&quot;,&quot;delta&quot;,&quot;gamma&quot;, &quot;macrophage&quot;, &quot;endothelial&quot;)
+distribution_highlight_types(
   type_vec        = celltype,
   subset_types    = highlights,
   order_vec = rownames(Loadings)[hc_order],
   density         = FALSE
 )</code></pre>
-<pre><code>Warning: Groups with fewer than two datapoints have been dropped.
-ℹ Set `drop = FALSE` to consider such groups for position adjustment purposes.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
@@ -1998,7 +2029,8 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
                      order_vec = rownames(Loadings)[hc_order],
                      other_color = &quot;white&quot;
@@ -2074,14 +2106,13 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>distribution_highlight_types(
+<pre class="r"><code>highlights &lt;- c(&quot;acinar&quot;,&quot;ductal&quot;,&quot;delta&quot;,&quot;gamma&quot;, &quot;macrophage&quot;, &quot;endothelial&quot;)
+distribution_highlight_types(
   type_vec        = celltype,
   subset_types    = highlights,
   order_vec = rownames(Loadings)[hc_order],
   density         = FALSE
 )</code></pre>
-<pre><code>Warning: Groups with fewer than two datapoints have been dropped.
-ℹ Set `drop = FALSE` to consider such groups for position adjustment purposes.</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
@@ -2171,23 +2202,22 @@ ordering does not necessarily produce a interpretable global ordering
 structure. In particular, the ordering is not unique, as clades of the
 tree can be rearranged without changing the clustering result.</p>
 </div>
-</div>
-<div id="ordering-based-on-em" class="section level2">
-<h2>Ordering based on EM</h2>
-<p>Now, let’s try to obtain the ordering based on the smooth-EM
-algorithm.</p>
-<div id="traditional-em" class="section level3">
-<h3>Traditional EM</h3>
-<p>First, we will see how the traditional EM algorithm performs on the
-loadings.</p>
-<pre class="r"><code>library(mclust)</code></pre>
-<pre><code>Package &#39;mclust&#39; version 6.1.1
-Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
-<pre class="r"><code>fit_mclust &lt;- Mclust(Loadings, G=100)</code></pre>
-<p>Let’s assume observations in the same cluster are ordered next to
-each other.</p>
-<pre class="r"><code>loadings_order_EM &lt;- order(fit_mclust$classification)</code></pre>
-<pre class="r"><code>plot_structure(Loadings, order = rownames(Loadings)[loadings_order_EM])</code></pre>
+<div id="p-curve" class="section level3">
+<h3>P-Curve</h3>
+<p>Try obtaining the ordering based on principal curve.</p>
+<pre class="r"><code>library(princurve)
+pc_fit &lt;- principal_curve(as.matrix(Loadings), maxit = 100, smoother = &quot;smooth_spline&quot;, thresh = 1e-10)
+pc_score &lt;- pc_fit$lambda
+names(pc_score) &lt;- rownames(Loadings)
+pc_order &lt;- order(pc_score)</code></pre>
+<pre class="r"><code>plot_structure(Loadings, order = rownames(Loadings)[pc_order])</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[pc_order],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
@@ -2226,215 +2256,24 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
-                     subset_types = highlights,
-                     order_vec = rownames(Loadings)[loadings_order_EM],
-                     other_color = &quot;white&quot;
-                     )</code></pre>
-<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-25-1">
-Past versions of unnamed-chunk-25-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-25-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-25-1.png" target="_blank">bf17243</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-08-11
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/5156f0de0ec499082a69afca6f273193c618c5af/docs/figure/explore_pancrea.rmd/unnamed-chunk-25-1.png" target="_blank">5156f0d</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-10
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/1b3273890af3425dcddd2c3c52093cf99d4b1a51/docs/figure/explore_pancrea.rmd/unnamed-chunk-25-1.png" target="_blank">1b32738</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-10
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/29aee9326a14219b232aaa4baa5233dd4afc9408/docs/figure/explore_pancrea.rmd/unnamed-chunk-25-1.png" target="_blank">29aee93</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-09
-</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
-<p>The same cell types tend to be clustered together, but the ordering
-does not make much sense. This is okay as we know in traditional EM, the
-index of the cluster is arbitrary.</p>
-</div>
-<div id="smooth-em-with-linear-prior" class="section level3">
-<h3>Smooth-EM with linear prior</h3>
-<pre class="r"><code>source(&quot;./code/linear_EM.R&quot;)
-source(&quot;./code/general_EM.R&quot;)</code></pre>
-<pre><code>Warning: package &#39;matrixStats&#39; was built under R version 4.3.3</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.3.3</code></pre>
-<pre><code>
-Attaching package: &#39;mvtnorm&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:mclust&#39;:
-
-    dmvnorm</code></pre>
-<pre><code>
-Attaching package: &#39;Matrix&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:tidyr&#39;:
-
-    expand, pack, unpack</code></pre>
-<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
-result_linear &lt;- EM_algorithm_linear(
-  data = Loadings,
-  K = 100,
-  betaprec = 0.001,
-  seed = 123,
-  max_iter = 100,
-  tol = 1e-3,
-  verbose = TRUE
-)</code></pre>
-<pre><code>Iteration   1: objective = 7697.904951
-Iteration   2: objective = 7707.333337
-Iteration   3: objective = 7740.471790
-Iteration   4: objective = 7824.680280
-Iteration   5: objective = 7932.772390
-Iteration   6: objective = 8004.887583
-Iteration   7: objective = 8048.786905
-Iteration   8: objective = 8082.151208
-Iteration   9: objective = 8108.914531
-Iteration  10: objective = 8128.262919
-Iteration  11: objective = 8140.589009
-Iteration  12: objective = 8148.242727
-Iteration  13: objective = 8153.754444
-Iteration  14: objective = 8158.892229
-Iteration  15: objective = 8164.775036
-Iteration  16: objective = 8172.209580
-Iteration  17: objective = 8181.844606
-Iteration  18: objective = 8194.050410
-Iteration  19: objective = 8208.553655
-Iteration  20: objective = 8224.115553
-Iteration  21: objective = 8238.839898
-Iteration  22: objective = 8251.246227
-Iteration  23: objective = 8261.096431
-Iteration  24: objective = 8269.093358
-Iteration  25: objective = 8276.041121
-Iteration  26: objective = 8282.391788
-Iteration  27: objective = 8288.274436
-Iteration  28: objective = 8293.675980
-Iteration  29: objective = 8298.567980
-Iteration  30: objective = 8302.950218
-Iteration  31: objective = 8306.847980
-Iteration  32: objective = 8310.299406
-Iteration  33: objective = 8313.349138
-Iteration  34: objective = 8316.047888
-Iteration  35: objective = 8318.452196
-Iteration  36: objective = 8320.621235
-Iteration  37: objective = 8322.611615
-Iteration  38: objective = 8324.472662
-Iteration  39: objective = 8326.243878
-Iteration  40: objective = 8327.954752
-Iteration  41: objective = 8329.626164
-Iteration  42: objective = 8331.272395
-Iteration  43: objective = 8332.903070
-Iteration  44: objective = 8334.524663
-Iteration  45: objective = 8336.141525
-Iteration  46: objective = 8337.756516
-Iteration  47: objective = 8339.371381
-Iteration  48: objective = 8340.986992
-Iteration  49: objective = 8342.603518
-Iteration  50: objective = 8344.220562
-Iteration  51: objective = 8345.837262
-Iteration  52: objective = 8347.452327
-Iteration  53: objective = 8349.064049
-Iteration  54: objective = 8350.670270
-Iteration  55: objective = 8352.268358
-Iteration  56: objective = 8353.855204
-Iteration  57: objective = 8355.427242
-Iteration  58: objective = 8356.980488
-Iteration  59: objective = 8358.510581
-Iteration  60: objective = 8360.012823
-Iteration  61: objective = 8361.482229
-Iteration  62: objective = 8362.913615
-Iteration  63: objective = 8364.301750
-Iteration  64: objective = 8365.641605
-Iteration  65: objective = 8366.928691
-Iteration  66: objective = 8368.159455
-Iteration  67: objective = 8369.331684
-Iteration  68: objective = 8370.444838
-Iteration  69: objective = 8371.500247
-Iteration  70: objective = 8372.501125
-Iteration  71: objective = 8373.452390
-Iteration  72: objective = 8374.360303
-Iteration  73: objective = 8375.231997
-Iteration  74: objective = 8376.074940
-Iteration  75: objective = 8376.896412
-Iteration  76: objective = 8377.703041
-Iteration  77: objective = 8378.500430
-Iteration  78: objective = 8379.292888
-Iteration  79: objective = 8380.083277
-Iteration  80: objective = 8380.872937
-Iteration  81: objective = 8381.661719
-Iteration  82: objective = 8382.448072
-Iteration  83: objective = 8383.229208
-Iteration  84: objective = 8384.001319
-Iteration  85: objective = 8384.759839
-Iteration  86: objective = 8385.499737
-Iteration  87: objective = 8386.215835
-Iteration  88: objective = 8386.903115
-Iteration  89: objective = 8387.557006
-Iteration  90: objective = 8388.173626
-Iteration  91: objective = 8388.749967
-Iteration  92: objective = 8389.284001
-Iteration  93: objective = 8389.774717
-Iteration  94: objective = 8390.222091
-Iteration  95: objective = 8390.626991
-Iteration  96: objective = 8390.991049
-Iteration  97: objective = 8391.316501
-Iteration  98: objective = 8391.606022
-Iteration  99: objective = 8391.862565
-Iteration 100: objective = 8392.089216</code></pre>
-<pre class="r"><code>result_linear$clustering &lt;- apply(result_linear$gamma, 1, which.max)
-loadings_order_linear &lt;- order(result_linear$clustering)
-plot_structure(Loadings, order = rownames(Loadings)[loadings_order_linear])</code></pre>
+<div id="ordering-based-on-em" class="section level2">
+<h2>Ordering based on EM</h2>
+<p>Now, let’s try to obtain the ordering based on the smooth-EM
+algorithm.</p>
+<div id="traditional-em" class="section level3">
+<h3>Traditional EM</h3>
+<p>First, we will see how the traditional EM algorithm performs on the
+loadings.</p>
+<pre class="r"><code>library(mclust)</code></pre>
+<pre><code>Package &#39;mclust&#39; version 6.1.2
+Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
+<pre class="r"><code>fit_mclust &lt;- Mclust(Loadings, G=100)</code></pre>
+<p>Let’s assume observations in the same cluster are ordered next to
+each other.</p>
+<pre class="r"><code>loadings_order_EM &lt;- order(fit_mclust$classification)</code></pre>
+<pre class="r"><code>plot_structure(Loadings, order = rownames(Loadings)[loadings_order_EM])</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-27-1">
@@ -2473,9 +2312,10 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
-                     order_vec = rownames(Loadings)[loadings_order_linear],
+                     order_vec = rownames(Loadings)[loadings_order_EM],
                      other_color = &quot;white&quot;
                      )</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -2560,223 +2400,94 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>The ordering from linear prior does not look very informative, which
-is not unexpected since the linear prior is like a coarser version of
-the PCA.</p>
+<p>The same cell types tend to be clustered together, but the ordering
+does not make much sense. This is okay as we know in traditional EM, the
+index of the cluster is arbitrary.</p>
 </div>
-<div id="smooth-em-with-rw1-prior" class="section level3">
-<h3>Smooth-EM with RW1 prior</h3>
-<p>Now, let’s try the smooth-EM algorithm with a first order random walk
-prior.</p>
-<pre class="r"><code>set.seed(123)
-Q_prior_RW1 &lt;- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 50, q=1, ridge = 0)
-# Random initialization
-init_params &lt;- make_default_init(Loadings, K=100)
-# # Initalize based on the tSNE metric
-# init_params &lt;- make_init(X = Loadings, ordering_vec = tsne_metric, K = 100)
-result_RW1 &lt;- EM_algorithm(
+<div id="smooth-em-with-linear-prior" class="section level3">
+<h3>Smooth-EM with linear prior</h3>
+<p>Now, let’s try the smooth-EM algorithm with a linear prior.</p>
+<pre class="r"><code>source(&quot;./code/linear_EM.R&quot;)
+source(&quot;./code/general_EM.R&quot;)</code></pre>
+<pre><code>
+Attaching package: &#39;matrixStats&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:mclust&#39;:
+
+    count</code></pre>
+<pre><code>
+Attaching package: &#39;mvtnorm&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:mclust&#39;:
+
+    dmvnorm</code></pre>
+<pre><code>
+Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:tidyr&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
+result_linear &lt;- EM_algorithm_linear(
   data = Loadings,
-  Q_prior = Q_prior_RW1,
-  init_params = init_params,
-  rank_deficiency = ncol(Loadings),
-  max_iter = 100,
-  modelName = &quot;EEI&quot;,
+  K = 100,
+  betaprec = 0,
+  seed = 123,
+  max_iter = 50,
   tol = 1e-3,
-  relative_lambda = TRUE,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration   1: penLogLik = 11289.221276, ELBO = 11288.463630
-Iteration   2: penLogLik = 11290.342366, ELBO = 11289.633050
-Iteration   3: penLogLik = 11295.140656, ELBO = 11291.870317
-Iteration   4: penLogLik = 11318.775589, ELBO = 11302.560669
-Iteration   5: penLogLik = 11432.025585, ELBO = 11356.335168
-Iteration   6: penLogLik = 11818.553633, ELBO = 11591.140978
-Iteration   7: penLogLik = 12590.180553, ELBO = 12220.735179
-Iteration   8: penLogLik = 13699.573498, ELBO = 13119.749326
-Iteration   9: penLogLik = 15200.101069, ELBO = 14743.085589
-Iteration  10: penLogLik = 15650.275899, ELBO = 15518.843876
-Iteration  11: penLogLik = 15808.430984, ELBO = 15747.256662
-Iteration  12: penLogLik = 15909.967983, ELBO = 15869.669367
-Iteration  13: penLogLik = 15964.195351, ELBO = 15942.237145
-Iteration  14: penLogLik = 15999.419504, ELBO = 15983.698857
-Iteration  15: penLogLik = 16027.779523, ELBO = 16014.798067
-Iteration  16: penLogLik = 16050.104360, ELBO = 16040.119338
-Iteration  17: penLogLik = 16067.752664, ELBO = 16059.619518
-Iteration  18: penLogLik = 16083.490140, ELBO = 16076.316722
-Iteration  19: penLogLik = 16094.897814, ELBO = 16090.030988
-Iteration  20: penLogLik = 16103.182559, ELBO = 16099.336029
-Iteration  21: penLogLik = 16110.414896, ELBO = 16106.985688
-Iteration  22: penLogLik = 16116.924271, ELBO = 16113.833230
-Iteration  23: penLogLik = 16122.734367, ELBO = 16119.988788
-Iteration  24: penLogLik = 16127.827668, ELBO = 16125.433924
-Iteration  25: penLogLik = 16132.222445, ELBO = 16130.170411
-Iteration  26: penLogLik = 16135.855457, ELBO = 16134.191582
-Iteration  27: penLogLik = 16138.747585, ELBO = 16137.417617
-Iteration  28: penLogLik = 16141.111691, ELBO = 16140.013177
-Iteration  29: penLogLik = 16143.102540, ELBO = 16142.168488
-Iteration  30: penLogLik = 16144.829607, ELBO = 16144.011309
-Iteration  31: penLogLik = 16146.371130, ELBO = 16145.634417
-Iteration  32: penLogLik = 16147.780455, ELBO = 16147.102285
-Iteration  33: penLogLik = 16149.093515, ELBO = 16148.458294
-Iteration  34: penLogLik = 16150.335431, ELBO = 16149.732016
-Iteration  35: penLogLik = 16151.525333, ELBO = 16150.944958
-Iteration  36: penLogLik = 16152.679352, ELBO = 16152.114407
-Iteration  37: penLogLik = 16153.812135, ELBO = 16153.255606
-Iteration  38: penLogLik = 16154.937333, ELBO = 16154.382682
-Iteration  39: penLogLik = 16156.067465, ELBO = 16155.508757
-Iteration  40: penLogLik = 16157.213463, ELBO = 16156.645626
-Iteration  41: penLogLik = 16158.384001, ELBO = 16157.803184
-Iteration  42: penLogLik = 16159.584637, ELBO = 16158.988657
-Iteration  43: penLogLik = 16160.816753, ELBO = 16160.205643
-Iteration  44: penLogLik = 16162.076367, ELBO = 16161.452957
-Iteration  45: penLogLik = 16163.353095, ELBO = 16162.723456
-Iteration  46: penLogLik = 16164.629825, ELBO = 16164.003267
-Iteration  47: penLogLik = 16165.883849, ELBO = 16165.272108
-Iteration  48: penLogLik = 16167.089889, ELBO = 16166.505381
-Iteration  49: penLogLik = 16168.224589, ELBO = 16167.678099
-Iteration  50: penLogLik = 16169.270925, ELBO = 16168.769617
-Iteration  51: penLogLik = 16170.220760, ELBO = 16169.767291
-Iteration  52: penLogLik = 16171.074688, ELBO = 16170.667649
-Iteration  53: penLogLik = 16171.839858, ELBO = 16171.475033
-Iteration  54: penLogLik = 16172.527103, ELBO = 16172.198872
-Iteration  55: penLogLik = 16173.148491, ELBO = 16172.850918
-Iteration  56: penLogLik = 16173.715703, ELBO = 16173.443213
-Iteration  57: penLogLik = 16174.239140, ELBO = 16173.986870
-Iteration  58: penLogLik = 16174.727438, ELBO = 16174.491437
-Iteration  59: penLogLik = 16175.187120, ELBO = 16174.964505
-Iteration  60: penLogLik = 16175.622388, ELBO = 16175.411396
-Iteration  61: penLogLik = 16176.035457, ELBO = 16175.835173
-Iteration  62: penLogLik = 16176.427714, ELBO = 16176.237424
-Iteration  63: penLogLik = 16176.800963, ELBO = 16176.619636
-Iteration  64: penLogLik = 16177.157709, ELBO = 16176.984034
-Iteration  65: penLogLik = 16177.500596, ELBO = 16177.333307
-Iteration  66: penLogLik = 16177.831890, ELBO = 16177.669963
-Iteration  67: penLogLik = 16178.153350, ELBO = 16177.996008
-Iteration  68: penLogLik = 16178.466297, ELBO = 16178.312961
-Iteration  69: penLogLik = 16178.771717, ELBO = 16178.621955
-Iteration  70: penLogLik = 16179.070333, ELBO = 16178.923830
-Iteration  71: penLogLik = 16179.362656, ELBO = 16179.219192
-Iteration  72: penLogLik = 16179.649027, ELBO = 16179.508459
-Iteration  73: penLogLik = 16179.929647, ELBO = 16179.791894
-Iteration  74: penLogLik = 16180.204609, ELBO = 16180.069639
-Iteration  75: penLogLik = 16180.473934, ELBO = 16180.341746
-Iteration  76: penLogLik = 16180.737593, ELBO = 16180.608204
-Iteration  77: penLogLik = 16180.995535, ELBO = 16180.868972
-Iteration  78: penLogLik = 16181.247715, ELBO = 16181.123998
-Iteration  79: penLogLik = 16181.494107, ELBO = 16181.373245
-Iteration  80: penLogLik = 16181.734720, ELBO = 16181.616701
-Iteration  81: penLogLik = 16181.969604, ELBO = 16181.854398
-Iteration  82: penLogLik = 16182.198854, ELBO = 16182.086407
-Iteration  83: penLogLik = 16182.422609, ELBO = 16182.312846
-Iteration  84: penLogLik = 16182.641045, ELBO = 16182.533874
-Iteration  85: penLogLik = 16182.854371, ELBO = 16182.749686
-Iteration  86: penLogLik = 16183.062815, ELBO = 16182.960499
-Iteration  87: penLogLik = 16183.266619, ELBO = 16183.166552
-Iteration  88: penLogLik = 16183.466030, ELBO = 16183.368090
-Iteration  89: penLogLik = 16183.661288, ELBO = 16183.565357
-Iteration  90: penLogLik = 16183.852621, ELBO = 16183.758589
-Iteration  91: penLogLik = 16184.040239, ELBO = 16183.948004
-Iteration  92: penLogLik = 16184.224326, ELBO = 16184.133801
-Iteration  93: penLogLik = 16184.405038, ELBO = 16184.316150
-Iteration  94: penLogLik = 16184.582503, ELBO = 16184.495193
-Iteration  95: penLogLik = 16184.756814, ELBO = 16184.671040
-Iteration  96: penLogLik = 16184.928035, ELBO = 16184.843770
-Iteration  97: penLogLik = 16185.096198, ELBO = 16185.013431
-Iteration  98: penLogLik = 16185.261310, ELBO = 16185.180040
-Iteration  99: penLogLik = 16185.423353, ELBO = 16185.343592
-Iteration 100: penLogLik = 16185.582291, ELBO = 16185.504060</code></pre>
-<pre class="r"><code>result_RW1$clustering &lt;- apply(result_RW1$gamma, 1, which.max)
-loadings_order_RW1 &lt;- order(result_RW1$clustering)
-plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])</code></pre>
-<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-29-1">
-Past versions of unnamed-chunk-29-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-29-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" target="_blank">bf17243</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-08-11
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/5156f0de0ec499082a69afca6f273193c618c5af/docs/figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" target="_blank">5156f0d</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-10
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/1b3273890af3425dcddd2c3c52093cf99d4b1a51/docs/figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" target="_blank">1b32738</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-10
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/17d2e8d0764f661045dc2dd9bf20953b68d170ae/docs/figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" target="_blank">17d2e8d</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-10
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/InferOrder/blob/29aee9326a14219b232aaa4baa5233dd4afc9408/docs/figure/explore_pancrea.rmd/unnamed-chunk-29-1.png" target="_blank">29aee93</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2025-07-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>plot(result_RW1$elbo_trace, type = &#39;l&#39;, pch=19,
-     cex=0.5, col=&#39;blue&#39;, lty=1,
-     xlab = &quot;Iteration&quot;, ylab = &quot;ELBO&quot;,
-     main = &quot;ELBO Trace&quot;)
-lines(result_RW1$loglik_trace, col=&#39;orange&#39;, 
-      lty=2,
-      lwd=2)</code></pre>
+<pre><code>Iteration   1: objective = 7697.905000
+Iteration   2: objective = 7707.333552
+Iteration   3: objective = 7740.472503
+Iteration   4: objective = 7824.681675
+Iteration   5: objective = 7932.773593
+Iteration   6: objective = 8004.888287
+Iteration   7: objective = 8048.787352
+Iteration   8: objective = 8082.151448
+Iteration   9: objective = 8108.914585
+Iteration  10: objective = 8128.262855
+Iteration  11: objective = 8140.588880
+Iteration  12: objective = 8148.242545
+Iteration  13: objective = 8153.754187
+Iteration  14: objective = 8158.891856
+Iteration  15: objective = 8164.774496
+Iteration  16: objective = 8172.208814
+Iteration  17: objective = 8181.843564
+Iteration  18: objective = 8194.049084
+Iteration  19: objective = 8208.552129
+Iteration  20: objective = 8224.114012
+Iteration  21: objective = 8238.838547
+Iteration  22: objective = 8251.245164
+Iteration  23: objective = 8261.095619
+Iteration  24: objective = 8269.092707
+Iteration  25: objective = 8276.040565
+Iteration  26: objective = 8282.391299
+Iteration  27: objective = 8288.274010
+Iteration  28: objective = 8293.675619
+Iteration  29: objective = 8298.567682
+Iteration  30: objective = 8302.949981
+Iteration  31: objective = 8306.847797
+Iteration  32: objective = 8310.299271
+Iteration  33: objective = 8313.349044
+Iteration  34: objective = 8316.047831
+Iteration  35: objective = 8318.452168
+Iteration  36: objective = 8320.621231
+Iteration  37: objective = 8322.611630
+Iteration  38: objective = 8324.472693
+Iteration  39: objective = 8326.243921
+Iteration  40: objective = 8327.954805
+Iteration  41: objective = 8329.626225
+Iteration  42: objective = 8331.272465
+Iteration  43: objective = 8332.903147
+Iteration  44: objective = 8334.524747
+Iteration  45: objective = 8336.141615
+Iteration  46: objective = 8337.756612
+Iteration  47: objective = 8339.371484
+Iteration  48: objective = 8340.987101
+Iteration  49: objective = 8342.603633
+Iteration  50: objective = 8344.220684</code></pre>
+<pre class="r"><code>result_linear$clustering &lt;- apply(result_linear$gamma, 1, which.max)
+result_linear$position &lt;- result_linear$gamma %*% matrix(1:100, ncol=1)
+loadings_order_linear &lt;- order(result_linear$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_linear])</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-30-1">
@@ -2802,6 +2513,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/7cd1cc77a1425685cd8b8e457228c43abaddf40c/docs/figure/explore_pancrea.rmd/unnamed-chunk-30-1.png" target="_blank">7cd1cc7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-09-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-30-1.png" target="_blank">bf17243</a>
 </td>
 <td>
@@ -2815,9 +2537,10 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>highlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
-                     order_vec = rownames(Loadings)[loadings_order_RW1],
+                     order_vec = rownames(Loadings)[loadings_order_linear],
                      other_color = &quot;white&quot;
                      )</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -2843,6 +2566,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/7cd1cc77a1425685cd8b8e457228c43abaddf40c/docs/figure/explore_pancrea.rmd/unnamed-chunk-31-1.png" target="_blank">7cd1cc7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-09-13
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-31-1.png" target="_blank">bf17243</a>
@@ -2924,86 +2658,84 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>The result from RW1 looks good. Each cell type is separated from the
-others, and the ordering seems to make sense.</p>
+<p>The ordering from linear prior does not look very informative, which
+is not unexpected since the linear prior is like a coarser version of
+the PCA.</p>
 </div>
-<div id="smooth-em-with-rw2-prior" class="section level3">
-<h3>Smooth-EM with RW2 prior</h3>
-<p>Next, we will try the RW2 prior in the smooth-EM algorithm.</p>
-<pre class="r"><code>set.seed(1234)
-Q_prior_RW2 &lt;- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 500, q=2, ridge = 0)
-# Random initialization
-init_params &lt;- make_default_init(Loadings, K=100)
-# # Initialize based on the other ordering metric
-# init_params &lt;- make_init(X = Loadings, ordering_vec = -PC1, K = 100)
-result_RW2 &lt;- EM_algorithm(
+<div id="smooth-em-with-rw1-prior" class="section level3">
+<h3>Smooth-EM with RW1 prior</h3>
+<p>Now, let’s try the smooth-EM algorithm with a first order random walk
+prior.</p>
+<pre class="r"><code>set.seed(123)
+q &lt;- 1
+Q_prior_RW1 &lt;- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 50, q=q, ridge = 0)
+# Initalize based on the tSNE metric
+init_params &lt;- make_init(X = Loadings, ordering_vec = PC1, K = 100)
+result_RW1 &lt;- EM_algorithm(
   data = Loadings,
-  Q_prior = Q_prior_RW2,
+  Q_prior = Q_prior_RW1,
   init_params = init_params,
+  rank_deficiency = q * ncol(Loadings),
   max_iter = 50,
   modelName = &quot;EEI&quot;,
   tol = 1e-3,
-  iterate_once = TRUE,
-  eigen_tol = 0,
-  rank_deficiency = 2 * ncol(Loadings),
-  nugget = 0,
   relative_lambda = TRUE,
   verbose = TRUE
 )</code></pre>
-<pre><code>Iteration   1: penLogLik = 12200.763612, ELBO = 12199.715191
-Iteration   2: penLogLik = 12202.640731, ELBO = 12201.376235
-Iteration   3: penLogLik = 12212.402068, ELBO = 12205.628903
-Iteration   4: penLogLik = 12269.190504, ELBO = 12229.289782
-Iteration   5: penLogLik = 12555.100276, ELBO = 12369.562102
-Iteration   6: penLogLik = 13324.139151, ELBO = 12923.240782
-Iteration   7: penLogLik = 14550.912388, ELBO = 13948.441659
-Iteration   8: penLogLik = 16469.945501, ELBO = 15811.344591
-Iteration   9: penLogLik = 17367.589967, ELBO = 17116.349863
-Iteration  10: penLogLik = 17763.713587, ELBO = 17594.781977
-Iteration  11: penLogLik = 18092.846119, ELBO = 17975.295591
-Iteration  12: penLogLik = 18225.030093, ELBO = 18179.971248
-Iteration  13: penLogLik = 18293.644409, ELBO = 18264.574946
-Iteration  14: penLogLik = 18346.201346, ELBO = 18323.019771
-Iteration  15: penLogLik = 18386.889069, ELBO = 18369.110284
-Iteration  16: penLogLik = 18420.503043, ELBO = 18404.946960
-Iteration  17: penLogLik = 18455.929507, ELBO = 18437.864444
-Iteration  18: penLogLik = 18495.409259, ELBO = 18477.319377
-Iteration  19: penLogLik = 18530.813479, ELBO = 18514.260194
-Iteration  20: penLogLik = 18559.361912, ELBO = 18547.214545
-Iteration  21: penLogLik = 18581.914646, ELBO = 18571.368810
-Iteration  22: penLogLik = 18602.013016, ELBO = 18592.661712
-Iteration  23: penLogLik = 18619.452400, ELBO = 18611.365844
-Iteration  24: penLogLik = 18634.928828, ELBO = 18627.491221
-Iteration  25: penLogLik = 18650.206596, ELBO = 18642.695530
-Iteration  26: penLogLik = 18663.677192, ELBO = 18657.689381
-Iteration  27: penLogLik = 18673.180605, ELBO = 18669.075214
-Iteration  28: penLogLik = 18680.253183, ELBO = 18677.017274
-Iteration  29: penLogLik = 18686.376385, ELBO = 18683.457760
-Iteration  30: penLogLik = 18692.158462, ELBO = 18689.357699
-Iteration  31: penLogLik = 18697.760918, ELBO = 18695.045539
-Iteration  32: penLogLik = 18703.124002, ELBO = 18700.539124
-Iteration  33: penLogLik = 18708.259326, ELBO = 18705.744384
-Iteration  34: penLogLik = 18714.125148, ELBO = 18710.926387
-Iteration  35: penLogLik = 18723.125067, ELBO = 18718.065152
-Iteration  36: penLogLik = 18733.737725, ELBO = 18728.497545
-Iteration  37: penLogLik = 18742.407147, ELBO = 18738.670991
-Iteration  38: penLogLik = 18747.782058, ELBO = 18745.540091
-Iteration  39: penLogLik = 18751.232029, ELBO = 18749.701401
-Iteration  40: penLogLik = 18753.897271, ELBO = 18752.649293
-Iteration  41: penLogLik = 18756.262705, ELBO = 18755.120570
-Iteration  42: penLogLik = 18758.550464, ELBO = 18757.424212
-Iteration  43: penLogLik = 18760.903371, ELBO = 18759.727729
-Iteration  44: penLogLik = 18763.443063, ELBO = 18762.160158
-Iteration  45: penLogLik = 18766.271145, ELBO = 18764.834672
-Iteration  46: penLogLik = 18769.485125, ELBO = 18767.839137
-Iteration  47: penLogLik = 18773.270589, ELBO = 18771.302326
-Iteration  48: penLogLik = 18777.774791, ELBO = 18775.454419
-Iteration  49: penLogLik = 18782.565755, ELBO = 18780.238686
-Iteration  50: penLogLik = 18786.667124, ELBO = 18784.817347</code></pre>
-<pre class="r"><code># hard threshold the gamma matrix to get the clustering
-result_RW2$clustering &lt;- apply(result_RW2$gamma, 1, which.max)
-loadings_order_RW2 &lt;- order(result_RW2$clustering)
-plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])</code></pre>
+<pre><code>Iteration   1: penLogLik = 14623.733398, ELBO = 14120.061892
+Iteration   2: penLogLik = 15142.600132, ELBO = 14999.000864
+Iteration   3: penLogLik = 15322.626736, ELBO = 15253.331506
+Iteration   4: penLogLik = 15427.864366, ELBO = 15385.339693
+Iteration   5: penLogLik = 15492.957196, ELBO = 15465.218375
+Iteration   6: penLogLik = 15538.988204, ELBO = 15518.945468
+Iteration   7: penLogLik = 15568.491370, ELBO = 15556.287400
+Iteration   8: penLogLik = 15587.376907, ELBO = 15578.858052
+Iteration   9: penLogLik = 15603.471593, ELBO = 15595.718297
+Iteration  10: penLogLik = 15618.521399, ELBO = 15611.344429
+Iteration  11: penLogLik = 15632.508896, ELBO = 15625.705619
+Iteration  12: penLogLik = 15646.947662, ELBO = 15639.849641
+Iteration  13: penLogLik = 15660.652198, ELBO = 15654.451752
+Iteration  14: penLogLik = 15670.103583, ELBO = 15666.262629
+Iteration  15: penLogLik = 15675.456882, ELBO = 15673.259255
+Iteration  16: penLogLik = 15678.845557, ELBO = 15677.365979
+Iteration  17: penLogLik = 15681.352811, ELBO = 15680.207246
+Iteration  18: penLogLik = 15683.439509, ELBO = 15682.453305
+Iteration  19: penLogLik = 15685.341069, ELBO = 15684.420915
+Iteration  20: penLogLik = 15687.177542, ELBO = 15686.278827
+Iteration  21: penLogLik = 15688.982001, ELBO = 15688.097725
+Iteration  22: penLogLik = 15690.767383, ELBO = 15689.883694
+Iteration  23: penLogLik = 15692.689719, ELBO = 15691.695007
+Iteration  24: penLogLik = 15695.419006, ELBO = 15693.866414
+Iteration  25: penLogLik = 15701.671494, ELBO = 15697.801381
+Iteration  26: penLogLik = 15714.399302, ELBO = 15708.292182
+Iteration  27: penLogLik = 15721.149354, ELBO = 15718.910880
+Iteration  28: penLogLik = 15723.544472, ELBO = 15722.553133
+Iteration  29: penLogLik = 15725.137638, ELBO = 15724.417121
+Iteration  30: penLogLik = 15726.253622, ELBO = 15725.760400
+Iteration  31: penLogLik = 15727.086028, ELBO = 15726.698296
+Iteration  32: penLogLik = 15727.798024, ELBO = 15727.459190
+Iteration  33: penLogLik = 15728.436967, ELBO = 15728.130662
+Iteration  34: penLogLik = 15729.020097, ELBO = 15728.739794
+Iteration  35: penLogLik = 15729.554821, ELBO = 15729.297629
+Iteration  36: penLogLik = 15730.045028, ELBO = 15729.809217
+Iteration  37: penLogLik = 15730.494016, ELBO = 15730.277926
+Iteration  38: penLogLik = 15730.905285, ELBO = 15730.707172
+Iteration  39: penLogLik = 15731.282278, ELBO = 15731.100494
+Iteration  40: penLogLik = 15731.628094, ELBO = 15731.461184
+Iteration  41: penLogLik = 15731.945484, ELBO = 15731.792155
+Iteration  42: penLogLik = 15732.236953, ELBO = 15732.096015
+Iteration  43: penLogLik = 15732.504846, ELBO = 15732.375175
+Iteration  44: penLogLik = 15732.751380, ELBO = 15732.631909
+Iteration  45: penLogLik = 15732.978666, ELBO = 15732.868378
+Iteration  46: penLogLik = 15733.188700, ELBO = 15733.086632
+Iteration  47: penLogLik = 15733.383371, ELBO = 15733.288614
+Iteration  48: penLogLik = 15733.564453, ELBO = 15733.476151
+Iteration  49: penLogLik = 15733.733609, ELBO = 15733.650961
+Iteration  50: penLogLik = 15733.892390, ELBO = 15733.814650</code></pre>
+<pre class="r"><code>result_RW1$clustering &lt;- apply(result_RW1$gamma, 1, which.max)
+result_RW1$position &lt;- result_RW1$gamma %*% matrix(1:100, ncol=1)
+loadings_order_RW1 &lt;- order(result_RW1$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-32-1">
@@ -3027,6 +2759,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/7cd1cc77a1425685cd8b8e457228c43abaddf40c/docs/figure/explore_pancrea.rmd/unnamed-chunk-32-1.png" target="_blank">7cd1cc7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-09-13
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-32-1.png" target="_blank">bf17243</a>
@@ -3108,11 +2851,12 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot(result_RW2$elbo_trace, type = &#39;l&#39;, pch=19,
+<p>Check the ELBO trace to see if the algorithm converged.</p>
+<pre class="r"><code>plot(result_RW1$elbo_trace, type = &#39;l&#39;, pch=19,
      cex=0.5, col=&#39;blue&#39;, lty=1,
      xlab = &quot;Iteration&quot;, ylab = &quot;ELBO&quot;,
      main = &quot;ELBO Trace&quot;)
-lines(result_RW2$loglik_trace, col=&#39;orange&#39;, 
+lines(result_RW1$loglik_trace, col=&#39;orange&#39;, 
       lty=2,
       lwd=2)</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -3140,6 +2884,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/7cd1cc77a1425685cd8b8e457228c43abaddf40c/docs/figure/explore_pancrea.rmd/unnamed-chunk-33-1.png" target="_blank">7cd1cc7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-09-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-33-1.png" target="_blank">bf17243</a>
 </td>
 <td>
@@ -3153,9 +2908,10 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+<pre class="r"><code>hightlights &lt;- unique(celltype)
+plot_highlight_types(type_vec = celltype,
                      subset_types = highlights,
-                     order_vec = rownames(Loadings)[loadings_order_RW2],
+                     order_vec = rownames(Loadings)[loadings_order_RW1],
                      other_color = &quot;white&quot;
                      )</code></pre>
 <p><img src="figure/explore_pancrea.rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -3181,6 +2937,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/7cd1cc77a1425685cd8b8e457228c43abaddf40c/docs/figure/explore_pancrea.rmd/unnamed-chunk-34-1.png" target="_blank">7cd1cc7</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-09-13
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-34-1.png" target="_blank">bf17243</a>
@@ -3262,8 +3029,210 @@ Ziang Zhang
 </table>
 </div>
 </div>
+<p>The result from RW1 looks good. Each cell type is separated from the
+others, and the ordering seems to make sense.</p>
+</div>
+<div id="smooth-em-with-rw2-prior" class="section level3">
+<h3>Smooth-EM with RW2 prior</h3>
+<p>Next, we will try the RW2 prior in the smooth-EM algorithm.</p>
+<pre class="r"><code>set.seed(1234)
+q &lt;- 2
+Q_prior_RW2 &lt;- make_random_walk_precision(K=100, 
+                                          d=ncol(Loadings), 
+                                          lambda = 500, 
+                                          q = q, 
+                                          ridge = 0)
+
+# Initialize based on the other ordering metric
+init_params &lt;- make_init(X = Loadings, ordering_vec = PC1, K = 100)
+result_RW2 &lt;- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  # iterate_once = TRUE,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration   1: penLogLik = 15762.369288, ELBO = 15036.329730
+Iteration   2: penLogLik = 16478.285908, ELBO = 16258.441342
+Iteration   3: penLogLik = 16756.927575, ELBO = 16662.454970
+Iteration   4: penLogLik = 16887.706358, ELBO = 16832.980595
+Iteration   5: penLogLik = 17004.919496, ELBO = 16947.130264
+Iteration   6: penLogLik = 17109.218926, ELBO = 17068.055533
+Iteration   7: penLogLik = 17200.748443, ELBO = 17151.746837
+Iteration   8: penLogLik = 17310.343705, ELBO = 17254.329769
+Iteration   9: penLogLik = 17403.769343, ELBO = 17363.773513
+Iteration  10: penLogLik = 17477.238507, ELBO = 17442.108568
+Iteration  11: penLogLik = 17550.410662, ELBO = 17515.135545
+Iteration  12: penLogLik = 17634.099818, ELBO = 17590.338581
+Iteration  13: penLogLik = 17734.254605, ELBO = 17693.002809
+Iteration  14: penLogLik = 17810.747464, ELBO = 17774.972440
+Iteration  15: penLogLik = 17894.956159, ELBO = 17852.193329
+Iteration  16: penLogLik = 17971.537628, ELBO = 17940.159876
+Iteration  17: penLogLik = 18006.303697, ELBO = 17993.160681
+Iteration  18: penLogLik = 18031.586788, ELBO = 18019.281706
+Iteration  19: penLogLik = 18061.118834, ELBO = 18045.426321
+Iteration  20: penLogLik = 18097.374902, ELBO = 18079.904220
+Iteration  21: penLogLik = 18122.530930, ELBO = 18112.379198
+Iteration  22: penLogLik = 18136.446801, ELBO = 18130.598498
+Iteration  23: penLogLik = 18146.863243, ELBO = 18141.905900
+Iteration  24: penLogLik = 18156.000690, ELBO = 18151.824903
+Iteration  25: penLogLik = 18163.963131, ELBO = 18160.252028
+Iteration  26: penLogLik = 18171.503294, ELBO = 18167.760889
+Iteration  27: penLogLik = 18178.144196, ELBO = 18175.374552
+Iteration  28: penLogLik = 18183.384987, ELBO = 18180.829853
+Iteration  29: penLogLik = 18188.770903, ELBO = 18186.077992
+Iteration  30: penLogLik = 18194.434327, ELBO = 18191.632852
+Iteration  31: penLogLik = 18200.165981, ELBO = 18197.392591
+Iteration  32: penLogLik = 18205.682063, ELBO = 18203.064959
+Iteration  33: penLogLik = 18210.735196, ELBO = 18208.380801
+Iteration  34: penLogLik = 18214.968197, ELBO = 18213.083633
+Iteration  35: penLogLik = 18218.001163, ELBO = 18216.698610
+Iteration  36: penLogLik = 18220.233836, ELBO = 18219.209603
+Iteration  37: penLogLik = 18222.338716, ELBO = 18221.298939
+Iteration  38: penLogLik = 18224.720440, ELBO = 18223.500357
+Iteration  39: penLogLik = 18227.703196, ELBO = 18226.139190
+Iteration  40: penLogLik = 18231.823272, ELBO = 18229.604853
+Iteration  41: penLogLik = 18238.339791, ELBO = 18234.716363
+Iteration  42: penLogLik = 18250.229092, ELBO = 18243.552301
+Iteration  43: penLogLik = 18269.705789, ELBO = 18260.200448
+Iteration  44: penLogLik = 18284.536116, ELBO = 18279.796421
+Iteration  45: penLogLik = 18290.090230, ELBO = 18288.064440
+Iteration  46: penLogLik = 18293.617778, ELBO = 18292.010854
+Iteration  47: penLogLik = 18296.747221, ELBO = 18295.267946
+Iteration  48: penLogLik = 18299.601220, ELBO = 18298.268725
+Iteration  49: penLogLik = 18302.021880, ELBO = 18300.926991
+Iteration  50: penLogLik = 18303.871741, ELBO = 18303.062417</code></pre>
+<pre class="r"><code>result_RW2$clustering &lt;- apply(result_RW2$gamma, 1, which.max)
+result_RW2$position &lt;- result_RW2$gamma %*% matrix(1:100, ncol=1)
+loadings_order_RW2 &lt;- order(result_RW2$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-35-1">
+Past versions of unnamed-chunk-35-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-35-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/bf17243698279cb5b29974613a83cd89a13204d7/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">bf17243</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-08-11
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/f7cb8cb71948cd42a20db30fe62d055834d29aa5/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">f7cb8cb</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-18
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/a0efb11d9d99b42603072019acfac3e5c63cf874/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">a0efb11</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-18
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/5156f0de0ec499082a69afca6f273193c618c5af/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">5156f0d</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-10
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/1b3273890af3425dcddd2c3c52093cf99d4b1a51/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">1b32738</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-10
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/17d2e8d0764f661045dc2dd9bf20953b68d170ae/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">17d2e8d</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-10
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/29aee9326a14219b232aaa4baa5233dd4afc9408/docs/figure/explore_pancrea.rmd/unnamed-chunk-35-1.png" target="_blank">29aee93</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-07-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>plot(result_RW2$elbo_trace, type = &#39;l&#39;, pch=19,
+     cex=0.5, col=&#39;blue&#39;, lty=1,
+     xlab = &quot;Iteration&quot;, ylab = &quot;ELBO&quot;,
+     main = &quot;ELBO Trace&quot;)
+lines(result_RW2$loglik_trace, col=&#39;orange&#39;, 
+      lty=2,
+      lwd=2)</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_highlight_types(type_vec = celltype,
+                     subset_types = highlights,
+                     order_vec = rownames(Loadings)[loadings_order_RW2],
+                     other_color = &quot;white&quot;
+                     )</code></pre>
+<p><img src="figure/explore_pancrea.rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The result also looks good, but the choice of the smoothing parameter
-(<code>lambda</code>) is very important…</p>
+(<code>lambda</code>) is very important.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -3273,44 +3242,44 @@ Session information
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.3.1 (2023-06-16)
-Platform: aarch64-apple-darwin20 (64-bit)
-Running under: macOS 15.6.1
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.6.1
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
-LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
-time zone: America/Chicago
+time zone: America/Toronto
 tzcode source: internal
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] Matrix_1.6-4      mvtnorm_1.3-1     matrixStats_1.4.1 mclust_6.1.1     
- [5] umap_0.2.10.0     Rtsne_0.17        ggplot2_3.5.2     tidyr_1.3.1      
- [9] tibble_3.2.1      workflowr_1.7.1  
+ [1] Matrix_1.7-3      mvtnorm_1.3-3     matrixStats_1.5.0 mclust_6.1.2     
+ [5] princurve_2.1.6   umap_0.2.10.0     Rtsne_0.17        ggplot2_4.0.0    
+ [9] tidyr_1.3.1       tibble_3.3.0      workflowr_1.7.2  
 
 loaded via a namespace (and not attached):
- [1] sass_0.4.10        generics_0.1.4     stringi_1.8.7      lattice_0.22-6    
- [5] digest_0.6.37      magrittr_2.0.3     evaluate_1.0.3     grid_4.3.1        
- [9] RColorBrewer_1.1-3 fastmap_1.2.0      rprojroot_2.0.4    jsonlite_2.0.0    
+ [1] sass_0.4.10        generics_0.1.4     lattice_0.22-7     stringi_1.8.7     
+ [5] digest_0.6.37      magrittr_2.0.4     evaluate_1.0.5     grid_4.5.1        
+ [9] RColorBrewer_1.1-3 fastmap_1.2.0      rprojroot_2.1.1    jsonlite_2.0.0    
 [13] processx_3.8.6     whisker_0.4.1      RSpectra_0.16-2    ps_1.9.1          
-[17] promises_1.3.3     httr_1.4.7         purrr_1.0.4        scales_1.4.0      
+[17] promises_1.3.3     httr_1.4.7         purrr_1.1.0        scales_1.4.0      
 [21] jquerylib_0.1.4    cli_3.6.5          rlang_1.1.6        withr_3.0.2       
-[25] cachem_1.1.0       yaml_2.3.10        tools_4.3.1        dplyr_1.1.4       
-[29] httpuv_1.6.16      reticulate_1.42.0  png_0.1-8          vctrs_0.6.5       
-[33] R6_2.6.1           lifecycle_1.0.4    git2r_0.33.0       stringr_1.5.1     
-[37] fs_1.6.6           pkgconfig_2.0.3    callr_3.7.6        pillar_1.10.2     
-[41] bslib_0.9.0        later_1.4.2        gtable_0.3.6       glue_1.8.0        
-[45] Rcpp_1.0.14        xfun_0.52          tidyselect_1.2.1   rstudioapi_0.16.0 
-[49] knitr_1.50         farver_2.1.2       htmltools_0.5.8.1  labeling_0.4.3    
-[53] rmarkdown_2.28     compiler_4.3.1     getPass_0.2-4      askpass_1.2.1     
-[57] openssl_2.2.2     </code></pre>
+[25] cachem_1.1.0       yaml_2.3.10        tools_4.5.1        dplyr_1.1.4       
+[29] httpuv_1.6.16      reticulate_1.43.0  png_0.1-8          vctrs_0.6.5       
+[33] R6_2.6.1           lifecycle_1.0.4    git2r_0.36.2       stringr_1.5.2     
+[37] fs_1.6.6           pkgconfig_2.0.3    callr_3.7.6        pillar_1.11.1     
+[41] bslib_0.9.0        later_1.4.4        gtable_0.3.6       glue_1.8.0        
+[45] Rcpp_1.1.0         xfun_0.54          tidyselect_1.2.1   rstudioapi_0.17.1 
+[49] knitr_1.50         dichromat_2.0-0.1  farver_2.1.2       htmltools_0.5.8.1 
+[53] labeling_0.4.3     rmarkdown_2.30     compiler_4.5.1     getPass_0.2-4     
+[57] S7_0.2.0           askpass_1.2.1      openssl_2.3.4     </code></pre>
 </div>
 </div>
 </div>
