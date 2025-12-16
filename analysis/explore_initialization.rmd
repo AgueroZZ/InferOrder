@@ -1,5 +1,5 @@
 ---
-title: "explore_initialization"
+title: "Explore different ways of initializing SmoothEM"
 author: "Ziang Zhang"
 date: "2025-12-15"
 output: workflowr::wflow_html
@@ -9,7 +9,9 @@ editor_options:
 
 ## Introduction
 
-```{r}
+We will consider implementing the SmoothEM with the RW2 prior for the pancrea dataset, and compare different ways of initializing the SmoothEM algorithm: 
+
+```{r message = FALSE}
 library(tibble)
 library(tidyr)
 library(ggplot2)
@@ -52,14 +54,25 @@ Q_prior_RW2 <- make_random_walk_precision(K = 65,
 
 ## Initialization with PC
 
-```{r}
+First, we consider the SmoothEM initialized with the first principal component.
+
+The original structure plot ordered by first PC:
+
+```{r fig.width=6, fig.height=4}
 PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+loadings_order_PC1 <- order(-PC1)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_PC1])
+```
+
+The smoothEM initialized with first PC:
+
+```{r fig.width=6, fig.height=4}
 init_params <- make_init(X = Loadings, ordering_vec = -PC1, K = 65)
 result_RW2_PC1 <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 200,
+  max_iter = 50,
   modelName = "EEI",
   tol = 1e-3,
   eigen_tol = 0,
@@ -77,16 +90,25 @@ plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_PC1])
 
 ## Initialization with P-curve
 
-```{r}
+Now, we will consider initializing the SmoothEM with the principal curve.
+
+The structure plot ordered by principal curve:
+```{r fig.width=6, fig.height=4}
 pc_fit <- principal_curve(as.matrix(Loadings), maxit = 1000, smoother = "smooth_spline", thresh = 1e-5)
 pc_score <- pc_fit$lambda
-names(pc_score) <- rownames(Loadings)
+loadings_order_pcurve <- order(-pc_score)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_pcurve])
+```
+
+The smoothEM initialized with principal curve:
+
+```{r fig.width=6, fig.height=4}
 init_params <- make_init(X = Loadings, ordering_vec = -pc_score, K = 65)
 result_RW2_pcurve <- EM_algorithm(
   data = Loadings,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 200,
+  max_iter = 50,
   modelName = "EEI",
   tol = 1e-3,
   eigen_tol = 0,
@@ -104,7 +126,6 @@ plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_pcurve])
 ## Initialization with multi-resolution
 
 ```{r}
-set.seed(1)
 result_RW2_multi <- progressive_smoothEM(
   data = Loadings,
   m_max = 6,              
@@ -113,9 +134,8 @@ result_RW2_multi <- progressive_smoothEM(
   ridge = 0,
   nugget_kriging = 0,  
   tol = 1e-3,
-  max_iter = 200,
+  max_iter = 50,
   relative_lambda = TRUE,
-  coords_show = c(1,2,3),
   plot_each_stage = F,
   verbose = F
 )
