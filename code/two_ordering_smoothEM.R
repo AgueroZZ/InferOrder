@@ -1,6 +1,11 @@
 two_ordering_smoothEM <- function(X, K = 5,
                                   max_iter_EM = 100,
                                   max_iter = 20,
+                                  max_inner = 10,
+                                  iterate_once = TRUE,
+                                  rank_deficiency = 0,
+                                  nugget    = 0,
+                                  eigen_tol = 1e-10,
                                   modelName = "EEI",
                                   init_method = c("random", "pca", "warm_start", "tsne"),
                                   make_Q_prior = NULL,
@@ -9,7 +14,9 @@ two_ordering_smoothEM <- function(X, K = 5,
                                   reassign_by = c("likelihood", "posterior"),
                                   init_coord_assign = NULL,
                                   relative_lambda = TRUE,
-                                  em_args = list(), verbose = TRUE) {
+                                  em_args = list(),
+                                  verbose = TRUE,
+                                  verbose_EM = TRUE) {
 
   init_method <- match.arg(init_method)
 
@@ -56,9 +63,14 @@ two_ordering_smoothEM <- function(X, K = 5,
         max_iter = max_iter_EM,
         init_params = initial_params1,
         Q_prior = Q1,
+        iterate_once = iterate_once,
+        rank_deficiency = rank_deficiency,
+        nugget = nugget,
+        eigen_tol = eigen_tol,
+        max_inner = max_inner,
         relative_lambda = relative_lambda,
         modelName = modelName,
-        verbose = FALSE
+        verbose = verbose_EM
       ), em_args))
     } else {
       if (verbose) cat("Ordering 1 skipped (empty)\n")
@@ -71,9 +83,14 @@ two_ordering_smoothEM <- function(X, K = 5,
         max_iter = max_iter_EM,
         init_params = initial_params2,
         Q_prior = Q2,
+        iterate_once = iterate_once,
+        rank_deficiency = rank_deficiency,
+        nugget = nugget,
+        eigen_tol = eigen_tol,
+        max_inner = max_inner,
         relative_lambda = relative_lambda,
         modelName = modelName,
-        verbose = FALSE
+        verbose = verbose_EM
       ), em_args))
     } else {
       if (verbose) cat("Ordering 2 skipped (empty)\n")
@@ -92,11 +109,11 @@ two_ordering_smoothEM <- function(X, K = 5,
       } else {
         Q1_j <- make_Q_prior(K = K, d = 1, lambda = lambda_vec[1], q = rw_order_vec[1])
         mu1_j <- compute_mu_posterior(xj, res1$gamma, Q1_j)
-        E1 <- compute_posterior_energy(xj, res1$gamma, mu1_j, Q1_j, scaled = relative_lambda)
+        E1 <- compute_posterior_energy(xj, res1$gamma, mu1_j, Q1_j, scaled = relative_lambda, eigen_tol = eigen_tol, rank_deficiency = rank_deficiency)
 
         Q2_j <- make_Q_prior(K = K, d = 1, lambda = lambda_vec[2], q = rw_order_vec[2])
         mu2_j <- compute_mu_posterior(xj, res2$gamma, Q2_j)
-        E2 <- compute_posterior_energy(xj, res2$gamma, mu2_j, Q2_j, scaled = relative_lambda)
+        E2 <- compute_posterior_energy(xj, res2$gamma, mu2_j, Q2_j, scaled = relative_lambda, eigen_tol = eigen_tol, rank_deficiency = rank_deficiency)
         new_assign[j] <- if (E1 < E2) 1 else 2
       }
     }
@@ -128,7 +145,7 @@ compute_mu_posterior <- function(xj, Gamma, Q_1D) {
   solve(H, rhs)
 }
 
-compute_posterior_energy <- function(xj, Gamma, mu_jk, Q_1D, scaled = TRUE) {
+compute_posterior_energy <- function(xj, Gamma, mu_jk, Q_1D, scaled = TRUE, eigen_tol = 0, rank_deficiency = 0) {
 
   # xj: length-N vector
   # Gamma: N x K matrix
@@ -156,7 +173,7 @@ compute_posterior_energy <- function(xj, Gamma, mu_jk, Q_1D, scaled = TRUE) {
   penalty_prior <- as.numeric(0.5 * crossprod(mu_jk, Q_1D %*% mu_jk))
 
   # Prior normalization constant
-  prior_norm <- (length(mu_jk) / 2) * log(2 * pi) - 0.5 * as.numeric(generalized_logdet(Q_1D))
+  prior_norm <- (length(mu_jk) / 2) * log(2 * pi) - 0.5 * as.numeric(generalized_logdet(Q_1D, eigen_tol = eigen_tol, rank_deficiency = rank_deficiency))
 
   # Total posterior negative log-density
   total <- data_fit + norm_obs + penalty_prior + prior_norm

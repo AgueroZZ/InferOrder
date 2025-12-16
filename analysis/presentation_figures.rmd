@@ -1,0 +1,548 @@
+---
+title: "presentation_figures"
+author: "Ziang Zhang"
+date: "2025-11-29"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Simulate some points in 2D:
+
+```{r}
+f1 <- function(x) 4*sin(0.5*pi * x)
+f2 <- function(x) 3*log(x + 0.1) * sin(0.3*pi * x)
+
+set.seed(123)
+n <- 3000
+t <- seq(0, 2, length.out = n)
+x1 <- f1(t) + rnorm(n, sd = 0.1)
+x2 <- f2(t) + rnorm(n, sd = 0.1)
+X <- cbind(x1, x2)
+```
+
+
+```{r}
+plot(X, pch = 16, col = rgb(0, 0, 0, 0.5),
+     xlab = "X1", ylab = "X2", main = "Simulated 2D Data")
+```
+
+Compute the first PC and project the data onto it:
+
+```{r}
+svd_res <- svd(X, nv = 1, nu = 1)
+beta <- svd_res$v[, 1]
+loadings <- svd_res$u[, 1] * svd_res$d[1]
+```
+
+Draw the first PC direction, and color points by their loadings:
+
+```{r}
+library(ggplot2)
+library(scales)
+
+df <- data.frame(
+  X1      = X[, 1],
+  X2      = X[, 2],
+  loading = loadings
+)
+
+# scale loadings to stay between 0 and 1
+df$loading <- df$loading - min(df$loading)
+df$loading <- df$loading / max(abs(df$loading))
+
+ggplot(df, aes(x = X1, y = X2, color = loading)) +
+  geom_point(size = 0.8, alpha = 0.8) +
+  geom_segment(
+    aes(x = 0, y = 0, xend = beta[1] * 3, yend = beta[2] * 3),
+    inherit.aes = FALSE,
+    arrow = arrow(length = unit(0.15, "cm")),
+    color = "black",
+    linewidth = 0.8
+  ) +
+  coord_equal() +
+  scale_color_viridis_c(
+    name = "PC loadings",
+    option = "plasma",
+    begin = 0, end = 1
+  ) +
+  labs(
+    x = "X1",
+    y = "X2",
+    title = "First Principal Component"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+Using P-curve:
+
+```{r}
+library(princurve)
+pc_fit <- principal_curve(as.matrix(X), maxit = 100, smoother = "smooth_spline", thresh = 1e-10)
+
+df_p <- data.frame(
+  X1     = X[, 1],
+  X2     = X[, 2],
+  lambda = pc_fit$lambda
+)
+
+df_p$lambda_scaled <- (df_p$lambda - min(df_p$lambda)) /
+                      (max(df_p$lambda) - min(df_p$lambda))
+
+curve_df <- data.frame(
+  X1     = pc_fit$s[, 1],
+  X2     = pc_fit$s[, 2],
+  lambda = df_p$lambda_scaled
+)
+curve_df <- curve_df[order(curve_df$lambda), ]
+
+library(grid)  
+
+ggplot(df_p, aes(x = X1, y = X2, color = lambda_scaled)) +
+  geom_point(size = 0.8, alpha = 0.8) +
+  geom_path(
+    data = curve_df,
+    aes(x = X1, y = X2),
+    inherit.aes = FALSE,
+    linewidth = 1.0,
+    color = "black",
+    arrow = arrow(
+      length = unit(0.2, "cm"),
+      ends   = "last",   
+      type   = "closed"
+    )
+  ) +
+  coord_equal() +
+  scale_color_viridis_c(
+    name = "p-curve index",
+    option = "plasma",
+    begin = 0, end = 1
+  ) +
+  labs(
+    x = "X1",
+    y = "X2",
+    title = "Principal Curve"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+
+```{r}
+set.seed(123)
+iters <- seq(1, 50, by = 1)
+fit_list <- lapply(iters, function(k) {
+  principal_curve(
+    as.matrix(X),
+    maxit  = k,
+    smoother = "smooth_spline",
+    trace    = FALSE,
+    thresh   = 1e-8
+  )
+})
+names(fit_list) <- paste0("iter = ", iters)
+curve_df <- do.call(rbind, lapply(seq_along(fit_list), function(j) {
+  fit <- fit_list[[j]]
+  data.frame(
+    X1       = fit$s[, 1],
+    X2       = fit$s[, 2],
+    lambda   = fit$lambda,
+    iter_lab = names(fit_list)[j]
+  )
+}))
+
+curve_df <- curve_df[order(curve_df$iter_lab, curve_df$lambda), ]
+df_p <- data.frame(X1 = X[, 1], X2 = X[, 2])
+```
+
+```{r}
+# install.packages("gganimate")
+library(gganimate)
+library(ggplot2)
+
+curve_df$iter_num <- as.integer(gsub("iter = ", "", curve_df$iter_lab))
+
+p_anim <- ggplot() +
+  geom_point(
+    data = df_p,
+    aes(x = X1, y = X2),
+    color = "grey70", size = 0.4, alpha = 0.7
+  ) +
+  geom_path(
+    data = curve_df,
+    aes(x = X1, y = X2, group = 1),
+    color = "black", linewidth = 0.9
+  ) +
+  coord_equal() +
+  labs(
+    x = "X1",
+    y = "X2",
+    title = "Principal Curve Fitting (iteration: {current_frame})"
+  ) +
+  theme_minimal(base_size = 14) +
+  transition_manual(iter_num)   
+
+anim <- gganimate::animate(
+  p_anim,
+  nframes  = length(unique(curve_df$iter_num)),  # 50
+  fps      = 5,
+  renderer = gifski_renderer()
+)
+
+gganimate::anim_save("pcurve_iterations.gif", animation = anim)
+```
+
+
+```{r}
+# 取一小部分点来画 projection（例如 300 个）
+set.seed(1)
+idx_sample <- sample(seq_len(nrow(X)), size = 300)
+
+# 曲线数据：每个 iteration 有两个 phase：
+# "iter 01 - project" 和 "iter 01 - smooth"
+curve_all <- do.call(rbind, lapply(seq_along(fit_list), function(j) {
+  fit  <- fit_list[[j]]
+  it   <- iters[j]
+  base <- data.frame(
+    X1     = fit$s[, 1],
+    X2     = fit$s[, 2],
+    lambda = fit$lambda
+  )
+  rbind(
+    transform(base, frame_lab = sprintf("iter %02d - project", it)),
+    transform(base, frame_lab = sprintf("iter %02d - smooth",  it))
+  )
+}))
+
+# 按 frame + lambda 排序，画 path 时不会乱连
+curve_all <- curve_all[order(curve_all$frame_lab, curve_all$lambda), ]
+
+
+# 投影线段：只在 "project" phase 显示
+segments_all <- do.call(rbind, lapply(seq_along(fit_list), function(j) {
+  fit  <- fit_list[[j]]
+  it   <- iters[j]
+  data.frame(
+    x      = X[idx_sample, 1],
+    y      = X[idx_sample, 2],
+    xend   = fit$s[idx_sample, 1],
+    yend   = fit$s[idx_sample, 2],
+    id     = idx_sample,
+    frame_lab = sprintf("iter %02d - project", it)  # 只在 project 阶段存在
+  )
+}))
+
+# 固定坐标范围，避免帧间抖动
+xr <- range(df_p$X1)
+yr <- range(df_p$X2)
+
+p_anim_proj <- ggplot() +
+  # 原始数据点（灰）
+  geom_point(
+    data = df_p[idx_sample,],
+    aes(x = X1, y = X2),
+    color = "grey80", size = 0.4, alpha = 0.7
+  ) +
+  # 曲线（黑）
+  geom_path(
+    data = curve_all,
+    aes(x = X1, y = X2, group = 1),
+    color = "black", linewidth = 0.9
+  ) +
+  # 投影线段（蓝），只在 "project" 帧出现
+  geom_segment(
+    data = segments_all,
+    aes(x = x, y = y, xend = xend, yend = yend, group = id),
+    color = "steelblue", linewidth = 0.4, alpha = 0.8
+  ) +
+  coord_equal(xlim = xr, ylim = yr) +
+  labs(
+    x = "X1",
+    y = "X2",
+    title = "Principal Curve Fitting (step: {current_frame})"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  # 每一帧就是一个明确的 step（iter k - project / iter k - smooth）
+  transition_manual(frame_lab)
+
+# 帧数 = 不同 step 的个数，即 2 * length(iters)
+nf <- length(unique(curve_all$frame_lab))
+
+anim_proj <- gganimate::animate(
+  p_anim_proj,
+  nframes  = nf,
+  fps      = 5,
+  renderer = gifski_renderer()
+)
+
+gganimate::anim_save("pcurve_iterations_with_projection.gif", animation = anim_proj)
+```
+
+GPLVM:
+
+```{r}
+## ------------------------------------------------------------
+## Toy 1D GPLVM with FITC approximation and exact gradient in t
+## ------------------------------------------------------------
+
+library(stats)
+library(ggplot2)
+
+## 1. Simulate 2D data lying on a 1D manifold ------------------
+f1 <- function(x) 4 * sin(0.5 * pi * x)
+f2 <- function(x) 3 * log(x + 0.1) * sin(0.3 * pi * x)
+
+set.seed(123)
+n      <- 400
+t_true <- seq(0, 2, length.out = n)
+x1     <- f1(t_true) + rnorm(n, sd = 0.1)
+x2     <- f2(t_true) + rnorm(n, sd = 0.1)
+
+Y  <- cbind(x1, x2)             # N x D
+Y  <- scale(Y, center = TRUE, scale = FALSE)
+N  <- nrow(Y)
+D  <- ncol(Y)
+
+## 2. SE kernel (1D inputs) ------------------------------------
+se_kernel <- function(t1, t2, log_ell, log_var) {
+  ell <- exp(log_ell)
+  var <- exp(log_var)
+  t1  <- as.numeric(t1)
+  t2  <- as.numeric(t2)
+  dist2 <- outer(t1, t2, FUN = function(a, b) (a - b)^2)
+  var * exp(-0.5 * dist2 / ell^2)
+}
+
+## 3. Hyper-parameters (fixed here, can be optimised later) ----
+log_ell   <- log(0.5)   # length-scale
+log_var   <- log(1)     # signal variance
+log_sigma <- log(0.1)   # noise sd
+
+## 4. Initialise latent t via PCA, choose inducing points ------
+
+pc1    <- prcomp(Y, center = FALSE, scale. = FALSE)$x[, 1]
+t_init <- as.numeric(scale(pc1))
+
+M   <- 10                          # number of inducing points
+qs  <- seq(0, 1, length.out = M)   # pick quantiles along t_init
+t_u <- as.numeric(quantile(t_init, probs = qs, type = 8))
+
+K_mm     <- se_kernel(t_u, t_u, log_ell, log_var)
+L_mm     <- chol(K_mm)
+K_mm_inv <- chol2inv(L_mm)
+
+## 5. FITC negative log-likelihood + exact grad wrt t ----------
+
+gplvm_fitc_nll_grad_t <- function(t_latent, Y,
+                                  t_u, K_mm_inv,
+                                  log_ell, log_var, log_sigma) {
+  N <- length(t_latent)
+  D <- ncol(Y)
+
+  ell    <- exp(log_ell)
+  var    <- exp(log_var)         # signal variance σ_f^2
+  sigma2 <- exp(2 * log_sigma)   # noise variance
+
+  # K_NM: N x M
+  K_nm <- se_kernel(t_latent, t_u, log_ell, log_var)
+
+  # diag(K_NN) = var
+  K_nn_diag <- rep(var, N)
+
+  # Q = K_nm K_mm^{-1} K_mn
+  B <- K_mm_inv %*% t(K_nm)        # M x N
+  Q <- K_nm %*% B                  # N x N
+
+  # diag correction Λ
+  Q_diag      <- rowSums(K_nm * t(B))  # diag(Q)
+  Lambda_diag <- K_nn_diag - Q_diag + sigma2
+
+  # Σ = Q + diag(Λ)
+  Sigma <- Q
+  diag(Sigma) <- diag(Sigma) + Lambda_diag
+
+  # Cholesky of Σ
+  chol_Sigma <- tryCatch(chol(Sigma), error = function(e) NA)
+  if (anyNA(chol_Sigma)) {
+    return(list(value = 1e10, grad = rep(0, N)))
+  }
+
+  # log |Σ|
+  logdet_Sigma <- 2 * sum(log(diag(chol_Sigma)))
+
+  # Σ^{-1} Y
+  alpha <- backsolve(chol_Sigma, forwardsolve(chol_Sigma, Y))
+  quad_term <- sum(Y * alpha)     # tr(Y^T Σ^{-1} Y)
+
+  nll <- 0.5 * (D * logdet_Sigma + quad_term + N * D * log(2 * pi))
+
+  ## ---- exact gradient wrt t_latent ----
+
+  Sigma_inv <- chol2inv(chol_Sigma)
+
+  # G = 1/2 ( D Σ^{-1} - Σ^{-1} Y Y^T Σ^{-1} )
+  A_mat <- alpha %*% t(alpha)           # Σ^{-1} Y Y^T Σ^{-1}
+  G <- 0.5 * (D * Sigma_inv - A_mat)    # N x N
+
+  # dL/dQ = H = G - diag(diag(G))
+  diagG <- diag(G)
+  H <- G - diag(diagG)
+
+  # dL/dK_nm = 2 H K_nm K_mm^{-1}
+  G_K <- 2 * H %*% K_nm %*% K_mm_inv    # N x M
+
+  # dK_nm/dt_i: ∂k(t_i,u_j)/∂t_i = k(t_i,u_j) * (u_j - t_i)/ell^2
+  diff_mat <- outer(t_latent, t_u, FUN = function(a, b) b - a)  # (u_j - t_i)
+  dK_dt <- K_nm * (diff_mat / (ell^2))                          # N x M
+
+  # grad_t_i = Σ_j G_K[i,j] * dK_dt[i,j]
+  grad_t <- rowSums(G_K * dK_dt)
+
+  list(value = nll, grad = grad_t)
+}
+
+## 6. Wrap for optim (L-BFGS-B) -------------------------------
+
+fitc_obj <- function(t_par) {
+  out <- gplvm_fitc_nll_grad_t(
+    t_latent  = t_par,
+    Y         = Y,
+    t_u       = t_u,
+    K_mm_inv  = K_mm_inv,
+    log_ell   = log_ell,
+    log_var   = log_var,
+    log_sigma = log_sigma
+  )
+  attr(out$value, "grad") <- out$grad
+  out$value
+}
+
+set.seed(1)
+fit <- optim(
+  par     = t_init,
+  fn      = function(p) fitc_obj(p),
+  gr      = function(p) attr(fitc_obj(p), "grad"),
+  method  = "L-BFGS-B",
+  control = list(maxit = 200)
+)
+
+fit$convergence   # 0 means converged
+t_fitc <- fit$par
+
+## 7. Simple check / visualization -----------------------------
+
+df_latent <- data.frame(
+  t_true = t_true,
+  t_pca  = as.numeric(scale(t_init)),
+  t_fitc = as.numeric(scale(t_fitc))
+)
+
+df_long <- reshape2::melt(df_latent, id.vars = "t_true",
+                          variable.name = "method",
+                          value.name   = "t_est")
+
+ggplot(df_long, aes(x = t_true, y = t_est, color = method)) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "True t",
+    y = "Estimated latent coordinate",
+    color = "Method",
+    title = "PCA vs 1D GPLVM (FITC approximation)"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+```{r}
+library(ggplot2)
+library(viridis)
+library(grid)
+
+## 假设已有：
+## Y        : N x 2 数据矩阵
+## t_fitc   : 长度 N 的 GPLVM latent (FITC 优化得到)
+## se_kernel, log_ell, log_var, log_sigma 同前
+
+N <- nrow(Y)
+D <- ncol(Y)
+stopifnot(D == 2)
+
+sigma2 <- exp(2 * log_sigma)
+
+# 1. 用 GPLVM latent t_fitc 做一次 GP regression，算 posterior mean
+#    K_tt: N x N
+K_tt <- se_kernel(t_fitc, t_fitc, log_ell, log_var)
+Ky   <- K_tt + sigma2 * diag(N)
+
+chol_Ky <- chol(Ky)
+
+# Σ^{-1} Y
+alpha <- backsolve(chol_Ky, forwardsolve(chol_Ky, Y))  # N x 2
+
+# 在一个更平滑的 grid 上画曲线
+t_grid <- seq(min(t_fitc), max(t_fitc), length.out = 200)
+
+# K_*t: 200 x N
+K_star <- se_kernel(t_grid, t_fitc, log_ell, log_var)
+
+# posterior mean: 200 x 2
+F_hat <- K_star %*% alpha
+colnames(F_hat) <- c("X1_hat", "X2_hat")
+
+curve_df_gplvm <- data.frame(
+  X1 = F_hat[, 1],
+  X2 = F_hat[, 2],
+  t  = t_grid
+)
+
+# 为点的着色，把 t_fitc 缩放到 [0,1]
+t_scaled <- (t_fitc - min(t_fitc)) / (max(t_fitc) - min(t_fitc))
+
+df_gplvm <- data.frame(
+  X1          = Y[, 1],
+  X2          = Y[, 2],
+  t_scaled    = t_scaled
+)
+
+# 2. 画图：模仿你 p-curve 那张图的风格
+ggplot(df_gplvm, aes(x = X1, y = X2, color = t_scaled)) +
+  geom_point(size = 0.8, alpha = 0.8) +
+  geom_path(
+    data = curve_df_gplvm,
+    aes(x = X1, y = X2),
+    inherit.aes = FALSE,
+    linewidth = 1.0,
+    color = "black",
+    arrow = arrow(
+      length = unit(0.2, "cm"),
+      ends   = "last",
+      type   = "closed"
+    )
+  ) +
+  coord_equal() +
+  scale_color_viridis_c(
+    name   = "GPLVM index",
+    option = "plasma",
+    begin  = 0, end = 1
+  ) +
+  labs(
+    x = "X1",
+    y = "X2",
+    title = "GPLVM (1D latent, FITC approximation)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    plot.title      = element_text(hjust = 0.5)
+  )
+```
+

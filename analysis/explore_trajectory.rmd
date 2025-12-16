@@ -126,11 +126,23 @@ result_RW1 <- EM_algorithm(
   init_params = init_params,
   max_iter = 200,
   modelName = "EEI",
+  rank_deficiency = (1 * ncol(dat$Y_obs)),
   tol = 1e-2,
   relative_lambda = TRUE,
   verbose = TRUE
 )
 ```
+
+```{r}
+plot(result_RW1$elbo_trace, type = 'l', pch=19,
+     cex=0.5, col='blue', lty=1,
+     xlab = "Iteration", ylab = "ELBO",
+     main = "ELBO Trace")
+lines(result_RW1$loglik_trace, col='orange', 
+      lty=2,
+      lwd=2)
+```
+
 
 ```{r}
 plot(dat$Y_obs, cex=0.5,
@@ -161,10 +173,21 @@ result_RW2 <- EM_algorithm(
   init_params = init_params,
   max_iter = 300,
   modelName = "EEI",
+  rank_deficiency = (2 * ncol(dat$Y_obs)),
   tol = 1e-2,
   relative_lambda = TRUE,
   verbose = TRUE
 )
+```
+
+```{r}
+plot(result_RW2$elbo_trace, type = 'l', pch=19,
+     cex=0.5, col='blue', lty=1,
+     xlab = "Iteration", ylab = "ELBO",
+     main = "ELBO Trace")
+lines(result_RW2$loglik_trace, col='orange', 
+      lty=2,
+      lwd=2)
 ```
 
 

@@ -1,38 +1,29 @@
----
-title: "kriging"
-author: "Ziang Zhang"
-date: "2025-12-14"
-output: workflowr::wflow_html
-editor_options:
-  chunk_output_type: console
----
-
-## Illustration of Kriging from Precision Matrix
-
-```{r}
 library(Matrix)
 library(mclust)
 
-# --- nested grids: K = 2^m + 1, so old grid is subset of new grid ---
-make_nested_K <- function(m_max) 2^(0:m_max) + 1
-
-# --- true function on a grid ---
-make_truth <- function(u) {
-  sin(2*pi*u) + 0.35*cos(6*pi*u)
-}
-
-# --- RW2 precision: Q = D2' D2 ---
-make_RW2_precision <- function(K) {
-  D2 <- sparseMatrix(
-    i = c(seq_len(K-2), seq_len(K-2), seq_len(K-2)),
-    j = c(seq_len(K-2), seq_len(K-2) + 1L, seq_len(K-2) + 2L),
-    x = c(rep(1, K-2), rep(-2, K-2), rep(1, K-2)),
-    dims = c(K-2, K)
-  )
-  t(D2) %*% D2
-}
-
-# --- match old locations to indices on new grid (needs nested grids) ---
+#' Match locations on an old grid to indices on a new grid
+#'
+#' @description
+#' Given a vector of locations \code{loc_old} (typically a subset of \code{loc_new}),
+#' return the indices of their nearest matches on \code{loc_new}. This is mainly used
+#' for hierarchical/nested grids where coarse-grid locations appear exactly on a
+#' finer grid.
+#'
+#' The function checks that each \code{loc_old} can be matched within tolerance
+#' and that no duplicate indices occur.
+#'
+#' @param loc_old Numeric vector of locations to be matched (e.g. \code{u_obs}).
+#' @param loc_new Numeric vector of candidate locations (e.g. \code{u_final}).
+#' @param tol Nonnegative numeric tolerance. A location \code{x} in \code{loc_old}
+#'   must satisfy \code{min(abs(loc_new - x)) <= tol} to be considered a valid match.
+#'
+#' @return Integer vector of the same length as \code{loc_old}, giving indices into \code{loc_new}.
+#'
+#' @examples
+#' u_final <- seq(0, 1, length.out = 65)
+#' u_obs   <- c(0, 0.5, 1)
+#' match_locations_to_grid(u_obs, u_final)
+#'
 match_locations_to_grid <- function(loc_old, loc_new, tol = 1e-8) {
   idx_obs <- vapply(loc_old, function(x) {
     j <- which.min(abs(loc_new - x))
@@ -45,137 +36,36 @@ match_locations_to_grid <- function(loc_old, loc_new, tol = 1e-8) {
   idx_obs
 }
 
-# --- conditional mean under precision Q: E[f_U | f_O] = - Q_UU^{-1} Q_UO f_O ---
-kriging_from_precision <- function(f_obs, idx_obs, Q_new,
-                                  nugget = 0,
-                                  keep_obs = TRUE) {
-  K_new <- nrow(Q_new)
-  idx_obs  <- as.integer(idx_obs)
-  idx_pred <- setdiff(seq_len(K_new), idx_obs)
 
-  if (length(idx_pred) == 0L) {
-    return(if (keep_obs) f_obs else list(pred_idx = integer(0), f_pred = NULL))
-  }
-
-  if (is.null(dim(f_obs))) f_obs_mat <- matrix(f_obs, ncol = 1) else f_obs_mat <- as.matrix(f_obs)
-  if (nrow(f_obs_mat) != length(idx_obs)) stop("nrow(f_obs) must equal length(idx_obs).")
-
-  Q_UU <- Q_new[idx_pred, idx_pred, drop = FALSE]
-  Q_UO <- Q_new[idx_pred, idx_obs,  drop = FALSE]
-
-  if (nugget > 0) Q_UU <- Q_UU + nugget * Diagonal(n = nrow(Q_UU))
-
-  rhs <- Q_UO %*% f_obs_mat
-  f_pred_mat <- - Matrix::solve(Q_UU, rhs)
-
-  if (!keep_obs) {
-    out_pred <- if (ncol(f_pred_mat) == 1) as.numeric(f_pred_mat) else f_pred_mat
-    return(list(pred_idx = idx_pred, f_pred = out_pred))
-  }
-
-  if (ncol(f_obs_mat) == 1) {
-    f_full <- numeric(K_new)
-    f_full[idx_obs]  <- f_obs_mat[, 1]
-    f_full[idx_pred] <- as.numeric(f_pred_mat)
-    return(f_full)
-  } else {
-    p <- ncol(f_obs_mat)
-    f_full <- matrix(NA_real_, nrow = K_new, ncol = p)
-    f_full[idx_obs, ]  <- f_obs_mat
-    f_full[idx_pred, ] <- f_pred_mat
-    return(f_full)
-  }
-}
-```
-
-```{r}
-m_max  <- 6
-K_new  <- max(make_nested_K(m_max))  # e.g., 65
-u_new  <- seq(0, 1, length.out = K_new)
-f_true <- make_truth(u_new)
-
-plot(u_new, f_true, type = "l",
-     xlab = "u", ylab = "f(u)",
-     main = "Step 1: True function on the finest grid")
-```
-
-```{r}
-Q_new <- make_RW2_precision(K_new)
-
-image(Q_new != 0,
-      main = "Step 2: Sparsity pattern of RW2 precision (Q != 0)",
-      xlab = "index", ylab = "index")
-```
-
-```{r}
-K_old  <- 10
-u_old <- u_new[seq(1, K_new, length.out = K_old)]
-idx_O  <- match_locations_to_grid(u_old, u_new)
-
-f_obs <- f_true[idx_O]
-
-plot(u_new, f_true, type = "l",
-     xlab = "u", ylab = "f(u)",
-     main = sprintf("Step 3: Observed points (K_old = %d)", K_old))
-points(u_new[idx_O], f_obs, pch = 16, cex = 0.9)
-```
-
-```{r}
-idx_U <- setdiff(seq_len(K_new), idx_O)
-
-Q_UU <- Q_new[idx_U, idx_U]
-Q_UO <- Q_new[idx_U, idx_O]
-
-cat("Step 4:\n")
-cat("  |O| =", length(idx_O), "\n")
-cat("  |U| =", length(idx_U), "\n")
-cat("  dim(Q_UU) =", paste(dim(Q_UU), collapse=" x "), "\n")
-cat("  dim(Q_UO) =", paste(dim(Q_UO), collapse=" x "), "\n")
-
-image(Q_UU != 0,
-      main = "Step 4: Sparsity pattern of Q_UU (unknown-unknown block)",
-      xlab = "U index", ylab = "U index")
-```
-
-```{r}
-f_hat <- kriging_from_precision(
-  f_obs  = f_obs,
-  idx_obs = idx_O,
-  Q_new   = Q_new,
-  nugget  = 0,
-  keep_obs = TRUE
-)
-
-plot(u_new, f_true, type = "l",
-     xlab = "u", ylab = "f(u)",
-     main = sprintf("Step 5: Conditional mean reconstruction (K_old=%d)", K_old))
-lines(u_new, f_hat, lty = 2)
-points(u_new[idx_O], f_obs, pch = 16, cex = 0.8)
-
-legend("topright",
-       legend = c("truth", "kriging mean", "observed"),
-       lty = c(1,2,NA), pch = c(NA,NA,16), bty = "n")
-```
-
-
-## SmoothEM initialized with Progressive Kriging
-
-```{r}
-set.seed(1)
-source("./code/general_EM.R")
-source("./code/prior_precision.R")
-source("./code/plot_ordering.R")
-load("./data/loading_order/pancreas_factors.rdata")
-load("./data/loading_order/pancreas.rdata")
-
-cells <- subsample_cell_types(sample_info$celltype,n = 500)
-Loadings <- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
-celltype <- as.character(sample_info$celltype[cells])
-names(celltype) <- rownames(Loadings)
-batchtype <- as.character(sample_info$tech[cells])
-names(batchtype) <- rownames(Loadings)
-
-# --- (A) hierarchical nested grids: K_m = 2^m + 1, and indices are subsets of final grid
+#' Construct a hierarchy of nested grids inside a final grid
+#'
+#' @description
+#' Build a set of *hierarchical* (nested) grid levels indexed into a final grid.
+#' The final grid has \code{K_final = 2^m_max + 1} equally-spaced points on \eqn{[0,1]}.
+#' Each level \code{m} has \code{K_m = 2^m + 1} points, and its indices are a subset of
+#' the final grid indices.
+#'
+#' This is useful for progressive-resolution initialization: you can fit at a coarse
+#' level and krige/interpolate to initialize the next, finer level while guaranteeing
+#' exact overlap of design points.
+#'
+#' @param m_max Nonnegative integer; the finest level exponent.
+#'
+#' @return A list with:
+#' \itemize{
+#'   \item \code{m_max}: the input \code{m_max}.
+#'   \item \code{K_final}: \code{2^m_max + 1}.
+#'   \item \code{u_final}: numeric vector of length \code{K_final} on \eqn{[0,1]}.
+#'   \item \code{idx_levels}: list of length \code{m_max+1}; indices into \code{u_final}
+#'         for each level \code{m=0,...,m_max}.
+#'   \item \code{K_levels}: integer vector of \code{K_m} for each level.
+#' }
+#'
+#' @examples
+#' lev <- make_hierarchical_levels(m_max = 4)
+#' lev$K_levels
+#' lev$idx_levels[[1]]  # level m=0 -> 2 points (ends)
+#'
 make_hierarchical_levels <- function(m_max = 6) {
   K_final <- 2^m_max + 1
   u_final <- seq(0, 1, length.out = K_final)
@@ -195,20 +85,83 @@ make_hierarchical_levels <- function(m_max = 6) {
   )
 }
 
-# --- (B) spacing-aware lambda scaling for RW(q)
-# If make_random_walk_precision assumes unit spacing in index space,
-# then to keep the continuous roughness penalty comparable across grids:
-# lambda_m = lambda_final * (h_final/h_m)^(2q-1) = lambda_final * ((K_m-1)/(K_final-1))^(2q-1)
+
+#' Scale random-walk penalty strength to account for grid spacing
+#'
+#' @description
+#' In a random-walk prior/penalty of order \code{q} (e.g., RW2), if the precision builder
+#' \code{make_random_walk_precision()} implicitly assumes unit spacing in index space,
+#' then changing the physical grid spacing \code{h} changes the implied roughness penalty.
+#'
+#' This helper rescales the penalty strength \code{lambda} so that the *continuous*
+#' roughness penalty stays comparable across nested grids on \eqn{[0,1]}.
+#'
+#' For nested equally-spaced grids with \code{K} points on \eqn{[0,1]}, spacing is
+#' \code{h = 1/(K-1)}. With order \code{q}, a common scaling is
+#' \deqn{\lambda(h) \propto h^{-(2q-1)}.}
+#' Therefore, relative to a final grid \code{K_final}, the level-\code{K_level} lambda is
+#' \deqn{\lambda_level = \lambda_final * ((K_level-1)/(K_final-1))^{(2q-1)}.}
+#'
+#' @param lambda_final Numeric scalar; the lambda used on the final grid.
+#' @param K_final Integer; number of points on the final grid.
+#' @param K_level Integer; number of points on the current level grid.
+#' @param q Integer; RW order (e.g., 2 for RW2).
+#'
+#' @return Numeric scalar \code{lambda_level}.
+#'
+#' @examples
+#' lambda_scale_for_spacing(lambda_final = 500, K_final = 65, K_level = 17, q = 2)
+#'
 lambda_scale_for_spacing <- function(lambda_final, K_final, K_level, q = 2) {
   if (K_level < 2 || K_final < 2) stop("K_level and K_final must be >= 2")
   ratio <- (K_level - 1) / (K_final - 1)  # h_final/h_level
   lambda_final * (ratio^(2*q - 1))
 }
 
-# --- (C) kriging from precision (your version; vectorized over coordinates via matrix RHS)
+
+#' Krige/interpolate from observed nodes using a Gaussian precision matrix
+#'
+#' @description
+#' Compute the conditional mean under a Gaussian model specified via a precision
+#' matrix \code{Q_new} on a grid of size \code{K_new}.
+#'
+#' Let the latent vector on the full grid be partitioned into observed indices \eqn{O}
+#' and unobserved indices \eqn{U}. Under a (possibly improper) Gaussian prior with
+#' precision \eqn{Q}, the conditional mean satisfies
+#' \deqn{E[f_U | f_O] = - Q_{UU}^{-1} Q_{UO} f_O.}
+#'
+#' This routine supports vector-valued observations by allowing \code{f_obs} to be a
+#' matrix with rows corresponding to \eqn{O} and columns corresponding to coordinates.
+#' The solve is then done once with a matrix right-hand side.
+#'
+#' @param f_obs Numeric vector of length \code{|O|} OR numeric matrix \code{|O| x p}.
+#'   Rows correspond to observed indices \code{idx_obs}. For multivariate means, \code{p = d}.
+#' @param idx_obs Integer vector of observed indices (subset of \code{1:K_new}).
+#' @param Q_new \code{K_new x K_new} precision matrix (dense or sparse \code{Matrix}).
+#' @param nugget Nonnegative scalar. If \code{>0}, adds \code{nugget * I} to \eqn{Q_{UU}}
+#'   to stabilize the solve (useful if \eqn{Q} is rank-deficient).
+#' @param keep_obs Logical. If \code{TRUE}, return a full vector/matrix of length \code{K_new}
+#'   with observed entries filled by \code{f_obs} and unobserved entries filled by the
+#'   conditional mean. If \code{FALSE}, only return predictions on \eqn{U}.
+#'
+#' @return If \code{keep_obs=TRUE}:
+#' \itemize{
+#'   \item a numeric vector (if \code{f_obs} was a vector), length \code{K_new}; or
+#'   \item a numeric matrix \code{K_new x p} (if \code{f_obs} was a matrix).
+#' }
+#' If \code{keep_obs=FALSE}, returns a list with:
+#' \itemize{
+#'   \item \code{pred_idx}: indices \eqn{U}
+#'   \item \code{f_pred}: predicted values on \eqn{U} (vector or matrix)
+#' }
+#'
+#' @examples
+#' # (Toy) RW2 precision on K=65 grid, observe two endpoints and krige the rest.
+#' # See your Rmd for a full worked example.
+#'
 kriging_from_precision <- function(f_obs, idx_obs, Q_new,
-                                  nugget = 0,
-                                  keep_obs = TRUE) {
+                                   nugget = 0,
+                                   keep_obs = TRUE) {
   K_new <- nrow(Q_new)
   idx_obs  <- as.integer(idx_obs)
   idx_pred <- setdiff(seq_len(K_new), idx_obs)
@@ -247,7 +200,31 @@ kriging_from_precision <- function(f_obs, idx_obs, Q_new,
   }
 }
 
-# --- (D) utility: mu_list (length K_obs) -> Mu_full matrix (K_final x d) + mu_full list
+
+#' Krige SmoothEM mean functions from an observed grid to the final grid
+#'
+#' @description
+#' Convenience wrapper for SmoothEM: take a list of component means defined on an observed
+#' grid (design points) and krige/interpolate them to the full final grid using a 1D
+#' precision matrix \code{Q_final_1d}.
+#'
+#' This is used in progressive initialization, where you fit SmoothEM at a coarse set of
+#' positions \code{u_obs}, then krige to the final grid \code{u_final} to obtain
+#' \code{Mu_full} (a \code{K_final x d} matrix) and \code{mu_full_list} (SmoothEM format).
+#'
+#' @param mu_list_obs List of length \code{K_obs}; each element is a numeric vector of length \code{d}.
+#' @param u_obs Numeric vector of length \code{K_obs}; design-point locations.
+#' @param u_final Numeric vector of length \code{K_final}; final grid locations.
+#' @param Q_final_1d \code{K_final x K_final} precision matrix acting along the grid.
+#' @param nugget Nonnegative scalar passed to \code{kriging_from_precision}.
+#'
+#' @return A list with:
+#' \itemize{
+#'   \item \code{Mu_full}: numeric matrix \code{K_final x d}.
+#'   \item \code{mu_full_list}: list length \code{K_final}, each a length-\code{d} vector.
+#'   \item \code{idx_obs}: integer indices of \code{u_obs} inside \code{u_final}.
+#' }
+#'
 krige_mu_list_to_full_grid <- function(mu_list_obs, u_obs, u_final, Q_final_1d,
                                        nugget = 0) {
   idx_obs <- match_locations_to_grid(u_obs, u_final)
@@ -262,28 +239,114 @@ krige_mu_list_to_full_grid <- function(mu_list_obs, u_obs, u_final, Q_final_1d,
   mu_full_list <- lapply(seq_len(nrow(Mu_full)), function(k) as.numeric(Mu_full[k, ]))
   list(Mu_full = Mu_full, mu_full_list = mu_full_list, idx_obs = idx_obs)
 }
-```
 
-```{r}
+
+
+#' Progressive-resolution initialization for SmoothEM via kriging on a final grid
+#'
+#' @description
+#' Fit SmoothEM on a sequence of *nested* (hierarchical) grids, starting from a very coarse
+#' grid (stage 1 uses \code{K=2} endpoints) and progressively refining the resolution
+#' (\code{K_m = 2^m + 1} for \code{m = 1,...,m_max}). At each stage:
+#' \enumerate{
+#'   \item Fit a penalized GMM (SmoothEM) on the current grid locations \code{u_fit}.
+#'   \item Krige/interpolate the fitted component means back to the *final* grid
+#'         (size \code{K_final = 2^m_max + 1}) using a 1D random-walk precision matrix.
+#'   \item Use the kriged means (restricted to the next stage’s design points) as a warm start
+#'         for the next stage.
+#' }
+#'
+#' Stage 1 (the first history entry) is special: it initializes the two endpoint means using
+#' \code{mclust::Mclust(data, G = 2)} and then kriges those two means to the final grid.
+#'
+#' The routine is designed for your “progressive initialization” idea: it avoids PCA-based
+#' initialization and instead uses a coarse-to-fine continuation strategy where the mean
+#' functions evolve smoothly across grid refinements.
+#'
+#' @details
+#' \strong{Nested grids.}
+#' The function uses \code{make_hierarchical_levels(m_max)} to construct a final grid
+#' \code{u_final} of length \code{K_final = 2^m_max + 1} on \eqn{[0,1]} and a list of index sets
+#' \code{idx_levels} such that each coarser level is an exact subset of the final grid.
+#' This guarantees that design points align exactly across stages (no floating mismatch).
+#'
+#' \strong{Two precisions.}
+#' \itemize{
+#'   \item \code{Q_final_1d}: a \code{K_final x K_final} 1D precision used only for kriging means
+#'         to the final grid.
+#'   \item \code{Q_next}: a \code{(K_next*d) x (K_next*d)} separable precision used in SmoothEM
+#'         at the current stage with \code{d = ncol(data)} coordinates.
+#' }
+#'
+#' \strong{Spacing-aware lambda scaling.}
+#' When the grid spacing changes across stages, the discrete RW(\code{q}) penalty needs rescaling
+#' to keep the implied continuous roughness penalty comparable across grids. This function uses
+#' \code{lambda_scale_for_spacing(lambda_final, K_final, K_next, q)} to obtain \code{lambda_next}.
+#'
+#' \strong{Rank deficiency.}
+#' For an RW(\code{q}) prior, each coordinate typically contributes \code{q} null-space dimensions.
+#' With \code{d} coordinates and a separable prior, the overall rank deficiency is often taken as
+#' \code{rank_deficiency = q * d}. This matches how you compute log-determinants / constants in
+#' your penalized objectives.
+#'
+#' @param data Numeric matrix \code{n x d}. Each row is an observation (e.g., a cell),
+#'   each column is a coordinate (e.g., loading dimension).
+#' @param m_max Nonnegative integer. Finest grid uses \code{K_final = 2^m_max + 1}.
+#' @param lambda_final Numeric scalar. Penalty strength on the final grid (used to build \code{Q_final_1d}
+#'   and as the baseline for scaling \code{lambda_next} at each stage).
+#' @param q Integer. Random-walk order (e.g., \code{q=2} for RW2).
+#' @param ridge Nonnegative scalar ridge added inside \code{make_random_walk_precision()} if supported.
+#' @param nugget_kriging Nonnegative scalar nugget added to \eqn{Q_{UU}} in kriging to stabilize the solve
+#'   (useful if RW precisions are rank-deficient). Passed to \code{krige_mu_list_to_full_grid()}.
+#' @param tol Convergence tolerance for \code{EM_algorithm()}.
+#' @param max_iter Maximum iterations for \code{EM_algorithm()} at each stage.
+#' @param relative_lambda Logical. Passed to \code{EM_algorithm()}. If TRUE, scales the penalty relative to
+#'   the current variance estimate (your “relative lambda” option).
+#' @param modelName Character. Passed to \code{EM_algorithm()} (e.g., \code{"EEI"}).
+#' @param coords_show Integer vector of coordinates (columns of \code{data}) to visualize when \code{plot_each_stage=TRUE}.
+#' @param plot_each_stage Logical. If TRUE, plot kriged mean curves (on the final grid) at every stage.
+#' @param verbose Logical. If TRUE, print stage summaries and pass verbose to \code{EM_algorithm()}.
+#'
+#' @return A list with:
+#' \itemize{
+#'   \item \code{grid}: output of \code{make_hierarchical_levels()} (final grid + nested indices).
+#'   \item \code{Q_final_1d}: final-grid 1D precision used for kriging.
+#'   \item \code{fits}: named list of SmoothEM fits at each stage, keyed by \code{"K_<K_next>"}.
+#'   \item \code{mu_full_history}: list of length \code{m_max+1}; each element is a \code{K_final x d} matrix
+#'         of kriged means on the final grid for that stage (stage 1 corresponds to mclust initialization).
+#'   \item \code{mu_full_list_final}: SmoothEM-style list (length \code{K_final}) of length-\code{d} mean vectors
+#'         corresponding to the last kriged final-grid means.
+#'   \item \code{meta_history}: list of per-stage metadata (stage index, \code{u_obs}, \code{K_obs}, \code{lambda}, etc.).
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' res <- progressive_smoothEM(Loadings, m_max = 6, lambda_final = 500, q = 2,
+#'                            plot_each_stage = TRUE, verbose = TRUE)
+#' plot_mu_history(res$mu_full_history, res$grid$u_final, history_i = 3, res = res,
+#'                 coords = c(1,2,3), add_points = TRUE)
+#' compare_positions_by_history(res, h1 = 2, h2 = 3, type = "mean")
+#' }
+#'
 progressive_smoothEM <- function(
-  data,
-  m_max = 6,
-  lambda_final = 500,
-  q = 2,
-  ridge = 0,
-  nugget_kriging = 0,
-  tol = 1e-3,
-  max_iter = 1000,
-  relative_lambda = TRUE,
-  modelName = "EEI",
-  coords_show = c(1,2,3),
-  plot_each_stage = TRUE,
-  verbose = TRUE
+    data,
+    m_max = 6,
+    lambda_final = 500,
+    q = 2,
+    ridge = 0,
+    nugget_kriging = 0,
+    tol = 1e-3,
+    max_iter = 1000,
+    relative_lambda = TRUE,
+    modelName = "EEI",
+    coords_show = c(1,2,3),
+    plot_each_stage = TRUE,
+    verbose = TRUE
 ) {
   d <- ncol(data)
 
   meta_history <- list()
-  
+
   # 1) hierarchical grids
   grid <- make_hierarchical_levels(m_max = m_max)
   u_final <- grid$u_final
@@ -305,9 +368,9 @@ progressive_smoothEM <- function(
   fits <- list()
   mu_full_history <- list()
   mu_full_history[[1]] <- kr0$Mu_full
-  
+
   meta_history[[1]] <- list(
-    stage = 0,
+    stage = 1,
     u_obs = u_obs0,
     mu_obs_list = mu_list_obs,
     K_obs = length(u_obs0),
@@ -317,7 +380,7 @@ progressive_smoothEM <- function(
   if (plot_each_stage) {
     matplot(u_final, kr0$Mu_full[, coords_show, drop = FALSE], type = "l", lty = 1,
             xlab = "u", ylab = expression(mu[j](u)),
-            main = "Stage 0 (K=2): kriged means on final grid")
+            main = "Stage 1 (K=2): kriged means on final grid")
     for (jj in coords_show) points(u_obs0, c(mu_list_obs[[1]][jj], mu_list_obs[[2]][jj]), pch = 16)
   }
 
@@ -337,7 +400,7 @@ progressive_smoothEM <- function(
     init_params <- make_default_init(data, K = K_next)
     init_params$mu <- mu_full_list[idx_fit]  # nested => directly subset by indices
 
-    # rank deficiency for RW separable prior 
+    # rank deficiency for RW separable prior
     rank_def <- q * d
 
     if (verbose) {
@@ -363,9 +426,9 @@ progressive_smoothEM <- function(
     kr_m <- krige_mu_list_to_full_grid(mu_list_obs, u_fit, u_final, Q_final_1d, nugget = nugget_kriging)
     mu_full_list <- kr_m$mu_full_list
     mu_full_history[[m + 1]] <- kr_m$Mu_full
-    
+
     meta_history[[m + 1]] <- list(
-      stage = m,
+      stage = (m + 1),
       u_obs = u_fit,
       mu_obs_list = mu_list_obs,
       K_obs = K_next,
@@ -391,27 +454,36 @@ progressive_smoothEM <- function(
     meta_history = meta_history
   )
 }
-```
 
-```{r}
-set.seed(1)
-res <- progressive_smoothEM(
-  data = Loadings,
-  m_max = 6,              
-  lambda_final = 500,
-  q = 2,
-  ridge = 0,
-  nugget_kriging = 0,  
-  tol = 1e-3,
-  max_iter = 1000,
-  relative_lambda = TRUE,
-  coords_show = c(1,2,3),
-  plot_each_stage = TRUE,
-  verbose = TRUE
-)
-```
 
-```{r}
+
+#' Plot kriged mean curves from mu_full_history
+#'
+#' @description
+#' Plot selected coordinates (columns) of a kriged mean matrix stored in
+#' \code{mu_full_history[[history_i]]}. Optionally overlay the corresponding observed
+#' design-point means.
+#'
+#' If \code{add_points=TRUE} and \code{u_obs}/\code{mu_obs_list} are not provided,
+#' the function will attempt to read them from \code{res$meta_history[[history_i]]}
+#' (expected fields: \code{u_obs}, \code{mu_obs_list}).
+#'
+#' @param mu_full_history List of matrices; each element is \code{K_final x d}.
+#' @param u_final Numeric vector of length \code{K_final}.
+#' @param history_i Integer; which history element to plot.
+#' @param coords Integer vector of coordinates (columns) to show.
+#' @param main Plot title; if \code{NULL}, a default is constructed (uses \code{res} if available).
+#' @param xlab,ylab Axis labels.
+#' @param lty Line type for curves.
+#' @param add_points Logical; overlay observed means at design points.
+#' @param u_obs Numeric vector of observed design locations (optional).
+#' @param mu_obs_list List of observed means at design points (optional).
+#' @param res Optional progressive-fit result object; used to auto-fill points and build title.
+#' @param pch,cex Point style for overlays.
+#' @param legend_loc,legend_prefix,bty Legend settings.
+#'
+#' @return Invisibly returns a list containing the plotted matrix and any points used.
+#'
 plot_mu_history <- function(mu_full_history,
                             u_final,
                             history_i = 1,
@@ -497,15 +569,46 @@ plot_mu_history <- function(mu_full_history,
   invisible(list(Mu = Mu, coords = coords, history_i = history_i,
                  u_obs = u_obs, mu_obs_list = mu_obs_list))
 }
-```
 
-```{r}
-plot_mu_history(res$mu_full_history, res$grid$u_final,
-                history_i = 3, coords = c(1,2,3),
-                add_points = TRUE, res = res)
-```
 
-```{r}
+#' Plot change in a single coordinate between two histories
+#'
+#' @description
+#' Visualize how one coordinate \code{coord} of the kriged mean curve changes between
+#' \code{history_i} and \code{history_j}. Supports:
+#' \itemize{
+#'   \item \code{"overlay"}: plot both curves on the same axes.
+#'   \item \code{"diff"}: plot the difference curve \eqn{\Delta(u) = \mu_j(u) - \mu_i(u)}.
+#'   \item \code{"both"}: produce both plots (in two plotting pages).
+#' }
+#'
+#' Optionally highlight design points corresponding to each history (from \code{res$meta_history[[h]]$u_obs})
+#' or a user-supplied set \code{highlight_u}.
+#'
+#' The overlay plot can auto-set \code{ylim} based on both curves to make them comparable.
+#'
+#' @param mu_full_history List of matrices; each element is \code{K_final x d}.
+#' @param u_final Numeric vector of length \code{K_final}.
+#' @param coord Integer; which coordinate (column) to plot.
+#' @param history_i,history_j Integers; which two histories to compare.
+#' @param type One of \code{"both"}, \code{"overlay"}, \code{"diff"}.
+#' @param highlight Which design points to highlight: \code{"i"}, \code{"j"}, \code{"both"}, \code{"none"}.
+#' @param highlight_u Optional numeric vector of locations to highlight (overrides \code{res}).
+#' @param res Optional progressive-fit result object (for extracting \code{u_obs} per history).
+#' @param main Plot title; if \code{NULL} uses \code{res$meta_history} when available.
+#' @param xlab,ylab_overlay,ylab_diff Axis labels.
+#' @param lty_i,lty_j,lty_diff Line types.
+#' @param pch_i,pch_j,pch_diff Point styles for highlighted points.
+#' @param cex_pts Point size for highlights.
+#' @param add_zero_line Logical; add horizontal zero line in diff plot.
+#' @param legend_loc,bty Legend settings.
+#' @param ylim_overlay Optional y-limits for overlay plot. If \code{NULL}, computed automatically.
+#' @param pad_ylim Nonnegative numeric; padding fraction used when auto-computing \code{ylim_overlay}.
+#' @param include_highlight_in_ylim Logical; include highlighted points in y-range computation.
+#' @param label_points Logical; label highlighted indices on the plot.
+#'
+#' @return Invisibly returns a list with extracted curves and highlighted indices.
+#'
 plot_coordinate_change <- function(mu_full_history,
                                    u_final,
                                    coord,
@@ -532,7 +635,8 @@ plot_coordinate_change <- function(mu_full_history,
                                    ylim_overlay = NULL,
                                    pad_ylim = 0.04,
                                    include_highlight_in_ylim = TRUE,
-                                   label_points = FALSE) {
+                                   label_points = FALSE)
+{
 
   type <- match.arg(type)
   highlight <- match.arg(highlight)
@@ -598,7 +702,7 @@ plot_coordinate_change <- function(mu_full_history,
   }
 
   # --- overlay plot
-    # --- overlay plot
+  # --- overlay plot
   if (type %in% c("overlay", "both")) {
 
     # ----- compute y-limits for comparability
@@ -676,16 +780,33 @@ plot_coordinate_change <- function(mu_full_history,
                  mu_i = yi, mu_j = yj, delta = dy,
                  idx_hi_i = idx_hi_i, idx_hi_j = idx_hi_j))
 }
-```
 
-```{r}
-plot_coordinate_change(res$mu_full_history, res$grid$u_final,
-                       coord = 5, history_i = 2, history_j = 5,
-                       type = "overlay", highlight = "both", res = res)
-```
 
-```{r}
-get_history_block <- function(res, h, normalize_gamma = TRUE) {
+#' Extract a (u, gamma) block for a given progressive history index
+#'
+#' @description
+#' Helper for progressive-resolution SmoothEM diagnostics.
+#' For a given history index \code{h}, this function returns:
+#' \itemize{
+#'   \item \code{K}: number of design points for that history,
+#'   \item \code{u}: the design-point locations,
+#'   \item \code{gamma}: the responsibility matrix for that history.
+#' }
+#'
+#' History 1 is special: it may be initialized from \code{mclust} (membership \code{z}),
+#' so the function checks \code{res$mclust$z} (then several fallbacks).
+#' For later histories, it expects \code{res$fits[[paste0("K_", K)]]$gamma} unless a
+#' \code{res$fits_history[[h]]$gamma} override is provided.
+#'
+#' @param res Result object containing at least \code{meta_history}.
+#' @param h Integer history index.
+#' @param normalize_gamma Logical; if TRUE, row-normalize \code{gamma} to sum to 1.
+#'
+#' @return A list with \code{h}, \code{K}, \code{u}, \code{gamma}.
+#'
+get_history_block <- function(res,
+                              h,
+                              normalize_gamma = TRUE) {
   if (h < 1 || h > length(res$meta_history)) stop("h out of range.")
 
   mh <- res$meta_history[[h]]
@@ -731,10 +852,37 @@ get_history_block <- function(res, h, normalize_gamma = TRUE) {
 
   list(h = h, K = K, u = u, gamma = gamma)
 }
+
+
+
+#' Compare posterior position summaries across two histories
+#'
+#' @description
+#' Compare how inferred positions change between two progressive histories.
+#' For each observation \eqn{i} with responsibilities \eqn{\gamma_i} on grid \eqn{u}:
+#' \itemize{
+#'   \item \code{type="mean"} uses \eqn{E[u|x_i] = \sum_k \gamma_{ik} u_k}.
+#'   \item \code{type="max"} uses \eqn{\arg\max_k \gamma_{ik}} mapped to \eqn{u_k}.
+#' }
+#'
+#' Produces a scatter plot of history-2 positions vs history-1 positions and overlays:
+#' \itemize{
+#'   \item an identity line (optional) and
+#'   \item a least-squares regression line.
+#' }
+#'
+#' @param res Result object containing \code{meta_history} and fit memberships.
+#' @param h1,h2 Integer history indices.
+#' @param type One of \code{"mean"} or \code{"max"}.
+#' @param add_identity Logical; add y=x reference line.
+#' @param main Optional plot title.
+#'
+#' @return Invisibly returns a list with \code{pos1}, \code{pos2}, and their correlation.
+#'
 compare_positions_by_history <- function(res, h1, h2,
-                                        type = c("mean", "max"),
-                                        add_identity = TRUE,
-                                        main = NULL) {
+                                         type = c("mean", "max"),
+                                         add_identity = TRUE,
+                                         main = NULL) {
   type <- match.arg(type)
 
   b1 <- get_history_block(res, h1, normalize_gamma = TRUE)
@@ -763,76 +911,6 @@ compare_positions_by_history <- function(res, h1, h2,
 
   invisible(list(pos1 = pos1, pos2 = pos2, cor = cor(pos1, pos2)))
 }
-```
 
 
-```{r}
-clust_fit <- mclust::Mclust(Loadings, G = 2)
-membership_previous <- clust_fit$z  # n x 2
-res$mclust <- list(z = membership_previous) 
-res$meta_history[[1]]$K_obs <- ncol(membership_previous)
-res$meta_history[[1]]$u_obs <- c(0, 1)
-res$meta_history[[1]]$stage <- 1
-```
-
-```{r}
-compare_positions_by_history(res, h1 = 1, h2 = 3, type = "mean")
-compare_positions_by_history(res, h1 = 1, h2 = 3, type = "max")
-```
-
-```{r}
-inferred_pos <- res$fits[[length(res$fits)]]$gamma %*% res$grid$u_final
-# inferred_pos <- apply(res$fits$K_65$gamma, 1, which.max)
-final_order_RW2 <- order(inferred_pos)
-plot_structure(Loadings, order = rownames(Loadings)[final_order_RW2])
-```
-
-```{r}
-highlights <- unique(celltype)
-plot_highlight_types(type_vec = celltype,
-                     subset_types = highlights,
-                     order_vec = rownames(Loadings)[final_order_RW2],
-                     other_color = "white"
-                     )
-```
-
-Compare with the result initialized using PCA:
-
-```{r}
-### Smooth-EM with RW2 prior
-set.seed(1234)
-Q_prior_RW2 <- make_random_walk_precision(K= res$grid$K_final, d=ncol(Loadings), lambda = 500, q=2, ridge = 0)
-# Random initialization
-# # Initialize based on the other ordering metric
-PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
-init_params <- make_init(X = Loadings, ordering_vec = -PC1, K = res$grid$K_final)
-result_RW2 <- EM_algorithm(
-  data = Loadings,
-  Q_prior = Q_prior_RW2,
-  init_params = init_params,
-  max_iter = 50,
-  modelName = "EEI",
-  tol = 1e-3,
-  iterate_once = TRUE,
-  eigen_tol = 0,
-  rank_deficiency = 2 * ncol(Loadings),
-  nugget = 0,
-  relative_lambda = TRUE,
-  verbose = TRUE
-)
-```
-
-```{r}
-# hard threshold the gamma matrix to get the clustering
-result_RW2$clustering <- apply(result_RW2$gamma, 1, which.max)
-loadings_order_RW2 <- order(result_RW2$clustering)
-plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
-```
-
-```{r}
-# mean positions
-mean_positions_rw2 <- result_RW2$gamma %*% seq(0, 1, length.out = ncol(result_RW2$gamma))
-loadings_order_RW2 <- order(mean_positions_rw2)
-plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
-```
 
