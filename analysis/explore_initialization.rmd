@@ -17,7 +17,7 @@ library(Rtsne)
 library(umap)
 library(princurve)
 
-set.seed(1)
+set.seed(123)
 source("./code/plot_ordering.R")
 source("./code/linear_EM.R")
 source("./code/general_EM.R")
@@ -65,7 +65,7 @@ result_RW2_PC1 <- EM_algorithm(
   rank_deficiency = q * ncol(Loadings),
   nugget = 0,
   relative_lambda = TRUE,
-  verbose = TRUE
+  verbose = F
 )
 result_RW2_PC1$clustering <- apply(result_RW2_PC1$gamma, 1, which.max)
 result_RW2_PC1$position <- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
@@ -92,7 +92,7 @@ result_RW2_pcurve <- EM_algorithm(
   rank_deficiency = q * ncol(Loadings),
   nugget = 0,
   relative_lambda = TRUE,
-  verbose = TRUE
+  verbose = F
 )
 result_RW2_pcurve$clustering <- apply(result_RW2_pcurve$gamma, 1, which.max)
 result_RW2_pcurve$position <- result_RW2_pcurve$gamma %*% matrix(1:65, ncol=1)
@@ -145,7 +145,7 @@ elbo_values <- data.frame(
 
 elbo_long <- pivot_longer(elbo_values, cols = -Iteration, names_to = "Method", values_to = "ELBO")
 
-ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method)) +
+ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method, linetype = Method)) +
   geom_line(size = 1) +
   labs(title = "ELBO Convergence Comparison", x = "Iteration", y = "ELBO") +
   theme_minimal()
