@@ -1,0 +1,174 @@
+---
+title: "explore_initialization"
+author: "Ziang Zhang"
+date: "2025-12-15"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+library(tibble)
+library(tidyr)
+library(ggplot2)
+library(Rtsne)
+library(umap)
+library(princurve)
+
+set.seed(1)
+source("./code/plot_ordering.R")
+source("./code/linear_EM.R")
+source("./code/general_EM.R")
+source("./code/prior_precision.R")
+source("./code/kriging.R")
+load("./data/loading_order/pancreas_factors.rdata")
+load("./data/loading_order/pancreas.rdata")
+cells <- subsample_cell_types(sample_info$celltype,n = 500)
+Loadings <- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
+celltype <- as.character(sample_info$celltype[cells])
+names(celltype) <- rownames(Loadings)
+batchtype <- as.character(sample_info$tech[cells])
+names(batchtype) <- rownames(Loadings)
+
+# Let's further restrict cells to only contain cells from one type of batch
+Loadings <- Loadings[batchtype == "inDrop3",]
+celltype <- celltype[batchtype == "inDrop3"]
+batchtype <- batchtype[batchtype == "inDrop3"]
+```
+
+```{r}
+set.seed(1234)
+q <- 2
+Q_prior_RW2 <- make_random_walk_precision(K = 65, 
+                                          d=ncol(Loadings), 
+                                          lambda = 300, 
+                                          q = q, 
+                                          ridge = 0)
+```
+
+
+## Initialization with PC
+
+```{r}
+PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+init_params <- make_init(X = Loadings, ordering_vec = PC1, K = 65)
+result_RW2_PC1 <- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EEI",
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)
+result_RW2_PC1$clustering <- apply(result_RW2_PC1$gamma, 1, which.max)
+result_RW2_PC1$position <- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_PC1 <- order(result_RW2_PC1$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_PC1])
+```
+
+## Initialization with PC
+
+```{r}
+PC1 <- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+init_params <- make_init(X = Loadings, ordering_vec = -PC1, K = 65)
+result_RW2_PC1 <- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EEI",
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)
+result_RW2_PC1$clustering <- apply(result_RW2_PC1$gamma, 1, which.max)
+result_RW2_PC1$position <- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_PC1 <- order(result_RW2_PC1$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_PC1])
+```
+
+
+## Initialization with P-curve
+
+```{r}
+pc_fit <- principal_curve(as.matrix(Loadings), maxit = 1000, smoother = "smooth_spline", thresh = 1e-5)
+pc_score <- pc_fit$lambda
+names(pc_score) <- rownames(Loadings)
+init_params <- make_init(X = Loadings, ordering_vec = -pc_score, K = 65)
+result_RW2_pcurve <- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = "EEI",
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)
+result_RW2_pcurve$clustering <- apply(result_RW2_pcurve$gamma, 1, which.max)
+result_RW2_pcurve$position <- result_RW2_pcurve$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_pcurve <- order(result_RW2_pcurve$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_pcurve])
+```
+
+## Initialization with multi-resolution
+
+```{r}
+set.seed(1)
+result_RW2_multi <- progressive_smoothEM(
+  data = Loadings,
+  m_max = 6,              
+  lambda_final = 300,
+  q = 2,
+  ridge = 0,
+  nugget_kriging = 0,  
+  tol = 1e-3,
+  max_iter = 50,
+  relative_lambda = TRUE,
+  coords_show = c(1,2,3),
+  plot_each_stage = F,
+  verbose = F
+)
+
+result_RW2_multi$clustering <- apply(result_RW2_multi$fits$K_65$gamma, 1, which.max)
+result_RW2_multi$position <- result_RW2_multi$fits$K_65$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_multi <- order(result_RW2_multi$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_multi])
+```
+
+
+
+## Compare ELBO
+
+```{r}
+elbo_values <- data.frame(
+  Iteration = 1:length(result_RW2_PC1$elbo),
+  ELBO_PC1 = result_RW2_PC1$elbo,
+  ELBO_PCurve = result_RW2_pcurve$elbo,
+  ELBO_MultiRes = result_RW2_multi$fits$K_65$elbo
+)
+elbo_long <- pivot_longer(elbo_values, cols = -Iteration, names_to = "Method", values_to = "ELBO")
+ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method)) +
+  geom_line(size = 1) +
+  labs(title = "ELBO Convergence Comparison", x = "Iteration", y = "ELBO") +
+  theme_minimal()
+```
+
+
+
+
+
+
