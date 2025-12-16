@@ -509,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb2f2844162271d5948fc299cd43347ac28056154targetblankb2f2844a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree4bd5f9930aab8ccbcba8d32246eb5751ea875fcbtargetblank4bd5f99a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/b2f2844162271d5948fc299cd43347ac28056154" target="_blank">b2f2844</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/4bd5f9930aab8ccbcba8d32246eb5751ea875fcb" target="_blank">4bd5f99</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb2f2844162271d5948fc299cd43347ac28056154targetblankb2f2844a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree4bd5f9930aab8ccbcba8d32246eb5751ea875fcbtargetblank4bd5f99a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -527,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/b2f2844162271d5948fc299cd43347ac28056154" target="_blank">b2f2844</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/4bd5f9930aab8ccbcba8d32246eb5751ea875fcb" target="_blank">4bd5f99</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -622,6 +622,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/4bd5f9930aab8ccbcba8d32246eb5751ea875fcb/analysis/explore_initialization.rmd" target="_blank">4bd5f99</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_initialization.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/f186ca025ff985364a391db24ed04e6e8ba513e7/docs/explore_initialization.html" target="_blank">f186ca0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -750,7 +784,8 @@ Attaching package: &#39;mclust&#39;</code></pre>
 <pre class="r"><code>load(&quot;./data/loading_order/pancreas_factors.rdata&quot;)
 load(&quot;./data/loading_order/pancreas.rdata&quot;)
 cells &lt;- subsample_cell_types(sample_info$celltype,n = 500)
-Loadings &lt;- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
+# Loadings &lt;- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
+Loadings &lt;- fl_snmf_ldf$L[cells,]
 celltype &lt;- as.character(sample_info$celltype[cells])
 names(celltype) &lt;- rownames(Loadings)
 batchtype &lt;- as.character(sample_info$tech[cells])
@@ -812,6 +847,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/f186ca025ff985364a391db24ed04e6e8ba513e7/docs/figure/explore_initialization.rmd/unnamed-chunk-3-1.png" target="_blank">f186ca0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-3-1.png" target="_blank">70fc6d2</a>
@@ -887,6 +933,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/f186ca025ff985364a391db24ed04e6e8ba513e7/docs/figure/explore_initialization.rmd/unnamed-chunk-4-1.png" target="_blank">f186ca0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-4-1.png" target="_blank">70fc6d2</a>
 </td>
 <td>
@@ -959,6 +1016,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/f186ca025ff985364a391db24ed04e6e8ba513e7/docs/figure/explore_initialization.rmd/unnamed-chunk-5-1.png" target="_blank">f186ca0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-5-1.png" target="_blank">70fc6d2</a>
 </td>
 <td>
@@ -1010,8 +1078,6 @@ ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method, linetype = Method
 This warning is displayed once every 8 hours.
 Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 generated.</code></pre>
-<pre><code>Warning: Removed 40 rows containing missing values or values outside the scale range
-(`geom_line()`).</code></pre>
 <p><img src="figure/explore_initialization.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -1035,6 +1101,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/f186ca025ff985364a391db24ed04e6e8ba513e7/docs/figure/explore_initialization.rmd/unnamed-chunk-6-1.png" target="_blank">f186ca0</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-6-1.png" target="_blank">70fc6d2</a>
