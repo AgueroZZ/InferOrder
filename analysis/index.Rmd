@@ -35,7 +35,7 @@ The inferred ordering could be used
 
 + [Inferring latent ordering on pancrea dataset](explore_pancrea.html)
 
-
++ [Exploring different ways of initializing SmoothEM](explore_initialization.html)
 
 
 
