@@ -123,9 +123,14 @@ loadings_order_RW2_pcurve <- order(result_RW2_pcurve$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_pcurve])
 ```
 
-## Initialization with multi-resolution
+## Initialization with multi-scale
 
-```{r}
+Finally, we will consider initializing the SmoothEM with the multi-scale progressive smoothing approach.
+
+We start with a small choice of $K$ (e.g., K=2), and gradually increase $K$ to the desired value (e.g., K=65) by equally splitting the intervals between two grid-locations.
+The mean values from the previous stage will be kriged to get the initial mean values for the next stage.
+
+```{r fig.width=6, fig.height=4}
 result_RW2_multi <- progressive_smoothEM(
   data = Loadings,
   m_max = 6,              
@@ -150,7 +155,7 @@ plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_multi])
 
 ## Compare ELBO
 
-```{r}
+```{r fig.width=6, fig.height=4}
 # they might have different lengths, so we will just plot them all
 max_length <- max(length(result_RW2_PC1$elbo), length(result_RW2_pcurve$elbo), length(result_RW2_multi$fits$K_65$elbo))
 elbo_PC1 <- c(result_RW2_PC1$elbo, rep(NA, max_length - length(result_RW2_PC1$elbo)))
