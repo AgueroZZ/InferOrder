@@ -509,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree740623b3103a160b1e69d76ac0ea0cf69e021791targetblank740623ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb2f2844162271d5948fc299cd43347ac28056154targetblankb2f2844a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/740623b3103a160b1e69d76ac0ea0cf69e021791" target="_blank">740623b</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/b2f2844162271d5948fc299cd43347ac28056154" target="_blank">b2f2844</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree740623b3103a160b1e69d76ac0ea0cf69e021791targetblank740623ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertreeb2f2844162271d5948fc299cd43347ac28056154targetblankb2f2844a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -527,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/740623b3103a160b1e69d76ac0ea0cf69e021791" target="_blank">740623b</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/b2f2844162271d5948fc299cd43347ac28056154" target="_blank">b2f2844</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,7 +547,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
-    Ignored:    analysis/figure/
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
 
@@ -628,6 +627,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/b2f2844162271d5948fc299cd43347ac28056154/analysis/explore_initialization.rmd" target="_blank">b2f2844</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_initialization.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/explore_initialization.html" target="_blank">70fc6d2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/740623b3103a160b1e69d76ac0ea0cf69e021791/analysis/explore_initialization.rmd" target="_blank">740623b</a>
 </td>
 <td>
@@ -690,7 +723,7 @@ library(Rtsne)
 library(umap)
 library(princurve)
 
-set.seed(1)
+set.seed(123)
 source(&quot;./code/plot_ordering.R&quot;)
 source(&quot;./code/linear_EM.R&quot;)
 source(&quot;./code/general_EM.R&quot;)</code></pre>
@@ -750,106 +783,9 @@ result_RW2_PC1 &lt;- EM_algorithm(
   rank_deficiency = q * ncol(Loadings),
   nugget = 0,
   relative_lambda = TRUE,
-  verbose = TRUE
-)</code></pre>
-<pre><code>Iteration   1: penLogLik = 13465.043557, ELBO = 12954.390438
-Iteration   2: penLogLik = 14019.040766, ELBO = 13816.740704
-Iteration   3: penLogLik = 14368.690745, ELBO = 14214.751124
-Iteration   4: penLogLik = 14661.625136, ELBO = 14527.276540
-Iteration   5: penLogLik = 14956.399841, ELBO = 14818.388995
-Iteration   6: penLogLik = 15253.321292, ELBO = 15142.407334
-Iteration   7: penLogLik = 15380.284779, ELBO = 15340.796480
-Iteration   8: penLogLik = 15430.948162, ELBO = 15413.232785
-Iteration   9: penLogLik = 15454.044476, ELBO = 15444.583904
-Iteration  10: penLogLik = 15467.996532, ELBO = 15462.208613
-Iteration  11: penLogLik = 15477.600774, ELBO = 15473.156486
-Iteration  12: penLogLik = 15485.876388, ELBO = 15481.975649
-Iteration  13: penLogLik = 15492.356923, ELBO = 15489.489195
-Iteration  14: penLogLik = 15496.656758, ELBO = 15494.825120
-Iteration  15: penLogLik = 15499.404107, ELBO = 15498.216076
-Iteration  16: penLogLik = 15501.313389, ELBO = 15500.453210
-Iteration  17: penLogLik = 15502.791428, ELBO = 15502.104464
-Iteration  18: penLogLik = 15504.013666, ELBO = 15503.436190
-Iteration  19: penLogLik = 15505.061022, ELBO = 15504.560099
-Iteration  20: penLogLik = 15505.991608, ELBO = 15505.539441
-Iteration  21: penLogLik = 15506.865383, ELBO = 15506.431264
-Iteration  22: penLogLik = 15507.753762, ELBO = 15507.300006
-Iteration  23: penLogLik = 15508.747295, ELBO = 15508.225757
-Iteration  24: penLogLik = 15509.952812, ELBO = 15509.309881
-Iteration  25: penLogLik = 15511.452622, ELBO = 15510.657535
-Iteration  26: penLogLik = 15513.233656, ELBO = 15512.312376
-Iteration  27: penLogLik = 15515.196543, ELBO = 15514.204150
-Iteration  28: penLogLik = 15517.289180, ELBO = 15516.233766
-Iteration  29: penLogLik = 15519.599056, ELBO = 15518.417840
-Iteration  30: penLogLik = 15522.301243, ELBO = 15520.905481
-Iteration  31: penLogLik = 15525.531811, ELBO = 15523.872847
-Iteration  32: penLogLik = 15529.251278, ELBO = 15527.385517
-Iteration  33: penLogLik = 15533.146889, ELBO = 15531.267446
-Iteration  34: penLogLik = 15536.712438, ELBO = 15535.070587
-Iteration  35: penLogLik = 15539.563615, ELBO = 15538.295969
-Iteration  36: penLogLik = 15541.700351, ELBO = 15540.744415
-Iteration  37: penLogLik = 15543.431313, ELBO = 15542.616170
-Iteration  38: penLogLik = 15544.961997, ELBO = 15544.242841
-Iteration  39: penLogLik = 15546.233008, ELBO = 15545.627286
-Iteration  40: penLogLik = 15547.410158, ELBO = 15546.819105
-Iteration  41: penLogLik = 15548.607830, ELBO = 15547.999068
-Iteration  42: penLogLik = 15549.845138, ELBO = 15549.217822
-Iteration  43: penLogLik = 15551.108818, ELBO = 15550.473091
-Iteration  44: penLogLik = 15552.374517, ELBO = 15551.743356
-Iteration  45: penLogLik = 15553.618851, ELBO = 15553.003657
-Iteration  46: penLogLik = 15554.820876, ELBO = 15554.232196
-Iteration  47: penLogLik = 15555.957980, ELBO = 15555.407035
-Iteration  48: penLogLik = 15557.009816, ELBO = 15556.504607
-Iteration  49: penLogLik = 15557.968962, ELBO = 15557.509920
-Iteration  50: penLogLik = 15558.840122, ELBO = 15558.423297
-Iteration  51: penLogLik = 15559.630474, ELBO = 15559.252349
-Iteration  52: penLogLik = 15560.344845, ELBO = 15560.003493
-Iteration  53: penLogLik = 15560.985935, ELBO = 15560.680337
-Iteration  54: penLogLik = 15561.555687, ELBO = 15561.284975
-Iteration  55: penLogLik = 15562.056378, ELBO = 15561.819356
-Iteration  56: penLogLik = 15562.491234, ELBO = 15562.286156
-Iteration  57: penLogLik = 15562.864613, ELBO = 15562.689167
-Iteration  58: penLogLik = 15563.181855, ELBO = 15563.033277
-Iteration  59: penLogLik = 15563.448944, ELBO = 15563.324209
-Iteration  60: penLogLik = 15563.672113, ELBO = 15563.568131
-Iteration  61: penLogLik = 15563.857487, ELBO = 15563.771270
-Iteration  62: penLogLik = 15564.010813, ELBO = 15563.939593
-Iteration  63: penLogLik = 15564.137284, ELBO = 15564.078584
-Iteration  64: penLogLik = 15564.241464, ELBO = 15564.193127
-Iteration  65: penLogLik = 15564.327269, ELBO = 15564.287456
-Iteration  66: penLogLik = 15564.398003, ELBO = 15564.365169
-Iteration  67: penLogLik = 15564.456415, ELBO = 15564.429280
-Iteration  68: penLogLik = 15564.504768, ELBO = 15564.482281
-Iteration  69: penLogLik = 15564.544912, ELBO = 15564.526217
-Iteration  70: penLogLik = 15564.578351, ELBO = 15564.562753
-Iteration  71: penLogLik = 15564.606306, ELBO = 15564.593240
-Iteration  72: penLogLik = 15564.629761, ELBO = 15564.618774
-Iteration  73: penLogLik = 15564.649516, ELBO = 15564.640238
-Iteration  74: penLogLik = 15564.666216, ELBO = 15564.658351
-Iteration  75: penLogLik = 15564.680385, ELBO = 15564.673691
-Iteration  76: penLogLik = 15564.692449, ELBO = 15564.686729
-Iteration  77: penLogLik = 15564.702754, ELBO = 15564.697850
-Iteration  78: penLogLik = 15564.711585, ELBO = 15564.707364
-Iteration  79: penLogLik = 15564.719175, ELBO = 15564.715531
-Iteration  80: penLogLik = 15564.725715, ELBO = 15564.722559
-Iteration  81: penLogLik = 15564.731365, ELBO = 15564.728624
-Iteration  82: penLogLik = 15564.736258, ELBO = 15564.733870
-Iteration  83: penLogLik = 15564.740503, ELBO = 15564.738419
-Iteration  84: penLogLik = 15564.744194, ELBO = 15564.742370
-Iteration  85: penLogLik = 15564.747409, ELBO = 15564.745809
-Iteration  86: penLogLik = 15564.750213, ELBO = 15564.748806
-Iteration  87: penLogLik = 15564.752663, ELBO = 15564.751424
-Iteration  88: penLogLik = 15564.754806, ELBO = 15564.753712
-Iteration  89: penLogLik = 15564.756683, ELBO = 15564.755716
-Iteration  90: penLogLik = 15564.758329, ELBO = 15564.757472
-Iteration  91: penLogLik = 15564.759774, ELBO = 15564.759014
-Iteration  92: penLogLik = 15564.761043, ELBO = 15564.760367
-Iteration  93: penLogLik = 15564.762159, ELBO = 15564.761558
-Iteration  94: penLogLik = 15564.763141, ELBO = 15564.762605
-Iteration  95: penLogLik = 15564.764006, ELBO = 15564.763528
-Converged at iteration 95 with ELBO 15564.763528
-Final pLoglik: 15564.764006</code></pre>
-<pre class="r"><code>result_RW2_PC1$clustering &lt;- apply(result_RW2_PC1$gamma, 1, which.max)
+  verbose = F
+)
+result_RW2_PC1$clustering &lt;- apply(result_RW2_PC1$gamma, 1, which.max)
 result_RW2_PC1$position &lt;- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
 loadings_order_RW2_PC1 &lt;- order(result_RW2_PC1$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_PC1])</code></pre>
@@ -876,6 +812,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-3-1.png" target="_blank">70fc6d2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/3fe6ab7a01625f408bf655391c26aef453ffade9/docs/figure/explore_initialization.rmd/unnamed-chunk-3-1.png" target="_blank">3fe6ab7</a>
@@ -909,177 +856,9 @@ result_RW2_pcurve &lt;- EM_algorithm(
   rank_deficiency = q * ncol(Loadings),
   nugget = 0,
   relative_lambda = TRUE,
-  verbose = TRUE
-)</code></pre>
-<pre><code>Iteration   1: penLogLik = 15621.810777, ELBO = 15218.102088
-Iteration   2: penLogLik = 15849.022423, ELBO = 15766.394906
-Iteration   3: penLogLik = 15969.446788, ELBO = 15921.545305
-Iteration   4: penLogLik = 16042.531299, ELBO = 16010.657766
-Iteration   5: penLogLik = 16150.106826, ELBO = 16087.690155
-Iteration   6: penLogLik = 16241.349133, ELBO = 16217.356059
-Iteration   7: penLogLik = 16271.577213, ELBO = 16258.812565
-Iteration   8: penLogLik = 16291.702308, ELBO = 16282.958910
-Iteration   9: penLogLik = 16306.320414, ELBO = 16299.617151
-Iteration  10: penLogLik = 16318.317874, ELBO = 16312.761184
-Iteration  11: penLogLik = 16327.852107, ELBO = 16323.533093
-Iteration  12: penLogLik = 16335.109758, ELBO = 16331.807518
-Iteration  13: penLogLik = 16340.959230, ELBO = 16338.206014
-Iteration  14: penLogLik = 16346.390139, ELBO = 16343.720269
-Iteration  15: penLogLik = 16352.095116, ELBO = 16349.244812
-Iteration  16: penLogLik = 16358.073581, ELBO = 16355.131368
-Iteration  17: penLogLik = 16364.059409, ELBO = 16361.076304
-Iteration  18: penLogLik = 16370.545970, ELBO = 16367.131866
-Iteration  19: penLogLik = 16380.861473, ELBO = 16374.846231
-Iteration  20: penLogLik = 16397.358547, ELBO = 16389.298855
-Iteration  21: penLogLik = 16412.279231, ELBO = 16404.985647
-Iteration  22: penLogLik = 16427.273930, ELBO = 16420.155067
-Iteration  23: penLogLik = 16442.888854, ELBO = 16434.946978
-Iteration  24: penLogLik = 16457.862356, ELBO = 16451.710863
-Iteration  25: penLogLik = 16467.450141, ELBO = 16463.225344
-Iteration  26: penLogLik = 16476.105230, ELBO = 16471.824779
-Iteration  27: penLogLik = 16487.288925, ELBO = 16481.347956
-Iteration  28: penLogLik = 16504.940296, ELBO = 16495.699236
-Iteration  29: penLogLik = 16524.577732, ELBO = 16516.590543
-Iteration  30: penLogLik = 16534.175038, ELBO = 16530.993877
-Iteration  31: penLogLik = 16538.046514, ELBO = 16536.447436
-Iteration  32: penLogLik = 16540.569359, ELBO = 16539.450273
-Iteration  33: penLogLik = 16542.393593, ELBO = 16541.587267
-Iteration  34: penLogLik = 16543.698072, ELBO = 16543.126397
-Iteration  35: penLogLik = 16544.622007, ELBO = 16544.215729
-Iteration  36: penLogLik = 16545.289314, ELBO = 16544.991308
-Iteration  37: penLogLik = 16545.790754, ELBO = 16545.562551
-Iteration  38: penLogLik = 16546.183131, ELBO = 16546.001635
-Iteration  39: penLogLik = 16546.502439, ELBO = 16546.352030
-Iteration  40: penLogLik = 16546.784152, ELBO = 16546.645441
-Iteration  41: penLogLik = 16547.099205, ELBO = 16546.927379
-Iteration  42: penLogLik = 16547.615544, ELBO = 16547.308698
-Iteration  43: penLogLik = 16548.544876, ELBO = 16548.019101
-Iteration  44: penLogLik = 16549.708178, ELBO = 16549.147712
-Iteration  45: penLogLik = 16550.556975, ELBO = 16550.207122
-Iteration  46: penLogLik = 16551.042985, ELBO = 16550.836749
-Iteration  47: penLogLik = 16551.353090, ELBO = 16551.216650
-Iteration  48: penLogLik = 16551.567377, ELBO = 16551.471170
-Iteration  49: penLogLik = 16551.724597, ELBO = 16551.652518
-Iteration  50: penLogLik = 16551.846870, ELBO = 16551.789589
-Iteration  51: penLogLik = 16551.947238, ELBO = 16551.899271
-Iteration  52: penLogLik = 16552.033474, ELBO = 16551.991570
-Iteration  53: penLogLik = 16552.110259, ELBO = 16552.072464
-Iteration  54: penLogLik = 16552.180451, ELBO = 16552.145572
-Iteration  55: penLogLik = 16552.245837, ELBO = 16552.213124
-Iteration  56: penLogLik = 16552.307561, ELBO = 16552.276530
-Iteration  57: penLogLik = 16552.366381, ELBO = 16552.336708
-Iteration  58: penLogLik = 16552.422815, ELBO = 16552.394276
-Iteration  59: penLogLik = 16552.477233, ELBO = 16552.449665
-Iteration  60: penLogLik = 16552.529903, ELBO = 16552.503187
-Iteration  61: penLogLik = 16552.581027, ELBO = 16552.555072
-Iteration  62: penLogLik = 16552.630757, ELBO = 16552.605493
-Iteration  63: penLogLik = 16552.679209, ELBO = 16552.654583
-Iteration  64: penLogLik = 16552.726470, ELBO = 16552.702443
-Iteration  65: penLogLik = 16552.772601, ELBO = 16552.749143
-Iteration  66: penLogLik = 16552.817643, ELBO = 16552.794735
-Iteration  67: penLogLik = 16552.861616, ELBO = 16552.839250
-Iteration  68: penLogLik = 16552.904531, ELBO = 16552.882701
-Iteration  69: penLogLik = 16552.946382, ELBO = 16552.925090
-Iteration  70: penLogLik = 16552.987158, ELBO = 16552.966410
-Iteration  71: penLogLik = 16553.026842, ELBO = 16553.006646
-Iteration  72: penLogLik = 16553.065415, ELBO = 16553.045780
-Iteration  73: penLogLik = 16553.102859, ELBO = 16553.083792
-Iteration  74: penLogLik = 16553.139157, ELBO = 16553.120667
-Iteration  75: penLogLik = 16553.174299, ELBO = 16553.156391
-Iteration  76: penLogLik = 16553.208278, ELBO = 16553.190954
-Iteration  77: penLogLik = 16553.241093, ELBO = 16553.224354
-Iteration  78: penLogLik = 16553.272748, ELBO = 16553.256592
-Iteration  79: penLogLik = 16553.303254, ELBO = 16553.287676
-Iteration  80: penLogLik = 16553.332624, ELBO = 16553.317618
-Iteration  81: penLogLik = 16553.360879, ELBO = 16553.346435
-Iteration  82: penLogLik = 16553.388039, ELBO = 16553.374147
-Iteration  83: penLogLik = 16553.414131, ELBO = 16553.400779
-Iteration  84: penLogLik = 16553.439182, ELBO = 16553.426357
-Iteration  85: penLogLik = 16553.463221, ELBO = 16553.450909
-Iteration  86: penLogLik = 16553.486279, ELBO = 16553.474465
-Iteration  87: penLogLik = 16553.508387, ELBO = 16553.497056
-Iteration  88: penLogLik = 16553.529576, ELBO = 16553.518712
-Iteration  89: penLogLik = 16553.549878, ELBO = 16553.539467
-Iteration  90: penLogLik = 16553.569326, ELBO = 16553.559351
-Iteration  91: penLogLik = 16553.587951, ELBO = 16553.578396
-Iteration  92: penLogLik = 16553.605784, ELBO = 16553.596635
-Iteration  93: penLogLik = 16553.622856, ELBO = 16553.614096
-Iteration  94: penLogLik = 16553.639196, ELBO = 16553.630812
-Iteration  95: penLogLik = 16553.654835, ELBO = 16553.646810
-Iteration  96: penLogLik = 16553.669800, ELBO = 16553.662121
-Iteration  97: penLogLik = 16553.684120, ELBO = 16553.676773
-Iteration  98: penLogLik = 16553.697821, ELBO = 16553.690791
-Iteration  99: penLogLik = 16553.710929, ELBO = 16553.704204
-Iteration 100: penLogLik = 16553.723470, ELBO = 16553.717037
-Iteration 101: penLogLik = 16553.735467, ELBO = 16553.729314
-Iteration 102: penLogLik = 16553.746944, ELBO = 16553.741059
-Iteration 103: penLogLik = 16553.757924, ELBO = 16553.752296
-Iteration 104: penLogLik = 16553.768429, ELBO = 16553.763045
-Iteration 105: penLogLik = 16553.778479, ELBO = 16553.773330
-Iteration 106: penLogLik = 16553.788094, ELBO = 16553.783169
-Iteration 107: penLogLik = 16553.797294, ELBO = 16553.792583
-Iteration 108: penLogLik = 16553.806097, ELBO = 16553.801591
-Iteration 109: penLogLik = 16553.814521, ELBO = 16553.810210
-Iteration 110: penLogLik = 16553.822582, ELBO = 16553.818458
-Iteration 111: penLogLik = 16553.830298, ELBO = 16553.826352
-Iteration 112: penLogLik = 16553.837683, ELBO = 16553.833908
-Iteration 113: penLogLik = 16553.844753, ELBO = 16553.841140
-Iteration 114: penLogLik = 16553.851521, ELBO = 16553.848064
-Iteration 115: penLogLik = 16553.858002, ELBO = 16553.854693
-Iteration 116: penLogLik = 16553.864208, ELBO = 16553.861041
-Iteration 117: penLogLik = 16553.870152, ELBO = 16553.867120
-Iteration 118: penLogLik = 16553.875846, ELBO = 16553.872943
-Iteration 119: penLogLik = 16553.881301, ELBO = 16553.878521
-Iteration 120: penLogLik = 16553.886528, ELBO = 16553.883865
-Iteration 121: penLogLik = 16553.891538, ELBO = 16553.888987
-Iteration 122: penLogLik = 16553.896339, ELBO = 16553.893895
-Iteration 123: penLogLik = 16553.900943, ELBO = 16553.898601
-Iteration 124: penLogLik = 16553.905357, ELBO = 16553.903113
-Iteration 125: penLogLik = 16553.909591, ELBO = 16553.907439
-Iteration 126: penLogLik = 16553.913652, ELBO = 16553.911589
-Iteration 127: penLogLik = 16553.917549, ELBO = 16553.915570
-Iteration 128: penLogLik = 16553.921288, ELBO = 16553.919391
-Iteration 129: penLogLik = 16553.924878, ELBO = 16553.923057
-Iteration 130: penLogLik = 16553.928324, ELBO = 16553.926577
-Iteration 131: penLogLik = 16553.931634, ELBO = 16553.929957
-Iteration 132: penLogLik = 16553.934813, ELBO = 16553.933203
-Iteration 133: penLogLik = 16553.937868, ELBO = 16553.936322
-Iteration 134: penLogLik = 16553.940804, ELBO = 16553.939319
-Iteration 135: penLogLik = 16553.943626, ELBO = 16553.942199
-Iteration 136: penLogLik = 16553.946339, ELBO = 16553.944968
-Iteration 137: penLogLik = 16553.948949, ELBO = 16553.947631
-Iteration 138: penLogLik = 16553.951460, ELBO = 16553.950192
-Iteration 139: penLogLik = 16553.953876, ELBO = 16553.952657
-Iteration 140: penLogLik = 16553.956202, ELBO = 16553.955029
-Iteration 141: penLogLik = 16553.958442, ELBO = 16553.957313
-Iteration 142: penLogLik = 16553.960599, ELBO = 16553.959513
-Iteration 143: penLogLik = 16553.962678, ELBO = 16553.961631
-Iteration 144: penLogLik = 16553.964681, ELBO = 16553.963673
-Iteration 145: penLogLik = 16553.966611, ELBO = 16553.965640
-Iteration 146: penLogLik = 16553.968474, ELBO = 16553.967537
-Iteration 147: penLogLik = 16553.970270, ELBO = 16553.969367
-Iteration 148: penLogLik = 16553.972003, ELBO = 16553.971133
-Iteration 149: penLogLik = 16553.973676, ELBO = 16553.972836
-Iteration 150: penLogLik = 16553.975291, ELBO = 16553.974481
-Iteration 151: penLogLik = 16553.976852, ELBO = 16553.976069
-Iteration 152: penLogLik = 16553.978359, ELBO = 16553.977603
-Iteration 153: penLogLik = 16553.979816, ELBO = 16553.979086
-Iteration 154: penLogLik = 16553.981224, ELBO = 16553.980519
-Iteration 155: penLogLik = 16553.982587, ELBO = 16553.981905
-Iteration 156: penLogLik = 16553.983905, ELBO = 16553.983245
-Iteration 157: penLogLik = 16553.985180, ELBO = 16553.984542
-Iteration 158: penLogLik = 16553.986415, ELBO = 16553.985798
-Iteration 159: penLogLik = 16553.987611, ELBO = 16553.987013
-Iteration 160: penLogLik = 16553.988769, ELBO = 16553.988190
-Iteration 161: penLogLik = 16553.989892, ELBO = 16553.989331
-Iteration 162: penLogLik = 16553.990980, ELBO = 16553.990437
-Iteration 163: penLogLik = 16553.992035, ELBO = 16553.991509
-Iteration 164: penLogLik = 16553.993059, ELBO = 16553.992548
-Iteration 165: penLogLik = 16553.994052, ELBO = 16553.993557
-Iteration 166: penLogLik = 16553.995016, ELBO = 16553.994536
-Converged at iteration 166 with ELBO 16553.994536
-Final pLoglik: 16553.995016</code></pre>
-<pre class="r"><code>result_RW2_pcurve$clustering &lt;- apply(result_RW2_pcurve$gamma, 1, which.max)
+  verbose = F
+)
+result_RW2_pcurve$clustering &lt;- apply(result_RW2_pcurve$gamma, 1, which.max)
 result_RW2_pcurve$position &lt;- result_RW2_pcurve$gamma %*% matrix(1:65, ncol=1)
 loadings_order_RW2_pcurve &lt;- order(result_RW2_pcurve$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_pcurve])</code></pre>
@@ -1106,6 +885,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-4-1.png" target="_blank">70fc6d2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/3fe6ab7a01625f408bf655391c26aef453ffade9/docs/figure/explore_initialization.rmd/unnamed-chunk-4-1.png" target="_blank">3fe6ab7</a>
@@ -1169,6 +959,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-5-1.png" target="_blank">70fc6d2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/3fe6ab7a01625f408bf655391c26aef453ffade9/docs/figure/explore_initialization.rmd/unnamed-chunk-5-1.png" target="_blank">3fe6ab7</a>
 </td>
 <td>
@@ -1200,7 +1001,7 @@ elbo_values &lt;- data.frame(
 
 elbo_long &lt;- pivot_longer(elbo_values, cols = -Iteration, names_to = &quot;Method&quot;, values_to = &quot;ELBO&quot;)
 
-ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method)) +
+ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method, linetype = Method)) +
   geom_line(size = 1) +
   labs(title = &quot;ELBO Convergence Comparison&quot;, x = &quot;Iteration&quot;, y = &quot;ELBO&quot;) +
   theme_minimal()</code></pre>
@@ -1209,7 +1010,7 @@ ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method)) +
 This warning is displayed once every 8 hours.
 Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 generated.</code></pre>
-<pre><code>Warning: Removed 139 rows containing missing values or values outside the scale range
+<pre><code>Warning: Removed 40 rows containing missing values or values outside the scale range
 (`geom_line()`).</code></pre>
 <p><img src="figure/explore_initialization.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1234,6 +1035,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/70fc6d22a9d019309b2349a49afe62a89e9c478e/docs/figure/explore_initialization.rmd/unnamed-chunk-6-1.png" target="_blank">70fc6d2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/InferOrder/blob/3fe6ab7a01625f408bf655391c26aef453ffade9/docs/figure/explore_initialization.rmd/unnamed-chunk-6-1.png" target="_blank">3fe6ab7</a>
