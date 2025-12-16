@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2025-12-15" />
+
+<title>explore_initialization</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Inferring latent ordering</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">explore_initialization</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2025-12-15</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-12-15
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>InferOrder/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250707code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250707)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250707code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250707)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree2062fecf2aa91988d6b5d5e1ef13f8b26fe6df63targetblank2062feca">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/2062fecf2aa91988d6b5d5e1ef13f8b26fe6df63" target="_blank">2062fec</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree2062fecf2aa91988d6b5d5e1ef13f8b26fe6df63targetblank2062feca"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/InferOrder/tree/2062fecf2aa91988d6b5d5e1ef13f8b26fe6df63" target="_blank">2062fec</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  analysis/explore_SmoothEM_Mixture_backward.rmd
+    Untracked:  analysis/presentation_figures.rmd
+    Untracked:  code/general_EM_perCoordinate_obs.R
+    Untracked:  code/kriging.R
+    Untracked:  code/pivoting_coordinate.R
+    Untracked:  code/two_ordering_EM_backward.R
+    Untracked:  code/two_ordering_EM_greedy_obs.R
+    Untracked:  debug.R
+    Untracked:  j.Rmd
+    Untracked:  j.html
+    Untracked:  pcurve_iterations.gif
+    Untracked:  pcurve_iterations_with_projection.gif
+    Untracked:  various figures/
+
+Unstaged changes:
+    Modified:   analysis/explore_SmoothEM_Mixture_greedy.rmd
+    Modified:   analysis/explore_trajectory.rmd
+    Modified:   analysis/kriging.rmd
+    Modified:   code/general_EM.R
+    Modified:   code/general_EM_obs.R
+    Modified:   code/general_EM_perCoordinate.R
+    Modified:   code/two_ordering_EM_greedy.R
+    Modified:   code/two_ordering_smoothEM.R
+    Deleted:    warmstart.png
+    Deleted:    without_warmstart.png
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/explore_initialization.rmd</code>) and HTML
+(<code>docs/explore_initialization.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/2062fecf2aa91988d6b5d5e1ef13f8b26fe6df63/analysis/explore_initialization.rmd" target="_blank">2062fec</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-15
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_initialization.rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<pre class="r"><code>library(tibble)
+library(tidyr)
+library(ggplot2)
+library(Rtsne)
+library(umap)
+library(princurve)
+
+set.seed(1)
+source(&quot;./code/plot_ordering.R&quot;)
+source(&quot;./code/linear_EM.R&quot;)
+source(&quot;./code/general_EM.R&quot;)</code></pre>
+<pre><code>
+Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:tidyr&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre class="r"><code>source(&quot;./code/prior_precision.R&quot;)
+source(&quot;./code/kriging.R&quot;)</code></pre>
+<pre><code>Package &#39;mclust&#39; version 6.1.2
+Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
+<pre><code>
+Attaching package: &#39;mclust&#39;</code></pre>
+<pre><code>The following object is masked _by_ &#39;.GlobalEnv&#39;:
+
+    logsumexp</code></pre>
+<pre><code>The following object is masked from &#39;package:mvtnorm&#39;:
+
+    dmvnorm</code></pre>
+<pre><code>The following object is masked from &#39;package:matrixStats&#39;:
+
+    count</code></pre>
+<pre class="r"><code>load(&quot;./data/loading_order/pancreas_factors.rdata&quot;)
+load(&quot;./data/loading_order/pancreas.rdata&quot;)
+cells &lt;- subsample_cell_types(sample_info$celltype,n = 500)
+Loadings &lt;- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
+celltype &lt;- as.character(sample_info$celltype[cells])
+names(celltype) &lt;- rownames(Loadings)
+batchtype &lt;- as.character(sample_info$tech[cells])
+names(batchtype) &lt;- rownames(Loadings)
+
+# Let&#39;s further restrict cells to only contain cells from one type of batch
+Loadings &lt;- Loadings[batchtype == &quot;inDrop3&quot;,]
+celltype &lt;- celltype[batchtype == &quot;inDrop3&quot;]
+batchtype &lt;- batchtype[batchtype == &quot;inDrop3&quot;]</code></pre>
+<pre class="r"><code>set.seed(1234)
+q &lt;- 2
+Q_prior_RW2 &lt;- make_random_walk_precision(K = 65, 
+                                          d=ncol(Loadings), 
+                                          lambda = 300, 
+                                          q = q, 
+                                          ridge = 0)</code></pre>
+</div>
+<div id="initialization-with-pc" class="section level2">
+<h2>Initialization with PC</h2>
+<pre class="r"><code>PC1 &lt;- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+init_params &lt;- make_init(X = Loadings, ordering_vec = PC1, K = 65)
+result_RW2_PC1 &lt;- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration   1: penLogLik = 13354.795478, ELBO = 12883.560665
+Iteration   2: penLogLik = 13793.232502, ELBO = 13649.604553
+Iteration   3: penLogLik = 14005.392668, ELBO = 13919.980273
+Iteration   4: penLogLik = 14180.739201, ELBO = 14096.597776
+Iteration   5: penLogLik = 14333.756168, ELBO = 14271.362666
+Iteration   6: penLogLik = 14439.662776, ELBO = 14391.425303
+Iteration   7: penLogLik = 14550.144527, ELBO = 14500.362571
+Iteration   8: penLogLik = 14669.465124, ELBO = 14605.338927
+Iteration   9: penLogLik = 14882.687264, ELBO = 14771.364441
+Iteration  10: penLogLik = 15097.708739, ELBO = 15020.947010
+Iteration  11: penLogLik = 15176.283219, ELBO = 15156.533337
+Iteration  12: penLogLik = 15191.398294, ELBO = 15185.256328
+Iteration  13: penLogLik = 15201.879768, ELBO = 15196.836989
+Iteration  14: penLogLik = 15211.338562, ELBO = 15207.231590
+Iteration  15: penLogLik = 15216.289280, ELBO = 15214.377301
+Iteration  16: penLogLik = 15218.860770, ELBO = 15217.789355
+Iteration  17: penLogLik = 15220.615180, ELBO = 15219.827689
+Iteration  18: penLogLik = 15222.018733, ELBO = 15221.361367
+Iteration  19: penLogLik = 15223.238066, ELBO = 15222.649136
+Iteration  20: penLogLik = 15224.370555, ELBO = 15223.810067
+Iteration  21: penLogLik = 15225.486901, ELBO = 15224.924524
+Iteration  22: penLogLik = 15226.640344, ELBO = 15226.053076
+Iteration  23: penLogLik = 15227.867890, ELBO = 15227.240459
+Iteration  24: penLogLik = 15229.189815, ELBO = 15228.514914
+Iteration  25: penLogLik = 15230.613796, ELBO = 15229.888970
+Iteration  26: penLogLik = 15232.148356, ELBO = 15231.367982
+Iteration  27: penLogLik = 15233.823586, ELBO = 15232.968273
+Iteration  28: penLogLik = 15235.710291, ELBO = 15234.738675
+Iteration  29: penLogLik = 15237.928174, ELBO = 15236.775339
+Iteration  30: penLogLik = 15240.635237, ELBO = 15239.221742
+Iteration  31: penLogLik = 15243.983509, ELBO = 15242.243948
+Iteration  32: penLogLik = 15248.016969, ELBO = 15245.959233
+Iteration  33: penLogLik = 15252.521962, ELBO = 15250.299563
+Iteration  34: penLogLik = 15256.966246, ELBO = 15254.874900
+Iteration  35: penLogLik = 15260.726771, ELBO = 15259.045617
+Iteration  36: penLogLik = 15263.483910, ELBO = 15262.297661
+Iteration  37: penLogLik = 15265.332164, ELBO = 15264.545481
+Iteration  38: penLogLik = 15266.554459, ELBO = 15266.024109
+Iteration  39: penLogLik = 15267.409502, ELBO = 15267.023110
+Iteration  40: penLogLik = 15268.070680, ELBO = 15267.757314
+Iteration  41: penLogLik = 15268.640561, ELBO = 15268.359275
+Iteration  42: penLogLik = 15269.176290, ELBO = 15268.904622
+Iteration  43: penLogLik = 15269.708220, ELBO = 15269.434522
+Iteration  44: penLogLik = 15270.251128, ELBO = 15269.970107
+Iteration  45: penLogLik = 15270.810429, ELBO = 15270.520681
+Iteration  46: penLogLik = 15271.385853, ELBO = 15271.088286
+Iteration  47: penLogLik = 15271.974190, ELBO = 15271.670739
+Iteration  48: penLogLik = 15272.571612, ELBO = 15272.264170
+Iteration  49: penLogLik = 15273.175294, ELBO = 15272.865048
+Iteration  50: penLogLik = 15273.784117, ELBO = 15273.471359</code></pre>
+<pre class="r"><code>result_RW2_PC1$clustering &lt;- apply(result_RW2_PC1$gamma, 1, which.max)
+result_RW2_PC1$position &lt;- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_PC1 &lt;- order(result_RW2_PC1$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_PC1])</code></pre>
+<p><img src="figure/explore_initialization.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="initialization-with-pc-1" class="section level2">
+<h2>Initialization with PC</h2>
+<pre class="r"><code>PC1 &lt;- prcomp(Loadings,center = TRUE, scale. = FALSE)$x[,1]
+init_params &lt;- make_init(X = Loadings, ordering_vec = -PC1, K = 65)
+result_RW2_PC1 &lt;- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration   1: penLogLik = 13465.043557, ELBO = 12954.390438
+Iteration   2: penLogLik = 14019.040766, ELBO = 13816.740704
+Iteration   3: penLogLik = 14368.690745, ELBO = 14214.751124
+Iteration   4: penLogLik = 14661.625136, ELBO = 14527.276540
+Iteration   5: penLogLik = 14956.399841, ELBO = 14818.388995
+Iteration   6: penLogLik = 15253.321292, ELBO = 15142.407334
+Iteration   7: penLogLik = 15380.284779, ELBO = 15340.796480
+Iteration   8: penLogLik = 15430.948162, ELBO = 15413.232785
+Iteration   9: penLogLik = 15454.044476, ELBO = 15444.583904
+Iteration  10: penLogLik = 15467.996532, ELBO = 15462.208613
+Iteration  11: penLogLik = 15477.600774, ELBO = 15473.156486
+Iteration  12: penLogLik = 15485.876388, ELBO = 15481.975649
+Iteration  13: penLogLik = 15492.356923, ELBO = 15489.489195
+Iteration  14: penLogLik = 15496.656758, ELBO = 15494.825120
+Iteration  15: penLogLik = 15499.404107, ELBO = 15498.216076
+Iteration  16: penLogLik = 15501.313389, ELBO = 15500.453210
+Iteration  17: penLogLik = 15502.791428, ELBO = 15502.104464
+Iteration  18: penLogLik = 15504.013666, ELBO = 15503.436190
+Iteration  19: penLogLik = 15505.061022, ELBO = 15504.560099
+Iteration  20: penLogLik = 15505.991608, ELBO = 15505.539441
+Iteration  21: penLogLik = 15506.865383, ELBO = 15506.431264
+Iteration  22: penLogLik = 15507.753762, ELBO = 15507.300006
+Iteration  23: penLogLik = 15508.747295, ELBO = 15508.225757
+Iteration  24: penLogLik = 15509.952812, ELBO = 15509.309881
+Iteration  25: penLogLik = 15511.452622, ELBO = 15510.657535
+Iteration  26: penLogLik = 15513.233656, ELBO = 15512.312376
+Iteration  27: penLogLik = 15515.196543, ELBO = 15514.204150
+Iteration  28: penLogLik = 15517.289180, ELBO = 15516.233766
+Iteration  29: penLogLik = 15519.599056, ELBO = 15518.417840
+Iteration  30: penLogLik = 15522.301243, ELBO = 15520.905481
+Iteration  31: penLogLik = 15525.531811, ELBO = 15523.872847
+Iteration  32: penLogLik = 15529.251278, ELBO = 15527.385517
+Iteration  33: penLogLik = 15533.146889, ELBO = 15531.267446
+Iteration  34: penLogLik = 15536.712438, ELBO = 15535.070587
+Iteration  35: penLogLik = 15539.563615, ELBO = 15538.295969
+Iteration  36: penLogLik = 15541.700351, ELBO = 15540.744415
+Iteration  37: penLogLik = 15543.431313, ELBO = 15542.616170
+Iteration  38: penLogLik = 15544.961997, ELBO = 15544.242841
+Iteration  39: penLogLik = 15546.233008, ELBO = 15545.627286
+Iteration  40: penLogLik = 15547.410158, ELBO = 15546.819105
+Iteration  41: penLogLik = 15548.607830, ELBO = 15547.999068
+Iteration  42: penLogLik = 15549.845138, ELBO = 15549.217822
+Iteration  43: penLogLik = 15551.108818, ELBO = 15550.473091
+Iteration  44: penLogLik = 15552.374517, ELBO = 15551.743356
+Iteration  45: penLogLik = 15553.618851, ELBO = 15553.003657
+Iteration  46: penLogLik = 15554.820876, ELBO = 15554.232196
+Iteration  47: penLogLik = 15555.957980, ELBO = 15555.407035
+Iteration  48: penLogLik = 15557.009816, ELBO = 15556.504607
+Iteration  49: penLogLik = 15557.968962, ELBO = 15557.509920
+Iteration  50: penLogLik = 15558.840122, ELBO = 15558.423297</code></pre>
+<pre class="r"><code>result_RW2_PC1$clustering &lt;- apply(result_RW2_PC1$gamma, 1, which.max)
+result_RW2_PC1$position &lt;- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_PC1 &lt;- order(result_RW2_PC1$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_PC1])</code></pre>
+<p><img src="figure/explore_initialization.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="initialization-with-p-curve" class="section level2">
+<h2>Initialization with P-curve</h2>
+<pre class="r"><code>pc_fit &lt;- principal_curve(as.matrix(Loadings), maxit = 1000, smoother = &quot;smooth_spline&quot;, thresh = 1e-5)
+pc_score &lt;- pc_fit$lambda
+names(pc_score) &lt;- rownames(Loadings)
+init_params &lt;- make_init(X = Loadings, ordering_vec = -pc_score, K = 65)
+result_RW2_pcurve &lt;- EM_algorithm(
+  data = Loadings,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 50,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(Loadings),
+  nugget = 0,
+  relative_lambda = TRUE,
+  verbose = TRUE
+)</code></pre>
+<pre><code>Iteration   1: penLogLik = 15621.810777, ELBO = 15218.102088
+Iteration   2: penLogLik = 15849.022423, ELBO = 15766.394906
+Iteration   3: penLogLik = 15969.446788, ELBO = 15921.545305
+Iteration   4: penLogLik = 16042.531299, ELBO = 16010.657766
+Iteration   5: penLogLik = 16150.106826, ELBO = 16087.690155
+Iteration   6: penLogLik = 16241.349133, ELBO = 16217.356059
+Iteration   7: penLogLik = 16271.577213, ELBO = 16258.812565
+Iteration   8: penLogLik = 16291.702308, ELBO = 16282.958910
+Iteration   9: penLogLik = 16306.320414, ELBO = 16299.617151
+Iteration  10: penLogLik = 16318.317874, ELBO = 16312.761184
+Iteration  11: penLogLik = 16327.852107, ELBO = 16323.533093
+Iteration  12: penLogLik = 16335.109758, ELBO = 16331.807518
+Iteration  13: penLogLik = 16340.959230, ELBO = 16338.206014
+Iteration  14: penLogLik = 16346.390139, ELBO = 16343.720269
+Iteration  15: penLogLik = 16352.095116, ELBO = 16349.244812
+Iteration  16: penLogLik = 16358.073581, ELBO = 16355.131368
+Iteration  17: penLogLik = 16364.059409, ELBO = 16361.076304
+Iteration  18: penLogLik = 16370.545970, ELBO = 16367.131866
+Iteration  19: penLogLik = 16380.861473, ELBO = 16374.846231
+Iteration  20: penLogLik = 16397.358547, ELBO = 16389.298855
+Iteration  21: penLogLik = 16412.279231, ELBO = 16404.985647
+Iteration  22: penLogLik = 16427.273930, ELBO = 16420.155067
+Iteration  23: penLogLik = 16442.888854, ELBO = 16434.946978
+Iteration  24: penLogLik = 16457.862356, ELBO = 16451.710863
+Iteration  25: penLogLik = 16467.450141, ELBO = 16463.225344
+Iteration  26: penLogLik = 16476.105230, ELBO = 16471.824779
+Iteration  27: penLogLik = 16487.288925, ELBO = 16481.347956
+Iteration  28: penLogLik = 16504.940296, ELBO = 16495.699236
+Iteration  29: penLogLik = 16524.577732, ELBO = 16516.590543
+Iteration  30: penLogLik = 16534.175038, ELBO = 16530.993877
+Iteration  31: penLogLik = 16538.046514, ELBO = 16536.447436
+Iteration  32: penLogLik = 16540.569359, ELBO = 16539.450273
+Iteration  33: penLogLik = 16542.393593, ELBO = 16541.587267
+Iteration  34: penLogLik = 16543.698072, ELBO = 16543.126397
+Iteration  35: penLogLik = 16544.622007, ELBO = 16544.215729
+Iteration  36: penLogLik = 16545.289314, ELBO = 16544.991308
+Iteration  37: penLogLik = 16545.790754, ELBO = 16545.562551
+Iteration  38: penLogLik = 16546.183131, ELBO = 16546.001635
+Iteration  39: penLogLik = 16546.502439, ELBO = 16546.352030
+Iteration  40: penLogLik = 16546.784152, ELBO = 16546.645441
+Iteration  41: penLogLik = 16547.099205, ELBO = 16546.927379
+Iteration  42: penLogLik = 16547.615544, ELBO = 16547.308698
+Iteration  43: penLogLik = 16548.544876, ELBO = 16548.019101
+Iteration  44: penLogLik = 16549.708178, ELBO = 16549.147712
+Iteration  45: penLogLik = 16550.556975, ELBO = 16550.207122
+Iteration  46: penLogLik = 16551.042985, ELBO = 16550.836749
+Iteration  47: penLogLik = 16551.353090, ELBO = 16551.216650
+Iteration  48: penLogLik = 16551.567377, ELBO = 16551.471170
+Iteration  49: penLogLik = 16551.724597, ELBO = 16551.652518
+Iteration  50: penLogLik = 16551.846870, ELBO = 16551.789589</code></pre>
+<pre class="r"><code>result_RW2_pcurve$clustering &lt;- apply(result_RW2_pcurve$gamma, 1, which.max)
+result_RW2_pcurve$position &lt;- result_RW2_pcurve$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_pcurve &lt;- order(result_RW2_pcurve$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_pcurve])</code></pre>
+<p><img src="figure/explore_initialization.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="initialization-with-multi-resolution" class="section level2">
+<h2>Initialization with multi-resolution</h2>
+<pre class="r"><code>set.seed(1)
+result_RW2_multi &lt;- progressive_smoothEM(
+  data = Loadings,
+  m_max = 6,              
+  lambda_final = 300,
+  q = 2,
+  ridge = 0,
+  nugget_kriging = 0,  
+  tol = 1e-3,
+  max_iter = 50,
+  relative_lambda = TRUE,
+  coords_show = c(1,2,3),
+  plot_each_stage = F,
+  verbose = F
+)
+
+result_RW2_multi$clustering &lt;- apply(result_RW2_multi$fits$K_65$gamma, 1, which.max)
+result_RW2_multi$position &lt;- result_RW2_multi$fits$K_65$gamma %*% matrix(1:65, ncol=1)
+loadings_order_RW2_multi &lt;- order(result_RW2_multi$position)
+plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2_multi])</code></pre>
+<p><img src="figure/explore_initialization.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="compare-elbo" class="section level2">
+<h2>Compare ELBO</h2>
+<pre class="r"><code>elbo_values &lt;- data.frame(
+  Iteration = 1:length(result_RW2_PC1$elbo),
+  ELBO_PC1 = result_RW2_PC1$elbo,
+  ELBO_PCurve = result_RW2_pcurve$elbo,
+  ELBO_MultiRes = result_RW2_multi$fits$K_65$elbo
+)
+elbo_long &lt;- pivot_longer(elbo_values, cols = -Iteration, names_to = &quot;Method&quot;, values_to = &quot;ELBO&quot;)
+ggplot(elbo_long, aes(x = Iteration, y = ELBO, color = Method)) +
+  geom_line(size = 1) +
+  labs(title = &quot;ELBO Convergence Comparison&quot;, x = &quot;Iteration&quot;, y = &quot;ELBO&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+generated.</code></pre>
+<p><img src="figure/explore_initialization.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.6.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] mclust_6.1.2      Matrix_1.7-3      mvtnorm_1.3-3     matrixStats_1.5.0
+ [5] princurve_2.1.6   umap_0.2.10.0     Rtsne_0.17        ggplot2_4.0.0    
+ [9] tidyr_1.3.1       tibble_3.3.0      workflowr_1.7.2  
+
+loaded via a namespace (and not attached):
+ [1] sass_0.4.10        generics_0.1.4     lattice_0.22-7     stringi_1.8.7     
+ [5] digest_0.6.37      magrittr_2.0.4     evaluate_1.0.5     grid_4.5.1        
+ [9] RColorBrewer_1.1-3 fastmap_1.2.0      rprojroot_2.1.1    jsonlite_2.0.0    
+[13] processx_3.8.6     whisker_0.4.1      RSpectra_0.16-2    ps_1.9.1          
+[17] promises_1.3.3     httr_1.4.7         purrr_1.1.0        scales_1.4.0      
+[21] jquerylib_0.1.4    cli_3.6.5          crayon_1.5.3       rlang_1.1.6       
+[25] withr_3.0.2        cachem_1.1.0       yaml_2.3.10        tools_4.5.1       
+[29] dplyr_1.1.4        httpuv_1.6.16      reticulate_1.43.0  png_0.1-8         
+[33] vctrs_0.6.5        R6_2.6.1           lifecycle_1.0.4    git2r_0.36.2      
+[37] stringr_1.5.2      fs_1.6.6           pkgconfig_2.0.3    callr_3.7.6       
+[41] pillar_1.11.1      bslib_0.9.0        later_1.4.4        gtable_0.3.6      
+[45] glue_1.8.0         Rcpp_1.1.0         xfun_0.54          tidyselect_1.2.1  
+[49] rstudioapi_0.17.1  knitr_1.50         dichromat_2.0-0.1  farver_2.1.2      
+[53] htmltools_0.5.8.1  labeling_0.4.3     rmarkdown_2.30     compiler_4.5.1    
+[57] getPass_0.2-4      S7_0.2.0           askpass_1.2.1      openssl_2.3.4     </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
