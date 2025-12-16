@@ -26,8 +26,8 @@ source("./code/kriging.R")
 load("./data/loading_order/pancreas_factors.rdata")
 load("./data/loading_order/pancreas.rdata")
 cells <- subsample_cell_types(sample_info$celltype,n = 500)
-# Loadings <- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
-Loadings <- fl_snmf_ldf$L[cells,]
+Loadings <- fl_snmf_ldf$L[cells,c(3,8,9,12,17,18,20,21)]
+# Loadings <- fl_snmf_ldf$L[cells,]
 celltype <- as.character(sample_info$celltype[cells])
 names(celltype) <- rownames(Loadings)
 batchtype <- as.character(sample_info$tech[cells])
