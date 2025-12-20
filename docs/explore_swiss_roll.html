@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2025-12-19" />
+
+<title>explore_swiss_roll</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Inferring latent ordering</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">explore_swiss_roll</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2025-12-19</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-12-20
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>InferOrder/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250707code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250707)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250707code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250707)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree1576a8cc7d390b8d43a8a69f2cbec50c827c7951targetblank1576a8ca">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/1576a8cc7d390b8d43a8a69f2cbec50c827c7951" target="_blank">1576a8c</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree1576a8cc7d390b8d43a8a69f2cbec50c827c7951targetblank1576a8ca"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/InferOrder/tree/1576a8cc7d390b8d43a8a69f2cbec50c827c7951" target="_blank">1576a8c</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  data/swiss_roll_r2_elbo.RData
+    Untracked:  debug.R
+    Untracked:  j.Rmd
+    Untracked:  j.html
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/explore_swiss_roll.rmd</code>)
+and HTML (<code>docs/explore_swiss_roll.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/1576a8cc7d390b8d43a8a69f2cbec50c827c7951/analysis/explore_swiss_roll.rmd" target="_blank">1576a8c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2025-12-20
+</td>
+<td>
+workflowr::wflow_publish("analysis/explore_swiss_roll.rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this example, we will consider how to learn a 1D manifold
+(swiss-roll/spiral) embedded in 2D with noise, using various variants of
+principal curve fitting and our SmoothEM algorithm.</p>
+<p>Simulate a 1D swiss-roll (spiral) embedded in 2D with noise.</p>
+<pre class="r"><code>simulate_swiss_roll_1d_2d &lt;- function(n = 800,
+                                     t_range = c(1.5 * pi, 6 * pi),
+                                     sigma = 0.15,     # can be scalar or length-2
+                                     seed = 1) {
+  stopifnot(length(t_range) == 2)
+  stopifnot(length(sigma) == 1 || length(sigma) == 2)
+
+  set.seed(seed)
+
+  # 1D parameter
+  t &lt;- runif(n, min = t_range[1], max = t_range[2])
+
+  # true 2D &quot;swiss roll&quot; (spiral)
+  x_true &lt;- t * cos(t)
+  y_true &lt;- t * sin(t)
+
+  # noise
+  if (length(sigma) == 1) sigma &lt;- rep(sigma, 2)
+  x_obs &lt;- x_true + rnorm(n, 0, sigma[1])
+  y_obs &lt;- y_true + rnorm(n, 0, sigma[2])
+
+  list(
+    t = t,
+    truth = data.frame(x = x_true, y = y_true),
+    obs   = data.frame(x = x_obs,  y = y_obs)
+  )
+}
+
+# Example
+sim &lt;- simulate_swiss_roll_1d_2d(n = 1500, sigma = 0.2, seed = 123)
+
+# Plot noisy observations (grey)
+plot(sim$obs$x, sim$obs$y, pch = 16, cex = 0.35, col = &quot;grey80&quot;,
+     xlab = &quot;x&quot;, ylab = &quot;y&quot;, main = &quot;Noisy 2D swiss-roll (spiral)&quot;)
+# Colors mapped from t
+pal &lt;- colorRampPalette(c(&quot;navy&quot;, &quot;cyan&quot;, &quot;yellow&quot;, &quot;red&quot;))(256)
+t_scaled &lt;- (sim$t - min(sim$t)) / (max(sim$t) - min(sim$t))  # in [0,1]
+col_t &lt;- pal[pmax(1, pmin(256, 1 + floor(255 * t_scaled)))]
+# Add truth, colored by t
+points(sim$truth$x, sim$truth$y, pch = 16, cex = 0.25, col = col_t)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="principal-curve-fitting" class="section level2">
+<h2>Principal Curve Fitting</h2>
+<p>The simpliest principal curve is just using the initial PCA line
+(zero iterations).</p>
+<pre class="r"><code>library(princurve)
+# Initial fit with zero iterations (just the initial PCA line)
+pc_fit &lt;- principal_curve(as.matrix(sim$obs), maxit = 0)
+# Plot noisy observations (grey)
+plot(sim$obs$x, sim$obs$y, pch = 16, cex = 0.35, col = &quot;grey80&quot;,
+     xlab = &quot;x&quot;, ylab = &quot;y&quot;,
+     main = &quot;Principal Curve Fit to Noisy Swiss-Roll&quot;,
+     asp = 1)
+# Add principal curve (sorted by lambda!)
+ord &lt;- order(pc_fit$lambda)
+lines(pc_fit$s[ord, 1], pc_fit$s[ord, 2], col = &quot;black&quot;, lwd = 2)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Apply principal curve fitting to recover the 1D structure with the
+default settings.</p>
+<pre class="r"><code>set.seed(123)
+pc_fit &lt;- principal_curve(as.matrix(sim$obs))
+
+# Plot noisy observations (grey)
+plot(sim$obs$x, sim$obs$y, pch = 16, cex = 0.35, col = &quot;grey80&quot;,
+     xlab = &quot;x&quot;, ylab = &quot;y&quot;,
+     main = &quot;Principal Curve Fit to Noisy Swiss-Roll&quot;,
+     asp = 1)
+# Add principal curve (sorted by lambda!)
+ord &lt;- order(pc_fit$lambda)
+lines(pc_fit$s[ord, 1], pc_fit$s[ord, 2], col = &quot;black&quot;, lwd = 2)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Try to increase fitting accuracy by lowering the convergence
+threshold.</p>
+<pre class="r"><code>set.seed(123)
+pc_fit &lt;- principal_curve(as.matrix(sim$obs), thresh = 0.0001, 
+                          stretch = 0, maxit = 100)
+
+plot(sim$obs$x, sim$obs$y, pch = 16, cex = 0.35, col = &quot;grey80&quot;,
+     xlab = &quot;x&quot;, ylab = &quot;y&quot;,
+     main = &quot;Principal Curve Fit to Noisy Swiss-Roll&quot;,
+     asp = 1)
+ord &lt;- order(pc_fit$lambda)
+lines(pc_fit$s[ord, 1], pc_fit$s[ord, 2], col = &quot;black&quot;, lwd = 2)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Try a different smoother: lowess.</p>
+<pre class="r"><code>set.seed(123)
+pc_fit_lowess &lt;- principal_curve(as.matrix(sim$obs), smoother = &quot;lowess&quot;, 
+                                 thresh = 0.0001,
+                                 maxit = 1000)
+plot(sim$obs$x, sim$obs$y, pch = 16, cex = 0.35, col = &quot;grey80&quot;,
+     xlab = &quot;x&quot;, ylab = &quot;y&quot;,
+     main = &quot;Principal Curve Fit (lowess) to Noisy Swiss-Roll&quot;,
+     asp = 1)
+ord &lt;- order(pc_fit_lowess$lambda)
+lines(pc_fit_lowess$s[ord, 1], pc_fit_lowess$s[ord, 2], col = &quot;black&quot;, lwd = 2)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="smoothem" class="section level2">
+<h2>SmoothEM</h2>
+<p>None of the above principal curve fittings are able to recover the 1D
+swiss-roll structure well, even when we switch to different
+smoothers.</p>
+<p>Most likely it is due to the improper initialization using PCA
+line.</p>
+<p>Now let’s try various way to initialize the SmoothEM algorithm to
+recover the 1D structure.</p>
+<pre class="r"><code>library(tibble)
+library(tidyr)
+library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.5.2</code></pre>
+<pre class="r"><code>library(Rtsne)
+library(umap)
+library(Matrix)</code></pre>
+<pre><code>
+Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:tidyr&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre class="r"><code>set.seed(123)
+source(&quot;./code/plot_ordering.R&quot;)
+source(&quot;./code/linear_EM.R&quot;)
+source(&quot;./code/general_EM.R&quot;)
+source(&quot;./code/prior_precision.R&quot;)
+source(&quot;./code/kriging.R&quot;)</code></pre>
+<pre><code>Package &#39;mclust&#39; version 6.1.2
+Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
+<pre><code>
+Attaching package: &#39;mclust&#39;</code></pre>
+<pre><code>The following object is masked _by_ &#39;.GlobalEnv&#39;:
+
+    logsumexp</code></pre>
+<pre><code>The following object is masked from &#39;package:mvtnorm&#39;:
+
+    dmvnorm</code></pre>
+<pre><code>The following object is masked from &#39;package:matrixStats&#39;:
+
+    count</code></pre>
+<pre class="r"><code>X &lt;- as.matrix(sim$obs)</code></pre>
+<div id="initialization-using-pca" class="section level3">
+<h3>Initialization using PCA</h3>
+<p>For comparison, let’s also start with PCA initialization.</p>
+<pre class="r"><code>set.seed(1234)
+q &lt;- 2
+Q_prior_RW2 &lt;- make_random_walk_precision(K = 65, 
+                                          d=ncol(X), 
+                                          lambda = 30, 
+                                          q = q, 
+                                          ridge = 0)
+
+PC1 &lt;- prcomp(X,center = TRUE, scale. = FALSE)$x[,1]
+
+init_params &lt;- make_init(X = X, ordering_vec = -PC1, K = 65)
+result_RW2_PC1 &lt;- EM_algorithm(
+  data = X,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 1000,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(X),
+  nugget = 0,
+  relative_lambda = T,
+  verbose = F
+)
+
+result_RW2_PC1$clustering &lt;- apply(result_RW2_PC1$gamma, 1, which.max)
+result_RW2_PC1$position &lt;- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)</code></pre>
+<pre class="r"><code>plot(X, cex=1,
+     xlab=&quot;X&quot;, ylab=&quot;Y&quot;,
+     pch=19)
+     
+# Turn mu_list into matrix
+mu_matrix &lt;- do.call(rbind, result_RW2_PC1$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=4, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Just like what we would expect, the inferred curve is not able to
+recover the swiss-roll structure, as what we have seen in the principal
+curve fitting with PCA initialization.</p>
+</div>
+<div id="initialization-using-principal-curve" class="section level3">
+<h3>Initialization using Principal Curve</h3>
+<p>Now let’s take the principal curve scores to initialize the
+SmoothEM.</p>
+<pre class="r"><code>pc_score &lt;- pc_fit_lowess$lambda
+init_params &lt;- make_init(X = X, ordering_vec = -pc_score, K = 65)
+result_RW2_pcurve &lt;- EM_algorithm(
+  data = X,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 1000,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(X),
+  nugget = 0,
+  relative_lambda = T,
+  verbose = F
+)
+
+result_RW2_pcurve$clustering &lt;- apply(result_RW2_pcurve$gamma, 1, which.max)
+result_RW2_pcurve$position &lt;- result_RW2_pcurve$gamma %*% matrix(1:65, ncol=1)</code></pre>
+<pre class="r"><code>plot(X, cex=1,
+     xlab=&quot;X&quot;, ylab=&quot;Y&quot;,
+     pch=19)
+     
+# Turn mu_list into matrix
+mu_matrix &lt;- do.call(rbind, result_RW2_pcurve$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=4, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The principal curve initialization also fails to recover the
+swiss-roll structure.</p>
+</div>
+<div id="initialization-using-t-sne" class="section level3">
+<h3>Initialization using t-SNE</h3>
+<p>Let’s try t-SNE to get a 1D ordering of the data points for
+initialization.</p>
+<pre class="r"><code>set.seed(123)
+tsne_result &lt;- Rtsne(X, dims = 2, perplexity = 10, verbose = FALSE, max_iter = 500)
+init_params &lt;- make_init(X = X, ordering_vec = -tsne_result$Y[,1], K = 65)
+result_RW2_tsne &lt;- EM_algorithm(
+  data = X,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 1000,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(X),
+  nugget = 0,
+  relative_lambda = T,
+  verbose = F
+)
+
+result_RW2_tsne$clustering &lt;- apply(result_RW2_tsne$gamma, 1, which.max)
+result_RW2_tsne$position &lt;- result_RW2_tsne$gamma %*% matrix(1:65, ncol=1)</code></pre>
+<pre class="r"><code>plot(X, cex=1,
+     xlab=&quot;X&quot;, ylab=&quot;Y&quot;,
+     pch=19)
+     
+# Turn mu_list into matrix
+mu_matrix &lt;- do.call(rbind, result_RW2_tsne$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=4, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The t-SNE initialization also fails to recover the swiss-roll
+structure.</p>
+</div>
+<div id="initialization-using-multi-scale-smoothem"
+class="section level3">
+<h3>Initialization using Multi-scale SmoothEM</h3>
+<p>Now, let’s try the progressive multi-scale SmoothEM
+initialization.</p>
+<pre class="r"><code>result_RW2_multi &lt;- progressive_smoothEM(
+  data = X,
+  m_max = 6,              
+  lambda_final = 100,
+  q = 2,
+  ridge = 0,
+  nugget_kriging = 0,  
+  tol = 1e-3,
+  max_iter = 1000,
+  relative_lambda = T,
+  plot_each_stage = F,
+  verbose = F
+)
+result_RW2_multi$clustering &lt;- apply(result_RW2_multi$fits$K_65$gamma, 1, which.max)
+result_RW2_multi$position &lt;- result_RW2_multi$fits$K_65$gamma %*% matrix(1:65, ncol=1)</code></pre>
+<pre class="r"><code>plot(X, cex=1,
+     xlab=&quot;X&quot;, ylab=&quot;Y&quot;,
+     pch=19)
+     
+# Turn mu_list into matrix
+mu_matrix &lt;- do.call(rbind, result_RW2_multi$fits$K_65$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=4, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Still no luck in recovering the swiss-roll structure.</p>
+</div>
+</div>
+<div id="why-none-of-these-method-work" class="section level2">
+<h2>Why none of these method work?</h2>
+<p>It seems like none of these methods provide a good visual recovery of
+the swiss-roll structure.</p>
+<p>One possible reason is that the initialization orderings are all very
+different from the true underlying ordering (by t), and all of these
+iterative methods are really easy to get stuck in local optima in the
+ordering space.</p>
+<p>Let’s cheat a bit by using the true underlying ordering to initialize
+the SmoothEM. We should see a much better objective value (ELBO) and
+visual recovery of the swiss-roll structure.</p>
+<pre class="r"><code>set.seed(1234)
+init_params &lt;- make_init(X = X, ordering_vec = -sim$t, K = 65)
+result_RW2_cheat &lt;- EM_algorithm(
+  data = X,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 1000,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(X),
+  nugget = 0,
+  relative_lambda = T,
+  verbose = F
+)
+
+result_RW2_cheat$clustering &lt;- apply(result_RW2_cheat$gamma, 1, which.max)
+result_RW2_cheat$position &lt;- result_RW2_cheat$gamma %*% matrix(1:65, ncol=1)</code></pre>
+<pre class="r"><code>plot(X, cex=1,
+     xlab=&quot;X&quot;, ylab=&quot;Y&quot;,
+     pch=19)
+     
+# Turn mu_list into matrix
+mu_matrix &lt;- do.call(rbind, result_RW2_cheat$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=4, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>range_elbo &lt;- c(
+  min(c(result_RW2_PC1$elbo_trace,
+        result_RW2_pcurve$elbo_trace,
+        result_RW2_tsne$elbo_trace,
+        result_RW2_multi$fits$K_65$elbo_trace,
+        result_RW2_cheat$elbo_trace)),
+  max(c(result_RW2_PC1$elbo_trace,
+        result_RW2_pcurve$elbo_trace,
+        result_RW2_tsne$elbo_trace,
+        result_RW2_multi$fits$K_65$elbo_trace,
+        result_RW2_cheat$elbo_trace))
+)
+# compare ELBOs
+plot(NULL, xlim=c(1,300), ylim=range_elbo,
+     xlab=&quot;Iteration&quot;, ylab=&quot;ELBO&quot;,
+     main=&quot;ELBO Comparison&quot;)
+lines(result_RW2_PC1$elbo_trace, col=&quot;blue&quot;, lwd=2)
+lines(result_RW2_pcurve$elbo_trace, col=&quot;green&quot;, lwd=2)
+lines(result_RW2_tsne$elbo_trace, col=&quot;purple&quot;, lwd=2)
+lines(result_RW2_multi$fits$K_65$elbo_trace, col=&quot;orange&quot;, lwd=2)
+lines(result_RW2_cheat$elbo_trace, col=&quot;red&quot;, lwd=2)
+legend(&quot;bottomright&quot;,
+       legend=c(&quot;PCA Init&quot;, &quot;P-Curve Init&quot;, &quot;t-SNE Init&quot;, &quot;Multi-scale Init&quot;, &quot;Cheat Init&quot;),
+       col=c(&quot;blue&quot;, &quot;green&quot;, &quot;purple&quot;, &quot;orange&quot;, &quot;red&quot;),
+       lwd=2)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Let’s try to see when the SmoothEM fit starts to break down as we
+alter the initialization ordering to be more and more different from the
+true ordering.</p>
+<pre class="r"><code>set.seed(1234)
+order_vec &lt;- sim$t + rnorm(length(sim$t), sd=3)
+# apply some monotone transformation to make it less correlated with true t
+f &lt;- function(x) {
+  # pnorm(x)
+  x
+}
+order_vec &lt;- f(order_vec)
+
+plot(rank(order_vec), rank(sim$t),
+     xlab=&quot;Altered Ordering Rank&quot;, ylab=&quot;True t Rank&quot;,
+     main=&quot;Altered vs True Ordering Ranks&quot;)
+# show the lm line and its r2 on the plot
+abline(lm(rank(sim$t) ~ rank(order_vec)), col=&quot;red&quot;, lwd=2)
+r2 &lt;- summary(lm(rank(sim$t) ~ rank(order_vec)))$r.squared
+legend(&quot;topleft&quot;, legend=paste0(&quot;R^2 = &quot;, round(r2, 3)), col=&quot;red&quot;, lwd=2)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>init_params &lt;- make_init(X = X, ordering_vec = order_vec, K = 65)
+result_RW2_cheat &lt;- EM_algorithm(
+  data = X,
+  Q_prior = Q_prior_RW2,
+  init_params = init_params,
+  max_iter = 1000,
+  modelName = &quot;EEI&quot;,
+  tol = 1e-3,
+  eigen_tol = 0,
+  rank_deficiency = q * ncol(X),
+  nugget = 0,
+  relative_lambda = T,
+  verbose = F
+)
+
+plot(X, cex=1,
+     xlab=&quot;X&quot;, ylab=&quot;Y&quot;,
+     pch=19)
+     
+# Turn mu_list into matrix
+mu_matrix &lt;- do.call(rbind, result_RW2_cheat$params$mu)
+
+# Draw arrows showing sequence of cluster means
+for (k in 1:(nrow(mu_matrix)-1)) {
+  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) &gt; 1e-6) {
+    arrows(mu_matrix[k,1], mu_matrix[k,2],
+           mu_matrix[k+1,1], mu_matrix[k+1,2],
+           col=&quot;orange&quot;, lwd=4, length=0.1)
+  }
+}
+points(mu_matrix, pch=8, cex=1, lwd=1, col=&quot;orange&quot;)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, let’s vary the amount of noise added to the true ordering to see
+how the final ELBO changes with respect to the <span
+class="math inline">\(R^2\)</span> between the altered ordering and the
+true ordering.</p>
+<pre class="r"><code>r2_rank &lt;- c()
+elbo_final &lt;- c()
+for (sd_noise in seq(0, 5, by=0.1)) {
+  set.seed(1234)
+  order_vec &lt;- sim$t + rnorm(length(sim$t), sd=sd_noise)
+  # apply some monotone transformation to make it less correlated with true t
+  f &lt;- function(x) {
+    # pnorm(x)
+    x
+  }
+  order_vec &lt;- f(order_vec) 
+  r2 &lt;- summary(lm(rank(sim$t) ~ rank(order_vec)))$r.squared
+  r2_rank &lt;- c(r2_rank, r2)
+  init_params &lt;- make_init(X = X, ordering_vec = order_vec, K = 65)
+  result_RW2 &lt;- EM_algorithm(
+    data = X,
+    Q_prior = Q_prior_RW2,
+    init_params = init_params,
+    max_iter = 1000,
+    modelName = &quot;EEI&quot;,
+    tol = 1e-3,
+    eigen_tol = 0,
+    rank_deficiency = q * ncol(X),
+    nugget = 0,
+    relative_lambda = T,
+    verbose = F
+  )
+  elbo_final &lt;- c(elbo_final, tail(result_RW2$elbo_trace, n=1))
+}
+save(r2_rank, elbo_final, file=&quot;./data/swiss_roll_r2_elbo.RData&quot;)</code></pre>
+<p>Showing the relationship between the final ELBO from SmoothEM and the
+<span class="math inline">\(R^2\)</span> between the altered
+initialization ordering and the true ordering. The amount of noise added
+to the true ordering increases from 0 to 5 in steps of 0.1, shown as
+text labels on the plot.</p>
+<pre class="r"><code>load(&quot;./data/swiss_roll_r2_elbo.RData&quot;)
+plot(r2_rank, elbo_final,
+     xlab=&quot;R^2 between Altered and True Ordering Ranks&quot;, ylab=&quot;Final ELBO&quot;,
+     main=&quot;Final ELBO vs R^2 of Initialization Ordering&quot;)
+lines(smooth.spline(r2_rank, elbo_final, df=5), col=&quot;red&quot;, lwd=2)
+# show sd in each point
+text(r2_rank, elbo_final, labels=seq(0, 5, by=0.1), pos=3)</code></pre>
+<p><img src="figure/explore_swiss_roll.rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.6.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] mclust_6.1.2      mvtnorm_1.3-3     matrixStats_1.5.0 Matrix_1.7-4     
+ [5] umap_0.2.10.0     Rtsne_0.17        ggplot2_4.0.1     tidyr_1.3.1      
+ [9] tibble_3.3.0      princurve_2.1.6   workflowr_1.7.2  
+
+loaded via a namespace (and not attached):
+ [1] sass_0.4.10        generics_0.1.4     lattice_0.22-7     stringi_1.8.7     
+ [5] digest_0.6.39      magrittr_2.0.4     evaluate_1.0.5     grid_4.5.1        
+ [9] RColorBrewer_1.1-3 fastmap_1.2.0      rprojroot_2.1.1    jsonlite_2.0.0    
+[13] processx_3.8.6     RSpectra_0.16-2    whisker_0.4.1      ps_1.9.1          
+[17] promises_1.5.0     httr_1.4.7         purrr_1.2.0        scales_1.4.0      
+[21] jquerylib_0.1.4    cli_3.6.5          rlang_1.1.6        withr_3.0.2       
+[25] cachem_1.1.0       yaml_2.3.12        otel_0.2.0         tools_4.5.1       
+[29] dplyr_1.1.4        httpuv_1.6.16      reticulate_1.44.1  png_0.1-8         
+[33] vctrs_0.6.5        R6_2.6.1           lifecycle_1.0.4    git2r_0.36.2      
+[37] stringr_1.6.0      fs_1.6.6           pkgconfig_2.0.3    callr_3.7.6       
+[41] pillar_1.11.1      bslib_0.9.0        later_1.4.4        gtable_0.3.6      
+[45] glue_1.8.0         Rcpp_1.1.0         xfun_0.55          tidyselect_1.2.1  
+[49] rstudioapi_0.17.1  knitr_1.50         dichromat_2.0-0.1  farver_2.1.2      
+[53] htmltools_0.5.9    rmarkdown_2.30     compiler_4.5.1     getPass_0.2-4     
+[57] S7_0.2.1           askpass_1.2.1      openssl_2.3.4     </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
