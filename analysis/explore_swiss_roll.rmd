@@ -1,5 +1,5 @@
 ---
-title: "explore_swiss_roll"
+title: "Explore the swiss roll"
 author: "Ziang Zhang"
 date: "2025-12-19"
 output: workflowr::wflow_html
@@ -69,9 +69,11 @@ plot(sim$obs$x, sim$obs$y, pch = 16, cex = 0.35, col = "grey80",
      xlab = "x", ylab = "y",
      main = "Principal Curve Fit to Noisy Swiss-Roll",
      asp = 1)
-# Add principal curve (sorted by lambda!)
+# Add principal curve
 ord <- order(pc_fit$lambda)
 lines(pc_fit$s[ord, 1], pc_fit$s[ord, 2], col = "black", lwd = 2)
+# Add arrow
+arrows(pc_fit$s[1, 1], pc_fit$s[1, 2], pc_fit$s[2, 1], pc_fit$s[2, 2])
 ```
 
 Apply principal curve fitting to recover the 1D structure with the default settings.
@@ -140,19 +142,11 @@ library(Matrix)
 
 set.seed(123)
 source("./code/plot_ordering.R")
-source("./code/linear_EM.R")
-source("./code/general_EM.R")
-source("./code/prior_precision.R")
-source("./code/kriging.R")
-
 X <- as.matrix(sim$obs)
 ```
 
-### Initialization using PCA
-
-For comparison, let's also start with PCA initialization.
-
 ```{r}
+library(smoothEMr)
 set.seed(1234)
 q <- 2
 Q_prior_RW2 <- make_random_walk_precision(K = 65, 
@@ -160,15 +154,21 @@ Q_prior_RW2 <- make_random_walk_precision(K = 65,
                                           lambda = 30, 
                                           q = q, 
                                           ridge = 0)
+```
 
-PC1 <- prcomp(X,center = TRUE, scale. = FALSE)$x[,1]
 
-init_params <- make_init(X = X, ordering_vec = -PC1, K = 65)
+### Initialization using PCA
+
+For comparison, let's also start with PCA initialization.
+
+```{r}
+init_params <- initialize_ordering(X = X, K = 65, method = "PCA")
+
 result_RW2_PC1 <- EM_algorithm(
   data = X,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 1000,
+  max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
   eigen_tol = 0,
@@ -178,28 +178,9 @@ result_RW2_PC1 <- EM_algorithm(
   verbose = F
 )
 
-result_RW2_PC1$clustering <- apply(result_RW2_PC1$gamma, 1, which.max)
-result_RW2_PC1$position <- result_RW2_PC1$gamma %*% matrix(1:65, ncol=1)
+plot_EM_embedding(result_RW2_PC1, X, dims = c(1,2))
 ```
 
-```{r}
-plot(X, cex=1,
-     xlab="X", ylab="Y",
-     pch=19)
-     
-# Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_RW2_PC1$params$mu)
-
-# Draw arrows showing sequence of cluster means
-for (k in 1:(nrow(mu_matrix)-1)) {
-  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
-    arrows(mu_matrix[k,1], mu_matrix[k,2],
-           mu_matrix[k+1,1], mu_matrix[k+1,2],
-           col="orange", lwd=4, length=0.1)
-  }
-}
-points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
-```
 
 Just like what we would expect, the inferred curve is not able to recover the swiss-roll structure, as what we have seen in the principal curve fitting with PCA initialization.
 
@@ -208,13 +189,14 @@ Just like what we would expect, the inferred curve is not able to recover the sw
 Now let's take the principal curve scores to initialize the SmoothEM.
 
 ```{r}
-pc_score <- pc_fit_lowess$lambda
-init_params <- make_init(X = X, ordering_vec = -pc_score, K = 65)
+# pc_score <- pc_fit_lowess$lambda
+# init_params <- make_init(X = X, ordering_vec = -pc_score, K = 65)
+init_params <- initialize_ordering(X = X, K = 65, method = "pcurve")
 result_RW2_pcurve <- EM_algorithm(
   data = X,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 1000,
+  max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
   eigen_tol = 0,
@@ -223,29 +205,9 @@ result_RW2_pcurve <- EM_algorithm(
   relative_lambda = T,
   verbose = F
 )
-
-result_RW2_pcurve$clustering <- apply(result_RW2_pcurve$gamma, 1, which.max)
-result_RW2_pcurve$position <- result_RW2_pcurve$gamma %*% matrix(1:65, ncol=1)
+plot_EM_embedding(result_RW2_pcurve, X, dims = c(1,2))
 ```
 
-```{r}
-plot(X, cex=1,
-     xlab="X", ylab="Y",
-     pch=19)
-     
-# Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_RW2_pcurve$params$mu)
-
-# Draw arrows showing sequence of cluster means
-for (k in 1:(nrow(mu_matrix)-1)) {
-  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
-    arrows(mu_matrix[k,1], mu_matrix[k,2],
-           mu_matrix[k+1,1], mu_matrix[k+1,2],
-           col="orange", lwd=4, length=0.1)
-  }
-}
-points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
-```
 
 The principal curve initialization also fails to recover the swiss-roll structure.
 
@@ -256,13 +218,12 @@ Let's try t-SNE to get a 1D ordering of the data points for initialization.
 
 ```{r}
 set.seed(123)
-tsne_result <- Rtsne(X, dims = 2, perplexity = 10, verbose = FALSE, max_iter = 500)
-init_params <- make_init(X = X, ordering_vec = -tsne_result$Y[,1], K = 65)
+init_params <- initialize_ordering(X = X, K = 65, method = "tSNE")
 result_RW2_tsne <- EM_algorithm(
   data = X,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 1000,
+  max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
   eigen_tol = 0,
@@ -272,27 +233,7 @@ result_RW2_tsne <- EM_algorithm(
   verbose = F
 )
 
-result_RW2_tsne$clustering <- apply(result_RW2_tsne$gamma, 1, which.max)
-result_RW2_tsne$position <- result_RW2_tsne$gamma %*% matrix(1:65, ncol=1)
-```
-
-```{r}
-plot(X, cex=1,
-     xlab="X", ylab="Y",
-     pch=19)
-     
-# Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_RW2_tsne$params$mu)
-
-# Draw arrows showing sequence of cluster means
-for (k in 1:(nrow(mu_matrix)-1)) {
-  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
-    arrows(mu_matrix[k,1], mu_matrix[k,2],
-           mu_matrix[k+1,1], mu_matrix[k+1,2],
-           col="orange", lwd=4, length=0.1)
-  }
-}
-points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
+plot_EM_embedding(result_RW2_tsne, X, dims = c(1,2))
 ```
 
 
@@ -313,54 +254,33 @@ result_RW2_multi <- progressive_smoothEM(
   ridge = 0,
   nugget_kriging = 0,  
   tol = 1e-3,
-  max_iter = 1000,
+  max_iter = 100,
   relative_lambda = T,
   plot_each_stage = F,
   verbose = F
 )
-result_RW2_multi$clustering <- apply(result_RW2_multi$fits$K_65$gamma, 1, which.max)
-result_RW2_multi$position <- result_RW2_multi$fits$K_65$gamma %*% matrix(1:65, ncol=1)
-```
 
-
-```{r}
-plot(X, cex=1,
-     xlab="X", ylab="Y",
-     pch=19)
-     
-# Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_RW2_multi$fits$K_65$params$mu)
-
-# Draw arrows showing sequence of cluster means
-for (k in 1:(nrow(mu_matrix)-1)) {
-  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
-    arrows(mu_matrix[k,1], mu_matrix[k,2],
-           mu_matrix[k+1,1], mu_matrix[k+1,2],
-           col="orange", lwd=4, length=0.1)
-  }
-}
-points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
+plot_EM_embedding(result_RW2_multi$fits$K_65, X, dims = c(1,2))
 ```
 
 Still no luck in recovering the swiss-roll structure.
 
 
-## Why none of these method work?
+## Initialization using Fiedler vector
 
-It seems like none of these methods provide a good visual recovery of the swiss-roll structure.
-
-One possible reason is that the initialization orderings are all very different from the true underlying ordering (by t), and all of these iterative methods are really easy to get stuck in local optima in the ordering space.
-
-Let's cheat a bit by using the true underlying ordering to initialize the SmoothEM. We should see a much better objective value (ELBO) and visual recovery of the swiss-roll structure.
+Now, let's try a graph-based initialization using Fiedler vector.
 
 ```{r}
-set.seed(1234)
-init_params <- make_init(X = X, ordering_vec = -sim$t, K = 65)
-result_RW2_cheat <- EM_algorithm(
+init_params <- initialize_ordering(
+  X = X,
+  K = 65, k = 20,
+  method = "fiedler"
+)
+result_RW2_fiedler <- EM_algorithm(
   data = X,
   Q_prior = Q_prior_RW2,
   init_params = init_params,
-  max_iter = 1000,
+  max_iter = 100,
   modelName = "EEI",
   tol = 1e-3,
   eigen_tol = 0,
@@ -370,28 +290,19 @@ result_RW2_cheat <- EM_algorithm(
   verbose = F
 )
 
-result_RW2_cheat$clustering <- apply(result_RW2_cheat$gamma, 1, which.max)
-result_RW2_cheat$position <- result_RW2_cheat$gamma %*% matrix(1:65, ncol=1)
+plot_EM_embedding(result_RW2_fiedler, X, dims = c(1,2))
 ```
 
-```{r}
-plot(X, cex=1,
-     xlab="X", ylab="Y",
-     pch=19)
-     
-# Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_RW2_cheat$params$mu)
+This time we are able to recover the swiss-roll structure quite well!
 
-# Draw arrows showing sequence of cluster means
-for (k in 1:(nrow(mu_matrix)-1)) {
-  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
-    arrows(mu_matrix[k,1], mu_matrix[k,2],
-           mu_matrix[k+1,1], mu_matrix[k+1,2],
-           col="orange", lwd=4, length=0.1)
-  }
-}
-points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
-```
+
+## Why many of these method do not work?
+
+It seems like most of these methods do not provide a good visual recovery of the swiss-roll structure.
+
+One possible reason is that the initialization orderings are all very different from the true underlying ordering (by t), and all of these iterative methods are really easy to get stuck in local optima in the ordering space.
+
+Let's compare the ELBO traces from these different initialization to see how they behave.
 
 ```{r}
 range_elbo <- c(
@@ -399,128 +310,27 @@ range_elbo <- c(
         result_RW2_pcurve$elbo_trace,
         result_RW2_tsne$elbo_trace,
         result_RW2_multi$fits$K_65$elbo_trace,
-        result_RW2_cheat$elbo_trace)),
+        result_RW2_fiedler$elbo_trace)),
   max(c(result_RW2_PC1$elbo_trace,
         result_RW2_pcurve$elbo_trace,
         result_RW2_tsne$elbo_trace,
         result_RW2_multi$fits$K_65$elbo_trace,
-        result_RW2_cheat$elbo_trace))
+        result_RW2_fiedler$elbo_trace))
 )
 # compare ELBOs
-plot(NULL, xlim=c(1,300), ylim=range_elbo,
+plot(NULL, xlim=c(1,100), ylim=range_elbo,
      xlab="Iteration", ylab="ELBO",
      main="ELBO Comparison")
 lines(result_RW2_PC1$elbo_trace, col="blue", lwd=2)
 lines(result_RW2_pcurve$elbo_trace, col="green", lwd=2)
 lines(result_RW2_tsne$elbo_trace, col="purple", lwd=2)
 lines(result_RW2_multi$fits$K_65$elbo_trace, col="orange", lwd=2)
-lines(result_RW2_cheat$elbo_trace, col="red", lwd=2)
+lines(result_RW2_fiedler$elbo_trace, col="red", lwd=2)
+
 legend("bottomright",
-       legend=c("PCA Init", "P-Curve Init", "t-SNE Init", "Multi-scale Init", "Cheat Init"),
+       legend=c("PCA", "Pcurve", "t-SNE", "Multi-scale", "Fiedler"),
        col=c("blue", "green", "purple", "orange", "red"),
        lwd=2)
-```
-
-
-Let's try to see when the SmoothEM fit starts to break down as we alter the initialization ordering to be more and more different from the true ordering.
-
-```{r}
-set.seed(1234)
-order_vec <- sim$t + rnorm(length(sim$t), sd=3)
-# apply some monotone transformation to make it less correlated with true t
-f <- function(x) {
-  # pnorm(x)
-  x
-}
-order_vec <- f(order_vec)
-
-plot(rank(order_vec), rank(sim$t),
-     xlab="Altered Ordering Rank", ylab="True t Rank",
-     main="Altered vs True Ordering Ranks")
-# show the lm line and its r2 on the plot
-abline(lm(rank(sim$t) ~ rank(order_vec)), col="red", lwd=2)
-r2 <- summary(lm(rank(sim$t) ~ rank(order_vec)))$r.squared
-legend("topleft", legend=paste0("R^2 = ", round(r2, 3)), col="red", lwd=2)
-
-init_params <- make_init(X = X, ordering_vec = order_vec, K = 65)
-result_RW2_cheat <- EM_algorithm(
-  data = X,
-  Q_prior = Q_prior_RW2,
-  init_params = init_params,
-  max_iter = 1000,
-  modelName = "EEI",
-  tol = 1e-3,
-  eigen_tol = 0,
-  rank_deficiency = q * ncol(X),
-  nugget = 0,
-  relative_lambda = T,
-  verbose = F
-)
-
-plot(X, cex=1,
-     xlab="X", ylab="Y",
-     pch=19)
-     
-# Turn mu_list into matrix
-mu_matrix <- do.call(rbind, result_RW2_cheat$params$mu)
-
-# Draw arrows showing sequence of cluster means
-for (k in 1:(nrow(mu_matrix)-1)) {
-  if (sqrt(sum((mu_matrix[k+1,] - mu_matrix[k,])^2)) > 1e-6) {
-    arrows(mu_matrix[k,1], mu_matrix[k,2],
-           mu_matrix[k+1,1], mu_matrix[k+1,2],
-           col="orange", lwd=4, length=0.1)
-  }
-}
-points(mu_matrix, pch=8, cex=1, lwd=1, col="orange")
-```
-
-Now, let's vary the amount of noise added to the true ordering to see how the final ELBO changes with respect to the $R^2$ between the altered ordering and the true ordering.
-
-```{r eval=FALSE}
-r2_rank <- c()
-elbo_final <- c()
-for (sd_noise in seq(0, 5, by=0.1)) {
-  set.seed(1234)
-  order_vec <- sim$t + rnorm(length(sim$t), sd=sd_noise)
-  # apply some monotone transformation to make it less correlated with true t
-  f <- function(x) {
-    # pnorm(x)
-    x
-  }
-  order_vec <- f(order_vec) 
-  r2 <- summary(lm(rank(sim$t) ~ rank(order_vec)))$r.squared
-  r2_rank <- c(r2_rank, r2)
-  init_params <- make_init(X = X, ordering_vec = order_vec, K = 65)
-  result_RW2 <- EM_algorithm(
-    data = X,
-    Q_prior = Q_prior_RW2,
-    init_params = init_params,
-    max_iter = 1000,
-    modelName = "EEI",
-    tol = 1e-3,
-    eigen_tol = 0,
-    rank_deficiency = q * ncol(X),
-    nugget = 0,
-    relative_lambda = T,
-    verbose = F
-  )
-  elbo_final <- c(elbo_final, tail(result_RW2$elbo_trace, n=1))
-}
-save(r2_rank, elbo_final, file="./data/swiss_roll_r2_elbo.RData")
-```
-
-Showing the relationship between the final ELBO from SmoothEM and the $R^2$ between the altered initialization ordering and the true ordering.
-The amount of noise added to the true ordering increases from 0 to 5 in steps of 0.1, shown as text labels on the plot.
-
-```{r}
-load("./data/swiss_roll_r2_elbo.RData")
-plot(r2_rank, elbo_final,
-     xlab="R^2 between Altered and True Ordering Ranks", ylab="Final ELBO",
-     main="Final ELBO vs R^2 of Initialization Ordering")
-lines(smooth.spline(r2_rank, elbo_final, df=5), col="red", lwd=2)
-# show sd in each point
-text(r2_rank, elbo_final, labels=seq(0, 5, by=0.1), pos=3)
 ```
 
 
