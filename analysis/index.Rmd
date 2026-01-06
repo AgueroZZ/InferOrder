@@ -19,24 +19,25 @@ The inferred ordering could be used
 
 + [Connection with standard EM algorithm.](monotonicity.html)
 
++ [A R package to implement Smooth-EM algorithm.](https://aguerozz.github.io/smoothEMr/)
+
 **Analyses:**
 
 + [Exploring smooth-EM algorithm.](explore_smoothEM.html)
 
-+ [Exploring smooth-EM algorithm with the mixture of two latent orderings.](explore_SmoothEM_Mixture.html)
+<!-- + [Exploring smooth-EM algorithm on 2D lattice.](explore_2DSmoothEM.html) -->
 
-+ [Exploring smooth-EM algorithm with the mixture of two latent orderings (Greedy Version).](explore_SmoothEM_Mixture_greedy.html)
+<!-- + [Exploring additive smooth-EM algorithm on 2D lattice](explore_2DSmoothEM_additive.html) -->
 
-+ [Exploring smooth-EM algorithm on 2D lattice.](explore_2DSmoothEM.html)
-
-+ [Exploring additive smooth-EM algorithm on 2D lattice](explore_2DSmoothEM_additive.html)
-
-+ [Exploring smooth threshold EM algorithm.](explore_smoothSEM.html)
+<!-- + [Exploring smooth threshold EM algorithm.](explore_smoothSEM.html) -->
 
 + [Inferring latent ordering on pancrea dataset](explore_pancrea.html)
 
++ [Exploring SmoothEM on SwissRoll](explore_swiss_roll.html)
+
 + [Exploring different ways of initializing SmoothEM](explore_initialization.html)
 
++ [Exploring smooth-EM algorithm with the mixture of two latent orderings (Greedy Approach).](explore_SmoothEM_Mixture_greedy.html)
 
 
 
