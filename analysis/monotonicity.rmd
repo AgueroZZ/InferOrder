@@ -39,15 +39,19 @@ At iteration $i$, define the evidence lower bound (ELBO) as
 \mathrm{ELBO}^{(i)}(\mathbf{U})
 \;=\;
 \mathbb{E}_{\mathbf{Z}\mid \mathbf{X},\,\hat{\mathbf{U}}^{(i-1)}}
-\!\left[ \log P(\mathbf{X},\mathbf{Z}\mid \mathbf{U}) \right].
+\!\left[ \log P(\mathbf{X},\mathbf{Z}\mid \mathbf{U}) \right] -
+\mathbb{E}_{\mathbf{Z}\mid \mathbf{X},\,\hat{\mathbf{U}}^{(i-1)}}
+\!\left[ \log P(\mathbf{Z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)}) \right].
 \]
 
 **Step 1. Variational lower bound.**  
-For any distribution $q(\mathbf{z})$ and parameter $\mathbf{U}$, Jensen’s inequality gives
+For any distribution $q(\mathbf{z})$ and parameter $\mathbf{U}$, we have
 \[
 \log P(\mathbf{X}\mid \mathbf{U})
 =
 \mathbb{E}_{q(\mathbf{z})}\!\left[\log P(\mathbf{X},\mathbf{z}\mid \mathbf{U})\right]
+-
+\mathbb{E}_{q(\mathbf{z})}\!\left[\log q(\mathbf{z})\right]
 +
 \KL\!\left(q(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid \mathbf{X},\mathbf{U})\right).
 \]
@@ -57,7 +61,7 @@ Define the surrogate objective at iteration $i$:
 \;=\;
 \mathrm{ELBO}^{(i)}(\mathbf{U}) + \log P(\mathbf{U}),
 \]
-which satisfies $\tilde{I}(\mathbf{U}) \le I(\mathbf{U})$ for all $\mathbf{U}$.
+which satisfies $\tilde{I}(\mathbf{U}) \le I(\mathbf{U})$ for all $\mathbf{U}$, since \(\KL(\cdot)\ge 0\).
 
 **Step 2. E-step.**  
 Set
