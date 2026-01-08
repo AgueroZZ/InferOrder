@@ -24,6 +24,7 @@ library(tidyr)
 library(ggplot2)
 library(Rtsne)
 library(umap)
+library(smoothEMr)
 set.seed(1)
 source("./code/plot_ordering.R")
 load("./data/loading_order/pancreas_factors.rdata")
@@ -315,44 +316,6 @@ The same cell types tend to be clustered together, but the ordering does not mak
 This is okay as we know in traditional EM, the index of the cluster is arbitrary.
 
 
-### Smooth-EM with linear prior
-
-Now, let's try the smooth-EM algorithm with a linear prior.
-
-```{r}
-source("./code/linear_EM.R")
-source("./code/general_EM.R")
-source("./code/prior_precision.R")
-result_linear <- EM_algorithm_linear(
-  data = Loadings,
-  K = 100,
-  betaprec = 0,
-  seed = 123,
-  max_iter = 50,
-  tol = 1e-3,
-  verbose = TRUE
-)
-```
-
-```{r}
-result_linear$clustering <- apply(result_linear$gamma, 1, which.max)
-result_linear$position <- result_linear$gamma %*% matrix(1:100, ncol=1)
-loadings_order_linear <- order(result_linear$position)
-plot_structure(Loadings, order = rownames(Loadings)[loadings_order_linear])
-```
-
-```{r}
-highlights <- unique(celltype)
-plot_highlight_types(type_vec = celltype,
-                     subset_types = highlights,
-                     order_vec = rownames(Loadings)[loadings_order_linear],
-                     other_color = "white"
-                     )
-```
-
-The ordering from linear prior does not look very informative, which is not unexpected since the linear prior is like a coarser version of the PCA.
-
-
 ### Smooth-EM with RW1 prior
 
 Now, let's try the smooth-EM algorithm with a first order random walk prior.
@@ -360,20 +323,8 @@ Now, let's try the smooth-EM algorithm with a first order random walk prior.
 ```{r}
 set.seed(123)
 q <- 1
-Q_prior_RW1 <- make_random_walk_precision(K=100, d=ncol(Loadings), lambda = 100, q=q, ridge = 0)
-init_params <- make_init(X = Loadings, ordering_vec = PC1 , K = 100)
-result_RW1 <- EM_algorithm(
-  data = Loadings,
-  Q_prior = Q_prior_RW1,
-  init_params = init_params,
-  rank_deficiency = q * ncol(Loadings),
-  max_iter = 100,
-  modelName = "EEI",
-  tol = 1e-3,
-  relative_lambda = TRUE,
-  verbose = TRUE
-)
-result_RW1$clustering <- apply(result_RW1$gamma, 1, which.max)
+result_RW1 <- optimize_initial_csmoothEM(X = Loadings, K = 100, rw_q = q, num_iter = 10, num_cores = 4) |>
+  do_csmoothEM(iter = 30)
 result_RW1$position <- result_RW1$gamma %*% matrix(1:100, ncol=1)
 loadings_order_RW1 <- order(result_RW1$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])
@@ -411,28 +362,8 @@ Next, we will try the RW2 prior in the smooth-EM algorithm.
 ```{r}
 set.seed(1234)
 q <- 2
-Q_prior_RW2 <- make_random_walk_precision(K=100, 
-                                          d=ncol(Loadings), 
-                                          lambda = 500, 
-                                          q = q, 
-                                          ridge = 0)
-
-init_params <- make_init(X = Loadings, ordering_vec = PC1, K = 100)
-result_RW2 <- EM_algorithm(
-  data = Loadings,
-  Q_prior = Q_prior_RW2,
-  init_params = init_params,
-  max_iter = 50,
-  modelName = "EEI",
-  tol = 1e-3,
-  # iterate_once = TRUE,
-  eigen_tol = 0,
-  rank_deficiency = q * ncol(Loadings),
-  nugget = 0,
-  relative_lambda = TRUE,
-  verbose = TRUE
-)
-result_RW2$clustering <- apply(result_RW2$gamma, 1, which.max)
+result_RW2 <- optimize_initial_csmoothEM(X = Loadings, K = 100, rw_q = q, num_iter = 10, num_cores = 4) |>
+  do_csmoothEM(iter = 30)
 result_RW2$position <- result_RW2$gamma %*% matrix(1:100, ncol=1)
 loadings_order_RW2 <- order(result_RW2$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
@@ -456,5 +387,4 @@ plot_highlight_types(type_vec = celltype,
                      )
 ```
 
-The result also looks good, but the choice of the smoothing parameter (`lambda`) is very important.
 
