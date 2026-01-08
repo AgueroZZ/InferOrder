@@ -323,8 +323,8 @@ Now, let's try the smooth-EM algorithm with a first order random walk prior.
 ```{r}
 set.seed(123)
 q <- 1
-result_RW1 <- optimize_initial_csmoothEM(X = Loadings, K = 100, rw_q = q, num_iter = 10, num_cores = 4) |>
-  do_csmoothEM(iter = 30)
+result_RW1 <- optimize_initial_csmoothEM(X = Loadings, K = 100, rw_q = q, num_iter = 30, num_cores = 4) |>
+  do_csmoothEM(iter = 50)
 result_RW1$position <- result_RW1$gamma %*% matrix(1:100, ncol=1)
 loadings_order_RW1 <- order(result_RW1$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW1])
@@ -362,8 +362,8 @@ Next, we will try the RW2 prior in the smooth-EM algorithm.
 ```{r}
 set.seed(1234)
 q <- 2
-result_RW2 <- optimize_initial_csmoothEM(X = Loadings, K = 100, rw_q = q, num_iter = 10, num_cores = 4) |>
-  do_csmoothEM(iter = 30)
+result_RW2 <- optimize_initial_csmoothEM(X = Loadings, K = 100, rw_q = q, num_iter = 30, num_cores = 4) |>
+  do_csmoothEM(iter = 50)
 result_RW2$position <- result_RW2$gamma %*% matrix(1:100, ncol=1)
 loadings_order_RW2 <- order(result_RW2$position)
 plot_structure(Loadings, order = rownames(Loadings)[loadings_order_RW2])
