@@ -378,7 +378,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-01-06
+<strong>Last updated:</strong> 2026-01-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -425,15 +425,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree9640ec93ce74024578eeeda92b9c6ec167adc9e4targetblank9640ec9a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree2d052a148489bf17004bd6375f6d17f432b91663targetblank2d052a1a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/InferOrder/tree/9640ec93ce74024578eeeda92b9c6ec167adc9e4" target="_blank">9640ec9</a>
+<a href="https://github.com/AgueroZZ/InferOrder/tree/2d052a148489bf17004bd6375f6d17f432b91663" target="_blank">2d052a1</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree9640ec93ce74024578eeeda92b9c6ec167adc9e4targetblank9640ec9a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZInferOrdertree2d052a148489bf17004bd6375f6d17f432b91663targetblank2d052a1a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -443,7 +443,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/InferOrder/tree/9640ec93ce74024578eeeda92b9c6ec167adc9e4" target="_blank">9640ec9</a>.
+<a href="https://github.com/AgueroZZ/InferOrder/tree/2d052a148489bf17004bd6375f6d17f432b91663" target="_blank">2d052a1</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -468,11 +468,11 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Intro.Rmd
+    Untracked:  analysis/explore_pancrea.knit.md
     Untracked:  data/swiss_roll_r2_elbo.RData
     Untracked:  debug.R
 
 Unstaged changes:
-    Modified:   analysis/explore_pancrea.rmd
     Modified:   code/general_EM.R
 
 </code></pre>
@@ -518,6 +518,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/2d052a148489bf17004bd6375f6d17f432b91663/analysis/monotonicity.rmd" target="_blank">2d052a1</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-01-13
+</td>
+<td>
+workflowr::wflow_publish("analysis/monotonicity.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/InferOrder/bee23c40d4d4be8fb100e1713cb1f9751bf42030/docs/monotonicity.html" target="_blank">bee23c4</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-01-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -602,7 +636,7 @@ P(\mathbf{U}).
 \]</span></p>
 <p>At iteration <span class="math inline">\(i\)</span>, define the
 evidence lower bound (ELBO) as <span class="math display">\[
-\mathrm{ELBO}^{(i)}(\mathbf{U})
+\mathrm{ELBO}^{(i-1)}(\mathbf{U})
 \;=\;
 \mathbb{E}_{\mathbf{Z}\mid \mathbf{X},\,\hat{\mathbf{U}}^{(i-1)}}
 \!\left[ \log P(\mathbf{X},\mathbf{Z}\mid \mathbf{U}) \right] -
@@ -625,7 +659,7 @@ and parameter <span class="math inline">\(\mathbf{U}\)</span>, we have
 \mathbf{X},\mathbf{U})\right).
 \]</span> Define the surrogate objective at iteration <span
 class="math inline">\(i\)</span>: <span class="math display">\[
-\tilde{I}(\mathbf{U})
+\tilde{I}^{(i)}(\mathbf{U})
 \;=\;
 \mathrm{ELBO}^{(i)}(\mathbf{U}) + \log P(\mathbf{U}),
 \]</span> which satisfies <span
@@ -634,29 +668,31 @@ for all <span class="math inline">\(\mathbf{U}\)</span>, since <span
 class="math inline">\(\mathrm{KL}(\cdot)\ge 0\)</span>.</p>
 <p><strong>Step 2. E-step.</strong><br />
 Set <span class="math display">\[
-q^{(i)}(\mathbf{z})
+q^{(i-1)}(\mathbf{z})
 =
 P(\mathbf{z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)}).
 \]</span> Then by the lemma below, <span class="math display">\[
-\mathrm{KL}\!\left(q^{(i)}(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid
+\mathrm{KL}\!\left(q^{(i-1)}(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid
 \mathbf{X},\hat{\mathbf{U}}^{(i-1)})\right)=0,
 \quad\Rightarrow\quad
-\tilde{I}(\hat{\mathbf{U}}^{(i-1)}) = I(\hat{\mathbf{U}}^{(i-1)}).
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i-1)}) =
+I(\hat{\mathbf{U}}^{(i-1)}).
 \]</span></p>
 <p><strong>Step 3. M-step.</strong><br />
 Update <span class="math display">\[
-\hat{\mathbf{U}}^{(i)} = \arg\max_{\mathbf{U}} \tilde{I}(\mathbf{U}),
+\hat{\mathbf{U}}^{(i)} = \arg\max_{\mathbf{U}}
+\tilde{I}^{(i-1)}(\mathbf{U}),
 \]</span> so that <span class="math display">\[
-\tilde{I}(\hat{\mathbf{U}}^{(i)}) \;\ge\;
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i)}) \;\ge\;
 \tilde{I}(\hat{\mathbf{U}}^{(i-1)}).
 \]</span></p>
 <p><strong>Step 4. Combine.</strong><br />
 By construction, <span class="math display">\[
 I(\hat{\mathbf{U}}^{(i)})
 \;\ge\;
-\tilde{I}(\hat{\mathbf{U}}^{(i)})
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i)})
 \;\ge\;
-\tilde{I}(\hat{\mathbf{U}}^{(i-1)})
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i-1)})
 =
 I(\hat{\mathbf{U}}^{(i-1)}).
 \]</span> Thus, SmoothEM monotonically increases the posterior
