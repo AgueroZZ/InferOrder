@@ -36,7 +36,7 @@ I(\mathbf{U}) \;=\; \log P(\mathbf{X}\mid \mathbf{U}) \;+\; \log P(\mathbf{U}).
 
 At iteration $i$, define the evidence lower bound (ELBO) as
 \[
-\mathrm{ELBO}^{(i)}(\mathbf{U})
+\mathrm{ELBO}^{(i-1)}(\mathbf{U})
 \;=\;
 \mathbb{E}_{\mathbf{Z}\mid \mathbf{X},\,\hat{\mathbf{U}}^{(i-1)}}
 \!\left[ \log P(\mathbf{X},\mathbf{Z}\mid \mathbf{U}) \right] -
@@ -57,7 +57,7 @@ For any distribution $q(\mathbf{z})$ and parameter $\mathbf{U}$, we have
 \]
 Define the surrogate objective at iteration $i$:
 \[
-\tilde{I}(\mathbf{U})
+\tilde{I}^{(i)}(\mathbf{U})
 \;=\;
 \mathrm{ELBO}^{(i)}(\mathbf{U}) + \log P(\mathbf{U}),
 \]
@@ -66,25 +66,25 @@ which satisfies $\tilde{I}(\mathbf{U}) \le I(\mathbf{U})$ for all $\mathbf{U}$, 
 **Step 2. E-step.**  
 Set
 \[
-q^{(i)}(\mathbf{z})
+q^{(i-1)}(\mathbf{z})
 =
 P(\mathbf{z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)}).
 \]
 Then by the lemma below,
 \[
-\KL\!\left(q^{(i)}(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)})\right)=0,
+\KL\!\left(q^{(i-1)}(\mathbf{z})\,\big\|\,P(\mathbf{z}\mid \mathbf{X},\hat{\mathbf{U}}^{(i-1)})\right)=0,
 \quad\Rightarrow\quad
-\tilde{I}(\hat{\mathbf{U}}^{(i-1)}) = I(\hat{\mathbf{U}}^{(i-1)}).
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i-1)}) = I(\hat{\mathbf{U}}^{(i-1)}).
 \]
 
 **Step 3. M-step.**  
 Update
 \[
-\hat{\mathbf{U}}^{(i)} = \arg\max_{\mathbf{U}} \tilde{I}(\mathbf{U}),
+\hat{\mathbf{U}}^{(i)} = \arg\max_{\mathbf{U}} \tilde{I}^{(i-1)}(\mathbf{U}),
 \]
 so that
 \[
-\tilde{I}(\hat{\mathbf{U}}^{(i)}) \;\ge\; \tilde{I}(\hat{\mathbf{U}}^{(i-1)}).
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i)}) \;\ge\; \tilde{I}(\hat{\mathbf{U}}^{(i-1)}).
 \]
 
 **Step 4. Combine.**  
@@ -92,9 +92,9 @@ By construction,
 \[
 I(\hat{\mathbf{U}}^{(i)})
 \;\ge\;
-\tilde{I}(\hat{\mathbf{U}}^{(i)})
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i)})
 \;\ge\;
-\tilde{I}(\hat{\mathbf{U}}^{(i-1)})
+\tilde{I}^{(i-1)}(\hat{\mathbf{U}}^{(i-1)})
 =
 I(\hat{\mathbf{U}}^{(i-1)}).
 \]
