@@ -1,0 +1,21 @@
+Package: gplvm
+Title: Bayesian Gaussian Process Latent Variable Model
+Version: 0.0.1
+Authors@R:
+    person("First", "Last", email = "your@email.com", role = c("aut", "cre"))
+Description: Implements Bayesian Gaussian Process Latent Variable Models (BGPLVM)
+    for dimensionality reduction and latent structure learning. Provides variational
+    inference for scalable approximate Bayesian inference.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.0
+Imports:
+    Matrix,
+    methods
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
