@@ -1,174 +1,410 @@
-#' Fit a Bayesian GPLVM
+#' Fit a Sparse Bayesian GPLVM
 #'
-#' Fits a Bayesian Gaussian Process Latent Variable Model using variational
-#' inference. The model assumes:
-#'   Y ~ GP(0, K(X, X) + sigma^2 * I)
-#' where X are the latent coordinates with prior X ~ N(0, I).
+#' Fits a sparse Bayesian Gaussian Process Latent Variable Model (BGPLVM) using
+#' variational inference with inducing points (Titsias 2009 / Titsias & Lawrence 2010).
 #'
-#' @param Y Data matrix of size N x D (N observations, D dimensions)
-#' @param Q Dimensionality of the latent space
-#' @param kernel Kernel function to use (default: kernel_se_ard)
-#' @param n_iter Number of optimization iterations
-#' @param lr Learning rate for gradient-based optimization
-#' @param verbose Print progress every this many iterations (0 = silent)
+#' The model:
+#'   - Prior: p(X) = prod_i N(x_i; 0, I_Q)
+#'   - Likelihood: p(Y | X) = prod_d GP(y_d; 0, K(X,X) + sigma^2 I)
+#'   - Variational posterior: q(X) = prod_i N(x_i; mu_i, diag(s_i^2))
+#'   - Sparse approximation via M inducing inputs Z (M << N)
 #'
-#' @return A list of class "bgplvm" with components:
-#'   \item{mu_X}{Posterior mean of latent coordinates (N x Q)}
-#'   \item{S_X}{Posterior variance of latent coordinates (N x Q)}
-#'   \item{kernel_params}{Fitted kernel hyperparameters}
-#'   \item{sigma2}{Fitted noise variance}
+#' Scales to N > 5000 cells at O(NM^2) per ELBO evaluation.
+#'
+#' @param Y         N x D data matrix (e.g., NMF or PCA loadings). Rows = cells.
+#' @param Q         Latent dimensionality. Use Q=2 for visualization, Q=1 for pseudo-time.
+#' @param M         Number of inducing points. Default: min(100, ceiling(sqrt(N))).
+#' @param n_iter    Maximum optimization iterations (default 1000).
+#' @param lr        Adam learning rate (default 0.01).
+#' @param optimizer "adam" (default) or "lbfgsb".
+#' @param init      "pca" (default), "random", or a named list of initial parameters.
+#' @param verbose   Print ELBO every this many iterations; 0 = silent (default 100).
+#' @param tol_elbo  Early stopping tolerance (default 1e-4).
+#' @param patience  Early stopping patience in iterations (default 20).
+#' @param ...       Additional arguments passed to the optimizer.
+#'
+#' @return An object of class \code{"bgplvm"} with components:
+#'   \item{mu_X}{N x Q matrix of posterior latent means}
+#'   \item{S_X}{N x Q matrix of posterior latent variances}
+#'   \item{Z}{M x Q matrix of learned inducing inputs}
+#'   \item{lengthscales}{Length-Q vector of ARD kernel lengthscales}
+#'   \item{variance}{Signal variance (scalar)}
+#'   \item{sigma2}{Noise variance (scalar)}
+#'   \item{K_MM}{M x M inducing kernel matrix at convergence}
+#'   \item{K_MM_inv}{M x M inverse of K_MM}
 #'   \item{elbo_trace}{ELBO values per iteration}
+#'   \item{N, D, Q, M}{Dimensions}
+#'   \item{converged}{Logical; TRUE if early stopping criterion was met}
+#'   \item{n_iter_run}{Number of iterations actually run}
+#'
+#' @references
+#'   Titsias, M. (2009). Variational learning of inducing variables in sparse
+#'   Gaussian processes. AISTATS.
+#'
+#'   Titsias, M. & Lawrence, N. (2010). Bayesian Gaussian process latent
+#'   variable model. AISTATS.
+#'
+#' @examples
+#' \dontrun{
+#' set.seed(42)
+#' Y <- matrix(rnorm(200 * 10), 200, 10)
+#'
+#' # 2D embedding
+#' fit <- bgplvm(Y, Q = 2, M = 20, n_iter = 100, verbose = 0)
+#' plot(fit)
+#'
+#' # Pseudo-time (1D)
+#' fit1d <- bgplvm(Y, Q = 1, M = 20, n_iter = 100, verbose = 0)
+#' pt <- extract_pseudotime(fit1d)
+#' }
 #' @export
-bgplvm <- function(Y, Q = 2, kernel = kernel_se_ard,
-                   n_iter = 200, lr = 0.01, verbose = 50) {
+bgplvm <- function(Y,
+                   Q         = 2L,
+                   M         = NULL,
+                   n_iter    = 1000L,
+                   lr        = 0.01,
+                   optimizer = c("adam", "lbfgsb"),
+                   init      = "pca",
+                   verbose   = 100L,
+                   tol_elbo  = 1e-4,
+                   patience  = 20L,
+                   ...) {
   Y <- as.matrix(Y)
   N <- nrow(Y)
   D <- ncol(Y)
 
-  # Initialize latent means via PCA
-  pca <- prcomp(Y, center = TRUE, scale. = FALSE)
-  mu_X <- pca$x[, seq_len(Q), drop = FALSE]
-  S_X  <- matrix(0.1, nrow = N, ncol = Q)  # log-variance init
+  if (N < 2L) stop("Y must have at least 2 rows")
+  if (D < Q)  stop("Q (", Q, ") cannot exceed D (", D, ")")
 
-  # Hyperparameters (log-parameterized for unconstrained optimization)
-  log_lengthscales <- rep(0, Q)   # lengthscale = 1 per dim
-  log_variance     <- 0           # signal variance = 1
-  log_sigma2       <- log(0.1)    # noise variance = 0.1
+  if (is.null(M)) M <- min(100L, ceiling(sqrt(N)))
+  M <- as.integer(M)
+  if (M > N)  stop("M (", M, ") cannot exceed N (", N, ")")
+  if (M < 2L) stop("M must be at least 2")
 
-  elbo_trace <- numeric(n_iter)
+  optimizer <- match.arg(optimizer)
+  cl        <- match.call()
 
-  for (i in seq_len(n_iter)) {
-    params <- list(
-      mu_X = mu_X, S_X = S_X,
-      log_ls = log_lengthscales,
-      log_var = log_variance,
-      log_sigma2 = log_sigma2
-    )
-
-    elbo_val <- .compute_elbo(Y, params, kernel)
-    elbo_trace[i] <- elbo_val
-
-    if (verbose > 0 && (i %% verbose == 0)) {
-      message(sprintf("Iter %d / %d | ELBO: %.4f", i, n_iter, elbo_val))
-    }
-
-    # Gradient step (finite differences placeholder — replace with analytic grads)
-    grad <- .finite_diff_elbo(Y, params, kernel, eps = 1e-4)
-    mu_X             <- mu_X             + lr * grad$mu_X
-    S_X              <- S_X              + lr * grad$S_X
-    log_lengthscales <- log_lengthscales + lr * grad$log_ls
-    log_variance     <- log_variance     + lr * grad$log_var
-    log_sigma2       <- log_sigma2       + lr * grad$log_sigma2
+  if (verbose > 0L) {
+    message(sprintf(
+      "Fitting sparse BGPLVM: N=%d, D=%d, Q=%d, M=%d, optimizer=%s",
+      N, D, Q, M, optimizer
+    ))
   }
+
+  params <- .init_params(Y, Q, M, init)
+
+  opt_result <- if (optimizer == "adam") {
+    .adam_optimize(
+      params_init = params,
+      Y           = Y,
+      n_iter      = n_iter,
+      lr          = lr,
+      tol_elbo    = tol_elbo,
+      patience    = patience,
+      verbose     = verbose,
+      ...
+    )
+  } else {
+    .lbfgsb_optimize(
+      params_init = params,
+      Y           = Y,
+      n_iter      = n_iter,
+      verbose     = verbose > 0L,
+      ...
+    )
+  }
+
+  p <- opt_result$params
+
+  # Cache K_MM and its inverse at converged parameters
+  ls_final  <- exp(p$log_ls)
+  var_final <- exp(p$log_var)
+  kmm_res   <- .compute_K_MM(p$Z, ls_final, var_final)
 
   structure(
     list(
-      mu_X = mu_X,
-      S_X  = exp(S_X),
-      kernel_params = list(
-        lengthscales = exp(log_lengthscales),
-        variance     = exp(log_variance)
-      ),
-      sigma2      = exp(log_sigma2),
-      elbo_trace  = elbo_trace,
-      Y = Y, Q = Q
+      mu_X         = p$mu_X,
+      log_s_X      = p$log_s_X,
+      S_X          = exp(2 * p$log_s_X),
+      Z            = p$Z,
+      lengthscales = ls_final,
+      variance     = var_final,
+      sigma2       = exp(p$log_sigma2),
+      K_MM         = kmm_res$K,
+      K_MM_inv     = chol2inv(t(kmm_res$L)),
+      elbo_trace   = opt_result$elbo_trace,
+      N            = N,
+      D            = D,
+      Q            = Q,
+      M            = M,
+      Y            = Y,
+      call         = cl,
+      converged    = opt_result$converged,
+      n_iter_run   = length(opt_result$elbo_trace)
     ),
     class = "bgplvm"
   )
 }
 
-#' Compute the Variational ELBO
+#' Extract pseudo-time from a bgplvm fit
 #'
-#' @param Y Data matrix N x D
-#' @param params List of variational and kernel parameters
-#' @param kernel Kernel function
-#' @keywords internal
-.compute_elbo <- function(Y, params, kernel) {
-  N <- nrow(Y)
-  D <- ncol(Y)
+#' Returns a per-cell pseudo-time coordinate with posterior uncertainty.
+#' If the model was fit with Q=1, the single latent dimension IS pseudo-time.
+#' If Q>1, the dimension with the smallest ARD lengthscale (most "active") is used.
+#'
+#' @param object   A \code{bgplvm} object
+#' @param dim      Which latent dimension to use (default NULL = auto-select)
+#' @param scale01  Rescale pseudo-time to [0, 1] (default TRUE)
+#' @param flip     Reverse the time direction (default FALSE)
+#'
+#' @return A data.frame with columns:
+#'   \item{cell}{Integer cell index (1:N)}
+#'   \item{pseudotime}{Posterior mean pseudo-time coordinate}
+#'   \item{lower95}{2.5th percentile: pseudotime - 1.96 * s}
+#'   \item{upper95}{97.5th percentile: pseudotime + 1.96 * s}
+#'   \item{s}{Posterior standard deviation}
+#'
+#' @export
+extract_pseudotime <- function(object, dim = NULL, scale01 = TRUE, flip = FALSE) {
+  if (!inherits(object, "bgplvm")) {
+    stop("object must be of class 'bgplvm'")
+  }
 
-  ls     <- exp(params$log_ls)
-  var_k  <- exp(params$log_var)
-  sigma2 <- exp(params$log_sigma2)
-  mu_X   <- params$mu_X
-  S_X    <- exp(params$S_X)   # variances (positive)
+  # Auto-select: dimension with smallest lengthscale = most "on" in ARD
+  if (is.null(dim)) {
+    dim <- which.min(object$lengthscales)
+  }
+  if (dim < 1L || dim > object$Q) {
+    stop("dim must be between 1 and Q (", object$Q, ")")
+  }
 
-  # Expected kernel using only posterior means (0th-order approximation)
-  K <- kernel(mu_X, lengthscales = ls, variance = var_k)
-  K <- K + (sigma2 + 1e-6) * diag(N)
+  pt_mean <- object$mu_X[, dim]
+  pt_sd   <- sqrt(object$S_X[, dim])
 
-  # Log-likelihood term: -0.5 * D * [log|K| + tr(K^{-1} YY^T/D)]
-  chol_K <- tryCatch(chol(K), error = function(e) NULL)
-  if (is.null(chol_K)) return(-Inf)
+  if (flip) pt_mean <- -pt_mean
 
-  log_det_K <- 2 * sum(log(diag(chol_K)))
-  K_inv_Y   <- chol2inv(chol_K) %*% Y
-  trace_term <- sum(Y * K_inv_Y)
-
-  ll <- -0.5 * (D * log_det_K + trace_term + N * D * log(2 * pi))
-
-  # KL divergence KL[q(X) || p(X)], p(X) = N(0, I)
-  # KL = 0.5 * sum(mu^2 + S - 1 - log(S))
-  kl <- 0.5 * sum(mu_X^2 + S_X - 1 - log(S_X + 1e-8))
-
-  ll - kl
-}
-
-#' Finite-difference gradient of ELBO (placeholder)
-#' @keywords internal
-.finite_diff_elbo <- function(Y, params, kernel, eps = 1e-4) {
-  f0 <- .compute_elbo(Y, params, kernel)
-
-  grad_mu_X <- matrix(0, nrow = nrow(params$mu_X), ncol = ncol(params$mu_X))
-  for (i in seq_len(nrow(params$mu_X))) {
-    for (j in seq_len(ncol(params$mu_X))) {
-      p2 <- params; p2$mu_X[i, j] <- p2$mu_X[i, j] + eps
-      grad_mu_X[i, j] <- (.compute_elbo(Y, p2, kernel) - f0) / eps
+  if (scale01) {
+    rng <- range(pt_mean)
+    if (diff(rng) < .Machine$double.eps) {
+      warning("Pseudo-time range is essentially zero; scale01 skipped.")
+    } else {
+      scale_factor <- diff(rng)
+      pt_mean <- (pt_mean - rng[1]) / scale_factor
+      pt_sd   <- pt_sd / scale_factor
     }
   }
 
-  # Scalar gradients
-  scalar_grad <- function(name) {
-    p2 <- params; p2[[name]] <- p2[[name]] + eps
-    (.compute_elbo(Y, p2, kernel) - f0) / eps
-  }
-
-  list(
-    mu_X       = grad_mu_X,
-    S_X        = matrix(0, nrow = nrow(params$S_X), ncol = ncol(params$S_X)),
-    log_ls     = sapply(seq_along(params$log_ls), function(k) {
-      p2 <- params; p2$log_ls[k] <- p2$log_ls[k] + eps
-      (.compute_elbo(Y, p2, kernel) - f0) / eps
-    }),
-    log_var    = scalar_grad("log_var"),
-    log_sigma2 = scalar_grad("log_sigma2")
+  data.frame(
+    cell       = seq_len(object$N),
+    pseudotime = pt_mean,
+    lower95    = pt_mean - 1.96 * pt_sd,
+    upper95    = pt_mean + 1.96 * pt_sd,
+    s          = pt_sd
   )
 }
 
-#' Print method for bgplvm
+#' Predict latent embedding for new observations
+#'
+#' Fits q(X_new) for new data Ynew while fixing all kernel hyperparameters
+#' at their trained values.
+#'
+#' @param object  A \code{bgplvm} object
+#' @param newdata N_new x D matrix of new observations (same D as training Y)
+#' @param n_iter  Optimization iterations for q(X_new) (default 200)
+#' @param verbose Print interval (default 0)
+#' @param ...     Additional arguments to .adam_optimize
+#'
+#' @return A data.frame with columns mu_1, ..., mu_Q, s_1, ..., s_Q
+#' @export
+predict.bgplvm <- function(object, newdata, n_iter = 200L, verbose = 0L, ...) {
+  Ynew <- as.matrix(newdata)
+  N_new <- nrow(Ynew)
+
+  if (ncol(Ynew) != object$D) {
+    stop("newdata has ", ncol(Ynew), " columns but model expects ", object$D)
+  }
+
+  Q <- object$Q
+  M <- object$M
+
+  # Fix hyperparameters; only optimize mu_X and log_s_X for new cells
+  fixed_log_ls     <- log(object$lengthscales)
+  fixed_log_var    <- log(object$variance)
+  fixed_log_sigma2 <- log(object$sigma2)
+  fixed_Z          <- object$Z
+
+  # Initialize new latent coords via regression onto training latent space
+  # Simple: project Ynew onto training principal components
+  pca_new <- tryCatch({
+    pc <- prcomp(object$Y, center = TRUE, scale. = FALSE)
+    scale(Ynew, center = pc$center, scale = FALSE) %*% pc$rotation[, seq_len(Q), drop = FALSE]
+  }, error = function(e) {
+    matrix(0, N_new, Q)
+  })
+
+  init_new <- list(
+    mu_X       = pca_new,
+    log_s_X    = matrix(log(0.1), N_new, Q),
+    Z          = fixed_Z,
+    log_ls     = fixed_log_ls,
+    log_var    = fixed_log_var,
+    log_sigma2 = fixed_log_sigma2
+  )
+
+  # Optimize only mu_X and log_s_X; freeze other params by zeroing their gradients
+  frozen_grad <- function(params, Y, YtY_trace = NULL) {
+    g <- .grad_sparse_elbo(params, Y, YtY_trace)
+    # Zero out gradients for frozen hyperparameters
+    g$Z          <- g$Z * 0
+    g$log_ls     <- g$log_ls * 0
+    g$log_var    <- g$log_var * 0
+    g$log_sigma2 <- g$log_sigma2 * 0
+    g
+  }
+
+  res <- .adam_optimize(
+    params_init = init_new,
+    Y           = Ynew,
+    n_iter      = n_iter,
+    verbose     = verbose,
+    grad_fn     = frozen_grad,
+    ...
+  )
+
+  p     <- res$params
+  s_mat <- sqrt(exp(2 * p$log_s_X))
+
+  df <- as.data.frame(p$mu_X)
+  names(df) <- paste0("mu_", seq_len(Q))
+  for (q in seq_len(Q)) df[[paste0("s_", q)]] <- s_mat[, q]
+
+  df
+}
+
+# ---- S3 Methods ---------------------------------------------------------------
+
 #' @export
 print.bgplvm <- function(x, ...) {
-  cat("Bayesian GPLVM\n")
-  cat(sprintf("  N = %d observations, D = %d dimensions, Q = %d latent dims\n",
-              nrow(x$Y), ncol(x$Y), x$Q))
-  cat(sprintf("  Noise sigma^2 = %.4f\n", x$sigma2))
-  cat(sprintf("  Kernel lengthscales: %s\n",
-              paste(round(x$kernel_params$lengthscales, 3), collapse = ", ")))
-  cat(sprintf("  Final ELBO: %.4f\n", tail(x$elbo_trace, 1)))
+  cat("Bayesian GPLVM (sparse, variational)\n")
+  cat(sprintf("  N = %d cells, D = %d dims, Q = %d latent, M = %d inducing\n",
+              x$N, x$D, x$Q, x$M))
+  cat(sprintf("  Noise sigma^2       : %.4f\n", x$sigma2))
+  cat(sprintf("  Signal variance     : %.4f\n", x$variance))
+  cat(sprintf("  ARD lengthscales    : %s\n",
+              paste(sprintf("%.3f", x$lengthscales), collapse = ", ")))
+  cat(sprintf("  Iterations run      : %d  (converged: %s)\n",
+              x$n_iter_run, x$converged))
+  if (!is.null(x$elbo_trace) && length(x$elbo_trace) > 0L) {
+    cat(sprintf("  Final ELBO          : %.4f\n", tail(x$elbo_trace, 1)))
+  }
   invisible(x)
 }
 
-#' Plot latent space of a bgplvm fit
-#'
-#' @param x A bgplvm object
-#' @param dims Which two latent dimensions to plot (default c(1, 2))
-#' @param ... Additional arguments passed to plot()
 #' @export
-plot.bgplvm <- function(x, dims = c(1, 2), ...) {
-  mu <- x$mu_X[, dims]
-  plot(mu[, 1], mu[, 2],
-       xlab = paste0("Latent dim ", dims[1]),
-       ylab = paste0("Latent dim ", dims[2]),
-       main = "BGPLVM Latent Space",
-       ...)
+summary.bgplvm <- function(object, ...) {
+  print(object)
+  if (object$Q >= 1L) {
+    cat("\nPseudo-time summary (dim with smallest lengthscale):\n")
+    pt <- extract_pseudotime(object, scale01 = TRUE)
+    cat(sprintf("  Mean uncertainty (s): %.4f\n", mean(pt$s)))
+    cat(sprintf("  Pseudo-time range   : [%.4f, %.4f]\n",
+                min(pt$pseudotime), max(pt$pseudotime)))
+  }
+  invisible(object)
+}
+
+#' Plot the latent space of a bgplvm fit
+#'
+#' @param x           A \code{bgplvm} object
+#' @param dims        Integer vector of length 2: which latent dims to plot (default c(1,2))
+#' @param col         Optional color vector of length N
+#' @param uncertainty If TRUE, draw uncertainty ellipses scaled by posterior std dev
+#' @param ...         Additional arguments passed to \code{plot()}
+#' @export
+plot.bgplvm <- function(x, dims = c(1L, 2L), col = NULL,
+                        uncertainty = FALSE, ...) {
+  if (x$Q < 2L) {
+    # 1D: plot pseudo-time with uncertainty ribbon
+    pt <- extract_pseudotime(x, scale01 = TRUE)
+    ord <- order(pt$pseudotime)
+    plot(pt$pseudotime[ord], pt$s[ord],
+         type = "l",
+         xlab = "Pseudo-time",
+         ylab = "Posterior std dev",
+         main = "BGPLVM Pseudo-time Uncertainty",
+         ...)
+    return(invisible(x))
+  }
+
+  mu <- x$mu_X[, dims, drop = FALSE]
+
+  plot_args <- list(
+    x    = mu[, 1],
+    y    = mu[, 2],
+    xlab = paste0("Latent dim ", dims[1]),
+    ylab = paste0("Latent dim ", dims[2]),
+    main = "BGPLVM Latent Space",
+    col  = if (is.null(col)) "black" else col,
+    pch  = 16L,
+    cex  = 0.7
+  )
+  do.call(plot, c(plot_args, list(...)))
+
+  if (uncertainty) {
+    s <- sqrt(x$S_X[, dims, drop = FALSE])
+    for (i in seq_len(x$N)) {
+      graphics::symbols(
+        x      = mu[i, 1],
+        y      = mu[i, 2],
+        circles = sqrt(s[i, 1]^2 + s[i, 2]^2),
+        add    = TRUE,
+        inches = FALSE,
+        fg     = grDevices::adjustcolor(
+          if (is.null(col)) "black" else col[i], alpha.f = 0.2
+        )
+      )
+    }
+  }
+
+  invisible(x)
+}
+
+#' Check convergence diagnostics for a bgplvm fit
+#'
+#' Prints a summary of convergence and suggests remedies if not converged.
+#'
+#' @param object A \code{bgplvm} object
+#' @param ... Ignored
+#' @export
+check_convergence <- function(object, ...) UseMethod("check_convergence")
+
+#' @export
+check_convergence.bgplvm <- function(object, ...) {
+  cat("=== Convergence Diagnostics ===\n")
+  cat(sprintf("  Iterations run : %d\n", object$n_iter_run))
+  cat(sprintf("  Converged      : %s\n", object$converged))
+
+  if (!is.null(object$elbo_trace) && length(object$elbo_trace) >= 10L) {
+    n  <- length(object$elbo_trace)
+    tail_elbo <- object$elbo_trace[max(1L, n - 9L):n]
+    cat(sprintf("  Last 10 ELBOs  : %s\n",
+                paste(sprintf("%.2f", tail_elbo), collapse = ", ")))
+
+    # Check if ELBO is still increasing
+    delta <- diff(tail(object$elbo_trace, 20L))
+    if (mean(delta) > 1e-2) {
+      cat("  WARNING: ELBO still increasing — consider more iterations.\n")
+    } else {
+      cat("  ELBO appears stable.\n")
+    }
+  }
+
+  if (!object$converged) {
+    cat("\nSuggestions:\n")
+    cat("  - Increase n_iter\n")
+    cat("  - Try a lower learning rate (lr = 0.005)\n")
+    cat("  - Increase M (more inducing points)\n")
+  }
+
+  invisible(object)
 }
