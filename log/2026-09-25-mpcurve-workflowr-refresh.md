@@ -75,7 +75,7 @@ restricted; all six pages render and pass static checks. Browser visual QA
 of local files was blocked by the browser security policy, so only local
 image inspection and static HTML checks were performed.
 
-The updated site is local and has not been committed, pushed, or published.
+At the initial review stage, the updated site was local and unpublished.
 
 ## Reader-facing publication pass
 
@@ -93,3 +93,28 @@ were rebuilt from saved results and passed `scripts/check_current_site.py`
 and `git diff --check` before staging. A workflowr favicon fetch warning
 remains in the local build log because the sandbox cannot reach GitHub, but
 it is not displayed in the page body.
+
+## Publication
+
+The site refresh was committed as `40fa47e` and pushed to `origin/master` on
+2026-09-25. GitHub Pages serves the updated site at
+<https://aguerozz.github.io/InferOrder/>.
+
+Public verification after deployment found:
+
+- The canonical site root and all six current HTML pages return HTTP 200.
+  Downloaded HTML for each current page matches its committed local file
+  byte-for-byte by SHA-256.
+- Fourteen checked historical HTML URLs, including the twelve removed
+  tracked pages and the old `about.html` and `theory.html` paths, return
+  HTTP 404 without query parameters.
+- All nine distinct external links in the current pages to MPCurver methods,
+  the InferOrder repository, reproduction scripts, and saved results return
+  HTTP 200.
+- A few immediate requests briefly returned old content from a CDN cache;
+  subsequent requests to the canonical URLs returned the current pages and
+  404 responses for the retired pages.
+
+The unrelated modified and untracked files in the shared checkout were not
+included in the publication commit. The locally retained untracked legacy
+files and two exploratory pancreatic candidate fits also remain unpublished.

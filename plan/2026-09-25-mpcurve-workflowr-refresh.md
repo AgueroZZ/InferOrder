@@ -83,9 +83,9 @@
   interpretation without exposing build diagnostics to readers.
 - [x] Rebuild and validate the six pages from saved results, including the
   rendered navigation, figures, links, and numerical claims.
-- [ ] Stage only this site refresh and archival files; preserve the unrelated
+- [x] Stage only this site refresh and archival files; preserve the unrelated
   modified and untracked work in the shared checkout.
-- [ ] Commit and push the updated `master` branch, then verify the live
+- [x] Commit and push the updated `master` branch, then verify the live
   GitHub Pages URLs and that the old Smooth-EM HTML URLs are unavailable.
-- [ ] Record the publication commit, public verification, and any remaining
+- [x] Record the publication commit, public verification, and any remaining
   limitations in the update log.
