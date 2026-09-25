@@ -1,0 +1,46 @@
+environment,category,ordering
+0.5% Raf,carbon source,A
+"1.5% Suc, 1% Raf",carbon source,A
+1% EtOH,carbon source,A
+1% Gly,carbon source,A
+1% Raf,carbon source,A
+0.5 μg/ml Flu,drug / chemical,A
+17 μM GdA,drug / chemical,A
+2 μg/ml Flu,drug / chemical,A
+8.5 μM GdA (B9),drug / chemical,A
+"Baffle, 0.4 μg/ml Ben",drug / chemical,A
+"Baffle, 2 μg/ml Ben",drug / chemical,A
+1.4% Gluc,glucose / batch,A
+1.8% Gluc,glucose / batch,A
+EC 1BigBatch,other,A
+EC Batch 20,other,A
+EC Batch 21,other,A
+EC Batch 23,other,A
+0.2 M KCl,salt stress,A
+0.2 M NaCl,salt stress,A
+0.5 M KCl,salt stress,A
+0.5 M NaCl,salt stress,A
+1 Day,time course,A
+22 hr Ferm,time course,A
+4 Day,time course,A
+5 Day,time course,A
+6 Day,time course,A
+7 Day,time course,A
+0.5% DMSO,drug / chemical,B
+8.5 μM GdA (B1),drug / chemical,B
+Baffle (B8),glucose / batch,B
+Baffle (B9),glucose / batch,B
+"Baffle, 1.4% Gluc",glucose / batch,B
+"Baffle, 1.6% Gluc",glucose / batch,B
+"Baffle, 1.7% Gluc",glucose / batch,B
+"Baffle, 1.8% Gluc",glucose / batch,B
+"Baffle, 2.5% Gluc",glucose / batch,B
+EC Batch 13,other,B
+EC Batch 18,other,B
+EC Batch 19,other,B
+EC Batch 3,other,B
+EC Batch 6,other,B
+12 hr Ferm,time course,B
+18 hr Ferm,time course,B
+3 Day,time course,B
+8 hr Ferm,time course,B

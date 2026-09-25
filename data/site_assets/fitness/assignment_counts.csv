@@ -1,0 +1,11 @@
+category,ordering,environments
+carbon source,A,5
+drug / chemical,A,6
+drug / chemical,B,2
+glucose / batch,A,2
+glucose / batch,B,7
+other,A,4
+other,B,5
+salt stress,A,4
+time course,A,6
+time course,B,4

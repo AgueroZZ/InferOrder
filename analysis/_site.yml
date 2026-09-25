@@ -1,12 +1,26 @@
 name: "InferOrder"
 output_dir: ../docs
 navbar:
-  title: Inferring latent ordering
+  title: MPCurve results
   left:
-    - text: Overview
+    - text: Home
       href: index.html
+    - text: Method
+      href: method.html
+    - text: Simulation
+      menu:
+        - text: One ordering
+          href: simulation_m1.html
+        - text: Two orderings
+          href: simulation_m2.html
+    - text: Analysis
+      menu:
+        - text: Fitness
+          href: fitness.html
+        - text: Pancreas loadings
+          href: pancreas.html
   right:
-    - text: source
+    - text: Source
       href: https://github.com/AgueroZZ/InferOrder
 output:
   workflowr::wflow_html:

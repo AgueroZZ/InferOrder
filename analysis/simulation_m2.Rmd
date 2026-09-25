@@ -1,0 +1,94 @@
+---
+title: "Simulation: Two Latent Orderings"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path = paste0(
+  tools::file_path_sans_ext(basename(knitr::current_input())),
+  "_files/figure-html/"
+))
+result_path <- "experiments/mpcurve_v030_site/results/simulations/simulation_m2.rds"
+result <- readRDS(result_path)
+stopifnot(inherits(result$fit, "mpcurve"), identical(result$fit$algorithm, "cavi"))
+sim <- result$simulation
+fit <- result$fit
+summary <- result$summary
+assignments <- result$assignments
+```
+
+## Question and design
+
+Can structural CAVI separate features that follow two different orderings of
+the same samples? The generator from the [MPCurver feature-partitioning
+article](https://aguerozz.github.io/MPCurver/articles/partition.html)
+creates 500 samples, ten quadratic features following ordering A, and ten
+monotone features following ordering B. Gaussian noise has standard deviation
+0.05. The generator seed is 1.
+
+We fit a fixed $M=2$ model with a second-order random-walk prior, $K=50$ grid
+positions, `ridge = 0`, and Fiedler ordering initialization. The assignment
+probabilities are estimated jointly with conditional feature trajectories
+and sample positions.
+
+## Feature assignments
+
+After aligning the arbitrary A/B labels, the fit assigns all **20 of 20**
+features to their generating groups.
+
+```{r assignments, echo=FALSE, fig.width=9, fig.height=4.5, fig.cap="Figure 1. Posterior assignment probabilities for the 20 simulated features. Axis labels show the generating feature group."}
+weights <- as.matrix(fit$partition$pi_weights)
+ordering_labels <- colnames(weights)
+if (is.null(ordering_labels)) ordering_labels <- c("A", "B")
+barplot(t(weights), col = c("#2E8A99", "#E76F51"), border = NA,
+        names.arg = sim$true_assign, las = 2,
+        xlab = "Feature (generating group)", ylab = "Assignment probability")
+legend("topright", legend = ordering_labels,
+       fill = c("#2E8A99", "#E76F51"), bty = "n")
+```
+
+## Sample orderings
+
+After aligning ordering labels and allowing reversal of each axis, the
+absolute Spearman correlations with the two generating positions are
+**`r sprintf("%.4f", summary$abs_spearman_A)`** and
+**`r sprintf("%.4f", summary$abs_spearman_B)`**.
+
+```{r ordering-recovery, echo=FALSE, fig.width=9, fig.height=4.4, fig.cap="Figure 2. True versus inferred sample position for each aligned ordering. Reversing an axis leaves its ordering unchanged."}
+positions <- lapply(fit$locations, function(item) item$mean$pseudotime)
+old_par <- par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+for (m in seq_len(2)) {
+  truth_m <- result$truth_order_for_fit[m]
+  plot(sim$latent_positions[, truth_m], positions[[m]], pch = 16, cex = 0.55,
+       col = grDevices::adjustcolor(c("#2E8A99", "#E76F51")[m], alpha.f = 0.5),
+       xlab = "Generating position", ylab = "Inferred position",
+       main = paste("Ordering", c("A", "B")[m]))
+}
+par(old_par)
+```
+
+## Structural objective
+
+```{r objective, echo=FALSE, fig.width=7, fig.height=4.2, fig.cap="Figure 3. Structural variational objective within the final temperature-one phase."}
+t1_objective <- fit$objective_history[fit$temperature_history == 1]
+plot(seq_along(t1_objective), t1_objective, type = "l", lwd = 2,
+     col = "#2E8A99", xlab = "Recorded T = 1 update",
+     ylab = "Structural objective")
+```
+
+The structural objective increases during the final $T=1$ refinement phase.
+
+## Reproduce
+
+Run the [experiment
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_simulations.R)
+from the InferOrder root with MPCurver 0.3.0. The
+[saved results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v030_site/results/simulations)
+include the generating truth, fitted model, and assignment probabilities.
+This is one simulated data set.

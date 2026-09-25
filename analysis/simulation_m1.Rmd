@@ -1,0 +1,72 @@
+---
+title: "Simulation: One Latent Ordering"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path = paste0(
+  tools::file_path_sans_ext(basename(knitr::current_input())),
+  "_files/figure-html/"
+))
+result_path <- "experiments/mpcurve_v030_site/results/simulations/simulation_m1.rds"
+result <- readRDS(result_path)
+stopifnot(inherits(result$fit, "mpcurve"), identical(result$fit$algorithm, "cavi"))
+sim <- result$simulation
+fit <- result$fit
+X <- as.matrix(sim$obs)
+position <- result$position
+summary <- result$summary
+```
+
+## Question and design
+
+Can a single MPCurve ordering recover a known sample trajectory from noisy
+two-dimensional observations? We use the spiral generator from the
+[MPCurver getting-started
+article](https://aguerozz.github.io/MPCurver/articles/mpcurve_intro.html):
+1,000 samples with latent $t\in[1.5\pi,4.5\pi]$ and Gaussian noise standard
+deviation 0.12. The simulation seed is 1. A CAVI fit uses Fiedler
+initialization, $K=60$ grid positions, and at most 120 iterations.
+
+## Ordering recovery
+
+```{r recovery, echo=FALSE, fig.width=10, fig.height=4.5, fig.cap="Figure 1. The simulated spiral coloured by the generating position (left) and the inferred posterior-mean grid position (right)."}
+palette <- grDevices::colorRampPalette(
+  c("#1F3A5F", "#2E8A99", "#F2C14E", "#E76F51")
+)(256)
+position_colours <- function(values) palette[cut(values, breaks = 256, labels = FALSE)]
+old_par <- par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+plot(X, col = position_colours(sim$t), pch = 19, cex = 0.55,
+     xlab = "Feature 1", ylab = "Feature 2", main = "Generating position")
+plot(X, col = position_colours(position), pch = 19, cex = 0.55,
+     xlab = "Feature 1", ylab = "Feature 2", main = "Inferred position")
+par(old_par)
+```
+
+The absolute Spearman correlation between true $t$ and inferred
+posterior-mean grid position is **`r sprintf("%.4f", summary$abs_spearman)`**. The
+absolute value accounts for the arbitrary direction of an inferred ordering.
+This result comes from one simulated data set.
+
+## Objective trace
+
+```{r elbo, echo=FALSE, fig.width=7, fig.height=4.2, fig.cap="Figure 2. Evidence lower bound recorded during the single-ordering CAVI fit."}
+plot(fit$elbo_trace, type = "l", lwd = 2, col = "#2E8A99",
+     xlab = "Recorded iteration", ylab = "ELBO")
+```
+
+The ELBO increases through the fit and levels off as CAVI converges.
+
+## Reproduce
+
+The [experiment
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_simulations.R)
+regenerates the data, fit, and figures with MPCurver 0.3.0. The
+[saved results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v030_site/results/simulations)
+include the generating truth and fitted model.

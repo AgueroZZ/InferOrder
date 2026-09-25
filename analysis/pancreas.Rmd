@@ -1,0 +1,140 @@
+---
+title: "Analysis: Pancreatic Cell Loadings"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path = paste0(
+  tools::file_path_sans_ext(basename(knitr::current_input())),
+  "_files/figure-html/"
+))
+result_dir <- "experiments/mpcurve_v030_site/results/pancreas"
+m1 <- readRDS(file.path(result_dir, "fit_m1.rds"))
+m2 <- readRDS(file.path(result_dir, "fit_m2.rds"))
+samples <- read.csv(file.path(result_dir, "sample_positions.csv"), check.names = FALSE)
+assignments <- read.csv(file.path(result_dir, "factor_assignments.csv"))
+X <- m1$fit$data
+factor_columns <- c(3, 8, 9, 12, 17, 18, 20, 21)
+stopifnot(identical(dim(X), c(865L, 8L)),
+          isTRUE(all.equal(X, m2$fit$data, check.attributes = FALSE)))
+position_correlations <- c(
+  A = abs(cor(samples$M1, samples$M2_A, method = "spearman")),
+  B = abs(cor(samples$M1, samples$M2_B, method = "spearman"))
+)
+```
+
+## Data and analysis question
+
+We analyze semi-NMF loading factors from pancreatic cells. We sample at most
+500 cells per cell type with seed 1, retain cells measured with `inDrop3`,
+and select factor columns 3, 8, 9, 12, 17, 18, 20, and 21. This gives
+**865 cells by 8 factors**. We fit $M=1$ and $M=2$ MPCurve models to the same
+matrix to see what each specified number of orderings captures.
+
+## Fitting settings
+
+Both fits use CAVI, an RW2 trajectory prior, $K=50$ grid positions, and
+`ridge = 0`. The $M=1$ fit starts from PCA; the $M=2$ fit uses Fiedler
+ordering and similarity-based feature initialization. Exact seeds and
+iteration budgets are in the [reproduction script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_pancreas.R).
+
+```{r fit-settings-table, echo=FALSE}
+settings <- read.csv(file.path(result_dir, "fit_settings.csv"))
+knitr::kable(settings[, c("model", "seed", "method", "K", "rw_q", "ridge")],
+             caption = "Table 1. Fixed model and initialization settings.")
+```
+
+## One versus two orderings
+
+The plots below arrange the same loadings according to each fitted sample
+ordering. The first panel uses $M=1$; the other two are orderings A and B
+from the fixed $M=2$ fit. Colours show the observed loading values, with the
+same colour scale in all panels. Ordering direction is arbitrary.
+
+```{r ordered-loadings, echo=FALSE, fig.width=10, fig.height=10, fig.cap="Figure 1. Eight semi-NMF loading factors arranged by the inferred cell positions under fixed M = 1 and M = 2 fits."}
+plot_loading_heatmap <- function(position, title) {
+  ordered_X <- X[order(position), , drop = FALSE]
+  colours <- grDevices::colorRampPalette(c("#f7fbff", "#6baed6", "#08306b"))(100)
+  image(seq_len(nrow(ordered_X)), seq_len(ncol(ordered_X)), ordered_X,
+        col = colours, zlim = range(X), yaxt = "n",
+        xlab = "Cells ordered by inferred pseudotime",
+        ylab = "Semi-NMF factor column", main = title)
+  axis(2, at = seq_len(ncol(X)), labels = factor_columns, las = 2)
+  box()
+}
+old_par <- par(mfrow = c(3, 1), mar = c(4, 6, 3, 1))
+plot_loading_heatmap(samples$M1, "M = 1")
+plot_loading_heatmap(samples$M2_A, "M = 2, ordering A")
+plot_loading_heatmap(samples$M2_B, "M = 2, ordering B")
+par(old_par)
+```
+
+The absolute Spearman correlations between the $M=1$ positions and the
+$M=2$ positions are **`r sprintf("%.3f", position_correlations["A"])`** for
+ordering A and **`r sprintf("%.3f", position_correlations["B"])`** for
+ordering B. Ordering A closely follows the single-ordering fit; ordering B
+places cells differently.
+
+Cell-type annotations provide another view of the fitted positions. Each
+point in Figure 2 is one cell, grouped by its recorded cell type.
+
+```{r cell-types, echo=FALSE, fig.width=10, fig.height=10, fig.cap="Figure 2. Inferred pseudotime for each pancreatic cell, grouped by the recorded cell type."}
+type_levels <- names(sort(table(samples$cell_type), decreasing = TRUE))
+plot_cell_types <- function(position, title) {
+  y <- match(samples$cell_type, type_levels)
+  plot(position, jitter(y, amount = 0.22), pch = 16, cex = 0.55,
+       col = grDevices::adjustcolor("#2E8A99", alpha.f = 0.38),
+       xlab = "Inferred pseudotime", ylab = "Cell type", yaxt = "n",
+       ylim = c(length(type_levels) + 0.6, 0.4), main = title)
+  axis(2, at = seq_along(type_levels), labels = type_levels,
+       las = 2, cex.axis = 0.65)
+  grid(nx = NA, ny = length(type_levels), col = "grey90")
+}
+old_par <- par(mfrow = c(3, 1), mar = c(4, 9, 3, 1))
+plot_cell_types(samples$M1, "M = 1")
+plot_cell_types(samples$M2_A, "M = 2, ordering A")
+plot_cell_types(samples$M2_B, "M = 2, ordering B")
+par(old_par)
+```
+
+## Feature assignments in the two-ordering fit
+
+```{r assignment-table, echo=FALSE}
+knitr::kable(assignments, digits = 3,
+             caption = "Table 2. Posterior ordering probabilities for each selected semi-NMF factor.")
+```
+
+Seven factors follow ordering A; only factor 20 follows B. Most cells have
+similar fitted positions on B, while a smaller subset spreads across its
+range. The second ordering is therefore driven mainly by factor 20 in this
+fit.
+
+## Fitting objectives
+
+```{r objective-traces, echo=FALSE, fig.width=10, fig.height=4.3, fig.cap="Figure 3. Within-model objectives: the M = 1 CAVI ELBO and the M = 2 structural objective at T = 1."}
+t1_objective <- m2$fit$objective_history[m2$fit$temperature_history == 1]
+old_par <- par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+plot(m1$fit$elbo_trace, type = "l", lwd = 2, col = "#2E8A99",
+     xlab = "Recorded iteration", ylab = "ELBO", main = "M = 1")
+plot(seq_along(t1_objective), t1_objective, type = "l", lwd = 2,
+     col = "#E76F51", xlab = "Recorded T = 1 update",
+     ylab = "Structural objective", main = "M = 2")
+par(old_par)
+```
+
+Each objective rises during its own fit. The two panels use different
+objectives, so their heights cannot be used to choose $M$.
+
+## Reproduce
+
+The [reproduction
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_pancreas.R)
+reconstructs the input matrix and both fits. The [saved
+results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v030_site/results/pancreas)
+include selected cell IDs, fit settings, assignments, and fitted positions.

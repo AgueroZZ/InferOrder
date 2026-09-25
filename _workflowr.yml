@@ -6,3 +6,7 @@ seed: 20250707
 # The working directory to build the R Markdown files. The path is relative to
 # _workflowr.yml. See ?rmarkdown::render for details.
 knit_root_dir: "."
+# Keep the public pages focused on scientific content. Reproducibility details
+# are available in the repository's scripts, saved results, and update log.
+suppress_report: true
+sessioninfo: ""

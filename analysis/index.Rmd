@@ -1,5 +1,5 @@
 ---
-title: "Inferring latent ordering"
+title: "MPCurve: Methods and Results"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,36 +8,28 @@ editor_options:
   chunk_output_type: console
 ---
 
-In this project, we aim to study various ways to infer the latent ordering from the loading vectors.
-The inferred ordering could be used
+MPCurve infers latent sample orderings and smooth feature trajectories from
+multivariate data. This site presents selected results fitted by
+coordinate-ascent variational inference (CAVI) in **MPCurver 0.3.0**.
 
-- to produce a smooth informative structure plot;
-- to quantify the distance between two observations;
-- as side information to assist in covariate-adjusted matrix factorization method.
+## Method
 
-**Overview of Smooth-EM algorithm:**
+MPCurve places samples on an ordered grid and estimates a smooth trajectory
+for each feature. With multiple orderings, it also estimates which features
+follow each ordering. The [method overview](method.html) explains the model
+and algorithm; the [MPCurver package site](https://aguerozz.github.io/MPCurver/)
+provides full vignettes and software documentation.
 
-+ [Connection with standard EM algorithm.](monotonicity.html)
+## Simulation
 
-+ [A R package to implement Smooth-EM algorithm.](https://aguerozz.github.io/smoothEMr/)
+- [One ordering: a noisy spiral](simulation_m1.html) tests recovery of a known
+  sample order.
+- [Two orderings: two feature groups](simulation_m2.html) tests recovery of
+  feature assignments and both sample orders.
 
-**Analyses:**
+## Analysis
 
-+ [Exploring smooth-EM algorithm.](explore_smoothEM.html)
-
-<!-- + [Exploring smooth-EM algorithm on 2D lattice.](explore_2DSmoothEM.html) -->
-
-<!-- + [Exploring additive smooth-EM algorithm on 2D lattice](explore_2DSmoothEM_additive.html) -->
-
-<!-- + [Exploring smooth threshold EM algorithm.](explore_smoothSEM.html) -->
-
-+ [Inferring latent ordering on pancrea dataset](explore_pancrea.html)
-
-+ [Exploring SmoothEM on SwissRoll](explore_swiss_roll.html)
-
-+ [Exploring different ways of initializing SmoothEM](explore_initialization.html)
-
-+ [Exploring smooth-EM algorithm with the mixture of two latent orderings (Greedy Approach).](explore_SmoothEM_Mixture_greedy.html)
-
-
-
+- [Fitness across environments](fitness.html) compares mutant orderings and
+  environment groups, including a fit that uses measurement uncertainty.
+- [Pancreatic cell loadings](pancreas.html) compares one- and two-ordering fits
+  on the same semi-NMF loading matrix.

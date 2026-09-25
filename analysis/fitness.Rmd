@@ -1,0 +1,99 @@
+---
+title: "Analysis: Mutant Fitness Across Environments"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path = paste0(
+  tools::file_path_sans_ext(basename(knitr::current_input())),
+  "_files/figure-html/"
+))
+```
+
+This page summarizes the [MPCurver 0.3.0 fitness
+analysis](https://aguerozz.github.io/MPCurver/articles/fitness.html). The
+figures and numerical results come from that vignette.
+
+## Data and question
+
+The analysis contains 421 mutants measured in 45 environments. Each mutant
+has a fitness value and a reported measurement error in each environment.
+Rows are mutants, and features are environments. The question is whether one
+latent mutant ordering explains the variation across all environments or
+whether groups of environments follow different orderings.
+
+## One ordering
+
+The vignette starts with a single-ordering CAVI model using Isomap
+initialization, $K=50$ grid positions, and an RW2 trajectory prior. It then
+refits with a stronger smoothness prior using
+`lambda_sd_prior_rate = 1e4`. Comparing the inferred mutant positions helps
+assess whether smoothing changes the ordering or mainly the fitted curves.
+
+```{r compare-single-orderings, echo=FALSE, fig.width=10, fig.height=4.5, fig.cap="Figure 1. Comparison of inferred mutant positions under two smoothness settings, reproduced from the MPCurver 0.3.0 fitness vignette."}
+grid::grid.raster(png::readPNG(
+  "data/site_assets/fitness/compare-single-orderings-1.png"
+))
+```
+
+```{r single-ordering-correlation, include=FALSE}
+comparison <- read.csv("data/site_assets/fitness/single_ordering_comparison.csv")
+```
+
+The two fitted mutant positions have Pearson correlation
+**`r sprintf("%.3f", comparison$value)`**. The stronger prior produces
+smoother example trajectories in the full vignette while retaining a similar
+mutant ordering.
+
+## Two orderings and environment groups
+
+The vignette next fits a structural CAVI model with `intrinsic_dim = 2`.
+Each environment receives probabilities of following ordering A or B, and
+its trajectory is estimated conditional on the assignment. The plot below
+shows both conditional trajectories for one environment and its assignment
+probabilities in the panel titles.
+
+```{r partition-plot, echo=FALSE, fig.width=10, fig.height=5, fig.cap="Figure 2. Conditional trajectories under the fixed two-ordering fit, reproduced from the MPCurver 0.3.0 fitness vignette."}
+grid::grid.raster(png::readPNG(
+  "data/site_assets/fitness/partition-plot-1.png"
+))
+```
+
+The model assigns 27 environments to ordering A and 18 to B by their largest
+assignment probability. The table groups these assignments by environment
+category; the full vignette reports the underlying probabilities.
+
+```{r assignment-table, echo=FALSE}
+counts <- read.csv("data/site_assets/fitness/assignment_counts.csv")
+assignment_table <- xtabs(environments ~ category + ordering, data = counts)
+knitr::kable(assignment_table, caption = "Table 1. Environment counts by category and most probable ordering in the vignette fit.")
+```
+
+The two inferred mutant-position vectors have correlation **0.866**. Their
+orderings are related even though the environments divide between them.
+
+## Measurement uncertainty
+
+The vignette also fits models using reported measurement errors as observation
+standard deviations. Before fitting, it calibrates those errors from a
+Student-$t_4$ scale to Gaussian scores; the choice of four degrees of freedom
+is an analysis assumption. Figure 3 shows conditional trajectories after
+supplying the adjusted standard deviations to the model.
+
+```{r known-sd-partition-trajectories, echo=FALSE, fig.width=10, fig.height=5, fig.cap="Figure 3. Conditional trajectories with supplied measurement uncertainty, reproduced from the MPCurver 0.3.0 fitness vignette."}
+grid::grid.raster(png::readPNG(
+  "data/site_assets/fitness/known-sd-partition-trajectories-1.png"
+))
+```
+
+## Full analysis
+
+The [MPCurver fitness vignette](https://aguerozz.github.io/MPCurver/articles/fitness.html)
+provides the preprocessing, fitting calls, environment-level assignment
+probabilities, and further trajectory plots.

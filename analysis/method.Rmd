@@ -1,0 +1,60 @@
+---
+title: "MPCurve and CAVI"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+## Model
+
+For a sample-by-feature matrix $X=(x_{ij})$, MPCurve represents a latent
+ordering by $K$ grid positions. In the single-ordering model, sample $i$ has
+an unobserved position $C_i$, and feature $j$ has a trajectory
+$U_j=(u_{j1},\ldots,u_{jK})$. Conditional on $C_i=k$, the Gaussian observation
+model centers $x_{ij}$ at $u_{jk}$. A Gaussian Markov random-field prior on
+$U_j$ encourages smooth changes across adjacent grid positions. The model can
+estimate feature-specific noise variances or use supplied measurement standard
+deviations.
+
+## Variational inference
+
+MPCurver 0.3.0 fits MPCurve using coordinate-ascent variational inference
+(CAVI). It alternates updates of sample
+position probabilities, posterior distributions for the feature trajectories,
+and model parameters. The trajectory posterior records both a mean and
+uncertainty. The evidence lower bound (ELBO) tracks progress for the
+single-ordering fit.
+
+The [MPCurver getting-started
+article](https://aguerozz.github.io/MPCurver/articles/mpcurve_intro.html) gives
+the equations, CAVI updates, and an executable spiral example.
+
+## Several orderings
+
+When different feature groups may describe different sample patterns, set
+`intrinsic_dim = M` to fit a specified number $M$ of orderings. Each feature
+has a latent assignment $Z_j$ to an ordering. The structural variational
+family includes $q(Z_j)q(U_j\mid Z_j)$, so a candidate trajectory is
+conditional on the feature's ordering assignment. CAVI estimates the sample
+positions, conditional trajectories, and feature-assignment probabilities
+together.
+
+An assignment probability near one supports a particular ordering for a
+feature; a diffuse row indicates uncertainty. The ordering labels and
+directions are arbitrary, so interpretation uses observed annotations and
+trajectory shapes.
+
+The number of orderings $M$ is specified before fitting. The [feature-partitioning
+article](https://aguerozz.github.io/MPCurver/articles/partition.html) develops
+the structural model and its updates in detail.
+
+## Results on this site
+
+The [simulation pages](simulation_m1.html) compare fitted orderings with known
+generating positions. The [fitness](fitness.html) and
+[pancreas-loading](pancreas.html) pages interpret fitted orderings and feature
+groups in observed data.

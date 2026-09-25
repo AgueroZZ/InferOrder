@@ -1,0 +1,3 @@
+"model","seed","intrinsic_dim","method","K","rw_q","ridge","iter","n_outer","max_converge_iter","partition_init"
+"M1",20260925,1,"PCA",50,2,0,150,NA,NA,NA
+"M2",20260927,2,"fiedler",50,2,0,NA,25,100,"similarity"
