@@ -1,0 +1,34 @@
+2026-09-27 03:42:53.191202 main_M5_S4_r006_adaptive_M08 start; resumed=FALSE
+2026-09-27 03:45:01.025149 main_M5_S4_r006_adaptive_M08 sweeps=379 score=-16071.263032 converged=TRUE elapsed=127.70
+2026-09-27 03:45:01.054828 main_M5_S4_r006_adaptive_M08 finished: success
+2026-09-27 03:45:01.098264 main_M5_S4_r006_forward_M01 start; resumed=FALSE
+2026-09-27 03:45:01.414383 main_M5_S4_r006_forward_M01 sweeps=36 score=-22122.022338 converged=TRUE elapsed=0.31
+2026-09-27 03:45:01.426558 main_M5_S4_r006_forward_M01 finished: success
+2026-09-27 03:45:01.426682 main_M5_S4_r006_forward_M02 start; resumed=FALSE
+2026-09-27 03:45:24.385688 main_M5_S4_r006_forward_M02 sweeps=283 score=-20130.951148 converged=TRUE elapsed=22.92
+2026-09-27 03:45:24.387373 main_M5_S4_r006_forward_M02 finished: success
+2026-09-27 03:45:24.388119 main_M5_S4_r006_forward_M03 start; resumed=FALSE
+2026-09-27 03:46:04.914272 main_M5_S4_r006_forward_M03 sweeps=333 score=-18509.142474 converged=TRUE elapsed=40.47
+2026-09-27 03:46:04.918112 main_M5_S4_r006_forward_M03 finished: success
+2026-09-27 03:46:04.918573 main_M5_S4_r006_forward_M04 start; resumed=FALSE
+2026-09-27 03:47:00.064205 main_M5_S4_r006_forward_M04 sweeps=338 score=-16831.849206 converged=TRUE elapsed=55.05
+2026-09-27 03:47:00.066358 main_M5_S4_r006_forward_M04 finished: success
+2026-09-27 03:47:00.066798 main_M5_S4_r006_forward_M05 start; resumed=FALSE
+2026-09-27 03:48:28.618598 main_M5_S4_r006_forward_M05 sweeps=426 score=-16070.323367 converged=TRUE elapsed=88.45
+2026-09-27 03:48:28.625942 main_M5_S4_r006_forward_M05 finished: success
+2026-09-27 03:48:28.626431 main_M5_S4_r006_forward_M06 start; resumed=FALSE
+2026-09-27 03:50:01.660945 main_M5_S4_r006_forward_M06 sweeps=377 score=-16082.283949 converged=TRUE elapsed=92.88
+2026-09-27 03:50:01.664366 main_M5_S4_r006_forward_M06 finished: success
+DATASET COMPLETE
+               id phase true_M snr replicate   method  status estimated_M ARI
+1 main_M5_S4_r006  main      5   4         6 adaptive success           5   1
+2 main_M5_S4_r006  main      5   4         6  forward success           5   1
+  ordering_recovery matched_ordering_recovery true_ordering_coverage map_groups
+1         0.9884375                 0.9884375                      1          5
+2         0.9884398                 0.9884398                      1          5
+  near_duplicate_orderings constant_orderings elapsed_seconds candidate_count
+1                    FALSE                  0         127.703               1
+2                    FALSE                  0         300.091               6
+  warning_count error
+1             0
+2             0

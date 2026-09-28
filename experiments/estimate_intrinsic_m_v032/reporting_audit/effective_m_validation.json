@@ -1,0 +1,16 @@
+{
+  "corrected_rows": [
+    [
+      "main_M3_S16_r006",
+      "forward",
+      "4",
+      "3"
+    ]
+  ],
+  "exact_recovery": {
+    "adaptive": 87,
+    "forward": 90
+  },
+  "other_metrics_unchanged": true,
+  "rendered_report_checked": true
+}

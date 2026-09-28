@@ -13,6 +13,8 @@ navbar:
           href: simulation_m1.html
         - text: Two orderings
           href: simulation_m2.html
+        - text: Estimating the number of orderings
+          href: estimate_intrinsic_m.html
     - text: Analysis
       menu:
         - text: Fitness

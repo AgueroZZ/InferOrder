@@ -1,0 +1,178 @@
+```{r estimate-m-setup, include=FALSE}
+study <- "experiments/estimate_intrinsic_m_v032"
+result_dir <- file.path(study, "main_summary")
+status <- jsonlite::read_json(file.path(result_dir, "status.json"))
+stopifnot(isTRUE(status$complete), status$completed_method_runs == 180)
+design <- jsonlite::read_json(file.path(study, "design.json"), simplifyVector = TRUE)
+summary <- read.csv(file.path(result_dir, "summary.csv"))
+runs <- read.csv(file.path(result_dir, "runs.csv"))
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%")
+knitr::opts_chunk$set(fig.path = paste0(
+  tools::file_path_sans_ext(knitr::current_input()), "_files/figure-html/"))
+options(knitr.graphics.rel_path = FALSE)
+```
+
+## Question
+
+Can MPCurve recover the number of latent sample orderings when the true
+number is three, four, or five? We compare **adaptive empirical Bayes (EB)**
+with **a fixed uniform ordering prior and forward selection**, using the
+same simulated datasets for both methods.
+
+## Simulation design
+
+Each dataset has **300 samples and 60 features**. Features belong to equally
+sized groups following **3, 4, or 5 independent orderings**, giving 20, 15,
+or 12 features per ordering. For sample $i$ and feature $j$,
+
+$$X_{ij}=f_j(t_{i,z_j})+\epsilon_{ij},$$
+
+where $z_j$ identifies the generating ordering, latent positions are
+independent Uniform$(0,1)$ draws, and $f_j$ is a smooth monotone curve.
+Each curve is a random weighted combination of monotone basis functions,
+with its direction chosen to be increasing or decreasing. Under the parameters
+used here, most resulting trajectories have mild curvature and are close to
+linear. Each noiseless feature is
+centered and scaled to sample variance one before independent Gaussian
+noise is added.
+
+The variance signal-to-noise ratio is **1, 4, or 16**, corresponding to
+noise standard deviations of 1, 0.5, or 0.25. There are **10 independent
+datasets for each of the nine conditions**, or **90 datasets in total**.
+Separate pilot datasets were used to check the implementation and runtime;
+they are excluded from these results.
+
+### Simulated trajectories and observations
+
+The figures below show **replicate 1 from every condition**. Each row is a
+true ordering and each column is an SNR setting. For the first three features
+in each group, solid lines show the noiseless signal and points show all 300
+noisy observations, plotted against that group's true latent positions.
+All panels use the same axis scales. Conditions use independent datasets,
+so both the generating curves and noise realizations differ across columns.
+
+```{r estimate-m-design-three, fig.alt="True M equals 3: three ordering rows and three SNR columns, showing noiseless trajectories and noisy observations."}
+knitr::include_graphics(normalizePath(file.path(result_dir, "design_M3.png")))
+```
+
+```{r estimate-m-design-four, fig.alt="True M equals 4: four ordering rows and three SNR columns, showing noiseless trajectories and noisy observations."}
+knitr::include_graphics(normalizePath(file.path(result_dir, "design_M4.png")))
+```
+
+```{r estimate-m-design-five, fig.alt="True M equals 5: five ordering rows and three SNR columns, showing noiseless trajectories and noisy observations."}
+knitr::include_graphics(normalizePath(file.path(result_dir, "design_M5.png")))
+```
+
+## Methods
+
+Both methods use MPCurver **0.3.2**, CAVI, **50 grid positions**, a second-order
+random-walk prior with `ridge = 0`, adaptive cell-position priors, and estimated
+feature-specific noise and smoothness. Initialization clusters features using
+absolute Spearman correlation and single linkage, then uses Isomap within
+each group. A singleton group is initialized by ranking its feature.
+
+- **Adaptive EB:** fit eight candidate orderings with adaptive ordering-assignment
+  weights.
+- **Uniform + forward:** fix the ordering prior to $1/M$, start at $M=1$,
+  and fit successively larger $M$, up to eight. Accept a candidate only when
+  its converged, soft-assignment ELBO at temperature one exceeds the preceding
+  candidate's score. Stop at the first non-improvement.
+
+For both methods, the estimated **effective M** counts orderings whose mean
+posterior feature-assignment probability exceeds $10^{-12}$. Unused ordering
+slots are excluded. For adaptive EB, these mean probabilities equal the fitted
+assignment-prior weights.
+
+Each candidate has one initialization. Partition fits use a temperature
+schedule from five to one, followed by refinement at temperature one.
+Fitting stops when the absolute ELBO change divided by $N D$ is below
+$10^{-6}$, subject to the algorithm's numerical nondecrease check and
+completion of annealing. Continuation preserves the current fit. Candidates that remain unconverged after the declared
+10,000-sweep limit are recorded as unresolved, including forward searches
+whose next comparison cannot be completed.
+
+## Recovery of M
+
+Exact recovery, underestimation, overestimation, and unresolved outcomes use
+all 10 planned repeats as their denominator. Error bars are 95% Wilson
+intervals. The methods are assessed against the generating truth; their
+ELBO values are not compared against each other.
+
+Adaptive EB recovers the true effective M in **`r sum(summary$exact[summary$method == "adaptive"])` of 90 datasets**;
+uniform + forward does so in **`r sum(summary$exact[summary$method == "forward"])` of 90 datasets**.
+
+```{r estimate-m-recovery}
+knitr::include_graphics(normalizePath(file.path(result_dir, "exact_recovery.png")))
+```
+
+```{r estimate-m-table}
+table <- summary[, c("true_M", "snr", "method", "exact", "under", "over", "failed")]
+names(table) <- c("True M", "SNR", "Method", "Exact", "Under", "Over", "Unresolved")
+table$Method <- ifelse(table$Method == "adaptive", "Adaptive EB", "Uniform + forward")
+knitr::kable(table, row.names = FALSE, caption = "Counts out of 10 datasets per condition and method.")
+```
+
+```{r estimate-m-distribution}
+knitr::include_graphics(normalizePath(file.path(result_dir, "estimated_M_distribution.png")))
+```
+
+## Recovery of the underlying structure
+
+Feature-group recovery is measured by the adjusted Rand index (ARI), assigning
+each feature to the ordering with the largest posterior assignment probability.
+An ordering with no assigned features does not change this partition.
+
+For ordering recovery, inferred positions are matched one-to-one to the
+true orderings by absolute Spearman correlation, allowing reversal of an
+axis. Unmatched true orderings contribute zero to the mean recovery score.
+These structural summaries describe completed fits; unresolved rates are
+reported separately above.
+
+```{r estimate-m-structure}
+knitr::include_graphics(normalizePath(file.path(result_dir, "structural_recovery.png")))
+```
+
+### Examples with true M = 3, 4, and 5
+
+These examples were fixed in advance: replicate 1 at SNR 4 for each true
+dimension. The first row shows three generating curves per ordering;
+the following rows compare true and inferred sample positions.
+
+```{r estimate-m-example-three}
+knitr::include_graphics(normalizePath(file.path(result_dir, "example_M3.png")))
+```
+
+```{r estimate-m-example-four}
+knitr::include_graphics(normalizePath(file.path(result_dir, "example_M4.png")))
+```
+
+```{r estimate-m-example-five}
+knitr::include_graphics(normalizePath(file.path(result_dir, "example_M5.png")))
+```
+
+## Runtime and convergence
+
+Runtime includes initialization and every candidate and continuation used
+by each method. A forward search therefore includes its rejected stopping
+candidate. All workers use one CPU thread.
+
+```{r estimate-m-runtime}
+knitr::include_graphics(normalizePath(file.path(result_dir, "runtime.png")))
+```
+
+The study completed **`r sum(runs$status == "success")` of 180 method runs**
+with a converged estimate. The remaining **`r sum(runs$status != "success")`**
+runs are included as unresolved outcomes in the main recovery rates.
+
+## Summary and reproduction
+
+Both approaches recover the effective number of orderings well in this
+benchmark of balanced feature groups, independent orderings, and mostly
+mildly curved monotone trajectories. Uniform-prior greedy forward selection
+has slightly higher recovery in these simulations: **90/90**, compared with
+**87/90** for adaptive EB. The three EB errors each add one effective ordering.
+
+The [experiment directory](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/estimate_intrinsic_m_v032)
+contains the fixed design and seeds, scripts, summaries, and standalone
+report source. Each dataset is shared by the two methods, and saved
+candidates support continuation and reproducibility.

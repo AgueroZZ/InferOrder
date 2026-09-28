@@ -15,6 +15,7 @@ PAGES = {
     "method.html": ("Model", "Variational inference", "Several orderings"),
     "simulation_m1.html": ("Question and design", "Ordering recovery"),
     "simulation_m2.html": ("Feature assignments", "Sample orderings"),
+    "estimate_intrinsic_m.html": ("Simulation design", "Methods", "Recovery of M", "Summary and reproduction"),
     "fitness.html": ("One ordering", "Two orderings and environment groups"),
     "pancreas.html": ("One versus two orderings", "Feature assignments in the two-ordering fit"),
 }
@@ -23,6 +24,7 @@ EXPECTED_IMAGES = {
     "method.html": 0,
     "simulation_m1.html": 2,
     "simulation_m2.html": 3,
+    "estimate_intrinsic_m.html": 10,
     "fitness.html": 3,
     "pancreas.html": 3,
 }
@@ -31,6 +33,7 @@ EXPECTED_TITLES = {
     "method.html": "MPCurve and CAVI",
     "simulation_m1.html": "Simulation: One Latent Ordering",
     "simulation_m2.html": "Simulation: Two Latent Orderings",
+    "estimate_intrinsic_m.html": "Simulation: Estimating the Intrinsic Number of Orderings",
     "fitness.html": "Analysis: Mutant Fitness Across Environments",
     "pancreas.html": "Analysis: Pancreatic Cell Loadings",
 }
@@ -131,7 +134,15 @@ def main():
             assert target.exists(), f"Broken local reference in {name}: {item}"
 
     assert parsed["index.html"].headings == ["Method", "Simulation", "Analysis"]
-    assert "MPCurver 0.3.0" in page_text(parsed["index.html"])
+    assert "Each study records the package version" in page_text(parsed["index.html"])
+    intrinsic = page_text(parsed["estimate_intrinsic_m.html"])
+    assert "MPCurver 0.3.2" in intrinsic
+    assert "87 of 90 datasets" in intrinsic and "90 of 90 datasets" in intrinsic
+    assert "effective M" in intrinsic and "Unused ordering slots are excluded" in intrinsic
+    study_runs = rows(ROOT / "experiments/estimate_intrinsic_m_v032/main_summary/runs.csv")
+    assert len(study_runs) == 180 and all(row["status"] == "success" for row in study_runs)
+    for method, expected in (("adaptive", 87), ("forward", 90)):
+        assert sum(row["estimated_M"] == row["true_M"] for row in study_runs if row["method"] == method) == expected
     assert len(parsed["fitness.html"].captions) == 1
     assert len(parsed["pancreas.html"].captions) == 2
     assert "Environment counts" in parsed["fitness.html"].captions[0]
@@ -172,7 +183,7 @@ def main():
     assert "0.866" in fitness_text
     assert f"{float(comparison[0]['value']):.3f}" in fitness_text
 
-    print("Checked six public pages, local links, images, terminology, and saved-result claims.")
+    print("Checked seven public pages, local links, images, terminology, and saved-result claims.")
 
 
 if __name__ == "__main__":

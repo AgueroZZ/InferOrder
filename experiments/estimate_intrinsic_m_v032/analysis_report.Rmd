@@ -1,0 +1,12 @@
+---
+title: "Estimating the Intrinsic Number of Orderings"
+output:
+  html_document:
+    self_contained: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r report-body, child='experiments/estimate_intrinsic_m_v032/report_body.Rmd'}
+```

@@ -1,0 +1,28 @@
+2026-09-27 00:06:42.496362 main_M3_S4_r003_adaptive_M08 start; resumed=FALSE
+2026-09-27 00:09:04.907237 main_M3_S4_r003_adaptive_M08 sweeps=426 score=-15046.599496 converged=TRUE elapsed=142.26
+2026-09-27 00:09:04.937393 main_M3_S4_r003_adaptive_M08 finished: success
+2026-09-27 00:09:04.980995 main_M3_S4_r003_forward_M01 start; resumed=FALSE
+2026-09-27 00:09:05.652708 main_M3_S4_r003_forward_M01 sweeps=79 score=-19142.803431 converged=TRUE elapsed=0.67
+2026-09-27 00:09:05.667678 main_M3_S4_r003_forward_M01 finished: success
+2026-09-27 00:09:05.667823 main_M3_S4_r003_forward_M02 start; resumed=FALSE
+2026-09-27 00:09:35.963491 main_M3_S4_r003_forward_M02 sweeps=375 score=-16333.583517 converged=TRUE elapsed=30.24
+2026-09-27 00:09:35.966801 main_M3_S4_r003_forward_M02 finished: success
+2026-09-27 00:09:35.967694 main_M3_S4_r003_forward_M03 start; resumed=FALSE
+2026-09-27 00:10:39.185096 main_M3_S4_r003_forward_M03 sweeps=519 score=-15047.918805 converged=TRUE elapsed=63.13
+2026-09-27 00:10:39.187613 main_M3_S4_r003_forward_M03 finished: success
+2026-09-27 00:10:39.18807 main_M3_S4_r003_forward_M04 start; resumed=FALSE
+2026-09-27 00:11:47.308239 main_M3_S4_r003_forward_M04 sweeps=411 score=-15064.569406 converged=TRUE elapsed=68.03
+2026-09-27 00:11:47.312303 main_M3_S4_r003_forward_M04 finished: success
+DATASET COMPLETE
+               id phase true_M snr replicate   method  status estimated_M ARI
+1 main_M3_S4_r003  main      3   4         3 adaptive success           3   1
+2 main_M3_S4_r003  main      3   4         3  forward success           3   1
+  ordering_recovery matched_ordering_recovery true_ordering_coverage map_groups
+1         0.9931144                 0.9931144                      1          3
+2         0.9931355                 0.9931355                      1          3
+  near_duplicate_orderings constant_orderings elapsed_seconds candidate_count
+1                    FALSE                  0         142.263               1
+2                    FALSE                  0         162.071               4
+  warning_count error
+1             0
+2             0

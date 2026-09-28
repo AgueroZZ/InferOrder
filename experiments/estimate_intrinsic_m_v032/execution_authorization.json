@@ -1,0 +1,12 @@
+{
+  "approved_for_main": true,
+  "authorization": "User approved two CPU threads and starting the 90-dataset study.",
+  "convergence": "normalized",
+  "tolerance": 1e-06,
+  "workers": 2,
+  "cpu_threads_per_worker": 1,
+  "design_hash": "752c95bbec58224bfc696e124f4aa331040a3bf6f452011af45a09dfa9456371",
+  "pilot_input_reproduction": "All nine pinned pilot matrices and latent positions match exactly.",
+  "package_regression": "MPCurver experiments/v032_convergence_regression: 47 fits passed.",
+  "prior_pilots_in_main_totals": false
+}

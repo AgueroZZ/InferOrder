@@ -1,0 +1,24 @@
+{
+  "status": "completed",
+  "started_at": "2026-09-27T03:33:27.384867+00:00",
+  "supervisor_pid": 75994,
+  "worker_count": 2,
+  "cpu_threads_per_worker": 1,
+  "planned_datasets": 90,
+  "workers": [
+    {
+      "worker": 1,
+      "pid": 75995,
+      "exit_code": 0
+    },
+    {
+      "worker": 2,
+      "pid": 75996,
+      "exit_code": 0
+    }
+  ],
+  "phase": "completed",
+  "updated_at": "2026-09-27T08:54:43.444003+00:00",
+  "completed_method_outcomes": 180,
+  "finished_at": "2026-09-27T08:54:43.443951+00:00"
+}

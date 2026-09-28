@@ -1,0 +1,25 @@
+Validated all 180 method outcomes; unresolved outcomes: 0
+ true_M snr   method completed planned exact failed total_seconds
+      3   1 adaptive        10      10    10      0      1773.634
+      4   1 adaptive        10      10    10      0      2220.529
+      5   1 adaptive        10      10    10      0      2471.714
+      3   4 adaptive        10      10     9      0      1360.930
+      4   4 adaptive        10      10    10      0      1484.763
+      5   4 adaptive        10      10     9      0      1535.031
+      3  16 adaptive        10      10     9      0      1173.114
+      4  16 adaptive        10      10    10      0      1214.364
+      5  16 adaptive        10      10    10      0      1548.603
+      3   1  forward        10      10    10      0      1925.160
+      4   1  forward        10      10    10      0      3236.725
+      5   1  forward        10      10    10      0      4862.587
+      3   4  forward        10      10    10      0      1504.595
+      4   4  forward        10      10    10      0      2286.252
+      5   4  forward        10      10    10      0      3223.413
+      3  16  forward        10      10     9      0      1202.064
+      4  16  forward        10      10    10      0      1617.570
+      5  16  forward        10      10    10      0      3046.934
+Warning message:
+package ‘ggplot2’ was built under R version 4.5.2
+Completed summaries and figures for main
+Warning message:
+package ‘ggplot2’ was built under R version 4.5.2

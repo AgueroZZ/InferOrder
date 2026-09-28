@@ -1,0 +1,8 @@
+{
+  "data_generation": true,
+  "paired_input_hashes": true,
+  "label_and_reversal_invariance": true,
+  "unmatched_ordering_penalty": true,
+  "constant_ordering_score": true,
+  "design_hash": "752c95bbec58224bfc696e124f4aa331040a3bf6f452011af45a09dfa9456371"
+}

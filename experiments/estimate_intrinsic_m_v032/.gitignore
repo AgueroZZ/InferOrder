@@ -1,0 +1,5 @@
+library/
+checkpoints/
+full_fits/
+supervisor.lock
+*.tmp

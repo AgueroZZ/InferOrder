@@ -1,0 +1,31 @@
+2026-09-27 01:30:06.518253 main_M4_S1_r009_adaptive_M08 start; resumed=FALSE
+2026-09-27 01:32:56.311286 main_M4_S1_r009_adaptive_M08 sweeps=517 score=-27041.428598 converged=TRUE elapsed=169.61
+2026-09-27 01:32:56.341682 main_M4_S1_r009_adaptive_M08 finished: success
+2026-09-27 01:32:56.386583 main_M4_S1_r009_forward_M01 start; resumed=FALSE
+2026-09-27 01:32:56.907717 main_M4_S1_r009_forward_M01 sweeps=59 score=-29431.524110 converged=TRUE elapsed=0.52
+2026-09-27 01:32:56.924462 main_M4_S1_r009_forward_M01 finished: success
+2026-09-27 01:32:56.924588 main_M4_S1_r009_forward_M02 start; resumed=FALSE
+2026-09-27 01:33:18.249964 main_M4_S1_r009_forward_M02 sweeps=261 score=-28113.967373 converged=TRUE elapsed=21.29
+2026-09-27 01:33:18.251561 main_M4_S1_r009_forward_M02 finished: success
+2026-09-27 01:33:18.252369 main_M4_S1_r009_forward_M03 start; resumed=FALSE
+2026-09-27 01:34:04.901851 main_M4_S1_r009_forward_M03 sweeps=385 score=-27410.778981 converged=TRUE elapsed=46.58
+2026-09-27 01:34:04.907139 main_M4_S1_r009_forward_M03 finished: success
+2026-09-27 01:34:04.907603 main_M4_S1_r009_forward_M04 start; resumed=FALSE
+2026-09-27 01:35:31.279134 main_M4_S1_r009_forward_M04 sweeps=532 score=-27044.688455 converged=TRUE elapsed=86.27
+2026-09-27 01:35:31.281465 main_M4_S1_r009_forward_M04 finished: success
+2026-09-27 01:35:31.281917 main_M4_S1_r009_forward_M05 start; resumed=FALSE
+2026-09-27 01:37:19.211798 main_M4_S1_r009_forward_M05 sweeps=518 score=-27059.069132 converged=TRUE elapsed=107.81
+2026-09-27 01:37:19.214759 main_M4_S1_r009_forward_M05 finished: success
+DATASET COMPLETE
+               id phase true_M snr replicate   method  status estimated_M ARI
+1 main_M4_S1_r009  main      4   1         9 adaptive success           4   1
+2 main_M4_S1_r009  main      4   1         9  forward success           4   1
+  ordering_recovery matched_ordering_recovery true_ordering_coverage map_groups
+1         0.9692881                 0.9692881                      1          4
+2         0.9692669                 0.9692669                      1          4
+  near_duplicate_orderings constant_orderings elapsed_seconds candidate_count
+1                    FALSE                  0         169.609               1
+2                    FALSE                  0         262.466               5
+  warning_count error
+1             0
+2             0

@@ -1,0 +1,11 @@
+{
+  "phase": "main",
+  "design_hash": "752c95bbec58224bfc696e124f4aa331040a3bf6f452011af45a09dfa9456371",
+  "reported_dimension": "posterior_occupancy",
+  "effective_weight_tol": 1e-12,
+  "complete": true,
+  "planned_method_runs": 180,
+  "completed_method_runs": 180,
+  "successful_method_runs": 180,
+  "fitting_seconds": 37687.982
+}

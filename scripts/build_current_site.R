@@ -6,12 +6,13 @@ local({
     "method.Rmd",
     "simulation_m1.Rmd",
     "simulation_m2.Rmd",
+    "estimate_intrinsic_m.Rmd",
     "fitness.Rmd",
     "pancreas.Rmd"
   )
 
   stopifnot(file.exists("_workflowr.yml"), dir.exists("analysis"), dir.exists("docs"))
-  stopifnot(utils::packageVersion("MPCurver") == "0.3.0")
+  stopifnot(requireNamespace("MPCurver", quietly = TRUE))
   stopifnot(requireNamespace("workflowr", quietly = TRUE))
   stopifnot(requireNamespace("rmarkdown", quietly = TRUE))
 
@@ -35,7 +36,7 @@ local({
   actual <- list.files("docs", pattern = "\\.html$", full.names = FALSE)
   if (!setequal(actual, expected)) {
     stop(
-      "The public docs directory must contain only the six current HTML pages. ",
+      "The public docs directory must contain only the current HTML pages. ",
       "Expected: ", paste(expected, collapse = ", "), "; found: ",
       paste(actual, collapse = ", ")
     )
