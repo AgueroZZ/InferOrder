@@ -49,3 +49,13 @@ figures on the updated page, terminology, and saved-result claims; no absolute
 local image paths remain. The key automatic-M accuracy, count-distribution,
 and structural-recovery figures were visually inspected. Publication commit
 and Pages verification are appended after push.
+
+## Publication verification
+
+The simulation and website were committed as
+`a6003b57eb25997da26248696f055424ae5015fb` and pushed to `origin/master`.
+GitHub Pages deployment
+[36492621622](https://github.com/AgueroZZ/InferOrder/actions/runs/36492621622)
+completed successfully for that commit. The live result page and homepage are
+byte-identical to their committed HTML files; they contain the MPCurver 0.3.3
+method, 88/90 and 60/90 comparison, and runtime results.
