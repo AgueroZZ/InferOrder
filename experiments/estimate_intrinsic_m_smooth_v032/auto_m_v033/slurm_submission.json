@@ -1,0 +1,13 @@
+{
+  "scheduler": "Slurm",
+  "job_id": "59668185",
+  "array": "0-89%12",
+  "submitted_from": "InferOrder repository root",
+  "script": "experiments/estimate_intrinsic_m_smooth_v032/auto_m_v033/slurm/run_array.slurm",
+  "terminal_state": "COMPLETED",
+  "terminal_exit_code": "0:0",
+  "completed_tasks": 90,
+  "failed_tasks": 0,
+  "nonempty_stderr_files": 0,
+  "result_validation": "../validation.json"
+}

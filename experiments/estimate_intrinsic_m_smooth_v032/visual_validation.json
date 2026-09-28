@@ -1,21 +1,14 @@
 {
   "page": "estimate_intrinsic_m_smooth.html",
-  "images": 10,
-  "captions": 10,
-  "rendered_equation_elements": 15,
-  "page_errors": [],
+  "images": 13,
+  "captions": 13,
+  "embedded_images": 13,
+  "absolute_local_references": 0,
+  "site_audit_passed": true,
   "numeric_claims_verified": true,
-  "desktop_viewport": [
-    1280,
-    1000
-  ],
-  "mobile_viewport": [
-    390,
-    844
-  ],
-  "mobile_dimensions": {
-    "viewport": 390,
-    "body": 390,
-    "document": 390
-  }
+  "key_figures_visually_inspected": [
+    "exact_recovery_comparison.png",
+    "estimated_M_distribution_comparison.png",
+    "structural_recovery_comparison.png"
+  ]
 }

@@ -35,6 +35,25 @@ adaptive <- overall[overall$method == "adaptive", , drop = FALSE]
 forward <- overall[overall$method == "forward", , drop = FALSE]
 stopifnot(nrow(adaptive) == 1L, nrow(forward) == 1L,
           adaptive$planned == 90L, forward$planned == 90L)
+auto_dir <- file.path(study, "auto_m_v033")
+auto_result_dir <- file.path(auto_dir, "summary")
+auto_validation <- jsonlite::read_json(file.path(auto_dir, "validation.json"))
+auto_overall <- read.csv(file.path(auto_result_dir, "overall_summary.csv"))
+auto_comparison <- read.csv(file.path(auto_result_dir, "comparison_summary.csv"))
+auto_initialization <- read.csv(file.path(auto_result_dir, "initialization_summary.csv"))
+auto_runs <- read.csv(file.path(auto_result_dir, "auto_runs.csv"))
+stopifnot(isTRUE(auto_validation$complete), nrow(auto_runs) == 90L,
+          all(auto_runs$status == "success"), sum(auto_runs$warning_count) == 0L)
+auto_adaptive <- auto_overall[auto_overall$method == "auto_adaptive", , drop = FALSE]
+old_adaptive <- auto_overall[auto_overall$method == "adaptive", , drop = FALSE]
+old_forward <- auto_overall[auto_overall$method == "forward", , drop = FALSE]
+stopifnot(nrow(auto_adaptive) == 1L, nrow(old_adaptive) == 1L,
+          nrow(old_forward) == 1L)
+current_method_labels <- c(
+  adaptive = "Original adaptive EB (M = 8)",
+  auto_adaptive = "Automatic-M adaptive EB",
+  forward = "Uniform + forward"
+)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
                      out.width = "100%", fig.align = "center")
 knitr::opts_chunk$set(fig.path = paste0(
@@ -44,17 +63,18 @@ options(knitr.graphics.rel_path = FALSE)
 
 ## Question
 
-We tested how estimating the number of latent sample orderings changes when
-each ordering has **one monotone trajectory** and its remaining trajectories
-are **smooth with turning points**. The comparison uses the same 90 datasets'
-latent positions, feature groups, and measurement noise as the
-[all-monotone benchmark](https://aguerozz.github.io/InferOrder/estimate_intrinsic_m.html).
+Can an inexpensive nonlinear similarity estimate the number of latent sample
+orderings well enough to initialize adaptive empirical Bayes (EB)? We tested
+the automatic-$M$ initialization released in **MPCurver 0.3.3** on the 90 fixed
+datasets in this one-monotone-anchor study.
 
-With adaptive empirical Bayes (EB), exact recovery changes from
-**`r adaptive$baseline_exact`/90** in the all-monotone setting to
-**`r adaptive$smooth_exact`/90** with one monotone anchor. With a fixed uniform
-ordering prior and forward selection, it changes from
-**`r forward$baseline_exact`/90** to **`r forward$smooth_exact`/90**.
+The new procedure exactly recovers the final effective $M$ in
+**`r auto_adaptive$exact`/90** datasets, compared with
+**`r old_adaptive$exact`/90** for the original adaptive fit initialized with
+eight slots. It gains exact recovery in **`r auto_comparison$gained_exact`**
+paired datasets and loses it in **`r auto_comparison$lost_exact`**. Its
+accuracy matches uniform-prior forward selection
+(**`r old_forward$exact`/90**) while using substantially less computation.
 
 ## Simulation design
 
@@ -107,7 +127,39 @@ knitr::include_graphics(normalizePath(file.path(result_dir, "design_M5.png")))
 
 ## Methods
 
-Both methods use **MPCurver 0.3.2** and coordinate-ascent variational inference
+### Automatic-M adaptive EB in MPCurver 0.3.3
+
+The new fit calls `fit_mpcurve(intrinsic_dim = "auto")`. It computes a
+directional nonlinear similarity for every feature pair: one feature is sorted,
+the other is regressed on its rank using a natural cubic spline with five fixed
+degrees of freedom, and the variance explained is recorded. The symmetric
+similarity is the larger of the two directions. Single-linkage clustering then
+considers cuts with at most eight groups and rejects any cut containing a group
+with fewer than two features. Among the eligible cuts, the selected $M$
+maximizes mean silhouette width.
+
+If the selected groups have sizes $d_1,\ldots,d_M$, adaptive EB starts with
+
+$$p(z_j=m)=d_m/60.$$
+
+Thus the similarity cut supplies both a rough count and data-dependent global
+assignment probabilities; subsequent EB updates can remove an occupied
+ordering. The minimum group size encodes the study's assumption that every
+ordering has at least one distinct anchor plus another feature. It also avoids
+treating a single smooth or sortable noise feature as an identifiable ordering.
+This experiment does not include a separate garbage-feature component.
+
+The new fits use the released **MPCurver 0.3.3** source at commit
+`c905901424e43eab78b58bdcc0d1de367ec8fd73`. All other fitting controls match
+the original study, including 50 grid positions, second-order random-walk
+smoothing with `ridge = 0`, adaptive cell-position priors, one initialization,
+annealing from temperature five to one, and estimated feature-specific noise
+and smoothness.
+
+### Original MPCurver 0.3.2 procedures
+
+The two original methods use **MPCurver 0.3.2** and coordinate-ascent
+variational inference
 (CAVI), with the fitting settings of the all-monotone study. These include
 50 grid positions, second-order random-walk smoothing with `ridge = 0`,
 adaptive cell-position priors, and estimated feature-specific noise and
@@ -132,7 +184,8 @@ candidate required for the estimate fails to converge.
 ### Trajectory shape and initialization
 
 The modified trajectories have lower within-ordering rank correlations,
-the similarity used to initialize feature groups. Across all 90 datasets,
+which explains why the original Spearman-based initialization is difficult.
+Across all 90 datasets,
 the median within-group absolute Spearman correlation changes from
 **`r format_correlation("monotone", "within")`** to
 **`r format_correlation("smooth", "within")`**, while the between-group
@@ -162,43 +215,60 @@ knitr::kable(table, digits = 3, row.names = FALSE,
 
 ## Recovery of M
 
-Adaptive EB produces **29 underestimates and one overestimate**. Its largest
-losses occur at SNR 1: exact recovery is **0/10** for both true M = 4 and
-true M = 5. At SNR 4 and true M = 5, it recovers the count in **3/10**
-datasets. Uniform + forward's two errors both occur at true M = 5 and
-SNR 1, where it selects four occupied orderings. At SNR 16, adaptive EB
-recovers **29/30** counts and uniform + forward recovers **30/30**.
+The fixed-df spline similarity cut itself estimates the true $M$ in
+**`r auto_comparison$similarity_cut_exact`/90** datasets. It never
+underestimates $M$; its two errors are conservative overestimates. After
+adaptive EB, exact recovery remains **`r auto_adaptive$exact`/90**, with two
+underestimates and no overestimates. These totals hide one useful correction
+and one collapse: EB changes an initial 5 to the correct 4 in one SNR-1
+dataset, but changes a correct initial 5 to 4 in another. In the remaining
+miss, an initial 7 is reduced to 4 when the truth is 5.
 
-The comparison below uses all 10 paired datasets per condition. Exact
-recovery means that the reported effective M equals the generating M.
+The original adaptive fit with eight initial slots is exact in only
+**`r old_adaptive$exact`/90** datasets and makes 29 underestimates. The new
+initialization recovers all of those 60 cases and 28 additional cases.
+Uniform + forward is also exact in **`r old_forward$exact`/90** datasets.
 
-```{r smooth-m-baseline-recovery, fig.cap="Exact effective-M recovery in the all-monotone and one-monotone-anchor designs. Columns show true M, rows show the estimation method, and color identifies trajectory design. Each point is a proportion out of 10 paired datasets at the labeled variance SNR; error bars are 95% Wilson intervals. Unresolved outcomes contribute to the denominator."}
+```{r smooth-m-auto-recovery, fig.cap="Exact effective-M recovery for the three procedures on the same one-monotone-anchor datasets. Columns show the generating M. Each point is a proportion out of 10 datasets at the labeled variance SNR; error bars are 95% Wilson intervals. The automatic-M fit uses fixed-df spline variance explained, single linkage, a minimum initial cluster size of two, and adaptive EB."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "exact_recovery_comparison.png")))
+```
+
+```{r smooth-m-auto-overall-table}
+table <- auto_overall[, c("method", "exact", "under", "over", "mean_ARI",
+  "mean_ordering_recovery", "median_seconds", "warnings")]
+table$method <- unname(current_method_labels[table$method])
+names(table) <- c("Method", "Exact M", "Under", "Over", "Mean ARI",
+  "Mean ordering score", "Median seconds", "Warnings")
+knitr::kable(table, digits = 3, row.names = FALSE,
+  caption = paste("Overall results across the same 90 datasets per method.",
+    "Exact, under, and over compare effective M with the generating M.",
+    "All 270 fits converged."))
+```
+
+```{r smooth-m-auto-stages, fig.cap="Exact-M recovery before and after adaptive EB. The similarity cut supplies the initial M and cluster-size prior; the final count is the number of occupied orderings after adaptive EB. Each point summarizes 10 datasets. The identical overall totals of 88/90 arise from different errors, because EB corrects one initial overestimate and introduces one underestimate."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "auto_initial_vs_final.png")))
+```
+
+The full estimated-count distribution shows that the improvement is not an
+artifact of averaging across conditions. Both remaining final errors occur at
+true $M=5$, one at SNR 1 and one at SNR 4; all other conditions are exact in
+10/10 datasets.
+
+```{r smooth-m-auto-distribution, fig.cap="Estimated effective-M distributions for all three procedures. Rows identify the generating M, columns identify the estimate, and panels identify SNR and method. Cell labels give counts out of 10 datasets; outlined cells are exact. All fits converged, so the unresolved column is empty."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "estimated_M_distribution_comparison.png")))
+```
+
+### Original paired trajectory-shape comparison
+
+The original MPCurver 0.3.2 analysis asked a different question: how replacing
+all but one monotone trajectory in each ordering with nonmonotone smooth curves
+changes the two pre-existing procedures. Adaptive EB changes from
+**`r adaptive$baseline_exact`/90** exact results in the all-monotone setting to
+**`r adaptive$smooth_exact`/90** here; uniform + forward changes from
+**`r forward$baseline_exact`/90** to **`r forward$smooth_exact`/90**.
+
+```{r smooth-m-baseline-recovery, fig.cap="Original MPCurver 0.3.2 comparison of exact effective-M recovery in the all-monotone and one-monotone-anchor designs. Columns show true M, rows show method, and color identifies trajectory design. Each point is a proportion out of 10 paired datasets; error bars are 95% Wilson intervals."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "baseline_comparison_recovery.png")))
-```
-
-Of the pairs that recover M in the all-monotone setting, adaptive EB loses
-exact recovery in **`r adaptive$lost_exact`** and gains it in
-**`r adaptive$gained_exact`** other pairs. Uniform + forward loses exact
-recovery in **`r forward$lost_exact`** and gains it in
-**`r forward$gained_exact`**. The table gives the corresponding counts
-for each condition.
-
-```{r smooth-m-paired-table, results='asis'}
-table <- comparison[, c("true_M", "snr", "method", "baseline_exact",
-  "smooth_exact", "both_exact", "lost_exact", "gained_exact", "unresolved")]
-table$method <- unname(method_labels[table$method])
-names(table) <- c("True M", "SNR", "Method", "All monotone: exact",
-  "One anchor: exact", "Both exact", "Lost exact", "Gained exact", "Unresolved")
-cat('<div style="overflow-x: auto;">\n')
-cat(knitr::kable(table, format = "html", table.attr = 'class="table table-condensed"', row.names = FALSE,
-  caption = paste("Paired recovery counts out of 10 datasets per condition and method.",
-    "Lost exact denotes baseline recovery followed by a non-exact or unresolved modified outcome;",
-    "gained exact denotes recovery only in the modified design.")))
-cat('\n</div>\n')
-```
-
-```{r smooth-m-distribution, fig.cap="Estimated effective-M distributions for the one-monotone-anchor design. Each row identifies the generating M; columns identify the estimated count, with an additional unresolved category. Panels identify SNR and method. Cell labels give counts out of 10 datasets; fill shows the corresponding proportion, and outlined cells indicate exact recovery."}
-knitr::include_graphics(normalizePath(file.path(result_dir, "estimated_M_distribution.png")))
 ```
 
 ## Recovery of the underlying structure
@@ -209,6 +279,24 @@ Ordering recovery matches occupied inferred slots one-to-one to true
 orderings by absolute Spearman correlation, allowing axis reversal.
 An unmatched true ordering contributes zero to the mean score. The baseline
 and modified fits use this same evaluation rule.
+
+Automatic-M adaptive EB has mean feature-partition ARI
+**`r sprintf("%.3f", auto_adaptive$mean_ARI)`** and mean ordering score
+**`r sprintf("%.3f", auto_adaptive$mean_ordering_recovery)`**. These nearly
+match uniform + forward (**`r sprintf("%.3f", old_forward$mean_ARI)`** and
+**`r sprintf("%.3f", old_forward$mean_ordering_recovery)`**) and improve on
+the original adaptive fit (**`r sprintf("%.3f", old_adaptive$mean_ARI)`** and
+**`r sprintf("%.3f", old_adaptive$mean_ordering_recovery)`**). Relative to
+the original adaptive method, the mean paired gains are
+**`r sprintf("%.3f", auto_comparison$mean_delta_ARI)`** in ARI and
+**`r sprintf("%.3f", auto_comparison$mean_delta_ordering_recovery)`** in
+ordering score.
+
+```{r smooth-m-auto-structure, fig.cap="Mean feature-partition ARI and matched ordering recovery for the three procedures. Columns identify true M, rows identify the metric, and each point averages 10 datasets at the labeled variance SNR. Ordering recovery is mean absolute Spearman correlation after one-to-one matching, with unmatched true orderings assigned zero."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "structural_recovery_comparison.png")))
+```
+
+### Original paired trajectory-shape comparison
 
 Uniform + forward preserves feature grouping closely: mean ARI is
 **`r sprintf("%.3f", forward$smooth_mean_ARI)`**, compared with
@@ -239,9 +327,10 @@ knitr::include_graphics(normalizePath(file.path(result_dir, "baseline_comparison
 
 ### Preselected examples
 
-These examples use replicate 1 at SNR 4 for each true M. The top row shows
-the monotone anchor and two smooth trajectories per ordering; the following
-rows compare true positions with matched inferred positions.
+These examples from the original MPCurver 0.3.2 comparison use replicate 1 at
+SNR 4 for each true M. The top row shows the monotone anchor and two smooth
+trajectories per ordering; the following rows compare true positions with
+matched inferred positions.
 
 ```{r smooth-m-example-three, fig.cap="Preselected example with true M = 3, SNR 4, and replicate 1. Top panels show one monotone anchor and two smooth trajectories for each true ordering. The next two rows show matched positions for adaptive EB and uniform + forward. Axes are true and inferred latent positions; labels give absolute Spearman correlations, with reversals chosen consistently for display."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "example_M3.png")))
@@ -257,28 +346,43 @@ knitr::include_graphics(normalizePath(file.path(result_dir, "example_M5.png")))
 
 ## Runtime and convergence
 
-`r convergence_sentence`
-Runtime includes initialization and every candidate and continuation used
-by each method, including a forward search's stopping candidate.
+All **270 method runs** across the three procedures converged without fitting
+warnings. Automatic-M adaptive EB has a median runtime of
+**`r sprintf("%.1f", auto_adaptive$median_seconds)` seconds**, compared with
+**`r sprintf("%.1f", old_adaptive$median_seconds)` seconds** for original
+adaptive EB and **`r sprintf("%.1f", old_forward$median_seconds)` seconds**
+for uniform + forward. Runtime includes initialization and every continuation;
+the forward method additionally fits sequential candidates and its stopping
+candidate.
 
-```{r smooth-m-runtime, fig.cap="Median fitting time in seconds for each method, true M, and variance SNR in the one-monotone-anchor study. Runtime includes initialization, all fitted candidates, and continuations; forward selection includes its final stopping candidate. Each worker uses one CPU thread."}
-knitr::include_graphics(normalizePath(file.path(result_dir, "runtime.png")))
+```{r smooth-m-runtime, fig.cap="Median single-thread fitting time for each procedure, generating M, and variance SNR. Runtime includes initialization and all continuations; uniform + forward includes all fitted candidates and its stopping candidate. Each condition contains 10 datasets."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "runtime_comparison.png")))
 ```
 
 ## Summary and reproduction
 
-The paired experiment changes the non-anchor trajectories while keeping
-the latent orderings, balanced feature groups, noise, software, and fitting
-settings fixed. Adaptive EB recovers M in **`r adaptive$smooth_exact`/90**
-modified datasets and uniform + forward in **`r forward$smooth_exact`/90**,
-compared with **`r adaptive$baseline_exact`/90** and
-**`r forward$baseline_exact`/90** in the all-monotone design.
-The comparison measures the effect of trajectory shape on the complete
-fitting procedure, including its similarity and Isomap initialization.
+On these fixed datasets, inexpensive fixed-df spline variance explained gives
+a useful conservative estimate of $M$. With single linkage and a minimum
+cluster size of two, the initial cut is exact in
+**`r auto_comparison$similarity_cut_exact`/90** datasets and never
+underestimates. Initializing adaptive EB with that count and cluster-size
+probabilities raises its final exact recovery from
+**`r old_adaptive$exact`/90** to **`r auto_adaptive$exact`/90**, matching the
+more expensive forward search while reducing median runtime from
+**`r sprintf("%.1f", old_forward$median_seconds)`** to
+**`r sprintf("%.1f", auto_adaptive$median_seconds)` seconds**.
+
+This is an intentionally favorable identifiability setting: feature groups are
+balanced, every ordering has a monotone anchor, and there are no garbage
+features. The minimum cluster-size rule prevents singleton orderings but does
+not identify or model garbage. Unbalanced groups, missing anchors, and explicit
+noise features require separate evaluation before treating the initializer as
+a general estimator of $M$.
 
 The [experiment directory](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/estimate_intrinsic_m_smooth_v032)
 contains the fixed design and seeds, curve coefficients, input hashes,
-saved candidates, paired comparison tables, and reproduction scripts.
-All fits use the original frozen MPCurver 0.3.2 source archive. The shape seed
-is the original dataset seed plus 2,000,000; pairing and regeneration checks
-are recorded with the saved inputs.
+saved candidates, result tables, figures, and reproduction scripts. The
+original paired study remains frozen at MPCurver 0.3.2. The automatic-$M$
+extension under `auto_m_v033/` freezes MPCurver 0.3.3 at commit
+`c905901424e43eab78b58bdcc0d1de367ec8fd73` and records its archive SHA-256,
+input hashes, package provenance, scheduler job, and strict result validation.

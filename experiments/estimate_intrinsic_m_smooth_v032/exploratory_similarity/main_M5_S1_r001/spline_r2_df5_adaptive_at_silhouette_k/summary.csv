@@ -1,0 +1,2 @@
+"id","selection_rule","assignment_initialization","assignment_concentration","selected_cluster_k","fitted_model_M","effective_M","true_M","exact_M","ARI","ordering_recovery","matched_ordering_recovery","true_ordering_coverage","objective","iterations","elapsed_seconds","warning_count"
+"main_M5_S1_r001","spline R-squared mean silhouette","default",NA,5,5,5,5,TRUE,1,0.509769308547873,0.509769308547873,1,-28933.9101578752,214,70.643,0

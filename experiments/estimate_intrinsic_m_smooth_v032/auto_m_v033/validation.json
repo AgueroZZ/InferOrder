@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "design_hash": "6485a7524a6ded4b898920ca2f652d18f6cecf9438571bfb387f5466c413849f",
+  "package_version": "0.3.3",
+  "package_source_commit": "c905901424e43eab78b58bdcc0d1de367ec8fd73",
+  "package_archive_sha256": "cb57e1f6e8d859b7ff9aeda17c97d538fae0686eb0ceb616f126023a26d645f9",
+  "provenance_fingerprint": "b67c660c364ceca52cd3739759b24ca3e8e7f88b5e3b13580202112c03f2b7ea",
+  "datasets": 90,
+  "converged": 90,
+  "warnings": 0,
+  "exact_initial_M": 88,
+  "exact_effective_M": 88,
+  "under_initial_M": 0,
+  "over_initial_M": 2,
+  "under_effective_M": 2,
+  "over_effective_M": 0,
+  "mean_initial_partition_ARI": 0.99855642271311773,
+  "mean_final_ARI": 0.9944848483721439,
+  "mean_ordering_recovery": 0.83901591167810685,
+  "total_seconds": 3210.971,
+  "threshold_stability": {
+    "M_1e_12_equals_1e_9": 90,
+    "M_1e_12_equals_1e_6": 90,
+    "M_1e_12_equals_1e_3": 90
+  }
+}

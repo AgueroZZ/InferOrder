@@ -27,7 +27,7 @@ EXPECTED_IMAGES = {
     "simulation_m1.html": 2,
     "simulation_m2.html": 3,
     "estimate_intrinsic_m.html": 10,
-    "estimate_intrinsic_m_smooth.html": 10,
+    "estimate_intrinsic_m_smooth.html": 13,
     "fitness.html": 3,
     "pancreas.html": 3,
 }
@@ -166,6 +166,32 @@ def check_smooth_study(page, baseline_runs):
             assert int(total[count]) == sum(row[count] == "TRUE" for row in selected)
         assert f'{total["baseline_exact"]}/90' in text
         assert f'{total["smooth_exact"]}/90' in text
+
+    auto_dir = study / "auto_m_v033"
+    auto_validation = json.loads((auto_dir / "validation.json").read_text())
+    auto_runs = rows(auto_dir / "summary" / "auto_runs.csv")
+    auto_overall = rows(auto_dir / "summary" / "overall_summary.csv")
+    auto_comparison = rows(auto_dir / "summary" / "comparison_summary.csv")[0]
+    assert auto_validation["complete"] and auto_validation["datasets"] == 90
+    assert auto_validation["package_version"] == "0.3.3"
+    assert auto_validation["package_source_commit"] == (
+        "c905901424e43eab78b58bdcc0d1de367ec8fd73")
+    assert auto_validation["converged"] == 90 and auto_validation["warnings"] == 0
+    assert auto_validation["exact_initial_M"] == 88
+    assert auto_validation["exact_effective_M"] == 88
+    assert len(auto_runs) == 90 and all(row["status"] == "success" for row in auto_runs)
+    assert sum(int(row["selected_initial_M"]) == int(row["true_M"])
+               for row in auto_runs) == 88
+    assert sum(int(row["effective_M"]) == int(row["true_M"])
+               for row in auto_runs) == 88
+    assert min(int(row["minimum_initial_cluster_size"]) for row in auto_runs) >= 2
+    expected_exact = {"adaptive": 60, "auto_adaptive": 88, "forward": 88}
+    assert {row["method"]: int(row["exact"]) for row in auto_overall} == expected_exact
+    assert int(auto_comparison["gained_exact"]) == 28
+    assert int(auto_comparison["lost_exact"]) == 0
+    assert "MPCurver 0.3.3" in text and "88/90" in text and "60/90" in text
+    assert "minimum cluster size of two" in text
+    assert "32.5 seconds" in text and "132.4" in text
 
 
 def main():

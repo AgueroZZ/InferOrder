@@ -1,0 +1,2 @@
+"id","selection_rule","assignment_initialization","assignment_concentration","selected_cluster_k","fitted_model_M","effective_M","true_M","exact_M","ARI","ordering_recovery","matched_ordering_recovery","true_ordering_coverage","objective","iterations","elapsed_seconds","warning_count"
+"main_M5_S1_r001","explicit spline R-squared dendrogram cut","default",NA,6,6,2,5,FALSE,0.194762080413132,0.188310359003989,0.470775897509972,0.4,-30508.0317452927,389,136.314,0

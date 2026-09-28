@@ -1,8 +1,15 @@
 library/
+library_auto_candidate/
 checkpoints/
 full_fits/
 scratch/
 logs/
+auto_m_v033/library/
+auto_m_v033/checkpoints/
+auto_m_v033/full_fits/
+auto_m_v033/logs/
+auto_m_v033/slurm/*.out
+auto_m_v033/slurm/*.err
 slurm/*.out
 slurm/*.err
 *.tmp-*

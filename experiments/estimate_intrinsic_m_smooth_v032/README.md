@@ -60,6 +60,30 @@ and ordering scores are 0.730 and 0.685. Paired results, condition tables,
 figures, and the standalone report are saved under `main_summary/` and
 `analysis_report.html`.
 
+## MPCurver 0.3.3 automatic-M extension
+
+The `auto_m_v033/` extension applies the released package-level initializer to
+the same 90 fixed input matrices. It uses fixed-df natural-cubic-spline
+variance explained (`spline_r2_df = 5`), single linkage, cuts up to M = 8, and
+a minimum cluster size of two. If the selected group sizes are
+`d_1, ..., d_M`, adaptive EB is initialized with global assignment
+probabilities `d_m / 60`.
+
+The similarity cut estimates the true M in 88/90 datasets, with two
+overestimates and no underestimates. After adaptive EB, the effective M is
+correct in 88/90, with two underestimates and no overestimates. Compared with
+the original adaptive M = 8 fits, the extension gains exact recovery in 28
+paired datasets and loses it in none. Its mean feature-partition ARI is 0.994,
+mean ordering recovery is 0.839, and median runtime is 32.5 seconds. Uniform +
+forward is also exact in 88/90, with mean ARI 0.995, mean ordering recovery
+0.843, and median runtime 132.4 seconds.
+
+All 90 extension fits converged without warnings. `auto_m_v033/validation.json`
+records strict input, source, result, and occupancy-threshold checks. The
+extension freezes MPCurver 0.3.3 commit
+`c905901424e43eab78b58bdcc0d1de367ec8fd73` and source archive SHA-256
+`cb57e1f6e8d859b7ff9aeda17c97d538fae0686eb0ceb616f126023a26d645f9`.
+
 ## Reproduction
 
 Run from the InferOrder root. Install the baseline's frozen
@@ -97,3 +121,15 @@ bash experiments/estimate_intrinsic_m_smooth_v032/run_r.sh experiments/estimate_
 reevaluates saved baseline fits using the same occupied-slot matching rule,
 then saves aligned baseline metrics and pair/condition/overall comparison tables.
 The original baseline artifacts retain their published values.
+
+To reproduce the automatic-M extension after installing its frozen source
+archive into `auto_m_v033/library/`, run the 90 array tasks and then validate
+and summarize:
+
+```sh
+sbatch experiments/estimate_intrinsic_m_smooth_v032/auto_m_v033/slurm/run_array.slurm
+bash experiments/estimate_intrinsic_m_smooth_v032/run_r.sh \
+  experiments/estimate_intrinsic_m_smooth_v032/auto_m_v033/validate_results.R
+bash experiments/estimate_intrinsic_m_smooth_v032/run_r.sh \
+  experiments/estimate_intrinsic_m_smooth_v032/auto_m_v033/summarize.R
+```
