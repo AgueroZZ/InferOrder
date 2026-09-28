@@ -1,0 +1,20 @@
+{
+  "validated": true,
+  "datasets": 90,
+  "method_outcomes": 180,
+  "candidates": 570,
+  "successful_outcomes": 180,
+  "unresolved_outcomes": 0,
+  "error_outcomes": 0,
+  "nonconverged_outcomes": 0,
+  "candidate_errors": 0,
+  "candidate_nonconverged": 0,
+  "objective_guard_violations": 0,
+  "candidate_warnings": 0,
+  "all_saved_outcomes_accounted_for": true,
+  "converged_scores_at_temperature_one": true,
+  "posterior_occupancy_and_ordering_matching": true,
+  "forward_decisions_consistent": true,
+  "design_hash": "bc315aa0089d96ff1dae6f572118a9e8704620450ca034d4205ff9f38e163777",
+  "fitting_fingerprint": "b34fa805c6d1dc9b00af12ea18688888f08ae8b588b1b7ac97e398c0173d62b0"
+}

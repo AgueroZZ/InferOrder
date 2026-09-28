@@ -2,6 +2,7 @@
 """Check the published surface and saved-result claims of the MPCurve site."""
 
 import csv
+import json
 import re
 from html.parser import HTMLParser
 from pathlib import Path
@@ -16,6 +17,7 @@ PAGES = {
     "simulation_m1.html": ("Question and design", "Ordering recovery"),
     "simulation_m2.html": ("Feature assignments", "Sample orderings"),
     "estimate_intrinsic_m.html": ("Simulation design", "Methods", "Recovery of M", "Summary and reproduction"),
+    "estimate_intrinsic_m_smooth.html": ("Simulation design", "Methods", "Recovery of M", "Summary and reproduction"),
     "fitness.html": ("One ordering", "Two orderings and environment groups"),
     "pancreas.html": ("One versus two orderings", "Feature assignments in the two-ordering fit"),
 }
@@ -25,6 +27,7 @@ EXPECTED_IMAGES = {
     "simulation_m1.html": 2,
     "simulation_m2.html": 3,
     "estimate_intrinsic_m.html": 10,
+    "estimate_intrinsic_m_smooth.html": 10,
     "fitness.html": 3,
     "pancreas.html": 3,
 }
@@ -34,6 +37,7 @@ EXPECTED_TITLES = {
     "simulation_m1.html": "Simulation: One Latent Ordering",
     "simulation_m2.html": "Simulation: Two Latent Orderings",
     "estimate_intrinsic_m.html": "Simulation: Estimating the Intrinsic Number of Orderings",
+    "estimate_intrinsic_m_smooth.html": "Simulation: Estimating M with One Monotone Anchor per Ordering",
     "fitness.html": "Analysis: Mutant Fitness Across Environments",
     "pancreas.html": "Analysis: Pancreatic Cell Loadings",
 }
@@ -101,6 +105,69 @@ def page_text(page):
     return re.sub(r"\s+", " ", " ".join(page.text)).strip()
 
 
+def check_smooth_study(page, baseline_runs):
+    study = ROOT / "experiments/estimate_intrinsic_m_smooth_v032"
+    summary_dir = study / "main_summary"
+    status = json.loads((summary_dir / "status.json").read_text())
+    validation = json.loads((summary_dir / "baseline_comparison_validation.json").read_text())
+    assert status["complete"] and status["completed_method_runs"] == 180
+    assert validation["validated"] and validation["paired_datasets"] == 90
+    assert validation["paired_method_outcomes"] == 180
+    assert validation["occupancy_threshold"] == 1e-12
+    assert validation["maximum_noise_difference"] < 1e-12
+
+    study_runs = rows(summary_dir / "runs.csv")
+    paired = rows(summary_dir / "baseline_comparison_pairs.csv")
+    conditions = rows(summary_dir / "baseline_comparison_summary.csv")
+    overall = rows(summary_dir / "baseline_comparison_overall.csv")
+    pairing = rows(summary_dir / "baseline_pairing_checks.csv")
+    aligned_baseline = rows(summary_dir / "baseline_runs_aligned.csv")
+    assert len(study_runs) == len(paired) == len(aligned_baseline) == 180
+    assert len(conditions) == 18 and len(overall) == 2 and len(pairing) == 90
+    assert all(row["status"] in {"success", "error", "nonconverged"} for row in study_runs)
+    key = lambda row: (row["id"], row["method"])
+    baseline_by_key = {key(row): row for row in baseline_runs}
+    smooth_by_key = {key(row): row for row in study_runs}
+    paired_by_key = {key(row): row for row in paired}
+    assert len(baseline_by_key) == len(smooth_by_key) == len(paired_by_key) == 180
+    assert baseline_by_key.keys() == smooth_by_key.keys() == paired_by_key.keys()
+    for row in paired:
+        original = baseline_by_key[key(row)]
+        modified = smooth_by_key[key(row)]
+        assert all(row[column] == original[column] == modified[column]
+                   for column in ("true_M", "snr", "replicate"))
+        assert row["baseline_M"] == original["estimated_M"]
+        assert row["smooth_M"] == modified["estimated_M"]
+        assert row["smooth_status"] == modified["status"]
+        assert (row["baseline_exact"] == "TRUE") == (original["estimated_M"] == original["true_M"])
+        expected_exact = modified["status"] == "success" and modified["estimated_M"] == modified["true_M"]
+        assert (row["smooth_exact"] == "TRUE") == expected_exact
+    for row in aligned_baseline:
+        assert row["estimated_M"] == baseline_by_key[key(row)]["estimated_M"]
+    assert all(row["same_latent_positions"] == row["same_feature_groups"] ==
+               row["same_monotone_anchors"] == "TRUE" for row in pairing)
+    assert all(float(row["maximum_noise_difference"]) < 1e-12 for row in pairing)
+
+    text = page_text(page)
+    assert "MPCurver 0.3.2" in text and "effective M" in text
+    assert "one monotone trajectory" in text and "same evaluation rule" in text
+    for condition in conditions:
+        selected = [row for row in paired if all(row[column] == condition[column]
+                    for column in ("true_M", "snr", "method"))]
+        assert len(selected) == int(condition["planned"]) == 10
+        for count in ("baseline_exact", "smooth_exact", "both_exact", "lost_exact", "gained_exact", "neither_exact"):
+            assert int(condition[count]) == sum(row[count] == "TRUE" for row in selected)
+        assert int(condition["unresolved"]) == sum(row["smooth_status"] != "success" for row in selected)
+    for method in ("adaptive", "forward"):
+        selected = [row for row in paired if row["method"] == method]
+        total = next(row for row in overall if row["method"] == method)
+        assert int(total["planned"]) == len(selected) == 90
+        for count in ("baseline_exact", "smooth_exact", "both_exact", "lost_exact", "gained_exact", "neither_exact"):
+            assert int(total[count]) == sum(row[count] == "TRUE" for row in selected)
+        assert f'{total["baseline_exact"]}/90' in text
+        assert f'{total["smooth_exact"]}/90' in text
+
+
 def main():
     actual = {path.name for path in DOCS.glob("*.html")}
     assert actual == set(PAGES), f"Unexpected public HTML pages: {actual ^ set(PAGES)}"
@@ -143,6 +210,7 @@ def main():
     assert len(study_runs) == 180 and all(row["status"] == "success" for row in study_runs)
     for method, expected in (("adaptive", 87), ("forward", 90)):
         assert sum(row["estimated_M"] == row["true_M"] for row in study_runs if row["method"] == method) == expected
+    check_smooth_study(parsed["estimate_intrinsic_m_smooth.html"], study_runs)
     assert len(parsed["fitness.html"].captions) == 1
     assert len(parsed["pancreas.html"].captions) == 2
     assert "Environment counts" in parsed["fitness.html"].captions[0]
@@ -183,7 +251,7 @@ def main():
     assert "0.866" in fitness_text
     assert f"{float(comparison[0]['value']):.3f}" in fitness_text
 
-    print("Checked seven public pages, local links, images, terminology, and saved-result claims.")
+    print(f"Checked {len(PAGES)} public pages, local links, images, terminology, and saved-result claims.")
 
 
 if __name__ == "__main__":

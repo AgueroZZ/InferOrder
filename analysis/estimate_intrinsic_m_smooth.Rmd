@@ -1,0 +1,17 @@
+---
+title: "Simulation: Estimating M with One Monotone Anchor per Ordering"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path = "estimate_intrinsic_m_smooth_files/figure-html/")
+```
+
+```{r report-body, child='experiments/estimate_intrinsic_m_smooth_v032/report_body.Rmd'}
+```

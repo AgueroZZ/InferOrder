@@ -1,0 +1,27 @@
+{
+  "updated_at": "2026-09-28T14:15:15Z",
+  "planned_outcomes": 180,
+  "completed_outcomes": 180,
+  "saved_candidates": 570,
+  "methods": [
+    {
+      "method": "adaptive",
+      "completed": 90,
+      "success": 90,
+      "exact": 60,
+      "under": 29,
+      "over": 1,
+      "unresolved": 0
+    },
+    {
+      "method": "forward",
+      "completed": 90,
+      "success": 90,
+      "exact": 88,
+      "under": 2,
+      "over": 0,
+      "unresolved": 0
+    }
+  ],
+  "design_hash": "bc315aa0089d96ff1dae6f572118a9e8704620450ca034d4205ff9f38e163777"
+}

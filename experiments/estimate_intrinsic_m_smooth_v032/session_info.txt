@@ -1,0 +1,21 @@
+Package path: /project/mstephens/ziangzhang/MPCurve/InferOrder/experiments/estimate_intrinsic_m_smooth_v032/library/MPCurver
+Source commit: dd1a903c9c316717419b18bb2b5f325c3a4c9185
+Source archive SHA-256: 1626b6587ed5366518266afba1aa3287fe138515007e464f56f7de417107d29e
+R version 4.3.3 (2024-02-29)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/python-anaconda-2022.05-el8-x86_64/lib/libopenblasp-r0.3.27.so;  LAPACK version 3.12.0
+
+locale:
+[1] C
+
+time zone: NA
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base
+
+loaded via a namespace (and not attached):
+[1] compiler_4.3.3 jsonlite_1.8.8 digest_0.6.35

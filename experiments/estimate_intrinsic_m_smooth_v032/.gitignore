@@ -1,0 +1,8 @@
+library/
+checkpoints/
+full_fits/
+scratch/
+logs/
+slurm/*.out
+slurm/*.err
+*.tmp-*

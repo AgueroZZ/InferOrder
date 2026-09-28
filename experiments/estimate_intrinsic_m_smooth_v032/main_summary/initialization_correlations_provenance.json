@@ -1,0 +1,11 @@
+{
+  "quantity": "absolute Spearman correlation of noisy observed features",
+  "within_pairs": "all unordered feature pairs sharing a true ordering, diagonal excluded",
+  "between_pairs": "all unordered feature pairs assigned to different true orderings",
+  "anchor_pairs": "each retained monotone feature paired with the other features of its true ordering",
+  "summary_unit": "median correlation within each dataset; datasets weighted equally",
+  "quantile_type": 7,
+  "datasets_per_family": 90,
+  "design_hash": "bc315aa0089d96ff1dae6f572118a9e8704620450ca034d4205ff9f38e163777",
+  "descriptive": true
+}

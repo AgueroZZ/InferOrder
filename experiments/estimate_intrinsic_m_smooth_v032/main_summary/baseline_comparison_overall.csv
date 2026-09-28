@@ -1,0 +1,3 @@
+"method","planned","baseline_exact","smooth_exact","both_exact","lost_exact","gained_exact","neither_exact","unresolved","completed_pairs","baseline_mean_ARI","smooth_mean_ARI","mean_difference_ARI","baseline_mean_ordering_recovery","smooth_mean_ordering_recovery","mean_difference_ordering_recovery"
+"adaptive",90,87,60,58,29,2,1,0,90,0.996439630130971,0.730002734292357,-0.266436895838614,0.984815714084066,0.684723151847013,-0.300092562237053
+"forward",90,90,88,88,2,0,0,0,90,1,0.994898400345871,-0.00510159965412884,0.984852884209002,0.84318873512805,-0.141664149080952

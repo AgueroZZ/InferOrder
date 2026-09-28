@@ -1,0 +1,14 @@
+{
+  "job_id": "59628523",
+  "submitted_at": "2026-09-28T03:43:22.219344+00:00",
+  "array": "0-89%12",
+  "account": "pi-zemmour",
+  "partition": "zemmour-hm",
+  "cpus_per_task": 1,
+  "memory_per_task": "4G",
+  "time_limit": "06:00:00",
+  "datasets": 90,
+  "method_outcomes": 180,
+  "design_hash": "bc315aa0089d96ff1dae6f572118a9e8704620450ca034d4205ff9f38e163777",
+  "authorization": "User requested this simulation and publication of results."
+}

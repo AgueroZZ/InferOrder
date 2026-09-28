@@ -1,0 +1,8 @@
+{
+  "package_version": "0.3.2",
+  "package_archive_sha256": "1626b6587ed5366518266afba1aa3287fe138515007e464f56f7de417107d29e",
+  "source_commit": "dd1a903c9c316717419b18bb2b5f325c3a4c9185",
+  "baseline_design_hash": "752c95bbec58224bfc696e124f4aa331040a3bf6f452011af45a09dfa9456371",
+  "baseline_manifest_sha256": "b75fc4db118319ecddbf4a3efb068ec61bd857763a256d942166207d0b9f4227",
+  "new_design_hash": "bc315aa0089d96ff1dae6f572118a9e8704620450ca034d4205ff9f38e163777"
+}

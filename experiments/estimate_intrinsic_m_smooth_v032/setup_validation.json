@@ -1,0 +1,16 @@
+{
+  "data_generation": true,
+  "datasets_checked": 90,
+  "exact_latent_assignment_noise_pairing": true,
+  "unchanged_monotone_anchors": true,
+  "analytic_nonmonotonicity_certificates": true,
+  "sampled_nonmonotone_features": 5040,
+  "deterministic_regeneration": true,
+  "source_archive_hash_verified": true,
+  "total_curve_redraws": 0,
+  "baseline_effective_m_exact": {
+    "adaptive": 87,
+    "forward": 90
+  },
+  "design_hash": "bc315aa0089d96ff1dae6f572118a9e8704620450ca034d4205ff9f38e163777"
+}

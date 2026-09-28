@@ -30,6 +30,9 @@ provides full vignettes and software documentation.
 - [Estimating the number of orderings](estimate_intrinsic_m.html) compares
   adaptive EB and uniform-prior greedy forward selection across 90 simulated
   datasets with three, four, or five true orderings.
+- [One monotone anchor per ordering](estimate_intrinsic_m_smooth.html) tests
+  how estimation changes when the other trajectories have smooth peaks and
+  troughs, using a paired comparison with the all-monotone study.
 
 ## Analysis
 

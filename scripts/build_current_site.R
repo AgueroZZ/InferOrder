@@ -7,6 +7,7 @@ local({
     "simulation_m1.Rmd",
     "simulation_m2.Rmd",
     "estimate_intrinsic_m.Rmd",
+    "estimate_intrinsic_m_smooth.Rmd",
     "fitness.Rmd",
     "pancreas.Rmd"
   )

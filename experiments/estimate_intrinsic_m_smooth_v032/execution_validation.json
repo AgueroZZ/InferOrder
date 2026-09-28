@@ -1,0 +1,10 @@
+{
+  "datasets": 90,
+  "all_tasks_completed": true,
+  "all_exit_codes_zero": true,
+  "started_at": "2026-09-27T22:43:23",
+  "finished_at": "2026-09-27T23:15:59",
+  "sum_task_seconds": 21297,
+  "single_thread_tasks": true,
+  "frozen_fitting_source_unchanged": true
+}

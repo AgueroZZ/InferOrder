@@ -1,0 +1,21 @@
+{
+  "page": "estimate_intrinsic_m_smooth.html",
+  "images": 10,
+  "captions": 10,
+  "rendered_equation_elements": 15,
+  "page_errors": [],
+  "numeric_claims_verified": true,
+  "desktop_viewport": [
+    1280,
+    1000
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "mobile_dimensions": {
+    "viewport": 390,
+    "body": 390,
+    "document": 390
+  }
+}

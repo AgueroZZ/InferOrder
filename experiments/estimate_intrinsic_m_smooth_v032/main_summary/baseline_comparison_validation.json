@@ -1,0 +1,8 @@
+{
+  "validated": true,
+  "paired_datasets": 90,
+  "paired_method_outcomes": 180,
+  "occupancy_threshold": 1e-12,
+  "structural_evaluation": "common occupied-slot one-to-one matching",
+  "maximum_noise_difference": 4.4409e-16
+}
