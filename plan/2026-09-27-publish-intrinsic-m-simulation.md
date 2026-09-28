@@ -14,5 +14,5 @@
 - [x] Make the experiment's preparation script reproducible without the unpublished historical experiment; include a checked pilot hash reference.
 - [x] Extend `scripts/build_current_site.R` and `scripts/check_current_site.py` for seven pages and verify saved-result claims, navigation, and assets.
 - [x] Rebuild the standalone report and workflowr site from saved results, then inspect the rendered page.
-- [ ] Commit the simulation bundle, relevant plans/logs, page source, and generated public pages; preserve unrelated edits and exclude installed libraries and full fitting states.
-- [ ] Push to origin/master, verify GitHub Pages deployment and the live page, and report the public URL.
+- [x] Commit the simulation bundle, relevant plans/logs, page source, and generated public pages; preserve unrelated edits and exclude installed libraries and full fitting states.
+- [x] Push to origin/master, verify GitHub Pages deployment and the live page, and report the public URL.

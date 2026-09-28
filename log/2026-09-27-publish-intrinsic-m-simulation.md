@@ -25,5 +25,11 @@
 
 ## Deployment
 
-Commit and push the scoped files to origin/master, then verify the Pages run
-and the live simulation URL before reporting publication complete.
+Published commit `6d1fb4e719146e8854afe14aafcadf1e7c1ba7d0` to origin/master.
+GitHub Pages run `36366495048` completed successfully for that commit.
+A live Chrome visit verified the new simulation page, its figures and
+conclusion, including 90/90 versus 87/90 effective-M recovery:
+https://aguerozz.github.io/InferOrder/estimate_intrinsic_m.html
+
+The simulation is accessible from the homepage and the Simulation menu.
+The subsequent documentation-only commit records these completed checks.
