@@ -63,3 +63,9 @@ independent per-group Isomap initialization, and saved-result claims. The
 checker and `git diff --check` pass. The principal recovery, count-distribution,
 and structural-recovery figures were visually inspected for labels, clipping,
 and consistency with the saved tables.
+
+InferOrder commit `99deed26bbd9cead2b96e036d3c79648c511656f` was pushed to
+`origin/master`. GitHub Pages deployment
+[36512103474](https://github.com/AgueroZZ/InferOrder/actions/runs/36512103474)
+completed successfully for that exact commit. The live homepage and both
+estimate-M pages are byte-identical to their committed HTML files.
