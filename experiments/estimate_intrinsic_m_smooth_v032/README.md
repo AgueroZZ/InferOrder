@@ -6,6 +6,10 @@ nonmonotone trajectories. It uses the same 90 datasets' latent positions, featur
 groups, feature order, and measurement-noise realizations as the completed
 `estimate_intrinsic_m_v032` monotone benchmark.
 
+The public workflowr report presents only the current MPCurver 0.3.4 automatic-M
+fits under `auto_m_v034/`. Earlier package fits are retained here as experiment
+provenance and are not displayed as current software performance.
+
 There are 300 samples and 60 features, with true M = 3, 4, or 5; variance SNR =
 1, 4, or 16; and ten repetitions per condition. Features form balanced groups of
 20, 15, or 12. The first current feature column within each true group retains
@@ -83,6 +87,18 @@ records strict input, source, result, and occupancy-threshold checks. The
 extension freezes MPCurver 0.3.3 commit
 `c905901424e43eab78b58bdcc0d1de367ec8fd73` and source archive SHA-256
 `cb57e1f6e8d859b7ff9aeda17c97d538fae0686eb0ceb616f126023a26d645f9`.
+
+## Exploratory ordering-B diagnostic
+
+`exploratory_ordering_b/` diagnoses the ordering-B correlation of 0.756 in the
+original adaptive fit for `main_M3_S4_r001`. The feature partition is exact,
+but the old M = 8 absolute-Spearman initialization splits B into groups of 3,
+16, and 1 features. The surviving 16-feature Isomap ordering already has
+correlation 0.757, and adaptive fitting preserves that local solution. A
+truth-aware sensitivity analysis identifies one excluded trajectory that
+restores the Isomap geometry; the complete B group, uniform-forward fit, and
+automatic-M fit all recover B at about 0.998. This diagnostic does not alter
+the completed benchmark or propose a truth-dependent fitting rule.
 
 ## Reproduction
 

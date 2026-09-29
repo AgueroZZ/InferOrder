@@ -2,8 +2,9 @@
 
 This extension fits the 90 fixed inputs from the one-monotone-anchor study with
 the current package-level automatic ordering-count initialization in
-MPCurver 0.3.4. The original adaptive EB and uniform-forward fits remain
-unchanged and provide paired controls.
+MPCurver 0.3.4. The public report uses these fits exclusively. Earlier adaptive
+EB and uniform-forward fits remain in the parent experiment only as historical
+provenance.
 
 Each fit uses `intrinsic_dim = "auto"`, fixed-df natural-cubic-spline variance
 explained (`spline_r2_df = 5`), single linkage, candidate cuts up to eight
@@ -30,6 +31,9 @@ bash experiments/estimate_intrinsic_m_smooth_v032/run_r.sh \
 The Slurm array script maps tasks 0 through 89 to one-based manifest indices.
 Completed compact results are retained under `results/`; checkpoints, full
 replicate-one fits, installed packages, and scheduler logs are ignored.
+
+Run `render_current_report.R` to regenerate the current-package summary tables
+and figures used by the workflowr page.
 
 ## Completed run
 

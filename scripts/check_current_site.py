@@ -27,7 +27,7 @@ EXPECTED_IMAGES = {
     "simulation_m1.html": 2,
     "simulation_m2.html": 3,
     "estimate_intrinsic_m.html": 11,
-    "estimate_intrinsic_m_smooth.html": 13,
+    "estimate_intrinsic_m_smooth.html": 11,
     "fitness.html": 3,
     "pancreas.html": 3,
 }
@@ -105,7 +105,7 @@ def page_text(page):
     return re.sub(r"\s+", " ", " ".join(page.text)).strip()
 
 
-def check_auto_study(study_name, page, baseline_runs):
+def check_auto_study(study_name, page, baseline_runs, show_comparators=True):
     auto_dir = ROOT / "experiments" / study_name / "auto_m_v034"
     validation = json.loads((auto_dir / "validation.json").read_text())
     auto_runs = rows(auto_dir / "summary" / "auto_runs.csv")
@@ -159,75 +159,35 @@ def check_auto_study(study_name, page, baseline_runs):
     text = page_text(page)
     assert "MPCurver 0.3.4" in text
     assert f"{initial_exact}/90" in text and f"{effective_exact}/90" in text
-    assert f'{baseline_exact["adaptive"]}/90' in text
-    assert f'{baseline_exact["forward"]}/90' in text
+    if show_comparators:
+        assert f'{baseline_exact["adaptive"]}/90' in text
+        assert f'{baseline_exact["forward"]}/90' in text
+    else:
+        assert f'{baseline_exact["adaptive"]}/90' not in text
+        assert "Original adaptive EB" not in text
+        assert "Uniform + forward" not in text
     assert "minimum cluster size" in text and "two" in text
     assert "independently within" in text and "selected feature group" in text
 
 
 def check_smooth_study(page, baseline_runs):
     study = ROOT / "experiments/estimate_intrinsic_m_smooth_v032"
-    summary_dir = study / "main_summary"
-    status = json.loads((summary_dir / "status.json").read_text())
-    validation = json.loads((summary_dir / "baseline_comparison_validation.json").read_text())
-    assert status["complete"] and status["completed_method_runs"] == 180
-    assert validation["validated"] and validation["paired_datasets"] == 90
-    assert validation["paired_method_outcomes"] == 180
-    assert validation["occupancy_threshold"] == 1e-12
-    assert validation["maximum_noise_difference"] < 1e-12
-
-    study_runs = rows(summary_dir / "runs.csv")
-    paired = rows(summary_dir / "baseline_comparison_pairs.csv")
-    conditions = rows(summary_dir / "baseline_comparison_summary.csv")
-    overall = rows(summary_dir / "baseline_comparison_overall.csv")
-    pairing = rows(summary_dir / "baseline_pairing_checks.csv")
-    aligned_baseline = rows(summary_dir / "baseline_runs_aligned.csv")
-    assert len(study_runs) == len(paired) == len(aligned_baseline) == 180
-    assert len(conditions) == 18 and len(overall) == 2 and len(pairing) == 90
-    assert all(row["status"] in {"success", "error", "nonconverged"} for row in study_runs)
-    key = lambda row: (row["id"], row["method"])
-    baseline_by_key = {key(row): row for row in baseline_runs}
-    smooth_by_key = {key(row): row for row in study_runs}
-    paired_by_key = {key(row): row for row in paired}
-    assert len(baseline_by_key) == len(smooth_by_key) == len(paired_by_key) == 180
-    assert baseline_by_key.keys() == smooth_by_key.keys() == paired_by_key.keys()
-    for row in paired:
-        original = baseline_by_key[key(row)]
-        modified = smooth_by_key[key(row)]
-        assert all(row[column] == original[column] == modified[column]
-                   for column in ("true_M", "snr", "replicate"))
-        assert row["baseline_M"] == original["estimated_M"]
-        assert row["smooth_M"] == modified["estimated_M"]
-        assert row["smooth_status"] == modified["status"]
-        assert (row["baseline_exact"] == "TRUE") == (original["estimated_M"] == original["true_M"])
-        expected_exact = modified["status"] == "success" and modified["estimated_M"] == modified["true_M"]
-        assert (row["smooth_exact"] == "TRUE") == expected_exact
-    for row in aligned_baseline:
-        assert row["estimated_M"] == baseline_by_key[key(row)]["estimated_M"]
-    assert all(row["same_latent_positions"] == row["same_feature_groups"] ==
-               row["same_monotone_anchors"] == "TRUE" for row in pairing)
-    assert all(float(row["maximum_noise_difference"]) < 1e-12 for row in pairing)
-
+    auto_dir = study / "auto_m_v034"
+    auto_runs = rows(auto_dir / "summary" / "auto_runs.csv")
+    current_conditions = rows(auto_dir / "summary" / "current_condition_summary.csv")
+    assert len(auto_runs) == 90 and len(current_conditions) == 9
+    assert all(row["status"] == "success" and row["method"] == "auto_adaptive"
+               for row in auto_runs)
+    assert all(int(row["datasets"]) == 10 for row in current_conditions)
     text = page_text(page)
-    assert "MPCurver 0.3.2" in text and "effective M" in text
-    assert "one monotone trajectory" in text and "same evaluation rule" in text
-    for condition in conditions:
-        selected = [row for row in paired if all(row[column] == condition[column]
-                    for column in ("true_M", "snr", "method"))]
-        assert len(selected) == int(condition["planned"]) == 10
-        for count in ("baseline_exact", "smooth_exact", "both_exact", "lost_exact", "gained_exact", "neither_exact"):
-            assert int(condition[count]) == sum(row[count] == "TRUE" for row in selected)
-        assert int(condition["unresolved"]) == sum(row["smooth_status"] != "success" for row in selected)
-    for method in ("adaptive", "forward"):
-        selected = [row for row in paired if row["method"] == method]
-        total = next(row for row in overall if row["method"] == method)
-        assert int(total["planned"]) == len(selected) == 90
-        for count in ("baseline_exact", "smooth_exact", "both_exact", "lost_exact", "gained_exact", "neither_exact"):
-            assert int(total[count]) == sum(row[count] == "TRUE" for row in selected)
-        assert f'{total["baseline_exact"]}/90' in text
-        assert f'{total["smooth_exact"]}/90' in text
-
-    check_auto_study("estimate_intrinsic_m_smooth_v032", page, study_runs)
+    assert "MPCurver 0.3.4" in text and "effective M" in text
+    assert "90 current-package fits" in text
+    assert "MPCurver 0.3.2" not in text
+    assert "Original adaptive EB" not in text
+    assert "Uniform + forward" not in text
+    check_auto_study("estimate_intrinsic_m_smooth_v032", page,
+                     rows(study / "main_summary" / "runs.csv"),
+                     show_comparators=False)
 
 
 def main():
