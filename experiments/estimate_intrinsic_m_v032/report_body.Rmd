@@ -6,6 +6,25 @@ stopifnot(isTRUE(status$complete), status$completed_method_runs == 180)
 design <- jsonlite::read_json(file.path(study, "design.json"), simplifyVector = TRUE)
 summary <- read.csv(file.path(result_dir, "summary.csv"))
 runs <- read.csv(file.path(result_dir, "runs.csv"))
+auto_dir <- file.path(study, "auto_m_v034")
+auto_result_dir <- file.path(auto_dir, "summary")
+auto_validation <- jsonlite::read_json(file.path(auto_dir, "validation.json"))
+auto_overall <- read.csv(file.path(auto_result_dir, "overall_summary.csv"))
+auto_comparison <- read.csv(file.path(auto_result_dir, "comparison_summary.csv"))
+auto_initialization <- read.csv(file.path(auto_result_dir, "initialization_summary.csv"))
+auto_runs <- read.csv(file.path(auto_result_dir, "auto_runs.csv"))
+stopifnot(isTRUE(auto_validation$complete), nrow(auto_runs) == 90L,
+          all(auto_runs$status == "success"), sum(auto_runs$warning_count) == 0L)
+auto_adaptive <- auto_overall[auto_overall$method == "auto_adaptive", , drop = FALSE]
+old_adaptive <- auto_overall[auto_overall$method == "adaptive", , drop = FALSE]
+old_forward <- auto_overall[auto_overall$method == "forward", , drop = FALSE]
+stopifnot(nrow(auto_adaptive) == 1L, nrow(old_adaptive) == 1L,
+          nrow(old_forward) == 1L)
+current_method_labels <- c(
+  adaptive = "Original adaptive EB (M = 8)",
+  auto_adaptive = "Automatic-M adaptive EB",
+  forward = "Uniform + forward"
+)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%")
 knitr::opts_chunk$set(fig.path = paste0(
   tools::file_path_sans_ext(knitr::current_input()), "_files/figure-html/"))
@@ -14,10 +33,11 @@ options(knitr.graphics.rel_path = FALSE)
 
 ## Question
 
-Can MPCurve recover the number of latent sample orderings when the true
-number is three, four, or five? We compare **adaptive empirical Bayes (EB)**
-with **a fixed uniform ordering prior and forward selection**, using the
-same simulated datasets for both methods.
+Can MPCurve recover the number of latent sample orderings when every feature
+trajectory is monotone and the true number is three, four, or five? We test
+the automatic-$M$ adaptive empirical-Bayes (EB) procedure in **MPCurver
+0.3.4** on 90 fixed datasets and compare it with the original adaptive and
+uniform-prior forward fits on those same inputs.
 
 ## Simulation design
 
@@ -65,31 +85,44 @@ knitr::include_graphics(normalizePath(file.path(result_dir, "design_M5.png")))
 
 ## Methods
 
-Both methods use MPCurver **0.3.2**, CAVI, **50 grid positions**, a second-order
-random-walk prior with `ridge = 0`, adaptive cell-position priors, and estimated
-feature-specific noise and smoothness. Initialization clusters features using
-absolute Spearman correlation and single linkage, then uses Isomap within
-each group. A singleton group is initialized by ranking its feature.
+### Automatic-M adaptive EB in MPCurver 0.3.4
 
-- **Adaptive EB:** fit eight candidate orderings with adaptive ordering-assignment
-  weights.
-- **Uniform + forward:** fix the ordering prior to $1/M$, start at $M=1$,
-  and fit successively larger $M$, up to eight. Accept a candidate only when
-  its converged, soft-assignment ELBO at temperature one exceeds the preceding
-  candidate's score. Stop at the first non-improvement.
+The current fit calls `fit_mpcurve(intrinsic_dim = "auto")`. For each feature
+pair, it sorts one feature and regresses the other on its rank using a natural
+cubic spline with five fixed degrees of freedom. The symmetric similarity is
+the larger directional proportion of variance explained. Single-linkage
+clustering considers cuts up to eight groups, rejects any cut containing fewer
+than two features, and selects the eligible cut with the largest mean
+silhouette width.
 
-For both methods, the estimated **effective M** counts orderings whose mean
-posterior feature-assignment probability exceeds $10^{-12}$. Unused ordering
-slots are excluded. For adaptive EB, these mean probabilities equal the fitted
-assignment-prior weights.
+If the selected group sizes are $d_1,\ldots,d_M$, every feature starts with
+the same adaptive ordering probabilities $p(z_j=m)=d_m/60$. Isomap is then
+applied independently within each selected feature group. Subsequent EB
+updates may remove an occupied ordering, so the reported **effective M** is
+the number of slots whose mean posterior assignment probability exceeds
+$10^{-12}$.
 
-Each candidate has one initialization. Partition fits use a temperature
-schedule from five to one, followed by refinement at temperature one.
-Fitting stops when the absolute ELBO change divided by $N D$ is below
-$10^{-6}$, subject to the algorithm's numerical nondecrease check and
-completion of annealing. Continuation preserves the current fit. Candidates that remain unconverged after the declared
-10,000-sweep limit are recorded as unresolved, including forward searches
-whose next comparison cannot be completed.
+The current fits use the frozen MPCurver 0.3.4 source at commit
+`15f2b0bbe5dfa61cd46da5160b2bc251e75a0475`. They use 50 grid positions,
+coordinate-ascent variational inference (CAVI), second-order random-walk
+smoothing with `ridge = 0`, adaptive cell-position
+priors, estimated feature-specific noise and smoothness, annealing from
+temperature five to one, and normalized convergence tolerance $10^{-6}$.
+
+### Original paired controls
+
+The original MPCurver 0.3.2 fits remain paired controls on the same fixed
+datasets.
+
+- **Adaptive EB (M = 8):** starts with eight ordering slots and estimates the
+  ordering-assignment prior weights.
+- **Uniform + forward:** fixes the ordering prior to $1/M$, starts at $M=1$,
+  and fits successively larger models up to eight, stopping at the first
+  converged candidate whose temperature-one objective does not improve.
+
+These controls used absolute Spearman similarity, single linkage, and Isomap
+initialization. All procedures use the same effective-$M$ threshold and a
+declared maximum of 10,000 sweeps.
 
 ## Recovery of M
 
@@ -98,22 +131,33 @@ all 10 planned repeats as their denominator. Error bars are 95% Wilson
 intervals. The methods are assessed against the generating truth; their
 ELBO values are not compared against each other.
 
-Adaptive EB recovers the true effective M in **`r sum(summary$exact[summary$method == "adaptive"])` of 90 datasets**;
-uniform + forward does so in **`r sum(summary$exact[summary$method == "forward"])` of 90 datasets**.
+The spline-similarity cut selects the true $M$ in
+**`r auto_comparison$similarity_cut_exact` of 90 datasets**. After adaptive
+EB, automatic-$M$ recovers the true effective $M$ in
+**`r auto_adaptive$exact` of 90 datasets**, compared with
+**`r old_adaptive$exact`** for the original eight-slot adaptive fit and
+**`r old_forward$exact`** for uniform + forward.
 
-```{r estimate-m-recovery}
-knitr::include_graphics(normalizePath(file.path(result_dir, "exact_recovery.png")))
+```{r estimate-m-recovery, fig.cap="Exact effective-M recovery on the all-monotone datasets. Columns show true M; points summarize 10 datasets at each SNR and error bars are 95% Wilson intervals. Automatic-M uses spline variance explained, single linkage, minimum cluster size two, and adaptive EB."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "exact_recovery_comparison.png")))
 ```
 
 ```{r estimate-m-table}
-table <- summary[, c("true_M", "snr", "method", "exact", "under", "over", "failed")]
-names(table) <- c("True M", "SNR", "Method", "Exact", "Under", "Over", "Unresolved")
-table$Method <- ifelse(table$Method == "adaptive", "Adaptive EB", "Uniform + forward")
-knitr::kable(table, row.names = FALSE, caption = "Counts out of 10 datasets per condition and method.")
+table <- auto_overall[, c("method", "exact", "under", "over", "mean_ARI",
+  "mean_ordering_recovery", "median_seconds", "warnings")]
+table$method <- unname(current_method_labels[table$method])
+names(table) <- c("Method", "Exact M", "Under", "Over", "Mean ARI",
+  "Mean ordering score", "Median seconds", "Warnings")
+knitr::kable(table, digits = 3, row.names = FALSE,
+  caption = "Overall results across the same 90 all-monotone datasets per method.")
 ```
 
-```{r estimate-m-distribution}
-knitr::include_graphics(normalizePath(file.path(result_dir, "estimated_M_distribution.png")))
+```{r estimate-m-stages, fig.cap="Exact-M recovery before and after adaptive EB. The similarity cut supplies the initial M and cluster-size prior; the final count is the number of occupied orderings after fitting. Each point summarizes 10 datasets."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "auto_initial_vs_final.png")))
+```
+
+```{r estimate-m-distribution, fig.cap="Estimated effective-M distributions for all three procedures. Rows identify the generating M, columns identify the estimate, and panels identify SNR and method. Cell labels give counts out of 10; outlined cells are exact."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "estimated_M_distribution_comparison.png")))
 ```
 
 ## Recovery of the underlying structure
@@ -128,11 +172,20 @@ axis. Unmatched true orderings contribute zero to the mean recovery score.
 These structural summaries describe completed fits; unresolved rates are
 reported separately above.
 
-```{r estimate-m-structure}
-knitr::include_graphics(normalizePath(file.path(result_dir, "structural_recovery.png")))
+Automatic-$M$ adaptive EB has mean feature-partition ARI
+**`r sprintf("%.3f", auto_adaptive$mean_ARI)`** and mean ordering score
+**`r sprintf("%.3f", auto_adaptive$mean_ordering_recovery)`**. The corresponding
+values are **`r sprintf("%.3f", old_adaptive$mean_ARI)`** and
+**`r sprintf("%.3f", old_adaptive$mean_ordering_recovery)`** for the original
+adaptive fit, and **`r sprintf("%.3f", old_forward$mean_ARI)`** and
+**`r sprintf("%.3f", old_forward$mean_ordering_recovery)`** for uniform +
+forward.
+
+```{r estimate-m-structure, fig.cap="Mean feature-partition ARI and ordering recovery for all three procedures. Columns identify true M, rows identify the metric, and points average 10 fixed datasets at each SNR."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "structural_recovery_comparison.png")))
 ```
 
-### Examples with true M = 3, 4, and 5
+### Preselected examples from the original paired controls
 
 These examples were fixed in advance: replicate 1 at SNR 4 for each true
 dimension. The first row shows three generating curves per ordering;
@@ -156,23 +209,31 @@ Runtime includes initialization and every candidate and continuation used
 by each method. A forward search therefore includes its rejected stopping
 candidate. All workers use one CPU thread.
 
-```{r estimate-m-runtime}
-knitr::include_graphics(normalizePath(file.path(result_dir, "runtime.png")))
+```{r estimate-m-runtime, fig.cap="Median single-thread fitting time for each procedure, true M, and SNR. Automatic-M includes its similarity calculation and all continuations; forward selection includes every candidate and its stopping candidate."}
+knitr::include_graphics(normalizePath(file.path(auto_result_dir, "runtime_comparison.png")))
 ```
 
-The study completed **`r sum(runs$status == "success")` of 180 method runs**
-with a converged estimate. The remaining **`r sum(runs$status != "success")`**
-runs are included as unresolved outcomes in the main recovery rates.
+All **270 method runs** across the current procedure and two paired controls
+converged without fitting warnings. Automatic-$M$ adaptive EB has median
+runtime **`r sprintf("%.1f", auto_adaptive$median_seconds)` seconds**, compared
+with **`r sprintf("%.1f", old_adaptive$median_seconds)` seconds** for the
+original adaptive fit and **`r sprintf("%.1f", old_forward$median_seconds)`
+seconds** for uniform + forward.
 
 ## Summary and reproduction
 
-Both approaches recover the effective number of orderings well in this
-benchmark of balanced feature groups, independent orderings, and mostly
-mildly curved monotone trajectories. Uniform-prior greedy forward selection
-has slightly higher recovery in these simulations: **90/90**, compared with
-**87/90** for adaptive EB. The three EB errors each add one effective ordering.
+In this simpler all-monotone setting, the spline-based similarity cut is exact
+in **`r auto_comparison$similarity_cut_exact`/90** datasets. Automatic-$M$
+adaptive EB finishes with the correct effective count in
+**`r auto_adaptive$exact`/90**, compared with **`r old_adaptive$exact`/90** for
+the original adaptive fit and **`r old_forward$exact`/90** for uniform +
+forward. This benchmark has balanced groups, no garbage features, and a
+monotone trajectory for every feature; the one-anchor study tests the harder
+trajectory-shape setting.
 
 The [experiment directory](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/estimate_intrinsic_m_v032)
 contains the fixed design and seeds, scripts, summaries, and standalone
-report source. Each dataset is shared by the two methods, and saved
-candidates support continuation and reproducibility.
+report source. The `auto_m_v034/` extension freezes MPCurver 0.3.4 at commit
+`15f2b0bbe5dfa61cd46da5160b2bc251e75a0475`, records the package archive
+checksum and input hashes, and fits the same 90 inputs used by the two original
+controls.

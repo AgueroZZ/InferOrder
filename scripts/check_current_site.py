@@ -26,7 +26,7 @@ EXPECTED_IMAGES = {
     "method.html": 0,
     "simulation_m1.html": 2,
     "simulation_m2.html": 3,
-    "estimate_intrinsic_m.html": 10,
+    "estimate_intrinsic_m.html": 11,
     "estimate_intrinsic_m_smooth.html": 13,
     "fitness.html": 3,
     "pancreas.html": 3,
@@ -36,7 +36,7 @@ EXPECTED_TITLES = {
     "method.html": "MPCurve and CAVI",
     "simulation_m1.html": "Simulation: One Latent Ordering",
     "simulation_m2.html": "Simulation: Two Latent Orderings",
-    "estimate_intrinsic_m.html": "Simulation: Estimating the Intrinsic Number of Orderings",
+    "estimate_intrinsic_m.html": "Simulation: Estimating M with All-Monotone Trajectories",
     "estimate_intrinsic_m_smooth.html": "Simulation: Estimating M with One Monotone Anchor per Ordering",
     "fitness.html": "Analysis: Mutant Fitness Across Environments",
     "pancreas.html": "Analysis: Pancreatic Cell Loadings",
@@ -105,6 +105,66 @@ def page_text(page):
     return re.sub(r"\s+", " ", " ".join(page.text)).strip()
 
 
+def check_auto_study(study_name, page, baseline_runs):
+    auto_dir = ROOT / "experiments" / study_name / "auto_m_v034"
+    validation = json.loads((auto_dir / "validation.json").read_text())
+    auto_runs = rows(auto_dir / "summary" / "auto_runs.csv")
+    auto_overall = rows(auto_dir / "summary" / "overall_summary.csv")
+    auto_comparison = rows(auto_dir / "summary" / "comparison_summary.csv")[0]
+
+    assert validation["complete"] and validation["datasets"] == 90
+    assert validation["package_version"] == "0.3.4"
+    assert validation["package_source_commit"] == (
+        "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475")
+    assert validation["package_archive_sha256"] == (
+        "58d0c99c6170994c82eedba190fb1c28a63eb47530c575705323c3cf3992b7c6")
+    assert validation["converged"] == 90 and validation["warnings"] == 0
+    assert validation["independent_isomap_initialization_checks"] == 9
+    assert len(auto_runs) == 90 and all(row["status"] == "success" for row in auto_runs)
+
+    initial_exact = sum(int(row["selected_initial_M"]) == int(row["true_M"])
+                        for row in auto_runs)
+    effective_exact = sum(int(row["effective_M"]) == int(row["true_M"])
+                          for row in auto_runs)
+    assert validation["exact_initial_M"] == initial_exact
+    assert validation["exact_effective_M"] == effective_exact
+    assert min(int(row["minimum_initial_cluster_size"]) for row in auto_runs) >= 2
+
+    baseline_exact = {
+        method: sum(row["status"] == "success" and row["estimated_M"] == row["true_M"]
+                    for row in baseline_runs if row["method"] == method)
+        for method in ("adaptive", "forward")
+    }
+    reported_exact = {row["method"]: int(row["exact"]) for row in auto_overall}
+    assert reported_exact == {
+        "adaptive": baseline_exact["adaptive"],
+        "auto_adaptive": effective_exact,
+        "forward": baseline_exact["forward"],
+    }
+
+    baseline_adaptive = {
+        row["id"]: row for row in baseline_runs if row["method"] == "adaptive"
+    }
+    gained_exact = 0
+    lost_exact = 0
+    for row in auto_runs:
+        old = baseline_adaptive[row["id"]]
+        old_exact = old["status"] == "success" and old["estimated_M"] == old["true_M"]
+        new_exact = int(row["effective_M"]) == int(row["true_M"])
+        gained_exact += new_exact and not old_exact
+        lost_exact += old_exact and not new_exact
+    assert int(auto_comparison["gained_exact"]) == gained_exact
+    assert int(auto_comparison["lost_exact"]) == lost_exact
+
+    text = page_text(page)
+    assert "MPCurver 0.3.4" in text
+    assert f"{initial_exact}/90" in text and f"{effective_exact}/90" in text
+    assert f'{baseline_exact["adaptive"]}/90' in text
+    assert f'{baseline_exact["forward"]}/90' in text
+    assert "minimum cluster size" in text and "two" in text
+    assert "independently within" in text and "selected feature group" in text
+
+
 def check_smooth_study(page, baseline_runs):
     study = ROOT / "experiments/estimate_intrinsic_m_smooth_v032"
     summary_dir = study / "main_summary"
@@ -167,31 +227,7 @@ def check_smooth_study(page, baseline_runs):
         assert f'{total["baseline_exact"]}/90' in text
         assert f'{total["smooth_exact"]}/90' in text
 
-    auto_dir = study / "auto_m_v033"
-    auto_validation = json.loads((auto_dir / "validation.json").read_text())
-    auto_runs = rows(auto_dir / "summary" / "auto_runs.csv")
-    auto_overall = rows(auto_dir / "summary" / "overall_summary.csv")
-    auto_comparison = rows(auto_dir / "summary" / "comparison_summary.csv")[0]
-    assert auto_validation["complete"] and auto_validation["datasets"] == 90
-    assert auto_validation["package_version"] == "0.3.3"
-    assert auto_validation["package_source_commit"] == (
-        "c905901424e43eab78b58bdcc0d1de367ec8fd73")
-    assert auto_validation["converged"] == 90 and auto_validation["warnings"] == 0
-    assert auto_validation["exact_initial_M"] == 88
-    assert auto_validation["exact_effective_M"] == 88
-    assert len(auto_runs) == 90 and all(row["status"] == "success" for row in auto_runs)
-    assert sum(int(row["selected_initial_M"]) == int(row["true_M"])
-               for row in auto_runs) == 88
-    assert sum(int(row["effective_M"]) == int(row["true_M"])
-               for row in auto_runs) == 88
-    assert min(int(row["minimum_initial_cluster_size"]) for row in auto_runs) >= 2
-    expected_exact = {"adaptive": 60, "auto_adaptive": 88, "forward": 88}
-    assert {row["method"]: int(row["exact"]) for row in auto_overall} == expected_exact
-    assert int(auto_comparison["gained_exact"]) == 28
-    assert int(auto_comparison["lost_exact"]) == 0
-    assert "MPCurver 0.3.3" in text and "88/90" in text and "60/90" in text
-    assert "minimum cluster size of two" in text
-    assert "32.5 seconds" in text and "132.4" in text
+    check_auto_study("estimate_intrinsic_m_smooth_v032", page, study_runs)
 
 
 def main():
@@ -227,15 +263,21 @@ def main():
             assert target.exists(), f"Broken local reference in {name}: {item}"
 
     assert parsed["index.html"].headings == ["Method", "Simulation", "Analysis"]
-    assert "Each study records the package version" in page_text(parsed["index.html"])
+    index_text = page_text(parsed["index.html"])
+    assert "Each study records the package version" in index_text
+    index_source = (ROOT / "analysis" / "index.Rmd").read_text()
+    for label in ("- **Fixed $M=1$**", "- **Fixed $M=2$**",
+                  "- **Estimate $M$ from the data**"):
+        assert label in index_source
+    for label in ("All trajectories monotone", "One monotone anchor per ordering"):
+        assert label in index_text
     intrinsic = page_text(parsed["estimate_intrinsic_m.html"])
-    assert "MPCurver 0.3.2" in intrinsic
-    assert "87 of 90 datasets" in intrinsic and "90 of 90 datasets" in intrinsic
-    assert "effective M" in intrinsic and "Unused ordering slots are excluded" in intrinsic
+    assert "MPCurver 0.3.2" in intrinsic and "effective M" in intrinsic
     study_runs = rows(ROOT / "experiments/estimate_intrinsic_m_v032/main_summary/runs.csv")
     assert len(study_runs) == 180 and all(row["status"] == "success" for row in study_runs)
     for method, expected in (("adaptive", 87), ("forward", 90)):
         assert sum(row["estimated_M"] == row["true_M"] for row in study_runs if row["method"] == method) == expected
+    check_auto_study("estimate_intrinsic_m_v032", parsed["estimate_intrinsic_m.html"], study_runs)
     check_smooth_study(parsed["estimate_intrinsic_m_smooth.html"], study_runs)
     assert len(parsed["fitness.html"].captions) == 1
     assert len(parsed["pancreas.html"].captions) == 2

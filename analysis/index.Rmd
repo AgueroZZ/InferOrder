@@ -12,9 +12,8 @@ MPCurve infers latent sample orderings and smooth feature trajectories from
 multivariate data. This site presents selected results fitted by
 coordinate-ascent variational inference (CAVI) in **MPCurver**. Each study
 records the package version used for fitting.
-The introductory simulations and observed-data analyses were regenerated with
-MPCurver 0.3.4; version-frozen method-comparison studies retain their original
-software provenance.
+The current simulations and observed-data analyses use MPCurver 0.3.4. Earlier
+method fits are retained only as explicitly labeled paired controls.
 
 ## Method
 
@@ -26,17 +25,25 @@ provides full vignettes and software documentation.
 
 ## Simulation
 
-- [One ordering: a noisy spiral](simulation_m1.html) tests recovery of a known
-  sample order.
-- [Two orderings: two feature groups](simulation_m2.html) tests recovery of
-  feature assignments and both sample orders.
-- [Estimating the number of orderings](estimate_intrinsic_m.html) compares
-  adaptive EB and uniform-prior greedy forward selection across 90 simulated
-  datasets with three, four, or five true orderings.
-- [One monotone anchor per ordering](estimate_intrinsic_m_smooth.html) tests
-  the MPCurver 0.3.3 automatic-$M$ initializer when the other trajectories
-  have smooth peaks and troughs. It recovers the final effective $M$ in 88/90
-  fixed datasets, compared with 60/90 for the original adaptive fit.
+- **Fixed $M=1$**
+
+  - [One ordering: a noisy spiral](simulation_m1.html) tests recovery of a
+    known sample order.
+
+- **Fixed $M=2$**
+
+  - [Two orderings: two feature groups](simulation_m2.html) tests recovery of
+    feature assignments and both sample orders.
+
+- **Estimate $M$ from the data**
+
+  - [All trajectories monotone](estimate_intrinsic_m.html) is the simpler
+    setting. It evaluates automatic-$M$ adaptive EB on 90 fixed datasets with
+    three, four, or five true orderings.
+  - [One monotone anchor per ordering](estimate_intrinsic_m_smooth.html) is the
+    more challenging setting: all other trajectories have smooth peaks and
+    troughs. It evaluates the same automatic-$M$ procedure on paired fixed
+    datasets.
 
 ## Analysis
 

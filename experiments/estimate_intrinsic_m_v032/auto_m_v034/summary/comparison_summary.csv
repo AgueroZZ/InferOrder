@@ -1,0 +1,2 @@
+"paired_datasets","old_adaptive_exact","similarity_cut_exact","auto_adaptive_exact","gained_exact","lost_exact","mean_delta_ARI","mean_delta_ordering_recovery"
+90,87,90,90,3,0,0.0035603698690285,3.72524303767515e-05

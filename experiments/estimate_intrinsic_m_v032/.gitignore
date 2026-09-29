@@ -3,3 +3,9 @@ checkpoints/
 full_fits/
 supervisor.lock
 *.tmp
+auto_m_v034/library/
+auto_m_v034/checkpoints/
+auto_m_v034/full_fits/
+auto_m_v034/logs/
+auto_m_v034/slurm/*.out
+auto_m_v034/slurm/*.err

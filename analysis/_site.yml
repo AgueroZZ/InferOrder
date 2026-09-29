@@ -13,9 +13,9 @@ navbar:
           href: simulation_m1.html
         - text: Two orderings
           href: simulation_m2.html
-        - text: Estimating the number of orderings
+        - text: "Estimate M: all monotone"
           href: estimate_intrinsic_m.html
-        - text: One monotone anchor per ordering
+        - text: "Estimate M: one monotone anchor"
           href: estimate_intrinsic_m_smooth.html
     - text: Analysis
       menu:

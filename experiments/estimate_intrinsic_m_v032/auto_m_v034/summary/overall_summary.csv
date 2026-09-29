@@ -1,0 +1,4 @@
+"method","planned","successful","exact","under","over","mean_ARI","mean_ordering_recovery","median_seconds","total_seconds","warnings"
+"adaptive",90,90,87,0,3,0.996439630130971,0.984815714084066,150.6405,14782.682,0
+"auto_adaptive",90,90,90,0,0,1,0.984852966514443,94.9895,9398.617,0
+"forward",90,90,90,0,0,1,0.984852884209002,222.707,22905.3,0

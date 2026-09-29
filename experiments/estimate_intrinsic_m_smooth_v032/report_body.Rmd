@@ -35,7 +35,7 @@ adaptive <- overall[overall$method == "adaptive", , drop = FALSE]
 forward <- overall[overall$method == "forward", , drop = FALSE]
 stopifnot(nrow(adaptive) == 1L, nrow(forward) == 1L,
           adaptive$planned == 90L, forward$planned == 90L)
-auto_dir <- file.path(study, "auto_m_v033")
+auto_dir <- file.path(study, "auto_m_v034")
 auto_result_dir <- file.path(auto_dir, "summary")
 auto_validation <- jsonlite::read_json(file.path(auto_dir, "validation.json"))
 auto_overall <- read.csv(file.path(auto_result_dir, "overall_summary.csv"))
@@ -65,7 +65,7 @@ options(knitr.graphics.rel_path = FALSE)
 
 Can an inexpensive nonlinear similarity estimate the number of latent sample
 orderings well enough to initialize adaptive empirical Bayes (EB)? We tested
-the automatic-$M$ initialization released in **MPCurver 0.3.3** on the 90 fixed
+the automatic-$M$ initialization in **MPCurver 0.3.4** on the 90 fixed
 datasets in this one-monotone-anchor study.
 
 The new procedure exactly recovers the final effective $M$ in
@@ -127,7 +127,7 @@ knitr::include_graphics(normalizePath(file.path(result_dir, "design_M5.png")))
 
 ## Methods
 
-### Automatic-M adaptive EB in MPCurver 0.3.3
+### Automatic-M adaptive EB in MPCurver 0.3.4
 
 The new fit calls `fit_mpcurve(intrinsic_dim = "auto")`. It computes a
 directional nonlinear similarity for every feature pair: one feature is sorted,
@@ -149,8 +149,9 @@ ordering has at least one distinct anchor plus another feature. It also avoids
 treating a single smooth or sortable noise feature as an identifiable ordering.
 This experiment does not include a separate garbage-feature component.
 
-The new fits use the released **MPCurver 0.3.3** source at commit
-`c905901424e43eab78b58bdcc0d1de367ec8fd73`. All other fitting controls match
+The new fits use the released **MPCurver 0.3.4** source at commit
+`15f2b0bbe5dfa61cd46da5160b2bc251e75a0475`. Isomap is applied
+independently within every selected feature group. All other fitting controls match
 the original study, including 50 grid positions, second-order random-walk
 smoothing with `ridge = 0`, adaptive cell-position priors, one initialization,
 annealing from temperature five to one, and estimated feature-specific noise
@@ -216,17 +217,18 @@ knitr::kable(table, digits = 3, row.names = FALSE,
 ## Recovery of M
 
 The fixed-df spline similarity cut itself estimates the true $M$ in
-**`r auto_comparison$similarity_cut_exact`/90** datasets. It never
-underestimates $M$; its two errors are conservative overestimates. After
-adaptive EB, exact recovery remains **`r auto_adaptive$exact`/90**, with two
-underestimates and no overestimates. These totals hide one useful correction
-and one collapse: EB changes an initial 5 to the correct 4 in one SNR-1
-dataset, but changes a correct initial 5 to 4 in another. In the remaining
-miss, an initial 7 is reduced to 4 when the truth is 5.
+**`r auto_comparison$similarity_cut_exact`/90** datasets, with
+**`r sum(auto_initialization$initial_under)` underestimates** and
+**`r sum(auto_initialization$initial_over)` overestimates**. After adaptive EB,
+exact recovery is **`r auto_adaptive$exact`/90**, with
+**`r auto_adaptive$under` underestimates** and
+**`r auto_adaptive$over` overestimates**. This separates what is learned by
+the inexpensive similarity cut from changes made by the fitted model.
 
 The original adaptive fit with eight initial slots is exact in only
-**`r old_adaptive$exact`/90** datasets and makes 29 underestimates. The new
-initialization recovers all of those 60 cases and 28 additional cases.
+**`r old_adaptive$exact`/90** datasets. Relative to that fit, the new
+initialization gains **`r auto_comparison$gained_exact`** exact recoveries and
+loses **`r auto_comparison$lost_exact`**.
 Uniform + forward is also exact in **`r old_forward$exact`/90** datasets.
 
 ```{r smooth-m-auto-recovery, fig.cap="Exact effective-M recovery for the three procedures on the same one-monotone-anchor datasets. Columns show the generating M. Each point is a proportion out of 10 datasets at the labeled variance SNR; error bars are 95% Wilson intervals. The automatic-M fit uses fixed-df spline variance explained, single linkage, a minimum initial cluster size of two, and adaptive EB."}
@@ -245,14 +247,12 @@ knitr::kable(table, digits = 3, row.names = FALSE,
     "All 270 fits converged."))
 ```
 
-```{r smooth-m-auto-stages, fig.cap="Exact-M recovery before and after adaptive EB. The similarity cut supplies the initial M and cluster-size prior; the final count is the number of occupied orderings after adaptive EB. Each point summarizes 10 datasets. The identical overall totals of 88/90 arise from different errors, because EB corrects one initial overestimate and introduces one underestimate."}
+```{r smooth-m-auto-stages, fig.cap="Exact-M recovery before and after adaptive EB. The similarity cut supplies the initial M and cluster-size prior; the final count is the number of occupied orderings after adaptive EB. Each point summarizes 10 datasets."}
 knitr::include_graphics(normalizePath(file.path(auto_result_dir, "auto_initial_vs_final.png")))
 ```
 
-The full estimated-count distribution shows that the improvement is not an
-artifact of averaging across conditions. Both remaining final errors occur at
-true $M=5$, one at SNR 1 and one at SNR 4; all other conditions are exact in
-10/10 datasets.
+The full estimated-count distribution shows how the errors are distributed
+across true $M$ and SNR rather than only reporting an overall average.
 
 ```{r smooth-m-auto-distribution, fig.cap="Estimated effective-M distributions for all three procedures. Rows identify the generating M, columns identify the estimate, and panels identify SNR and method. Cell labels give counts out of 10 datasets; outlined cells are exact. All fits converged, so the unresolved column is empty."}
 knitr::include_graphics(normalizePath(file.path(auto_result_dir, "estimated_M_distribution_comparison.png")))
@@ -383,6 +383,6 @@ The [experiment directory](https://github.com/AgueroZZ/InferOrder/tree/master/ex
 contains the fixed design and seeds, curve coefficients, input hashes,
 saved candidates, result tables, figures, and reproduction scripts. The
 original paired study remains frozen at MPCurver 0.3.2. The automatic-$M$
-extension under `auto_m_v033/` freezes MPCurver 0.3.3 at commit
-`c905901424e43eab78b58bdcc0d1de367ec8fd73` and records its archive SHA-256,
+extension under `auto_m_v034/` freezes MPCurver 0.3.4 at commit
+`15f2b0bbe5dfa61cd46da5160b2bc251e75a0475` and records its archive SHA-256,
 input hashes, package provenance, scheduler job, and strict result validation.

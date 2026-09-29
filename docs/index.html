@@ -476,10 +476,10 @@ display: none;
       <a href="simulation_m2.html">Two orderings</a>
     </li>
     <li>
-      <a href="estimate_intrinsic_m.html">Estimating the number of orderings</a>
+      <a href="estimate_intrinsic_m.html">Estimate M: all monotone</a>
     </li>
     <li>
-      <a href="estimate_intrinsic_m_smooth.html">One monotone anchor per ordering</a>
+      <a href="estimate_intrinsic_m_smooth.html">Estimate M: one monotone anchor</a>
     </li>
   </ul>
 </li>
@@ -521,9 +521,9 @@ display: none;
 trajectories from multivariate data. This site presents selected results
 fitted by coordinate-ascent variational inference (CAVI) in
 <strong>MPCurver</strong>. Each study records the package version used
-for fitting. The introductory simulations and observed-data analyses
-were regenerated with MPCurver 0.3.4; version-frozen method-comparison
-studies retain their original software provenance.</p>
+for fitting. The current simulations and observed-data analyses use
+MPCurver 0.3.4. Earlier method fits are retained only as explicitly
+labeled paired controls.</p>
 <div id="method" class="section level2">
 <h2>Method</h2>
 <p>MPCurve places samples on an ordered grid and estimates a smooth
@@ -535,18 +535,27 @@ provides full vignettes and software documentation.</p>
 <div id="simulation" class="section level2">
 <h2>Simulation</h2>
 <ul>
+<li><p><strong>Fixed <span class="math inline">\(M=1\)</span></strong></p>
+<ul>
 <li><a href="simulation_m1.html">One ordering: a noisy spiral</a> tests
 recovery of a known sample order.</li>
+</ul></li>
+<li><p><strong>Fixed <span class="math inline">\(M=2\)</span></strong></p>
+<ul>
 <li><a href="simulation_m2.html">Two orderings: two feature groups</a>
 tests recovery of feature assignments and both sample orders.</li>
-<li><a href="estimate_intrinsic_m.html">Estimating the number of
-orderings</a> compares adaptive EB and uniform-prior greedy forward
-selection across 90 simulated datasets with three, four, or five true
-orderings.</li>
+</ul></li>
+<li><p><strong>Estimate <span class="math inline">\(M\)</span> from the
+data</strong></p>
+<ul>
+<li><a href="estimate_intrinsic_m.html">All trajectories monotone</a> is
+the simpler setting. It evaluates automatic-<span class="math inline">\(M\)</span> adaptive EB on 90 fixed datasets with
+three, four, or five true orderings.</li>
 <li><a href="estimate_intrinsic_m_smooth.html">One monotone anchor per
-ordering</a> tests the MPCurver 0.3.3 automatic-<span class="math inline">\(M\)</span> initializer when the other trajectories
-have smooth peaks and troughs. It recovers the final effective <span class="math inline">\(M\)</span> in 88/90 fixed datasets, compared with
-60/90 for the original adaptive fit.</li>
+ordering</a> is the more challenging setting: all other trajectories
+have smooth peaks and troughs. It evaluates the same automatic-<span class="math inline">\(M\)</span> procedure on paired fixed
+datasets.</li>
+</ul></li>
 </ul>
 </div>
 <div id="analysis" class="section level2">

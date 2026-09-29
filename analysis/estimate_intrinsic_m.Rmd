@@ -1,5 +1,5 @@
 ---
-title: "Simulation: Estimating the Intrinsic Number of Orderings"
+title: "Simulation: Estimating M with All-Monotone Trajectories"
 author: "Ziang Zhang"
 output:
   workflowr::wflow_html:
