@@ -50,5 +50,11 @@ convergence flags, assignments, and reported values. `git diff --check`
 passed. The principal simulation and pancreas figures were visually inspected
 for readable labels, unclipped panels, and agreement with the saved summaries.
 
-Publication commit and deployment identifiers will be appended after the
-site is pushed and verified live.
+InferOrder commit `036298f4c3b78ca73a1445298706e192a10e0ce5` was pushed
+to `origin/master`. GitHub Pages deployment
+[36501337473](https://github.com/AgueroZZ/InferOrder/actions/runs/36501337473)
+completed successfully for that exact commit. The live homepage, method page,
+two simulation pages, fitness page, and pancreas page are byte-identical to
+their committed HTML files. Live content checks found MPCurver 0.3.4 and the
+reported recovery, assignment, and correlation values on the corresponding
+pages.
