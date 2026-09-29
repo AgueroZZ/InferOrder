@@ -14,8 +14,11 @@ knitr::opts_chunk$set(fig.path = paste0(
   tools::file_path_sans_ext(basename(knitr::current_input())),
   "_files/figure-html/"
 ))
-result_path <- "experiments/mpcurve_v030_site/results/simulations/simulation_m2.rds"
+result_dir <- "experiments/mpcurve_v034_site/results/simulations"
+result_path <- file.path(result_dir, "simulation_m2.rds")
 result <- readRDS(result_path)
+provenance <- read.csv(file.path(result_dir, "package_provenance.csv"))
+stopifnot(identical(provenance$package_version, "0.3.4"))
 stopifnot(inherits(result$fit, "mpcurve"), identical(result$fit$algorithm, "cavi"))
 sim <- result$simulation
 fit <- result$fit
@@ -32,10 +35,13 @@ creates 500 samples, ten quadratic features following ordering A, and ten
 monotone features following ordering B. Gaussian noise has standard deviation
 0.05. The generator seed is 1.
 
-We fit a fixed $M=2$ model with a second-order random-walk prior, $K=50$ grid
-positions, `ridge = 0`, and Fiedler ordering initialization. The assignment
+We fit a fixed $M=2$ model with MPCurver 0.3.4, a second-order random-walk
+prior, $K=50$ grid positions, `ridge = 0`, and Fiedler ordering initialization.
+The same Fiedler method is applied independently within both similarity-based
+feature groups. The assignment
 probabilities are estimated jointly with conditional feature trajectories
-and sample positions.
+and sample positions. The fit allows up to 500 temperature-one refinement
+updates.
 
 ## Feature assignments
 
@@ -83,12 +89,14 @@ plot(seq_along(t1_objective), t1_objective, type = "l", lwd = 2,
 ```
 
 The structural objective increases during the final $T=1$ refinement phase.
+The fit converges after **`r summary$t1_objective_records` recorded
+temperature-one objective values** under the normalized per-observation rule.
 
 ## Reproduce
 
 Run the [experiment
-script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_simulations.R)
-from the InferOrder root with MPCurver 0.3.0. The
-[saved results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v030_site/results/simulations)
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v034_site/run_simulations.R)
+from the InferOrder root with MPCurver 0.3.4. The
+[saved results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v034_site/results/simulations)
 include the generating truth, fitted model, and assignment probabilities.
 This is one simulated data set.

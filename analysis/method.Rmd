@@ -22,7 +22,7 @@ deviations.
 
 ## Variational inference
 
-MPCurver 0.3.0 fits MPCurve using coordinate-ascent variational inference
+MPCurver 0.3.4 fits MPCurve using coordinate-ascent variational inference
 (CAVI). It alternates updates of sample
 position probabilities, posterior distributions for the feature trajectories,
 and model parameters. The trajectory posterior records both a mean and
@@ -48,7 +48,12 @@ feature; a diffuse row indicates uncertainty. The ordering labels and
 directions are arbitrary, so interpretation uses observed annotations and
 trajectory shapes.
 
-The number of orderings $M$ is specified before fitting. The [feature-partitioning
+The number of orderings $M$ can be specified before fitting or initialized
+automatically by cutting a feature-similarity tree at the eligible optimum in
+mean silhouette. The automatic initializer requires at least two features
+per selected group by default. Within a similarity-selected partition, one
+chosen ordering method is fitted independently to every feature group; default
+PCA initialization uses each group's own PC1. The [feature-partitioning
 article](https://aguerozz.github.io/MPCurver/articles/partition.html) develops
 the structural model and its updates in detail.
 

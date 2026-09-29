@@ -14,9 +14,11 @@ knitr::opts_chunk$set(fig.path = paste0(
   tools::file_path_sans_ext(basename(knitr::current_input())),
   "_files/figure-html/"
 ))
-result_dir <- "experiments/mpcurve_v030_site/results/pancreas"
+result_dir <- "experiments/mpcurve_v034_site/results/pancreas"
 m1 <- readRDS(file.path(result_dir, "fit_m1.rds"))
 m2 <- readRDS(file.path(result_dir, "fit_m2.rds"))
+provenance <- read.csv(file.path(result_dir, "package_provenance.csv"))
+stopifnot(identical(provenance$package_version, "0.3.4"))
 samples <- read.csv(file.path(result_dir, "sample_positions.csv"), check.names = FALSE)
 assignments <- read.csv(file.path(result_dir, "factor_assignments.csv"))
 X <- m1$fit$data
@@ -39,14 +41,16 @@ matrix to see what each specified number of orderings captures.
 
 ## Fitting settings
 
-Both fits use CAVI, an RW2 trajectory prior, $K=50$ grid positions, and
-`ridge = 0`. The $M=1$ fit starts from PCA; the $M=2$ fit uses Fiedler
-ordering and similarity-based feature initialization. Exact seeds and
-iteration budgets are in the [reproduction script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_pancreas.R).
+Both fits use MPCurver 0.3.4, CAVI, an RW2 trajectory prior, $K=50$ grid
+positions, and `ridge = 0`. The $M=1$ fit starts from PCA; the $M=2$ fit
+applies Fiedler ordering independently to both similarity-based feature
+groups. Exact seeds and iteration budgets are in the [reproduction
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v034_site/run_pancreas.R).
 
 ```{r fit-settings-table, echo=FALSE}
 settings <- read.csv(file.path(result_dir, "fit_settings.csv"))
-knitr::kable(settings[, c("model", "seed", "method", "K", "rw_q", "ridge")],
+knitr::kable(settings[, c("model", "seed", "method", "K", "rw_q", "ridge",
+                            "max_converge_iter")],
              caption = "Table 1. Fixed model and initialization settings.")
 ```
 
@@ -128,13 +132,14 @@ plot(seq_along(t1_objective), t1_objective, type = "l", lwd = 2,
 par(old_par)
 ```
 
-Each objective rises during its own fit. The two panels use different
-objectives, so their heights cannot be used to choose $M$.
+Each objective rises during its own fit, and both fits satisfy the normalized
+per-observation convergence rule. The two panels use different objectives, so
+their heights cannot be used to choose $M$.
 
 ## Reproduce
 
 The [reproduction
-script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_pancreas.R)
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v034_site/run_pancreas.R)
 reconstructs the input matrix and both fits. The [saved
-results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v030_site/results/pancreas)
+results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v034_site/results/pancreas)
 include selected cell IDs, fit settings, assignments, and fitted positions.

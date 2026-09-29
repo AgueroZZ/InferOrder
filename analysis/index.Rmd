@@ -12,6 +12,9 @@ MPCurve infers latent sample orderings and smooth feature trajectories from
 multivariate data. This site presents selected results fitted by
 coordinate-ascent variational inference (CAVI) in **MPCurver**. Each study
 records the package version used for fitting.
+The introductory simulations and observed-data analyses were regenerated with
+MPCurver 0.3.4; version-frozen method-comparison studies retain their original
+software provenance.
 
 ## Method
 

@@ -14,9 +14,16 @@ knitr::opts_chunk$set(fig.path = paste0(
   tools::file_path_sans_ext(basename(knitr::current_input())),
   "_files/figure-html/"
 ))
+fitness_provenance <- read.csv("data/site_assets/fitness/source_provenance.csv")
+stopifnot(identical(fitness_provenance$package_version, "0.3.4"))
+ordering_correlations <- read.csv(
+  "data/site_assets/fitness/ordering_correlation.csv",
+  check.names = FALSE,
+  row.names = 1
+)
 ```
 
-This page summarizes the [MPCurver 0.3.0 fitness
+This page summarizes the [MPCurver 0.3.4 fitness
 analysis](https://aguerozz.github.io/MPCurver/articles/fitness.html). The
 figures and numerical results come from that vignette.
 
@@ -36,7 +43,7 @@ refits with a stronger smoothness prior using
 `lambda_sd_prior_rate = 1e4`. Comparing the inferred mutant positions helps
 assess whether smoothing changes the ordering or mainly the fitted curves.
 
-```{r compare-single-orderings, echo=FALSE, fig.width=10, fig.height=4.5, fig.cap="Figure 1. Comparison of inferred mutant positions under two smoothness settings, reproduced from the MPCurver 0.3.0 fitness vignette."}
+```{r compare-single-orderings, echo=FALSE, fig.width=10, fig.height=4.5, fig.cap="Figure 1. Comparison of inferred mutant positions under two smoothness settings, reproduced from the MPCurver 0.3.4 fitness vignette."}
 grid::grid.raster(png::readPNG(
   "data/site_assets/fitness/compare-single-orderings-1.png"
 ))
@@ -59,7 +66,7 @@ its trajectory is estimated conditional on the assignment. The plot below
 shows both conditional trajectories for one environment and its assignment
 probabilities in the panel titles.
 
-```{r partition-plot, echo=FALSE, fig.width=10, fig.height=5, fig.cap="Figure 2. Conditional trajectories under the fixed two-ordering fit, reproduced from the MPCurver 0.3.0 fitness vignette."}
+```{r partition-plot, echo=FALSE, fig.width=10, fig.height=5, fig.cap="Figure 2. Conditional trajectories under the fixed two-ordering fit, reproduced from the MPCurver 0.3.4 fitness vignette."}
 grid::grid.raster(png::readPNG(
   "data/site_assets/fitness/partition-plot-1.png"
 ))
@@ -75,7 +82,8 @@ assignment_table <- xtabs(environments ~ category + ordering, data = counts)
 knitr::kable(assignment_table, caption = "Table 1. Environment counts by category and most probable ordering in the vignette fit.")
 ```
 
-The two inferred mutant-position vectors have correlation **0.866**. Their
+The two inferred mutant-position vectors have correlation
+**`r sprintf("%.3f", ordering_correlations["A", "B"])`**. Their
 orderings are related even though the environments divide between them.
 
 ## Measurement uncertainty
@@ -86,7 +94,7 @@ Student-$t_4$ scale to Gaussian scores; the choice of four degrees of freedom
 is an analysis assumption. Figure 3 shows conditional trajectories after
 supplying the adjusted standard deviations to the model.
 
-```{r known-sd-partition-trajectories, echo=FALSE, fig.width=10, fig.height=5, fig.cap="Figure 3. Conditional trajectories with supplied measurement uncertainty, reproduced from the MPCurver 0.3.0 fitness vignette."}
+```{r known-sd-partition-trajectories, echo=FALSE, fig.width=10, fig.height=5, fig.cap="Figure 3. Conditional trajectories with supplied measurement uncertainty, reproduced from the MPCurver 0.3.4 fitness vignette."}
 grid::grid.raster(png::readPNG(
   "data/site_assets/fitness/known-sd-partition-trajectories-1.png"
 ))

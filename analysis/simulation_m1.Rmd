@@ -14,8 +14,11 @@ knitr::opts_chunk$set(fig.path = paste0(
   tools::file_path_sans_ext(basename(knitr::current_input())),
   "_files/figure-html/"
 ))
-result_path <- "experiments/mpcurve_v030_site/results/simulations/simulation_m1.rds"
+result_dir <- "experiments/mpcurve_v034_site/results/simulations"
+result_path <- file.path(result_dir, "simulation_m1.rds")
 result <- readRDS(result_path)
+provenance <- read.csv(file.path(result_dir, "package_provenance.csv"))
+stopifnot(identical(provenance$package_version, "0.3.4"))
 stopifnot(inherits(result$fit, "mpcurve"), identical(result$fit$algorithm, "cavi"))
 sim <- result$simulation
 fit <- result$fit
@@ -33,6 +36,7 @@ article](https://aguerozz.github.io/MPCurver/articles/mpcurve_intro.html):
 1,000 samples with latent $t\in[1.5\pi,4.5\pi]$ and Gaussian noise standard
 deviation 0.12. The simulation seed is 1. A CAVI fit uses Fiedler
 initialization, $K=60$ grid positions, and at most 120 iterations.
+The fit uses MPCurver 0.3.4.
 
 ## Ordering recovery
 
@@ -61,12 +65,14 @@ plot(fit$elbo_trace, type = "l", lwd = 2, col = "#2E8A99",
      xlab = "Recorded iteration", ylab = "ELBO")
 ```
 
-The ELBO increases through the fit and levels off as CAVI converges.
+The ELBO increases through the fit and levels off as CAVI converges after
+**`r summary$iterations` recorded iterations** under the normalized
+per-observation convergence rule.
 
 ## Reproduce
 
 The [experiment
-script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v030_site/run_simulations.R)
-regenerates the data, fit, and figures with MPCurver 0.3.0. The
-[saved results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v030_site/results/simulations)
+script](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v034_site/run_simulations.R)
+regenerates the data, fit, and figures with MPCurver 0.3.4. The
+[saved results](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/mpcurve_v034_site/results/simulations)
 include the generating truth and fitted model.

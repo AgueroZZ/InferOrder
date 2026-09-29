@@ -243,20 +243,39 @@ def main():
     assert "Fixed model" in parsed["pancreas.html"].captions[0]
     assert "Posterior ordering probabilities" in parsed["pancreas.html"].captions[1]
 
-    sim_dir = ROOT / "experiments/mpcurve_v030_site/results/simulations"
+    current_study = ROOT / "experiments/mpcurve_v034_site"
+    source_hash = (current_study / "source/archive_sha256.txt").read_text().split()[0]
+    assert source_hash == (
+        "58d0c99c6170994c82eedba190fb1c28a63eb47530c575705323c3cf3992b7c6"
+    )
+
+    sim_dir = current_study / "results/simulations"
+    sim_provenance = rows(sim_dir / "package_provenance.csv")[0]
+    assert sim_provenance["package_version"] == "0.3.4"
+    assert sim_provenance["package_source_commit"] == (
+        "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475"
+    )
+    assert sim_provenance["source_archive_sha256"] == source_hash
     m1 = rows(sim_dir / "simulation_m1_summary.csv")[0]
     m2 = rows(sim_dir / "simulation_m2_summary.csv")[0]
+    assert m1["converged"] == m2["converged"] == "TRUE"
     assert f"{float(m1['abs_spearman']):.4f}" in page_text(parsed["simulation_m1.html"])
     m2_text = page_text(parsed["simulation_m2.html"])
     for column in ("abs_spearman_A", "abs_spearman_B"):
         assert f"{float(m2[column]):.4f}" in m2_text
     assert int(m2["d"]) == 20 and float(m2["partition_accuracy"]) == 1
     assert "20 of 20" in m2_text
+    for name in ("index.html", "method.html", "simulation_m1.html", "simulation_m2.html",
+                 "fitness.html", "pancreas.html"):
+        assert "0.3.4" in page_text(parsed[name]), name
 
-    pancreas_dir = ROOT / "experiments/mpcurve_v030_site/results/pancreas"
+    pancreas_dir = current_study / "results/pancreas"
+    pancreas_provenance = rows(pancreas_dir / "package_provenance.csv")[0]
+    assert pancreas_provenance == sim_provenance
     pancreas = rows(pancreas_dir / "fit_summary.csv")
     assert len(pancreas) == 2
     assert all(int(row["samples"]) == 865 and int(row["factors"]) == 8 for row in pancreas)
+    assert all(row["converged"] == "TRUE" for row in pancreas)
     assignments = rows(pancreas_dir / "factor_assignments.csv")
     assert len(assignments) == 8
     assert {row["assignment"] for row in assignments} == {"A", "B"}
@@ -269,12 +288,20 @@ def main():
               for ordering in ("A", "B")}
     assert totals == {"A": 27, "B": 18}
     correlations = rows(fitness_dir / "ordering_correlation.csv")
-    assert correlations[0]["B"] == "0.866"
+    assert correlations[0]["B"] == "0.857"
+    fitness_provenance = rows(fitness_dir / "source_provenance.csv")[0]
+    assert fitness_provenance["package_version"] == "0.3.4"
+    assert fitness_provenance["package_source_commit"] == (
+        "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475"
+    )
+    assert fitness_provenance["article_source_commit"] == (
+        "eeaf65bcf4c8b021d590c88ad411506359202f1f"
+    )
     comparison = rows(fitness_dir / "single_ordering_comparison.csv")
     assert len(comparison) == 1 and comparison[0]["metric"] == "Pearson correlation"
     fitness_text = page_text(parsed["fitness.html"])
     assert "27 environments" in fitness_text and "18 to" in fitness_text
-    assert "0.866" in fitness_text
+    assert "0.857" in fitness_text
     assert f"{float(comparison[0]['value']):.3f}" in fitness_text
 
     print(f"Checked {len(PAGES)} public pages, local links, images, terminology, and saved-result claims.")

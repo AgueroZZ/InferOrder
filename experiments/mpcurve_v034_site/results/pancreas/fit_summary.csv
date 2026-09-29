@@ -1,0 +1,3 @@
+"model","samples","factors","K","objective_records","converged","min_within_objective_increment"
+"M1",865,8,50,69,TRUE,0.00675505033177615
+"M2",865,8,50,162,TRUE,0.00341992645189748

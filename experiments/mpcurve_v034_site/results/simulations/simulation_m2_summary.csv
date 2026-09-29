@@ -1,0 +1,2 @@
+"n","d","K","partition_accuracy","abs_spearman_A","abs_spearman_B","t1_objective_records","converged","min_t1_increment"
+500,20,50,1,0.997521078084312,0.998872283489134,369,TRUE,0.00976416939738556
