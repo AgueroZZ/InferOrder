@@ -4,56 +4,92 @@ site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
     toc: false
+    self_contained: false
+    lib_dir: ../docs/site_libs
 editor_options:
   chunk_output_type: console
 ---
 
-MPCurve infers latent sample orderings and smooth feature trajectories from
-multivariate data. This site presents selected results fitted by
-coordinate-ascent variational inference (CAVI) in **MPCurver**. Each study
-records the package version used for fitting.
-The current simulations and observed-data analyses use MPCurver 0.3.4. Earlier
-method fits are retained only as explicitly labeled paired controls.
+<style>
+/* Index-only layout; study pages retain their workflowr styling. */
+.results-index h2 { margin-top: 1.6em; font-size: 26px; }
+.results-index .study-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+.results-index .study-grid > li {
+  padding: 16px 18px;
+  border: 1px solid #dce3e8;
+  border-radius: 5px;
+  background: #fafcfd;
+}
+.results-index .study-grid p { margin: 0; }
+.results-index .study-grid strong { display: block; margin-bottom: 5px; }
+.results-index a { text-underline-offset: 3px; }
+.results-index .study-grid a { text-decoration: underline; }
+.results-index .provenance { color: #505b65; font-size: 0.95em; }
+@media (max-width: 640px) {
+  .results-index .study-grid { grid-template-columns: 1fr; }
+  .results-index h2 { font-size: 24px; }
+}
+</style>
 
-## Method
+Results and reproducible code for MPCurve sample orderings and feature trajectories.
+[Method overview](method.html) · [MPCurver documentation](https://aguerozz.github.io/MPCurver/)
 
-MPCurve places samples on an ordered grid and estimates a smooth trajectory
-for each feature. With multiple orderings, it also estimates which features
-follow each ordering. The [method overview](method.html) explains the model
-and algorithm; the [MPCurver package site](https://aguerozz.github.io/MPCurver/)
-provides full vignettes and software documentation.
+::: {.results-index}
 
-## Simulation
+## Simulations
 
-- **Fixed $M=1$**
+<ul class="study-grid">
+<li>
 
-  - [Simulation summary: three figures](simulation_summary.html) compares four
-    methods under shared PCA and Isomap initialization.
+**Single-ordering method comparison**
+[Results](simulation_m1_comparison.html) · [Code](https://github.com/AgueroZZ/InferOrder/blob/master/analysis/simulation_m1_comparison.Rmd)
 
-  - [One ordering: a noisy spiral](simulation_m1.html) tests recovery of a
-    known sample order.
-  - [Random B-splines: four methods](simulation_m1_comparison.html) compares
-    ordering recovery from common PCA and Isomap starts over 30 replicates at two noise levels,
-    with 12 features and a paired extension to 50 features.
+</li>
+<li>
 
-- **Fixed $M=2$**
+**Estimate M · All trajectories monotone**
+[Results](estimate_intrinsic_m.html) · [Code](https://github.com/AgueroZZ/InferOrder/blob/master/analysis/estimate_intrinsic_m.Rmd)
 
-  - [Two orderings: two feature groups](simulation_m2.html) tests recovery of
-    feature assignments and both sample orders.
+</li>
+<li>
 
-- **Estimate $M$ from the data**
+**Estimate M · One monotone anchor per ordering**
+[Results](estimate_intrinsic_m_smooth.html) · [Code](https://github.com/AgueroZZ/InferOrder/blob/master/analysis/estimate_intrinsic_m_smooth.Rmd)
 
-  - [All trajectories monotone](estimate_intrinsic_m.html) is the simpler
-    setting. It evaluates automatic-$M$ adaptive EB on 90 fixed datasets with
-    three, four, or five true orderings.
-  - [One monotone anchor per ordering](estimate_intrinsic_m_smooth.html) is the
-    more challenging setting: all other trajectories have smooth peaks and
-    troughs. It evaluates the same automatic-$M$ procedure on paired fixed
-    datasets.
+</li>
+</ul>
 
-## Analysis
+## Analyses
 
-- [Fitness across environments](fitness.html) compares mutant orderings and
-  environment groups, including a fit that uses measurement uncertainty.
-- [Pancreatic cell loadings](pancreas.html) compares one- and two-ordering fits
-  on the same semi-NMF loading matrix.
+<ul class="study-grid">
+<li>
+
+**Fitness across environments**
+[Results](fitness.html) · [Code](https://github.com/AgueroZZ/InferOrder/blob/master/analysis/fitness.Rmd)
+
+</li>
+<li>
+
+**Pancreatic cell loadings**
+[Results](pancreas.html) · [Code](https://github.com/AgueroZZ/InferOrder/blob/master/analysis/pancreas.Rmd)
+
+</li>
+</ul>
+
+[Reproduction commands and saved results](https://github.com/AgueroZZ/InferOrder/blob/master/experiments/mpcurve_v034_site/README.md) ·
+[Site build script](https://github.com/AgueroZZ/InferOrder/blob/master/scripts/build_current_site.R) ·
+[Repository](https://github.com/AgueroZZ/InferOrder)
+
+::: {.provenance}
+Each curated study records the package version used for fitting. Curated results
+use MPCurver 0.3.4 (CAVI); earlier method fits are labeled paired controls.
+The site build reads saved results without rerunning model fits.
+:::
+
+:::

@@ -35,7 +35,9 @@ local({
     writeLines(sub("[[:blank:]]+$", "", lines), output, useBytes = TRUE)
   }
 
-  expected <- sub("\\.Rmd$", ".html", pages)
+  # Keep the published exploratory playground without rerunning its model fits.
+  # It is maintained separately from these saved-result pages.
+  expected <- c(sub("\\.Rmd$", ".html", pages), "ordering_playground.html")
   actual <- list.files("docs", pattern = "\\.html$", full.names = FALSE)
   if (!setequal(actual, expected)) {
     stop(

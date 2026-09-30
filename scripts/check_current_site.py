@@ -12,7 +12,8 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 PAGES = {
-    "index.html": ("Method", "Simulation", "Analysis"),
+    "ordering_playground.html": ("Intro", "PCA", "MPCurve", "PCA across P"),
+    "index.html": ("Simulations", "Analyses"),
     "method.html": ("Model", "Variational inference", "Several orderings"),
     "simulation_summary.html": ("Simulation design", "PCA initialization", "Isomap initialization"),
     "simulation_m1.html": ("Question and design", "Ordering recovery"),
@@ -24,6 +25,7 @@ PAGES = {
     "pancreas.html": ("One versus two orderings", "Feature assignments in the two-ordering fit"),
 }
 EXPECTED_IMAGES = {
+    "ordering_playground.html": 7,
     "index.html": 0,
     "method.html": 0,
     "simulation_summary.html": 3,
@@ -36,6 +38,7 @@ EXPECTED_IMAGES = {
     "pancreas.html": 3,
 }
 EXPECTED_TITLES = {
+    "ordering_playground.html": "Exploring how PC works as an ordering initialization",
     "index.html": "MPCurve: Methods and Results",
     "method.html": "MPCurve and CAVI",
     "simulation_summary.html": "Simulation Summary: Single-Ordering Recovery",
@@ -210,7 +213,9 @@ def main():
         assert page.title == EXPECTED_TITLES[name], name
         assert all(heading in page.headings for heading in required_headings), name
         assert len(page.images) == EXPECTED_IMAGES[name], name
-        assert {item for item in PAGES if item != name}.issubset(set(page.links)), name
+        # The existing exploratory playground is outside the shared navbar.
+        navbar_pages = set(PAGES) - {"ordering_playground.html", name}
+        assert navbar_pages.issubset(set(page.links)), name
         assert "id=\"workflowr-report\"" not in html, name
         assert "custom <code>fig.path</code>" not in html, name
 
@@ -253,13 +258,21 @@ def main():
         if row["method"] != "PCA":
             assert f'{float(row["median_seconds_p50"]):.2f}' in comparison_text
 
-    assert parsed["index.html"].headings == ["Method", "Simulation", "Analysis"]
+    assert parsed["index.html"].headings == list(PAGES["index.html"])
     index_text = page_text(parsed["index.html"])
-    assert "Each study records the package version" in index_text
+    assert "Each curated study records the package version" in index_text
     index_source = (ROOT / "analysis" / "index.Rmd").read_text()
-    for label in ("- **Fixed $M=1$**", "- **Fixed $M=2$**",
-                  "- **Estimate $M$ from the data**"):
-        assert label in index_source
+    # The homepage body deliberately selects only the five core studies.
+    # Navigation may still expose other published pages.
+    index_body = index_source.split("::: {.results-index}", 1)[1]
+    core_pages = re.findall(r"\]\(([^)]+\.html)\)", index_body)
+    assert core_pages == [
+        "simulation_m1_comparison.html",
+        "estimate_intrinsic_m.html",
+        "estimate_intrinsic_m_smooth.html",
+        "fitness.html",
+        "pancreas.html",
+    ]
     for label in ("All trajectories monotone", "One monotone anchor per ordering"):
         assert label in index_text
     intrinsic = page_text(parsed["estimate_intrinsic_m.html"])
