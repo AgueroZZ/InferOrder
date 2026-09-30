@@ -486,6 +486,43 @@ Figure 1. Features versus true t. Blue paths join noiseless values in
 true-position order; gray points are observations.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-figure-1-1">
+Past versions of figure-1-1.png
+</button>
+</p>
+<div id="fig-figure-1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e1a516518e59686c125def91fb599654346fc7e3/docs/figure/ordering_playground.Rmd/figure-1-1.png" target="_blank">e1a5165</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-09-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>j &lt;- 1
 plot_features(data, data$X[, j], signal_position = data$signal[, j],
               xlabel = sprintf(&quot;Observed %s (reference column)&quot;, colnames(data$X)[j]))</code></pre>
@@ -495,6 +532,43 @@ plot_features(data, data$X[, j], signal_position = data$signal[, j],
 Figure 2. Features versus the reference column. Blue paths are noiseless
 pairs; gray points contain noise on both axes.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-figure-2-1">
+Past versions of figure-2-1.png
+</button>
+</p>
+<div id="fig-figure-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e1a516518e59686c125def91fb599654346fc7e3/docs/figure/ordering_playground.Rmd/figure-2-1.png" target="_blank">e1a5165</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-09-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="pca" class="section level2">
@@ -512,6 +586,43 @@ pc_position &lt;- scale01(direction * pc_raw)</code></pre>
 Figure 3. Observations versus scaled PC1 scores; colors indicate true t.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-figure-3-1">
+Past versions of figure-3-1.png
+</button>
+</p>
+<div id="fig-figure-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e1a516518e59686c125def91fb599654346fc7e3/docs/figure/ordering_playground.Rmd/figure-3-1.png" target="_blank">e1a5165</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-09-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Compare the PCA positions against the true latent positions.</p>
 <pre class="r"><code>ggplot(data.frame(truth = data$t, estimate = pc_position), aes(truth, estimate)) +
   geom_abline(slope = 1, intercept = 0, linetype = 2, color = &quot;gray70&quot;) +
@@ -523,6 +634,43 @@ Figure 3. Observations versus scaled PC1 scores; colors indicate true t.
 <p class="caption">
 Figure 4. PCA positions versus true t. Dashed line: identity.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-figure-4-1">
+Past versions of figure-4-1.png
+</button>
+</p>
+<div id="fig-figure-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e1a516518e59686c125def91fb599654346fc7e3/docs/figure/ordering_playground.Rmd/figure-4-1.png" target="_blank">e1a5165</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-09-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="mpcurve" class="section level2">
@@ -552,6 +700,43 @@ Figure 5. Observations versus MPCurve posterior mean positions; colors
 indicate true t.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-figure-5-1">
+Past versions of figure-5-1.png
+</button>
+</p>
+<div id="fig-figure-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e1a516518e59686c125def91fb599654346fc7e3/docs/figure/ordering_playground.Rmd/figure-5-1.png" target="_blank">e1a5165</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-09-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Compare the MPCurve posterior mean positions against the true latent
 positions.</p>
 <pre class="r"><code>labels &lt;- c(
@@ -573,6 +758,81 @@ ggplot(comparison, aes(truth, estimate)) +
 Figure 6. Before/after comparison against true t, with the same
 orientation. Initial ELBO is evaluated after PCA quantile discretization
 and variational initialization, before CAVI updates.
+</p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-figure-6-1">
+Past versions of figure-6-1.png
+</button>
+</p>
+<div id="fig-figure-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/InferOrder/blob/e1a516518e59686c125def91fb599654346fc7e3/docs/figure/ordering_playground.Rmd/figure-6-1.png" target="_blank">e1a5165</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2026-09-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="pca-across-p" class="section level2">
+<h2>PCA across P</h2>
+<p>Let’s change P from 12 to 200, each with 30 replications, and see how
+the performance of PCA changes.</p>
+<pre class="r"><code># P = 12, 30, 50, 80, 100, 200
+# show boxplot of spearman correlation between PCA and true t in each replication, across different P values
+p_values &lt;- c(12L, 30L, 50L, 80L, 100L, 200L)
+n_rep &lt;- 30L
+pca_study &lt;- do.call(rbind, lapply(p_values, function(p) {
+  do.call(rbind, lapply(seq_len(n_rep), function(r) {
+    # Step seeds by 2: simulate_data() uses seed and seed + 1 (noise).
+    cfg &lt;- modifyList(config, list(p = p, seed = config$seed + 2L * r))
+    sim &lt;- simulate_data(cfg)
+    pc1 &lt;- prcomp(sim$X, center = TRUE, scale. = FALSE)$x[, 1]
+    data.frame(p = p, replicate = r, rho = recovery(pc1, sim$t))
+  }))
+}))
+aggregate(rho ~ p, pca_study, function(x) c(mean = mean(x), sd = sd(x)))</code></pre>
+<pre><code>    p   rho.mean     rho.sd
+1  12 0.70875125 0.23188408
+2  30 0.73812127 0.23083189
+3  50 0.82086199 0.15258999
+4  80 0.87136611 0.07681413
+5 100 0.88083839 0.06297183
+6 200 0.90337850 0.03792481</code></pre>
+<pre class="r"><code>ggplot(pca_study, aes(factor(p), rho)) +
+  geom_boxplot(outlier.shape = NA, fill = &quot;gray90&quot;) +
+  geom_jitter(width = 0.15, alpha = 0.6, size = 1.2) +
+  labs(x = &quot;Number of features P&quot;, y = &quot;|Spearman rho| (PC1 vs true t)&quot;,
+       title = sprintf(&quot;PCA recovery across P (%d replications each)&quot;, n_rep))</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/pca-vs-p-1.png" alt="Figure 7. |Spearman rho| between PC1 and true t across P; each point is one replication." width="1056" />
+<p class="caption">
+Figure 7. |Spearman rho| between PC1 and true t across P; each point is
+one replication.
 </p>
 </div>
 </div>
