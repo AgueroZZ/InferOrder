@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2026-09-30" />
+
+<title>Exploring different ways of initializing the ordering</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MPCurve results</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="method.html">Method</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Simulation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="simulation_summary.html">Simulation summary</a>
+    </li>
+    <li>
+      <a href="simulation_m1.html">One ordering</a>
+    </li>
+    <li>
+      <a href="simulation_m1_comparison.html">One ordering: method comparison</a>
+    </li>
+    <li>
+      <a href="simulation_m2.html">Two orderings</a>
+    </li>
+    <li>
+      <a href="estimate_intrinsic_m.html">Estimate M: all monotone</a>
+    </li>
+    <li>
+      <a href="estimate_intrinsic_m_smooth.html">Estimate M: one monotone anchor</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="fitness.html">Fitness</a>
+    </li>
+    <li>
+      <a href="pancreas.html">Pancreas loadings</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">Source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Exploring different ways of initializing
+the ordering</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2026-09-30</h4>
+
+</div>
+
+
+<pre class="r"><code># keep package startup messages and warnings out of the rendered output
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+library(ggplot2)
+library(patchwork)</code></pre>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this document, we will explore how different methods could be used
+to obtain an initial estimate of the ordering of the samples.</p>
+<p>For simplicity, we will consider a simple setting with only two
+columns (<span class="math inline">\(P = 2\)</span>) and a single latent
+variable <span class="math inline">\(t \in [0, 1]\)</span> that
+determines the values of the two columns.</p>
+<p>The matrix <span class="math inline">\(Y \in \mathbb{R}^{N \times
+P}\)</span> is generated as follows: 1. Generate <span
+class="math inline">\(t_1, ..., t_N\)</span> uniformly in <span
+class="math inline">\([0, 1]\)</span>. 2. Generate two smooth functions
+<span class="math inline">\(f_1(t)\)</span> and <span
+class="math inline">\(f_2(t)\)</span>, and let <span
+class="math inline">\(F = [f_1(t), f_2(t)] \in \mathbb{R}^{N \times
+P}\)</span>. 3. Generate <span class="math inline">\(Y = F +
+\epsilon\)</span>, where <span class="math inline">\(\epsilon \sim N(0,
+\sigma^2 I)\)</span> is Gaussian noise.</p>
+<pre class="r"><code>set.seed(1234)
+
+N &lt;- 100
+P &lt;- 2
+t &lt;- seq(0, 1, length.out = N)
+# f_j are independent draws from a GP with Matern(nu = 2.5, range = 0.1) covariance
+covariance &lt;- fields::Matern(abs(outer(t, t, &quot;-&quot;)), aRange = 0.5, smoothness = 2.5)
+L &lt;- t(chol(covariance + diag(1e-10, N)))
+F_true &lt;- L %*% matrix(rnorm(N * P), N, P)   # N x P, column j is f_j(t)
+
+# normalize such that f_j(t) has mean 0 and sd 1
+F_true &lt;- scale(F_true, center = TRUE, scale = TRUE)
+
+# add noise: epsilon ~ N(0, 0.1), where 0.1 is the sd
+Y &lt;- F_true + matrix(rnorm(N * P, sd = (0.1)), N, P)
+colnames(Y) &lt;- c(&quot;Y.1&quot;, &quot;Y.2&quot;)
+
+op &lt;- par(mfrow = c(1, 2), mar = c(4, 4, 2.5, 1))
+fcols &lt;- c(&quot;tomato&quot;, &quot;steelblue&quot;)
+
+# left: f1 and f2 as functions of t, with the noisy observations
+matplot(t, Y, pch = 19, cex = 0.6, col = adjustcolor(fcols, 0.5),
+        xlab = &quot;t&quot;, ylab = &quot;f(t)&quot;, main = &quot;True functions and data&quot;)
+matlines(t, F_true, lty = 1, lwd = 2, col = fcols)
+legend(&quot;bottomleft&quot;, legend = c(&quot;f1&quot;, &quot;f2&quot;), col = fcols,
+       lty = 1, lwd = 2, pch = 19, bty = &quot;n&quot;)
+
+# right: scatterplot of Y.1 ~ Y.2 (colored by t)
+cols &lt;- hcl.colors(N, &quot;viridis&quot;)
+plot(Y[, 1], Y[, 2], pch = 19, col = cols, xlab = &quot;Y.1&quot;, ylab = &quot;Y.2&quot;,
+     main = &quot;Y.1 vs Y.2 (colored by t)&quot;)
+lines(F_true[, 1], F_true[, 2], col = &quot;grey40&quot;, lty = 2)</code></pre>
+<p><img src="figure/explore_initialization.rmd/simulate-data-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(op)</code></pre>
+<p>We hope to explore methods that recover the true ordering of the
+samples (i.e., the order of <span class="math inline">\(t_1, ...,
+t_N\)</span>) from the observed data <span
+class="math inline">\(Y\)</span>.</p>
+</div>
+<div id="pca" class="section level2">
+<h2>PCA</h2>
+<p>We start with using the first PC scores as an estimate of the
+ordering of the samples.</p>
+<pre class="r"><code>Y_centered &lt;- scale(Y, center = TRUE, scale = FALSE)
+svd_Y &lt;- svd(Y_centered)
+U1 &lt;- svd_Y$u[, 1] * svd_Y$d[1]   # first left singular vector scaled by the first singular value
+v1 &lt;- svd_Y$v[, 1]                # PC1 direction in (Y.1, Y.2) space
+
+# the sign of a singular vector is arbitrary; flip it to agree with the true t for display
+if (cor(U1, t) &lt; 0) {
+  U1 &lt;- -U1
+  v1 &lt;- -v1
+}
+t_pca &lt;- (U1 - min(U1)) / (max(U1) - min(U1))
+rho_pca &lt;- cor(t_pca, t, method = &quot;spearman&quot;)
+
+p_left &lt;- ggplot(data.frame(t = t, t_pca = t_pca), aes(t, t_pca)) +
+  geom_abline(intercept = 0, slope = 1, colour = &quot;grey60&quot;, linetype = &quot;dashed&quot;) +
+  geom_point(shape = 3) +
+  labs(x = &quot;True t&quot;, y = &quot;Estimated t (PCA)&quot;,
+       title = sprintf(&quot;PCA estimate vs true t (Spearman = %.2f)&quot;, rho_pca)) +
+  theme_bw()
+
+
+proj &lt;- sweep(outer(U1, v1), 2, colMeans(Y), &quot;+&quot;)
+df_pts &lt;- data.frame(y1 = Y[, 1], y2 = Y[, 2], p1 = proj[, 1], p2 = proj[, 2],
+                     t_pca = t_pca)
+df_axis &lt;- data.frame(x = proj[which.min(U1), 1], y = proj[which.min(U1), 2],
+                      xend = proj[which.max(U1), 1], yend = proj[which.max(U1), 2])
+p_right &lt;- ggplot(df_pts) +
+  geom_segment(aes(y1, y2, xend = p1, yend = p2), colour = &quot;grey85&quot;) +
+  geom_path(data = data.frame(f1 = F_true[, 1], f2 = F_true[, 2]),
+            aes(f1, f2), colour = &quot;grey40&quot;, linetype = &quot;dashed&quot;) +
+  geom_segment(data = df_axis, aes(x, y, xend = xend, yend = yend),
+               colour = &quot;tomato&quot;, linewidth = 1,
+               arrow = arrow(length = unit(0.25, &quot;cm&quot;))) +
+  geom_point(aes(y1, y2, colour = t_pca), size = 2) +
+  scale_colour_viridis_c(name = &quot;estimated t&quot;, limits = c(0, 1)) +
+  coord_equal() +
+  labs(x = &quot;Y.1&quot;, y = &quot;Y.2&quot;, title = &quot;Y.1 vs Y.2 (colored by PCA estimate)&quot;,
+       caption = &quot;dashed: true curve; red arrow: PC1 axis; grey: projections&quot;) +
+  theme_bw() +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.02, 0.98),
+        legend.justification = c(0, 1),
+        legend.background = element_blank(),
+        legend.key.height = unit(0.35, &quot;cm&quot;),
+        legend.key.width = unit(0.25, &quot;cm&quot;),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7))
+p_left + p_right</code></pre>
+<p><img src="figure/explore_initialization.rmd/pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tsp" class="section level2">
+<h2>TSP</h2>
+<p>If we are just interested in getting the ordering of the samples, we
+can also frame this as a traveling salesman problem (TSP) on the
+samples, where the distance between sample <span
+class="math inline">\(i\)</span> and sample <span
+class="math inline">\(j\)</span> is the Euclidean distance between their
+observed values <span class="math inline">\(Y_i\)</span> and <span
+class="math inline">\(Y_j\)</span>.</p>
+<p>Let <span class="math inline">\(d_{i,j} = ||Y_i - Y_j||_2\)</span> be
+the Euclidean distance between sample <span
+class="math inline">\(i\)</span> and sample <span
+class="math inline">\(j\)</span>. TSP finds the shortest path that
+visits all samples exactly once. The order of the samples in the
+shortest path can be used as an estimate of the order of <span
+class="math inline">\(t_1, ..., t_N\)</span>.</p>
+<p>In other words, the objective function of TSP, given an ordering of
+the samples <span class="math inline">\(\pi\)</span>, is <span
+class="math display">\[
+J(\pi) = \sum_{i=1}^{N-1} d_{\pi(i), \pi(i+1)}
+\]</span> where <span class="math inline">\(\pi(i)\)</span> is the index
+of the sample at position <span class="math inline">\(i\)</span> in the
+ordering.</p>
+<p>Note that TSP is just finding the ordering, not the actual positions
+<span class="math inline">\(t_i\)</span>. The actual positions are only
+determined up to a monotone transformation. For now, we will assume the
+estimate <span class="math inline">\(\hat{t}_i = \pi(i)/N\)</span>.</p>
+<p>It is generally very hard to find the global optimal solution of TSP.
+One special case is when all the columns of <span
+class="math inline">\(Y\)</span> are monotone to each other, in which
+case the TSP solution is just ordering samples by any of the column.</p>
+<p>However, solving TSP is NP-hard, one typically uses heuristics to
+find a good local solution. We will use the <code>TSP</code> package in
+R to solve the TSP problem.</p>
+<pre class="r"><code>library(TSP)
+set.seed(1)
+# compute the distance matrix
+dist_matrix &lt;- as.matrix(dist(Y))
+
+# solve the TSP problem
+tsp &lt;- TSP(dist_matrix)
+
+# we want a shortest open path, not a closed tour: add a dummy city at
+# distance 0 from every sample, solve, then cut the tour at the dummy city
+tsp &lt;- insert_dummy(tsp, n = 1, label = &quot;cut&quot;)
+tour &lt;- solve_TSP(tsp, method = &quot;repetitive_nn&quot;)
+path &lt;- cut_tour(tour, &quot;cut&quot;, exclude_cut = TRUE)   # sample indices in path order
+
+# path[k] is the sample visited k-th, so the rank of sample i is k with path[k] = i
+rank_samples &lt;- integer(N)
+rank_samples[path] &lt;- seq_len(N)
+
+# the direction of the path is arbitrary; flip it to agree with the true t for display
+if (cor(rank_samples, t) &lt; 0) rank_samples &lt;- N + 1 - rank_samples
+
+# estimate t from the order
+t_tsp &lt;- rank_samples / N
+
+rho_tsp &lt;- cor(t_tsp, t, method = &quot;spearman&quot;)
+
+# left: the shortest path in (Y.1, Y.2) space, arrows point in the direction of increasing estimated t
+ord &lt;- order(rank_samples)   # sample indices in order of increasing estimated t
+df_path &lt;- data.frame(x = Y[ord[-N], 1], y = Y[ord[-N], 2],
+                      xend = Y[ord[-1], 1], yend = Y[ord[-1], 2])
+p_path &lt;- ggplot() +
+  geom_path(data = data.frame(f1 = F_true[, 1], f2 = F_true[, 2]),
+            aes(f1, f2), colour = &quot;grey70&quot;, linetype = &quot;dashed&quot;) +
+  geom_segment(data = df_path, aes(x, y, xend = xend, yend = yend),
+               colour = &quot;grey30&quot;, linewidth = 0.4,
+               arrow = arrow(length = unit(0.18, &quot;cm&quot;), type = &quot;closed&quot;)) +
+  geom_point(data = data.frame(y1 = Y[, 1], y2 = Y[, 2], t_tsp = t_tsp),
+             aes(y1, y2, colour = t_tsp), size = 2) +
+  scale_colour_viridis_c(name = &quot;estimated t&quot;, limits = c(0, 1)) +
+  coord_equal() +
+  labs(x = &quot;Y.1&quot;, y = &quot;Y.2&quot;, title = &quot;Shortest path found by TSP&quot;,
+       caption = &quot;dashed: true curve; arrows: TSP path&quot;) +
+  theme_bw() +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.02, 0.98),
+        legend.justification = c(0, 1),
+        legend.background = element_blank(),
+        legend.key.height = unit(0.35, &quot;cm&quot;),
+        legend.key.width = unit(0.25, &quot;cm&quot;),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7))
+
+# right: estimated vs true t (a perfect ordering is monotone)
+p_tsp &lt;- ggplot(data.frame(t = t, t_tsp = t_tsp), aes(t, t_tsp)) +
+  geom_abline(intercept = 0, slope = 1, colour = &quot;grey60&quot;, linetype = &quot;dashed&quot;) +
+  geom_point(shape = 3) +
+  labs(x = &quot;True t&quot;, y = &quot;Estimated t (TSP)&quot;,
+       title = sprintf(&quot;TSP estimate vs true t (Spearman = %.2f)&quot;, rho_tsp)) +
+  theme_bw()
+
+p_path + p_tsp</code></pre>
+<p><img src="figure/explore_initialization.rmd/tsp-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>The TSP objective for this solution is:</p>
+<pre class="r"><code>J_tsp &lt;- sum(dist_matrix[cbind(path[-N], path[-1])])
+J_tsp</code></pre>
+<pre><code>[1] 16.61186</code></pre>
+</div>
+<div id="fiedler-vector" class="section level2">
+<h2>Fiedler vector</h2>
+<p>Now, we look at methods that are based on the local manifold
+structure of the data. This type of methods assumes the Euclidean
+distance between nearby samples is reliable, and the global structure
+can be recovered by connecting nearby samples.</p>
+<p>The first approach is Fiedler vector, which starts with computing a
+K-nearest neighbor graph of the samples:</p>
+<pre class="r"><code>K &lt;- 5
+D &lt;- as.matrix(dist(Y))
+
+# for each sample, find its K nearest neighbors (excluding itself)
+knn_idx &lt;- t(apply(D, 1, function(d) order(d)[2:(K + 1)]))   # N x K
+
+# adjacency matrix: connect i and j if either is among the other&#39;s K nearest neighbors
+W &lt;- matrix(0, N, N)
+W[cbind(rep(seq_len(N), K), as.vector(knn_idx))] &lt;- 1
+W &lt;- pmax(W, t(W))
+par(mfrow = c(1, 1), mar = c(4, 4, 2.5, 1))
+# plot the graph on top of the scatterplot of Y.1 ~ Y.2
+plot(Y[, 1], Y[, 2], type = &quot;n&quot;, xlab = &quot;Y.1&quot;, ylab = &quot;Y.2&quot;,
+     main = paste0(&quot;K-nearest neighbor graph (K = &quot;, K, &quot;)&quot;))
+edges &lt;- which(W == 1 &amp; upper.tri(W), arr.ind = TRUE)
+segments(Y[edges[, 1], 1], Y[edges[, 1], 2],
+         Y[edges[, 2], 1], Y[edges[, 2], 2], col = &quot;grey60&quot;)
+points(Y[, 1], Y[, 2], pch = 19, col = cols)</code></pre>
+<p><img src="figure/explore_initialization.rmd/knn-graph-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Given the graph, let <span class="math inline">\(W \in \mathbb{R}^{N
+\times N}\)</span> be its adjacency matrix, with <span
+class="math inline">\(W_{ij} = 1\)</span> if samples <span
+class="math inline">\(i\)</span> and <span
+class="math inline">\(j\)</span> are connected and <span
+class="math inline">\(W_{ij} = 0\)</span> otherwise (other weighting
+schemes can also be used). Let <span
+class="math inline">\(\Lambda\)</span> be the diagonal degree matrix
+with <span class="math inline">\(\Lambda_{ii} = \sum_j W_{ij}\)</span>,
+and define the graph Laplacian <span class="math inline">\(L = \Lambda -
+W\)</span>. The Fiedler vector is the eigenvector of <span
+class="math inline">\(L\)</span> associated with its second smallest
+eigenvalue.</p>
+<p>Note that, for any vector <span class="math inline">\(v \in
+\mathbb{R}^N\)</span>, <span class="math display">\[
+\begin{aligned}
+v^T L v &amp;= v^T \Lambda v - v^T W v
+= \sum_i \Lambda_{ii} v_i^2 - \sum_{i,j} W_{ij} v_i v_j \\
+&amp;= \sum_{i,j} W_{ij} v_i^2 - \sum_{i,j} W_{ij} v_i v_j \\
+&amp;= \frac{1}{2}\left(\sum_{i,j} W_{ij} v_i^2 + \sum_{i,j} W_{ij}
+v_j^2\right) - \sum_{i,j} W_{ij} v_i v_j \\
+&amp;= \frac{1}{2} \sum_{i,j} W_{ij} \left(v_i^2 - 2 v_i v_j +
+v_j^2\right) \\
+&amp;= \frac{1}{2} \sum_{i,j} W_{ij} (v_i - v_j)^2 .
+\end{aligned}
+\]</span></p>
+<p>Hence <span class="math inline">\(L\)</span> is positive
+semi-definite, and <span class="math inline">\(v^T L v\)</span> measures
+how much <span class="math inline">\(v\)</span> varies across the edges
+of the graph: it is small when <span class="math inline">\(v_i \approx
+v_j\)</span> for every connected pair <span class="math inline">\((i,
+j)\)</span>. The smallest eigenvalue of <span
+class="math inline">\(L\)</span> is <span
+class="math inline">\(0\)</span>, attained by the constant vector <span
+class="math inline">\(\mathbf{1}\)</span>, which is smooth but carries
+no information about the ordering. The Fiedler vector <span
+class="math inline">\(v_{\text{F}}\)</span> is the smoothest
+non-constant vector on the graph (with unit norm), such that neighboring
+samples get similar values of <span
+class="math inline">\(v_{\text{F}}\)</span>.</p>
+<pre class="r"><code># compute the fiedler vector, and show how it estimates t
+Lambda &lt;- diag(rowSums(W))   # degree matrix
+L &lt;- Lambda - W
+eigen_L &lt;- eigen(L, symmetric = TRUE)
+fiedler_vector &lt;- eigen_L$vectors[, N - 1]   # second smallest
+
+# the sign of an eigenvector is arbitrary; flip it to agree with the true t for display
+if (cor(fiedler_vector, t) &lt; 0) fiedler_vector &lt;- -fiedler_vector
+t_fiedler &lt;- (fiedler_vector - min(fiedler_vector)) / (max(fiedler_vector) - min(fiedler_vector))
+rho_fiedler &lt;- cor(t_fiedler, t, method = &quot;spearman&quot;)
+
+# left: estimated vs true t (a perfect ordering is monotone)
+p_left &lt;- ggplot(data.frame(t = t, t_fiedler = t_fiedler), aes(t, t_fiedler)) +
+  geom_abline(intercept = 0, slope = 1, colour = &quot;grey60&quot;, linetype = &quot;dashed&quot;) +
+  geom_point(shape = 3) +
+  labs(x = &quot;True t&quot;, y = &quot;Estimated t (Fiedler)&quot;,
+       title = sprintf(&quot;Fiedler estimate vs true t (Spearman = %.2f)&quot;, rho_fiedler)) +
+  theme_bw()
+
+# right: data colored by estimated t, on top of the KNN graph
+df_edges &lt;- data.frame(x = Y[edges[, 1], 1], y = Y[edges[, 1], 2],
+                       xend = Y[edges[, 2], 1], yend = Y[edges[, 2], 2])
+p_right &lt;- ggplot() +
+  geom_segment(data = df_edges, aes(x, y, xend = xend, yend = yend),
+               colour = &quot;grey85&quot;) +
+  geom_path(data = data.frame(f1 = F_true[, 1], f2 = F_true[, 2]),
+            aes(f1, f2), colour = &quot;grey40&quot;, linetype = &quot;dashed&quot;) +
+  geom_point(data = data.frame(y1 = Y[, 1], y2 = Y[, 2], t_fiedler = t_fiedler),
+             aes(y1, y2, colour = t_fiedler), size = 2) +
+  scale_colour_viridis_c(name = &quot;estimated t&quot;, limits = c(0, 1)) +
+  coord_equal() +
+  labs(x = &quot;Y.1&quot;, y = &quot;Y.2&quot;, title = &quot;Y.1 vs Y.2 (colored by Fiedler estimate)&quot;,
+       caption = sprintf(&quot;dashed: true curve; grey: KNN graph (K = %d)&quot;, K)) +
+  theme_bw() +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.02, 0.98),
+        legend.justification = c(0, 1),
+        legend.background = element_blank(),
+        legend.key.height = unit(0.35, &quot;cm&quot;),
+        legend.key.width = unit(0.25, &quot;cm&quot;),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7))
+
+p_left + p_right</code></pre>
+<p><img src="figure/explore_initialization.rmd/fiedler-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="isomap" class="section level2">
+<h2>ISOMAP</h2>
+<p>Another approach in this category is ISOMAP.</p>
+<p>This method also starts with the K-nearest neighbor graph. From the
+graph, it first computes a distance matrix <span
+class="math inline">\(D_{geo}\)</span> between samples, where <span
+class="math inline">\(D_{geo}(i,j)\)</span> is the length of the
+shortest path between sample <span class="math inline">\(i\)</span> and
+sample <span class="math inline">\(j\)</span> in the graph.</p>
+<pre class="r"><code># Compute D_{geo} using the igraph package
+library(igraph)
+# weight each KNN edge by its Euclidean distance, so path length = sum of edge lengths
+g &lt;- graph_from_adjacency_matrix(W * D, mode = &quot;undirected&quot;, weighted = TRUE)
+D_geo &lt;- distances(g)</code></pre>
+<p>Then it applies classical multidimensional scaling (MDS) to <span
+class="math inline">\(D_{geo}\)</span>, to find a low-dimensional
+embedding of the samples whose Euclidean distances approximate the
+geodesic distances. Classical MDS double-centers the squared distances,
+<span class="math inline">\(B = -\frac{1}{2} J D_{geo}^{(2)} J\)</span>,
+where <span class="math inline">\(D_{geo}^{(2)}\)</span> is the
+element-wise square of <span class="math inline">\(D_{geo}\)</span> and
+<span class="math inline">\(J = I_N -
+\frac{1}{N}\mathbf{1}\mathbf{1}^T\)</span>, and then uses the top
+eigenvector of <span class="math inline">\(B\)</span>, scaled by the
+square root of its eigenvalue, as the 1-d embedding. Since we only want
+an ordering, we keep this single coordinate as the estimate of <span
+class="math inline">\(t\)</span>.</p>
+<p>Note that if classical MDS is applied to the Euclidean distance
+matrix <span class="math inline">\(D\)</span> instead, <span
+class="math inline">\(B = Y_c Y_c^T\)</span> with <span
+class="math inline">\(Y_c\)</span> the column-centered <span
+class="math inline">\(Y\)</span>, and the embedding is exactly the PC
+scores from the PCA section (up to sign). ISOMAP differs from PCA only
+by replacing <span class="math inline">\(D\)</span> with <span
+class="math inline">\(D_{geo}\)</span>, which measures distance along
+the curve instead of straight through the ambient space.</p>
+<pre class="r"><code># classical MDS on D_geo, keep the first coordinate (1-d embedding)
+mds &lt;- cmdscale(D_geo, k = 1)
+t_isomap &lt;- mds[, 1]
+
+# the sign of the embedding is arbitrary; flip it to agree with the true t for display
+if (cor(t_isomap, t) &lt; 0) t_isomap &lt;- -t_isomap
+t_isomap &lt;- (t_isomap - min(t_isomap)) / (max(t_isomap) - min(t_isomap))
+rho_isomap &lt;- cor(t_isomap, t, method = &quot;spearman&quot;)
+
+# left: estimated vs true t (a perfect ordering is monotone)
+p_left &lt;- ggplot(data.frame(t = t, t_isomap = t_isomap), aes(t, t_isomap)) +
+  geom_abline(intercept = 0, slope = 1, colour = &quot;grey60&quot;, linetype = &quot;dashed&quot;) +
+  geom_point(shape = 3) +
+  labs(x = &quot;True t&quot;, y = &quot;Estimated t (ISOMAP)&quot;,
+       title = sprintf(&quot;ISOMAP estimate vs true t (Spearman = %.2f)&quot;, rho_isomap)) +
+  theme_bw()
+
+# right: data colored by estimated t, on top of the KNN graph used for D_geo
+df_edges &lt;- data.frame(x = Y[edges[, 1], 1], y = Y[edges[, 1], 2],
+                       xend = Y[edges[, 2], 1], yend = Y[edges[, 2], 2])
+p_right &lt;- ggplot() +
+  geom_segment(data = df_edges, aes(x, y, xend = xend, yend = yend),
+               colour = &quot;grey85&quot;) +
+  geom_path(data = data.frame(f1 = F_true[, 1], f2 = F_true[, 2]),
+            aes(f1, f2), colour = &quot;grey40&quot;, linetype = &quot;dashed&quot;) +
+  geom_point(data = data.frame(y1 = Y[, 1], y2 = Y[, 2], t_isomap = t_isomap),
+             aes(y1, y2, colour = t_isomap), size = 2) +
+  scale_colour_viridis_c(name = &quot;estimated t&quot;, limits = c(0, 1)) +
+  coord_equal() +
+  labs(x = &quot;Y.1&quot;, y = &quot;Y.2&quot;, title = &quot;Y.1 vs Y.2 (colored by ISOMAP estimate)&quot;,
+       caption = sprintf(&quot;dashed: true curve; grey: KNN graph (K = %d)&quot;, K)) +
+  theme_bw() +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.02, 0.98),
+        legend.justification = c(0, 1),
+        legend.background = element_blank(),
+        legend.key.height = unit(0.35, &quot;cm&quot;),
+        legend.key.width = unit(0.25, &quot;cm&quot;),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7))
+
+p_left + p_right</code></pre>
+<p><img src="figure/explore_initialization.rmd/isomap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
