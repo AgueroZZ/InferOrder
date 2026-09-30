@@ -24,7 +24,12 @@ Here we store the simulation configurations, including the number of samples (`n
 config <- list(
   # Data generation
   seed = 20260932L, n = 300L, p = 12L, snr = 4,
-  generator = "matern",       # "matern" or "fourier"
+  generator = "matern",       # "matern" or "fourier" or "iwp2"
+  scale_signal = TRUE,            # scale signal to unit variance per column
+
+  # PC option
+  center = FALSE, scale = FALSE, # for PCA
+  which_pc = 1L,                  # which PC to use for ordering
 
   # For MPCurve fitting
   K = 50L, position_prior = "fixed", # "fixed" = uniform; or "adaptive"
@@ -34,6 +39,20 @@ config <- list(
 
 ```{r simulation-module}
 simulate_signal <- function(t, p, config) {
+  if (config$generator == "iwp2") {
+    # IWP2: f(t) = int_0^t (t-u) dW(u)
+    # Cov[f(s), f(t)] = m^2 (3M - m) / 6
+    # where m = min(s,t), M = max(s,t)
+
+    m <- outer(t, t, pmin)
+    M <- outer(t, t, pmax)
+
+    covariance <- m^2 * (3 * M - m) / 6
+
+    L <- t(chol(covariance + diag(1e-10, length(t))))
+    return(L %*% matrix(rnorm(length(t) * p), length(t), p))
+  }
+
   if (config$generator == "matern") {
     covariance <- fields::Matern(abs(outer(t, t, "-")),
                              aRange =  0.1,
@@ -58,7 +77,9 @@ simulate_data <- function(config) {
   signal <- simulate_signal(t, config$p, config)
   stopifnot(identical(dim(signal), c(config$n, config$p)),
             all(is.finite(signal)), all(apply(signal, 2, sd) > 0))
-  signal <- scale(signal)  # unit signal variance per column
+  if (config$scale_signal) {
+    signal <- scale(signal)  # unit signal variance per column
+  }
   # Separate noise seed keeps noise fixed when changing the generator.
   set.seed(config$seed + 1L)
   X <- signal + matrix(rnorm(length(signal)), nrow(signal)) / sqrt(config$snr)
@@ -117,8 +138,8 @@ plot_features(data, data$X[, j], signal_position = data$signal[, j],
 We first try using PC1 as the ordering initialization.
 
 ```{r pca}
-pca <- prcomp(data$X, center = TRUE, scale. = FALSE)
-pc_raw <- pca$x[, 1]
+pca <- prcomp(data$X, center = config$center, scale. = config$scale)
+pc_raw <- pca$x[, config$which_pc]
 direction <- if (cor(pc_raw, data$t, method = "spearman") < 0) -1 else 1
 pc_position <- scale01(direction * pc_raw)
 ```
@@ -202,7 +223,7 @@ pca_study <- do.call(rbind, lapply(p_values, function(p) {
     # Step seeds by 2: simulate_data() uses seed and seed + 1 (noise).
     cfg <- modifyList(config, list(p = p, seed = config$seed + 2L * r))
     sim <- simulate_data(cfg)
-    pc1 <- prcomp(sim$X, center = TRUE, scale. = FALSE)$x[, 1]
+    pc1 <- prcomp(sim$X, center = cfg$center, scale. = cfg$scale)$x[, cfg$which_pc]
     data.frame(p = p, replicate = r, rho = recovery(pc1, sim$t))
   }))
 }))
