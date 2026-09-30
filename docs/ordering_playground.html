@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2026-09-30" />
+
+<title>Exploring different ways of initializing the ordering</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MPCurve results</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="method.html">Method</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Simulation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="simulation_summary.html">Simulation summary</a>
+    </li>
+    <li>
+      <a href="simulation_m1.html">One ordering</a>
+    </li>
+    <li>
+      <a href="simulation_m1_comparison.html">One ordering: method comparison</a>
+    </li>
+    <li>
+      <a href="simulation_m2.html">Two orderings</a>
+    </li>
+    <li>
+      <a href="estimate_intrinsic_m.html">Estimate M: all monotone</a>
+    </li>
+    <li>
+      <a href="estimate_intrinsic_m_smooth.html">Estimate M: one monotone anchor</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="fitness.html">Fitness</a>
+    </li>
+    <li>
+      <a href="pancreas.html">Pancreas loadings</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/AgueroZZ/InferOrder">Source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Exploring different ways of initializing
+the ordering</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2026-09-30</h4>
+
+</div>
+
+
+<div id="intro" class="section level2">
+<h2>Intro</h2>
+<p>Here we store the simulation configurations, including the number of
+samples (<code>n</code>), number of columns (<code>p</code>), and the
+signal to noise ratio (<code>snr</code>).</p>
+<pre class="r"><code>config &lt;- list(
+  # Data generation
+  seed = 20260932L, n = 300L, p = 12L, snr = 4,
+  generator = &quot;matern&quot;,       # &quot;matern&quot; or &quot;fourier&quot;
+
+  # For MPCurve fitting
+  K = 50L, position_prior = &quot;fixed&quot;, # &quot;fixed&quot; = uniform; or &quot;adaptive&quot;
+  max_iter = 2000L, tol = 1e-6 
+)</code></pre>
+<pre class="r"><code>simulate_signal &lt;- function(t, p, config) {
+  if (config$generator == &quot;matern&quot;) {
+    covariance &lt;- fields::Matern(abs(outer(t, t, &quot;-&quot;)),
+                             aRange =  0.1,
+                             smoothness = 2.5)
+    L &lt;- t(chol(covariance + diag(1e-10, length(t))))
+    return(L %*% matrix(rnorm(length(t) * p), length(t), p))
+  }
+  if (config$generator == &quot;fourier&quot;) {
+    h &lt;- 2:6; decay &lt;- 1.5;
+    angles &lt;- outer(t, pi * h)
+    a &lt;- matrix(rnorm(length(h) * p), length(h), p)
+    b &lt;- matrix(rnorm(length(h) * p), length(h), p)
+    return(sin(angles) %*% (h^(-decay) * a) +
+           cos(angles) %*% (h^(-decay) * b))
+  }
+  stop(&quot;Unknown generator: &quot;, config$generator)
+}
+simulate_data &lt;- function(config) {
+  stopifnot(config$n &gt; config$K, config$p &gt;= 1, config$snr &gt; 0)
+  set.seed(config$seed)
+  t &lt;- runif(config$n)
+  signal &lt;- simulate_signal(t, config$p, config)
+  stopifnot(identical(dim(signal), c(config$n, config$p)),
+            all(is.finite(signal)), all(apply(signal, 2, sd) &gt; 0))
+  signal &lt;- scale(signal)  # unit signal variance per column
+  # Separate noise seed keeps noise fixed when changing the generator.
+  set.seed(config$seed + 1L)
+  X &lt;- signal + matrix(rnorm(length(signal)), nrow(signal)) / sqrt(config$snr)
+  colnames(X) &lt;- colnames(signal) &lt;- paste0(&quot;V&quot;, seq_len(config$p))
+  list(t = t, signal = signal, X = X)
+}
+data &lt;- simulate_data(config)</code></pre>
+<pre class="r"><code>scale01 &lt;- function(x) {
+  stopifnot(diff(range(x)) &gt; 0)
+  (x - min(x)) / diff(range(x))
+}
+recovery &lt;- function(x, truth) abs(cor(x, truth, method = &quot;spearman&quot;))
+
+feature_frame &lt;- function(values, position, truth) {
+  do.call(rbind, lapply(seq_len(ncol(values)), function(j)
+    data.frame(position = position, value = values[, j], truth = truth,
+               feature = factor(colnames(values)[j], levels = colnames(values)))))
+}
+
+plot_features &lt;- function(data, position, signal_position = NULL,
+                          xlabel = deparse(substitute(position))) {
+  observed &lt;- feature_frame(data$X, position, data$t)
+  if (is.null(signal_position)) {
+    ggplot(observed, aes(position, value, color = truth)) +
+      geom_point(size = 0.8, alpha = 0.65) +
+      scale_color_viridis_c(name = &quot;True t&quot;, limits = c(0, 1)) +
+      facet_wrap(~feature, ncol = 4) + labs(x = xlabel, y = &quot;Observed value&quot;)
+  } else {
+    idx &lt;- order(data$t)
+    paths &lt;- feature_frame(data$signal[idx, , drop = FALSE],
+                           signal_position[idx], data$t[idx])
+    ggplot(observed, aes(position, value)) +
+      geom_point(color = &quot;gray55&quot;, size = 0.6, alpha = 0.3) +
+      geom_path(data = paths, color = &quot;#0072B2&quot;, linewidth = 0.8) +
+      facet_wrap(~feature, ncol = 4) + labs(x = xlabel, y = &quot;Feature value&quot;)
+  }
+}</code></pre>
+<pre class="r"><code>plot_features(data, data$t, signal_position = data$t,
+              xlabel = &quot;True latent position&quot;)</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/figure-1-1.png" alt="Figure 1. Features versus true t. Blue paths join noiseless values in true-position order; gray points are observations." width="1056" />
+<p class="caption">
+Figure 1. Features versus true t. Blue paths join noiseless values in
+true-position order; gray points are observations.
+</p>
+</div>
+<pre class="r"><code>j &lt;- 1
+plot_features(data, data$X[, j], signal_position = data$signal[, j],
+              xlabel = sprintf(&quot;Observed %s (reference column)&quot;, colnames(data$X)[j]))</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/figure-2-1.png" alt="Figure 2. Features versus the reference column. Blue paths are noiseless pairs; gray points contain noise on both axes." width="1056" />
+<p class="caption">
+Figure 2. Features versus the reference column. Blue paths are noiseless
+pairs; gray points contain noise on both axes.
+</p>
+</div>
+</div>
+<div id="pca" class="section level2">
+<h2>PCA</h2>
+<p>We first try using PC1 as the ordering initialization.</p>
+<pre class="r"><code>pca &lt;- prcomp(data$X, center = TRUE, scale. = FALSE)
+pc_raw &lt;- pca$x[, 1]
+direction &lt;- if (cor(pc_raw, data$t, method = &quot;spearman&quot;) &lt; 0) -1 else 1
+pc_position &lt;- scale01(direction * pc_raw)</code></pre>
+<p>Take a look at the columns ordered by the PCA positions.</p>
+<pre class="r"><code>plot_features(data, pc_position, xlabel = &quot;PC1 scores scaled to [0,1]&quot;)</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/figure-3-1.png" alt="Figure 3. Observations versus scaled PC1 scores; colors indicate true t." width="1056" />
+<p class="caption">
+Figure 3. Observations versus scaled PC1 scores; colors indicate true t.
+</p>
+</div>
+<p>Compare the PCA positions against the true latent positions.</p>
+<pre class="r"><code>ggplot(data.frame(truth = data$t, estimate = pc_position), aes(truth, estimate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = &quot;gray70&quot;) +
+  geom_point(alpha = 0.65, size = 1.2) + coord_equal() +
+  labs(x = &quot;True latent position&quot;, y = &quot;Scaled PC1 position&quot;,
+       title = sprintf(&quot;PCA: |Spearman rho| = %.3f&quot;, recovery(pc_position, data$t)))</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/figure-4-1.png" alt="Figure 4. PCA positions versus true t. Dashed line: identity." width="1056" />
+<p class="caption">
+Figure 4. PCA positions versus true t. Dashed line: identity.
+</p>
+</div>
+</div>
+<div id="mpcurve" class="section level2">
+<h2>MPCurve</h2>
+<p>Now let’s try using MPCurve to improve the PC initialization.</p>
+<pre class="r"><code>fit &lt;- MPCurver::fit_mpcurve(X = data$X, K = config$K, 
+                             position_prior = config$position_prior,
+                             method = &quot;PCA&quot;,
+                             iter = config$max_iter, tol = config$tol)</code></pre>
+<p>Compute the posterior mean positions from the fitted MPCurve.</p>
+<pre class="r"><code>mp_position &lt;- as.numeric(fit$gamma %*% seq(0, 1, length.out = config$K))
+if (direction &lt; 0) mp_position &lt;- 1 - mp_position
+initial_elbo &lt;- head(fit$elbo_trace, 1)
+final_elbo &lt;- tail(fit$elbo_trace, 1)
+# Keep convergence status visible even when the iteration budget is exhausted.
+data.frame(version = as.character(packageVersion(&quot;MPCurver&quot;)),
+           iterations = fit$iter, converged = fit$converged,
+           initial_ELBO = initial_elbo, final_ELBO = final_elbo)</code></pre>
+<pre><code>  version iterations converged initial_ELBO final_ELBO
+1   0.3.4        323      TRUE    -5805.138  -3881.444</code></pre>
+<p>Plot the columns ordered by the MPCurve posterior mean positions.</p>
+<pre class="r"><code>plot_features(data, mp_position, xlabel = &quot;MPCurve posterior mean position&quot;)</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/figure-5-1.png" alt="Figure 5. Observations versus MPCurve posterior mean positions; colors indicate true t." width="1056" />
+<p class="caption">
+Figure 5. Observations versus MPCurve posterior mean positions; colors
+indicate true t.
+</p>
+</div>
+<p>Compare the MPCurve posterior mean positions against the true latent
+positions.</p>
+<pre class="r"><code>labels &lt;- c(
+  sprintf(&quot;PCA initialization\nrho = %.3f | ELBO = %.2f&quot;,
+          recovery(pc_position, data$t), initial_elbo),
+  sprintf(&quot;MPCurve: %d updates, converged = %s\nrho = %.3f | ELBO = %.2f&quot;,
+          fit$iter, fit$converged, recovery(mp_position, data$t), final_elbo))
+comparison &lt;- data.frame(
+  truth = rep(data$t, 2), estimate = c(pc_position, mp_position),
+  stage = factor(rep(labels, each = length(data$t)), levels = labels))
+ggplot(comparison, aes(truth, estimate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = &quot;gray70&quot;) +
+  geom_point(alpha = 0.65, size = 1.2) + facet_wrap(~stage, nrow = 1) +
+  coord_equal(xlim = c(0, 1), ylim = c(0, 1)) +
+  labs(x = &quot;True latent position&quot;, y = &quot;Estimated latent position&quot;)</code></pre>
+<div class="figure" style="text-align: center">
+<img src="figure/ordering_playground.Rmd/figure-6-1.png" alt="Figure 6. Before/after comparison against true t, with the same orientation. Initial ELBO is evaluated after PCA quantile discretization and variational initialization, before CAVI updates." width="1056" />
+<p class="caption">
+Figure 6. Before/after comparison against true t, with the same
+orientation. Initial ELBO is evaluated after PCA quantile discretization
+and variational initialization, before CAVI updates.
+</p>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
