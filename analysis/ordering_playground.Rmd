@@ -187,3 +187,29 @@ ggplot(comparison, aes(truth, estimate)) +
   labs(x = "True latent position", y = "Estimated latent position")
 ```
 
+
+## PCA across P
+
+Let's change P from 12 to 200, each with 30 replications, and see how the performance of PCA changes.
+
+```{r pca-vs-p, fig.height=5, fig.cap="Figure 7. |Spearman rho| between PC1 and true t across P; each point is one replication."}
+# P = 12, 30, 50, 80, 100, 200
+# show boxplot of spearman correlation between PCA and true t in each replication, across different P values
+p_values <- c(12L, 30L, 50L, 80L, 100L, 200L)
+n_rep <- 30L
+pca_study <- do.call(rbind, lapply(p_values, function(p) {
+  do.call(rbind, lapply(seq_len(n_rep), function(r) {
+    # Step seeds by 2: simulate_data() uses seed and seed + 1 (noise).
+    cfg <- modifyList(config, list(p = p, seed = config$seed + 2L * r))
+    sim <- simulate_data(cfg)
+    pc1 <- prcomp(sim$X, center = TRUE, scale. = FALSE)$x[, 1]
+    data.frame(p = p, replicate = r, rho = recovery(pc1, sim$t))
+  }))
+}))
+aggregate(rho ~ p, pca_study, function(x) c(mean = mean(x), sd = sd(x)))
+ggplot(pca_study, aes(factor(p), rho)) +
+  geom_boxplot(outlier.shape = NA, fill = "gray90") +
+  geom_jitter(width = 0.15, alpha = 0.6, size = 1.2) +
+  labs(x = "Number of features P", y = "|Spearman rho| (PC1 vs true t)",
+       title = sprintf("PCA recovery across P (%d replications each)", n_rep))
+```
