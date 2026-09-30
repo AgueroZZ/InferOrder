@@ -408,13 +408,32 @@ signal to noise ratio (<code>snr</code>).</p>
 <pre class="r"><code>config &lt;- list(
   # Data generation
   seed = 20260932L, n = 300L, p = 12L, snr = 4,
-  generator = &quot;matern&quot;,       # &quot;matern&quot; or &quot;fourier&quot;
+  generator = &quot;matern&quot;,       # &quot;matern&quot; or &quot;fourier&quot; or &quot;iwp2&quot;
+  scale_signal = TRUE,            # scale signal to unit variance per column
+
+  # PC option
+  center = FALSE, scale = FALSE, # for PCA
+  which_pc = 1L,                  # which PC to use for ordering
 
   # For MPCurve fitting
   K = 50L, position_prior = &quot;fixed&quot;, # &quot;fixed&quot; = uniform; or &quot;adaptive&quot;
   max_iter = 2000L, tol = 1e-6 
 )</code></pre>
 <pre class="r"><code>simulate_signal &lt;- function(t, p, config) {
+  if (config$generator == &quot;iwp2&quot;) {
+    # IWP2: f(t) = int_0^t (t-u) dW(u)
+    # Cov[f(s), f(t)] = m^2 (3M - m) / 6
+    # where m = min(s,t), M = max(s,t)
+
+    m &lt;- outer(t, t, pmin)
+    M &lt;- outer(t, t, pmax)
+
+    covariance &lt;- m^2 * (3 * M - m) / 6
+
+    L &lt;- t(chol(covariance + diag(1e-10, length(t))))
+    return(L %*% matrix(rnorm(length(t) * p), length(t), p))
+  }
+
   if (config$generator == &quot;matern&quot;) {
     covariance &lt;- fields::Matern(abs(outer(t, t, &quot;-&quot;)),
                              aRange =  0.1,
@@ -439,7 +458,9 @@ simulate_data &lt;- function(config) {
   signal &lt;- simulate_signal(t, config$p, config)
   stopifnot(identical(dim(signal), c(config$n, config$p)),
             all(is.finite(signal)), all(apply(signal, 2, sd) &gt; 0))
-  signal &lt;- scale(signal)  # unit signal variance per column
+  if (config$scale_signal) {
+    signal &lt;- scale(signal)  # unit signal variance per column
+  }
   # Separate noise seed keeps noise fixed when changing the generator.
   set.seed(config$seed + 1L)
   X &lt;- signal + matrix(rnorm(length(signal)), nrow(signal)) / sqrt(config$snr)
@@ -574,8 +595,8 @@ Ziang Zhang
 <div id="pca" class="section level2">
 <h2>PCA</h2>
 <p>We first try using PC1 as the ordering initialization.</p>
-<pre class="r"><code>pca &lt;- prcomp(data$X, center = TRUE, scale. = FALSE)
-pc_raw &lt;- pca$x[, 1]
+<pre class="r"><code>pca &lt;- prcomp(data$X, center = config$center, scale. = config$scale)
+pc_raw &lt;- pca$x[, config$which_pc]
 direction &lt;- if (cor(pc_raw, data$t, method = &quot;spearman&quot;) &lt; 0) -1 else 1
 pc_position &lt;- scale01(direction * pc_raw)</code></pre>
 <p>Take a look at the columns ordered by the PCA positions.</p>
@@ -811,18 +832,18 @@ pca_study &lt;- do.call(rbind, lapply(p_values, function(p) {
     # Step seeds by 2: simulate_data() uses seed and seed + 1 (noise).
     cfg &lt;- modifyList(config, list(p = p, seed = config$seed + 2L * r))
     sim &lt;- simulate_data(cfg)
-    pc1 &lt;- prcomp(sim$X, center = TRUE, scale. = FALSE)$x[, 1]
+    pc1 &lt;- prcomp(sim$X, center = cfg$center, scale. = cfg$scale)$x[, cfg$which_pc]
     data.frame(p = p, replicate = r, rho = recovery(pc1, sim$t))
   }))
 }))
 aggregate(rho ~ p, pca_study, function(x) c(mean = mean(x), sd = sd(x)))</code></pre>
 <pre><code>    p   rho.mean     rho.sd
-1  12 0.70875125 0.23188408
-2  30 0.73812127 0.23083189
-3  50 0.82086199 0.15258999
-4  80 0.87136611 0.07681413
-5 100 0.88083839 0.06297183
-6 200 0.90337850 0.03792481</code></pre>
+1  12 0.70875190 0.23182957
+2  30 0.73803599 0.23098484
+3  50 0.82086072 0.15258977
+4  80 0.87137358 0.07680341
+5 100 0.88084039 0.06295384
+6 200 0.90337739 0.03792054</code></pre>
 <pre class="r"><code>ggplot(pca_study, aes(factor(p), rho)) +
   geom_boxplot(outlier.shape = NA, fill = &quot;gray90&quot;) +
   geom_jitter(width = 0.15, alpha = 0.6, size = 1.2) +
