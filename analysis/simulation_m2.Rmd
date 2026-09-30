@@ -46,7 +46,7 @@ updates.
 ## Feature assignments
 
 After aligning the arbitrary A/B labels, the fit assigns all **20 of 20**
-features to their generating groups.
+features to their generating groups (Figure 1).
 
 ```{r assignments, echo=FALSE, fig.width=9, fig.height=4.5, fig.cap="Figure 1. Posterior assignment probabilities for the 20 simulated features. Axis labels show the generating feature group."}
 weights <- as.matrix(fit$partition$pi_weights)
@@ -64,7 +64,7 @@ legend("topright", legend = ordering_labels,
 After aligning ordering labels and allowing reversal of each axis, the
 absolute Spearman correlations with the two generating positions are
 **`r sprintf("%.4f", summary$abs_spearman_A)`** and
-**`r sprintf("%.4f", summary$abs_spearman_B)`**.
+**`r sprintf("%.4f", summary$abs_spearman_B)`** (Figure 2).
 
 ```{r ordering-recovery, echo=FALSE, fig.width=9, fig.height=4.4, fig.cap="Figure 2. True versus inferred sample position for each aligned ordering. Reversing an axis leaves its ordering unchanged."}
 positions <- lapply(fit$locations, function(item) item$mean$pseudotime)
@@ -88,7 +88,7 @@ plot(seq_along(t1_objective), t1_objective, type = "l", lwd = 2,
      ylab = "Structural objective")
 ```
 
-The structural objective increases during the final $T=1$ refinement phase.
+The structural objective increases during the final $T=1$ refinement phase (Figure 3).
 The fit converges after **`r summary$t1_objective_records` recorded
 temperature-one objective values** under the normalized per-observation rule.
 

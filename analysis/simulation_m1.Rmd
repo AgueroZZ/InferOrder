@@ -40,6 +40,8 @@ The fit uses MPCurver 0.3.4.
 
 ## Ordering recovery
 
+Figure 1 compares the generating and inferred positions on the simulated spiral.
+
 ```{r recovery, echo=FALSE, fig.width=10, fig.height=4.5, fig.cap="Figure 1. The simulated spiral coloured by the generating position (left) and the inferred posterior-mean grid position (right)."}
 palette <- grDevices::colorRampPalette(
   c("#1F3A5F", "#2E8A99", "#F2C14E", "#E76F51")
@@ -59,6 +61,8 @@ absolute value accounts for the arbitrary direction of an inferred ordering.
 This result comes from one simulated data set.
 
 ## Objective trace
+
+Figure 2 shows the ELBO recorded during the fit.
 
 ```{r elbo, echo=FALSE, fig.width=7, fig.height=4.2, fig.cap="Figure 2. Evidence lower bound recorded during the single-ordering CAVI fit."}
 plot(fit$elbo_trace, type = "l", lwd = 2, col = "#2E8A99",

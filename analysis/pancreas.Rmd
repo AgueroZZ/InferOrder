@@ -41,7 +41,7 @@ matrix to see what each specified number of orderings captures.
 
 ## Fitting settings
 
-Both fits use MPCurver 0.3.4, CAVI, an RW2 trajectory prior, $K=50$ grid
+Table 1 lists the settings. Both fits use MPCurver 0.3.4, CAVI, an RW2 trajectory prior, $K=50$ grid
 positions, and `ridge = 0`. The $M=1$ fit starts from PCA; the $M=2$ fit
 applies Fiedler ordering independently to both similarity-based feature
 groups. Exact seeds and iteration budgets are in the [reproduction
@@ -56,7 +56,7 @@ knitr::kable(settings[, c("model", "seed", "method", "K", "rw_q", "ridge",
 
 ## One versus two orderings
 
-The plots below arrange the same loadings according to each fitted sample
+Figure 1 arranges the same loadings according to each fitted sample
 ordering. The first panel uses $M=1$; the other two are orderings A and B
 from the fixed $M=2$ fit. Colours show the observed loading values, with the
 same colour scale in all panels. Ordering direction is arbitrary.
@@ -114,7 +114,7 @@ knitr::kable(assignments, digits = 3,
              caption = "Table 2. Posterior ordering probabilities for each selected semi-NMF factor.")
 ```
 
-Seven factors follow ordering A; only factor 20 follows B. Most cells have
+Seven factors follow ordering A; only factor 20 follows B (Table 2). Most cells have
 similar fitted positions on B, while a smaller subset spreads across its
 range. The second ordering is therefore driven mainly by factor 20 in this
 fit.
@@ -132,7 +132,7 @@ plot(seq_along(t1_objective), t1_objective, type = "l", lwd = 2,
 par(old_par)
 ```
 
-Each objective rises during its own fit, and both fits satisfy the normalized
+Each objective rises during its own fit (Figure 3), and both fits satisfy the normalized
 per-observation convergence rule. The two panels use different objectives, so
 their heights cannot be used to choose $M$.
 

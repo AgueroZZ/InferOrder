@@ -79,19 +79,19 @@ does not include garbage features.
 
 ### Simulated trajectories and observations
 
-The following figures show replicate 1 from every condition. Each row is a
+Figures 1–3 show replicate 1 from every condition. Each row is a
 true ordering and each column is an SNR setting. Blue shows the monotone
 anchor; orange and purple show two nonmonotone trajectories in the same group.
 
-```{r smooth-m-design-three, fig.alt="Three ordering rows and three SNR columns, each displaying one blue monotone anchor and two smooth nonmonotone trajectories with noisy observations.", fig.cap="True M = 3: replicate 1 at SNR 1, 4, and 16. Rows identify the three true orderings, each containing 20 features. Lines show one monotone anchor and two nonmonotone noiseless trajectories; points show all 300 noisy observations for each displayed feature."}
+```{r smooth-m-design-three, fig.alt="Three ordering rows and three SNR columns, each displaying one blue monotone anchor and two smooth nonmonotone trajectories with noisy observations.", fig.cap="Figure 1. True M = 3: replicate 1 at SNR 1, 4, and 16. Rows identify the three true orderings, each containing 20 features. Lines show one monotone anchor and two nonmonotone noiseless trajectories; points show all 300 noisy observations for each displayed feature."}
 knitr::include_graphics(normalizePath(file.path(design_result_dir, "design_M3.png")))
 ```
 
-```{r smooth-m-design-four, fig.alt="Four ordering rows and three SNR columns, each displaying one monotone anchor and two smooth nonmonotone trajectories with noisy observations.", fig.cap="True M = 4: replicate 1 at each SNR. Rows identify the four true orderings, each containing 15 features. Blue lines show monotone anchors; orange and purple lines show two nonmonotone trajectories per ordering."}
+```{r smooth-m-design-four, fig.alt="Four ordering rows and three SNR columns, each displaying one monotone anchor and two smooth nonmonotone trajectories with noisy observations.", fig.cap="Figure 2. True M = 4: replicate 1 at each SNR. Rows identify the four true orderings, each containing 15 features. Blue lines show monotone anchors; orange and purple lines show two nonmonotone trajectories per ordering."}
 knitr::include_graphics(normalizePath(file.path(design_result_dir, "design_M4.png")))
 ```
 
-```{r smooth-m-design-five, fig.alt="Five ordering rows and three SNR columns, each displaying one monotone anchor and two smooth nonmonotone trajectories with noisy observations.", fig.cap="True M = 5: replicate 1 at each SNR. Rows identify the five true orderings, each containing 12 features. Blue lines show monotone anchors; orange and purple lines show two nonmonotone trajectories per ordering."}
+```{r smooth-m-design-five, fig.alt="Five ordering rows and three SNR columns, each displaying one monotone anchor and two smooth nonmonotone trajectories with noisy observations.", fig.cap="Figure 3. True M = 5: replicate 1 at each SNR. Rows identify the five true orderings, each containing 12 features. Blue lines show monotone anchors; orange and purple lines show two nonmonotone trajectories per ordering."}
 knitr::include_graphics(normalizePath(file.path(design_result_dir, "design_M5.png")))
 ```
 
@@ -142,21 +142,23 @@ The spline-similarity cut selects the true initial $M$ in
 **`r initial_exact`/90 datasets**, with **`r initial_under` underestimates** and
 **`r initial_over` overestimates**. After adaptive EB, the effective $M$ is
 exact in **`r final_exact`/90**, with **`r final_under` underestimates** and
-**`r final_over` overestimates**.
+**`r final_over` overestimates**. Figure 4 reports final exact recovery by
+condition, Figure 5 compares it with the initial count, and Table 1 gives the
+overall totals.
 
-```{r smooth-m-current-recovery, fig.cap="Exact effective-M recovery for MPCurver 0.3.4 automatic-M adaptive fitting. Columns show the generating M. Each point summarizes 10 datasets at the labeled variance SNR; error bars are 95% Wilson intervals."}
+```{r smooth-m-current-recovery, fig.cap="Figure 4. Exact effective-M recovery for MPCurver 0.3.4 automatic-M adaptive fitting. Columns show the generating M. Each point summarizes 10 datasets at the labeled variance SNR; error bars are 95% Wilson intervals."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_exact_recovery.png")))
 ```
 
-```{r smooth-m-current-stages, fig.cap="Exact-M recovery at the similarity-cut initialization and after adaptive EB. The initial count is selected by mean silhouette among single-linkage cuts satisfying the minimum cluster size of two; the final count is posterior occupancy after adaptive fitting. Each point summarizes 10 datasets."}
+```{r smooth-m-current-stages, fig.cap="Figure 5. Exact-M recovery at the similarity-cut initialization and after adaptive EB. The initial count is selected by mean silhouette among single-linkage cuts satisfying the minimum cluster size of two; the final count is posterior occupancy after adaptive fitting. Each point summarizes 10 datasets."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_initial_vs_final.png")))
 ```
 
-The two final errors occur for true $M=5$: one at SNR 1 and one at SNR 4.
-Both fits retain four occupied orderings. All datasets with true $M=3$ or
+The two final errors occur for true $M=5$: one at SNR 1 and one at SNR 4
+(Figure 6). Both fits retain four occupied orderings. All datasets with true $M=3$ or
 $M=4$ are recovered exactly at every SNR.
 
-```{r smooth-m-current-distribution, fig.cap="Estimated effective-M distributions from the current package. Panels identify SNR, rows identify the generating M, and columns identify the fitted effective M. Cell labels give counts out of 10 datasets; outlined cells are exact."}
+```{r smooth-m-current-distribution, fig.cap="Figure 6. Estimated effective-M distributions from the current package. Panels identify SNR, rows identify the generating M, and columns identify the fitted effective M. Cell labels give counts out of 10 datasets; outlined cells are exact."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_estimated_M_distribution.png")))
 ```
 
@@ -173,18 +175,18 @@ table <- data.frame(
   check.names = FALSE
 )
 knitr::kable(table, digits = 3, row.names = FALSE,
-  caption = "Overall MPCurver 0.3.4 automatic-M results across the 90 datasets.")
+  caption = "Table 1. Overall MPCurver 0.3.4 automatic-M results across the 90 datasets.")
 ```
 
 ## Recovery of the underlying structure
 
 The current fit has mean feature-partition ARI
 **`r sprintf("%.3f", overall$mean_ARI)`**. Its mean matched ordering score is
-**`r sprintf("%.3f", overall$mean_ordering_recovery)`**. Feature grouping is
+**`r sprintf("%.3f", overall$mean_ordering_recovery)`**. Table 2 lists every condition. Feature grouping is
 nearly exact even at SNR 1, whereas estimation of the continuous sample
-positions is more sensitive to noise.
+positions is more sensitive to noise (Figure 7).
 
-```{r smooth-m-current-structure, fig.cap="Structural recovery from MPCurver 0.3.4. The top row shows mean feature-partition ARI; the bottom row shows mean absolute Spearman correlation after one-to-one matching of inferred and true orderings. Each point averages 10 datasets."}
+```{r smooth-m-current-structure, fig.cap="Figure 7. Structural recovery from MPCurver 0.3.4. The top row shows mean feature-partition ARI; the bottom row shows mean absolute Spearman correlation after one-to-one matching of inferred and true orderings. Each point averages 10 datasets."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_structural_recovery.png")))
 ```
 
@@ -194,25 +196,25 @@ table <- conditions[, c("true_M", "snr", "datasets", "initial_exact",
 names(table) <- c("True M", "SNR", "Datasets", "Initial M exact",
   "Final M exact", "Mean ARI", "Mean ordering score", "Median seconds")
 knitr::kable(table, digits = 3, row.names = FALSE,
-  caption = "Current-package recovery and runtime by simulation condition.")
+  caption = "Table 2. Current-package recovery and runtime by simulation condition.")
 ```
 
 ### Representative current-package fits
 
-These examples use SNR 4 and replicate 1 for each true $M$. Every panel below
+Figures 8–10 use SNR 4 and replicate 1 for each true $M$. Every panel
 comes from the MPCurver 0.3.4 automatic-$M$ adaptive fit. The top row displays
 the simulated trajectories; the bottom row compares true and matched inferred
 sample positions.
 
-```{r smooth-m-current-example-three, fig.cap="MPCurver 0.3.4 example with true M = 3, SNR 4, and replicate 1. The automatic initializer selects M = 3, adaptive EB retains three occupied orderings, and all three sample orderings are recovered with absolute Spearman correlation about 0.998."}
+```{r smooth-m-current-example-three, fig.cap="Figure 8. MPCurver 0.3.4 example with true M = 3, SNR 4, and replicate 1. The automatic initializer selects M = 3, adaptive EB retains three occupied orderings, and all three sample orderings are recovered with absolute Spearman correlation about 0.998."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_example_M3.png")))
 ```
 
-```{r smooth-m-current-example-four, fig.cap="MPCurver 0.3.4 example with true M = 4, SNR 4, and replicate 1. Columns identify true orderings. The bottom row shows their one-to-one matched inferred sample positions from the automatic-M adaptive fit."}
+```{r smooth-m-current-example-four, fig.cap="Figure 9. MPCurver 0.3.4 example with true M = 4, SNR 4, and replicate 1. Columns identify true orderings. The bottom row shows their one-to-one matched inferred sample positions from the automatic-M adaptive fit."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_example_M4.png")))
 ```
 
-```{r smooth-m-current-example-five, fig.cap="MPCurver 0.3.4 example with true M = 5, SNR 4, and replicate 1. The subtitle reports the initial and final ordering counts; bottom-panel labels give reversal-invariant absolute Spearman correlations."}
+```{r smooth-m-current-example-five, fig.cap="Figure 10. MPCurver 0.3.4 example with true M = 5, SNR 4, and replicate 1. The subtitle reports the initial and final ordering counts; bottom-panel labels give reversal-invariant absolute Spearman correlations."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_example_M5.png")))
 ```
 
@@ -220,10 +222,10 @@ knitr::include_graphics(normalizePath(file.path(result_dir, "current_example_M5.
 
 All **90 current-package fits** converged without fitting warnings. Median
 single-thread runtime is **`r sprintf("%.1f", overall$median_seconds)` seconds**
-per dataset. Runtime includes similarity calculation, automatic dimension
+per dataset. Runtime (Figure 11) includes similarity calculation, automatic dimension
 selection, ordering initialization, annealing, and adaptive fitting.
 
-```{r smooth-m-current-runtime, fig.cap="Median single-thread runtime of MPCurver 0.3.4 automatic-M adaptive fitting. Each point summarizes 10 complete fits, including similarity calculation, dimension initialization, and adaptive EB."}
+```{r smooth-m-current-runtime, fig.cap="Figure 11. Median single-thread runtime of MPCurver 0.3.4 automatic-M adaptive fitting. Each point summarizes 10 complete fits, including similarity calculation, dimension initialization, and adaptive EB."}
 knitr::include_graphics(normalizePath(file.path(result_dir, "current_runtime.png")))
 ```
 

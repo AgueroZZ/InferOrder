@@ -41,7 +41,8 @@ The vignette starts with a single-ordering CAVI model using Isomap
 initialization, $K=50$ grid positions, and an RW2 trajectory prior. It then
 refits with a stronger smoothness prior using
 `lambda_sd_prior_rate = 1e4`. Comparing the inferred mutant positions helps
-assess whether smoothing changes the ordering or mainly the fitted curves.
+assess whether smoothing changes the ordering or mainly the fitted curves
+(Figure 1).
 
 ```{r compare-single-orderings, echo=FALSE, fig.width=10, fig.height=4.5, fig.cap="Figure 1. Comparison of inferred mutant positions under two smoothness settings, reproduced from the MPCurver 0.3.4 fitness vignette."}
 grid::grid.raster(png::readPNG(
@@ -62,7 +63,7 @@ mutant ordering.
 
 The vignette next fits a structural CAVI model with `intrinsic_dim = 2`.
 Each environment receives probabilities of following ordering A or B, and
-its trajectory is estimated conditional on the assignment. The plot below
+its trajectory is estimated conditional on the assignment. Figure 2
 shows both conditional trajectories for one environment and its assignment
 probabilities in the panel titles.
 
@@ -73,7 +74,7 @@ grid::grid.raster(png::readPNG(
 ```
 
 The model assigns 27 environments to ordering A and 18 to B by their largest
-assignment probability. The table groups these assignments by environment
+assignment probability. Table 1 groups these assignments by environment
 category; the full vignette reports the underlying probabilities.
 
 ```{r assignment-table, echo=FALSE}
