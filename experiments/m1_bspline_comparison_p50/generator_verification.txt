@@ -1,0 +1,1 @@
+All 30 extensions exactly preserve parent sample positions, first 12 coefficient sets and noise; extra seeds regenerate all 38 added features; signals, basis knots, and unit average variance verified.

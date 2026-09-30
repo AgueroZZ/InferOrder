@@ -1,0 +1,381 @@
+---
+title: "Simulation: Comparing Single-Ordering Recovery"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: true
+    toc_float: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path='simulation_m1_comparison_files/figure-html/')
+study <- 'experiments/m1_bspline_comparison'
+metrics <- read.csv(file.path(study,'metrics.csv'))
+summary <- read.csv(file.path(study,'summary.csv'))
+paired <- read.csv(file.path(study,'paired_summary.csv'))
+study50 <- 'experiments/m1_bspline_comparison_p50'
+summary50 <- read.csv(file.path(study50,'summary.csv'))
+dimensions <- read.csv(file.path(study50,'dimension_summary.csv'))
+study_isomap <- 'experiments/m1_bspline_isomap'
+isomap_summary <- read.csv(file.path(study_isomap,'summary.csv'))
+isomap_metrics <- read.csv(file.path(study_isomap,'metrics.csv'))
+isomap_names <- c(Isomap='Initial embedding',MPCurve='MPCurve',PCurve='Principal curve',GPLVM='GPLVM',BayesianGPLVM='Bayesian GPLVM')
+method_names <- c(PCA='Initial PCA',MPCurve='MPCurve',PCurve='Principal curve',GPLVM='GPLVM',BayesianGPLVM='Bayesian GPLVM')
+cell <- function(noise,method,column='median_rho') summary[summary$noise==noise & summary$method==method,column]
+fig <- function(name, source=study, prefix='') {
+  destination <- file.path('docs','simulation_m1_comparison_files','figure-html',paste0(prefix,name,'.png'))
+  dir.create(dirname(destination),recursive=TRUE,showWarnings=FALSE)
+  stopifnot(file.copy(file.path(source,'figures',paste0(name,'.png')),destination,overwrite=TRUE))
+  knitr::include_graphics(normalizePath(destination),rel_path=FALSE)
+}
+```
+
+## Question and design
+
+How well do MPCurve, principal curves, GPLVM and Bayesian GPLVM recover one
+sample ordering when they share a one-dimensional initialization? We compare
+30 independent random B-spline realizations under two noise levels, with 200
+samples, first with 12 features and then with 50 features in a paired extension.
+We first compare a shared PCA start, then replace it with a shared Isomap start
+on the same observed data.
+The initial 12-feature experiment extends the earlier diagnostic of one
+selected trajectory to a replicated comparison. At 12 features, the four fitted methods have similar mean recovery, with large
+variation across trajectories. Principal curves sometimes recover a folded
+ordering but also show larger gains and losses. We measure recovery using
+absolute Spearman correlation; values near one indicate recovery up to an
+arbitrary reversal of the ordering.
+
+The initial 12-feature experiment draws sample positions independently from Uniform(0,1). Its 12
+feature trajectories have independent standard-normal coefficients in an
+eight-dimensional cubic B-spline basis, with interior knots at 0.2, 0.4, 0.6 and
+0.8 and boundary knots at 0 and 1. All features share the same sample position.
+The trajectories are centered over a 2,001-point uniform grid and scaled together
+to average signal variance one. This preserves variation in feature amplitude.
+No trajectory is constrained to be monotone.
+
+Gaussian noise has standard deviation 0.25 or 1, giving average variance SNR 16
+and 1. The two noise conditions share the underlying curve, sample positions and
+standard-normal errors within each replicate. Replicates are independent. Each
+method receives the same column-centered matrix, without feature variance
+standardization. Every generated dataset is included. Figure 1 shows the first
+replicate.
+
+```{r example, echo=FALSE, out.width='100%', fig.cap='Figure 1. The first replicate, selected by index before fitting: all 12 generating trajectories (left) and the observed data projected onto their first two principal components at low and high noise (center and right). Color in the PCA panels denotes true sample position. Each noise condition has its own PCA computed from its observed matrix.'}
+fig('example_trajectories')
+```
+
+## Common initialization and methods
+
+PC1 is computed once from each observed matrix and supplied to every method.
+GPLVM and Bayesian GPLVM receive its centered coordinates scaled to variance one;
+this bypasses GPy's different native PCA preprocessing. Principal curves receive
+the geometric PC1 line and start with exactly the same ranks. MPCurve maps PC1
+ranks into 50 ordered quantile bins, introducing ties within bins. Thus the
+methods share the same initial direction while using their required internal
+representations. The initial PCA baseline makes subsequent improvement visible.
+
+MPCurve uses the frozen MPCurver 0.3.4 implementation from the pilot: a single
+ordering, an RW2 smoothness prior, learned feature-specific noise and smoothness,
+and adaptive position weights. CAVI stops at relative ELBO tolerance $10^{-6}$
+or 2,000 sweeps. Principal curves use princurve 2.1.6 with the default df=5
+smoothing splines and endpoint stretch 2; the tighter pilot stopping rule allows
+1,000 iterations with relative projection-distance tolerance $10^{-6}$.
+
+GPy 1.13.2 supplies one-dimensional GPLVM with its native RBF plus bias covariance
+and Bayesian GPLVM with its native RBF covariance and 50 inducing points. Both
+receive one PCA start per dataset. Bayesian latent variances and inducing-point
+selection use a recorded replicate-specific seed. Both GP methods learn their
+noise and covariance parameters and use L-BFGS-B, allowing up to three blocks of
+2,000 evaluations; another block is used only after an evaluation-limit stop.
+All settings were fixed before the first timing run. The stopping rules differ
+across methods, so convergence is assessed within each method's own objective.
+
+## Ordering recovery
+
+The first comparison uses $P=12$ features (Figure 2 and Table 1).
+
+```{r recovery, echo=FALSE, out.width='100%', fig.cap='Figure 2. Absolute Spearman correlation between true sample position and inferred position over 30 replicates per noise condition. Boxes span Tukey hinges (approximate quartiles), center lines are medians, and whiskers extend to the most extreme values within 1.5 hinge ranges. Every finite endpoint is plotted: dots denote convergence or the PCA baseline; crosses denote an unmet stopping rule. Small horizontal offsets identify replicates and do not encode recovery. Numbers above boxes are medians. The dashed horizontal line marks 0.95 recovery and the dotted line marks 0.5. A global reversal is treated as equivalent.'}
+fig('ordering_recovery')
+```
+
+```{r summary-table, echo=FALSE}
+tab <- summary[,c('noise','method','median_rho','q25','q75','median_tau','recovery95','converged')]
+tab$noise <- ifelse(tab$noise=='low','Low (SNR 16)','High (SNR 1)')
+tab$method <- unname(method_names[tab$method])
+tab$converged[tab$method=='Initial PCA'] <- NA
+knitr::kable(tab,row.names=FALSE,digits=3,col.names=c('Noise','Method','Median Spearman','Q1','Q3','Median Kendall','Recovery >=0.95','Converged'),
+ caption='Table 1. Recovery and convergence among 30 replicates in each condition. Absolute Kendall correlation is a secondary ordering metric. Counts include all finite endpoints; convergence is not applicable to initial PCA.')
+```
+
+At low noise, median recovery is
+**`r sprintf('%.3f',cell('low','MPCurve'))`** for MPCurve,
+**`r sprintf('%.3f',cell('low','PCurve'))`** for principal curves,
+**`r sprintf('%.3f',cell('low','GPLVM'))`** for GPLVM, and
+**`r sprintf('%.3f',cell('low','BayesianGPLVM'))`** for Bayesian GPLVM,
+compared with **`r sprintf('%.3f',cell('low','PCA'))`** for the initial PCA.
+At high noise, the corresponding medians are
+**`r sprintf('%.3f',cell('high','MPCurve'))`**,
+**`r sprintf('%.3f',cell('high','PCurve'))`**,
+**`r sprintf('%.3f',cell('high','GPLVM'))`**, and
+**`r sprintf('%.3f',cell('high','BayesianGPLVM'))`**;
+initial PCA gives **`r sprintf('%.3f',cell('high','PCA'))`**.
+
+MPCurve meets its stopping rule in
+`r sum(summary$converged[summary$method=='MPCurve'])`/60 fits, principal curves in
+`r sum(summary$converged[summary$method=='PCurve'])`/60, GPLVM in
+`r sum(summary$converged[summary$method=='GPLVM'])`/60 and Bayesian GPLVM in
+`r sum(summary$converged[summary$method=='BayesianGPLVM'])`/60.
+The 18 principal-curve exceptions reach the iteration cap; the one Bayesian
+GPLVM exception terminates with a line-search error. All finite endpoints
+remain in the summaries. A converged fit can still recover
+the wrong ordering, and a budget-limited result is an algorithmic endpoint rather
+than a demonstrated optimum.
+
+## Paired method differences
+
+These comparisons use the same $P=12$ fits (Figure 3 and Table 2).
+
+Marginal boxplots summarize recovery distributions. Comparing methods within the
+same replicate also accounts for their shared curve and noise realization.
+
+```{r paired, echo=FALSE, out.width='100%', fig.cap='Figure 3. Paired differences in absolute Spearman recovery, computed as comparator minus MPCurve on the same dataset. Positive values favor the comparator; the dashed line is zero difference. Box and whisker conventions match Figure 2. Each point is one replicate, and a cross marks a comparator that did not meet its stopping rule. All endpoints are retained.'}
+fig('paired_differences')
+```
+
+```{r paired-table, echo=FALSE}
+tab <- paired[,c('noise','method','mean_delta','median_delta','mcse','wins')]
+tab$noise <- ifelse(tab$noise=='low','Low (SNR 16)','High (SNR 1)')
+tab$method <- unname(method_names[tab$method])
+knitr::kable(tab,row.names=FALSE,digits=3,col.names=c('Noise','Comparator','Mean difference','Median difference','Monte Carlo SE','Positive differences'),
+ caption='Table 2. Paired comparator-minus-MPCurve differences over 30 replicates. Monte Carlo SE is the standard deviation of the paired differences divided by the square root of 30. Positive differences count strict wins of any size; these are descriptive comparisons, not multiplicity-adjusted tests.')
+```
+
+## Increasing feature count to 50
+
+We extend each replicate to $P=50$ while keeping $N=200$, both noise levels,
+and all fitting settings fixed. Each extension preserves the original sample
+positions, the 12 original spline coefficient sets, and their standardized noise
+draws, then adds 38 independent features. The entire 50-feature signal is
+normalized to average variance one, preserving SNR 16 and 1. This common
+rescaling also changes the amplitudes of the original 12 signals. PCA is
+recomputed from all 50 observed features and shared across methods
+(Figure 4 and Table 3).
+
+```{r recovery-p50, echo=FALSE, out.width='100%', fig.cap='Figure 4. Ordering recovery with 50 features, 200 samples and 30 replicates per noise condition. Absolute Spearman correlation allows a global reversal. Boxes, whiskers and reference lines follow Figure 2; numbers above boxes are medians. Every finite endpoint is retained. Crosses indicate that the fitting stopping rule was not met.'}
+fig('ordering_recovery',source=study50,prefix='p50_')
+```
+
+<div style="overflow-x: auto;">
+
+```{r dimensions-table, echo=FALSE}
+tab <- dimensions[,c('noise','method','median_rho_p12','median_rho_p50','mean_change','mcse_change','converged_p50')]
+tab$noise <- ifelse(tab$noise=='low','Low (SNR 16)','High (SNR 1)')
+tab$method <- unname(method_names[tab$method])
+tab$converged_p50[tab$method=='Initial PCA'] <- NA
+knitr::kable(tab,row.names=FALSE,digits=3,col.names=c('Noise','Method','Median, P=12','Median, P=50','Mean paired change','Monte Carlo SE','Converged, P=50'),
+ caption='Table 3. Absolute Spearman recovery at both feature counts and the paired P=50 minus P=12 change. Monte Carlo SE is the sample standard deviation of the 30 paired changes divided by the square root of 30. Convergence counts are out of 30; PCA is a baseline.')
+```
+
+</div>
+
+```{r feature-effect, echo=FALSE, out.width='100%', fig.cap='Figure 5. Within-replicate changes in absolute Spearman recovery after extending from 12 to 50 features. Positive values favor 50 features; the dashed line marks no change. Boxes and whiskers use the Figure 2 convention. A cross indicates that either feature-count fit did not meet its stopping rule. The PCA column shows how the initial ordering itself changes when using the additional features.'}
+fig('feature_count_effect',source=study50,prefix='p50_')
+```
+
+At $P=50$, MPCurve meets its stopping rule in
+`r sum(summary50$converged[summary50$method=='MPCurve'])`/60 fits, principal curves
+in `r sum(summary50$converged[summary50$method=='PCurve'])`/60, GPLVM in
+`r sum(summary50$converged[summary50$method=='GPLVM'])`/60 and Bayesian GPLVM in
+`r sum(summary50$converged[summary50$method=='BayesianGPLVM'])`/60.
+Eight principal-curve fits reach the iteration cap, and one low-noise Bayesian
+GPLVM fit ends with a line-search error. All 60 datasets and all finite endpoints
+contribute to the comparison.
+
+Increasing the feature count raises median recovery for MPCurve from 0.612 to
+0.693 at low noise and from 0.550 to 0.707 at high noise (Figure 5). Both GPLVM variants
+also improve relative to their 12-feature medians. Initial PCA improves from
+0.620 to 0.698 and from 0.552 to 0.695, respectively, so much of the change is
+already present at initialization. Median gains beyond the P=50 PCA baseline
+are only about 0.01--0.04 for MPCurve and the GP methods.
+
+Principal curves have a wider spread: nine low-noise and eight high-noise
+endpoints reach at least 0.95 recovery, but their median recovery is 0.496 and
+0.568. Compared with P=50 initial PCA, they lose more than 0.05 in 16/30
+replicates at each noise level. Occasional near-perfect recovery coexists with
+substantial deterioration on other trajectories. At P=50, the paired mean
+principal-curve minus MPCurve difference is -0.083 (Monte Carlo SE 0.043) at low
+noise and -0.057 (SE 0.038) at high noise. The two GP comparators differ from
+MPCurve by +0.014 and +0.020 at low noise, and -0.011 and -0.002 at high noise.
+These are descriptive comparisons within this generator and fixed settings.
+
+### Fitting time
+
+<div style="overflow-x: auto;">
+
+```{r runtime-table, echo=FALSE}
+tab <- dimensions[dimensions$method!='PCA',c('noise','method','median_seconds_p12','median_seconds_p50','median_paired_runtime_ratio')]
+tab$noise <- ifelse(tab$noise=='low','Low (SNR 16)','High (SNR 1)')
+tab$method <- unname(method_names[tab$method])
+knitr::kable(tab,row.names=FALSE,digits=2,col.names=c('Noise','Method','Seconds, P=12','Seconds, P=50','Median paired time ratio'),
+ caption='Table 4. Median fitting seconds across 30 datasets and median within-replicate P=50/P=12 time ratios, including budget-limited endpoints. Time ratios are paired before taking the median, so they need not equal the ratio of the two displayed medians.')
+```
+
+</div>
+
+Timing (Table 4) includes model setup and optimization, excluding shared simulation and
+PCA computation. The R timing also includes a zero-iteration fit that records
+the initial state; the GP timing includes its parameter archive write. Each fit
+uses one BLAS thread. Four fits can run concurrently: the original study used
+one R process and three GP workers, and the extension uses two of each. These
+are descriptive end-to-end measurements under each method's stopping criterion.
+MPCurve remains fastest at low noise (0.26 seconds median), while GPLVM is
+fastest at high noise (0.64 seconds, compared with MPCurve's 1.22 seconds).
+GPLVM's high-noise median evaluation count falls from 430 to 152 when extending
+to 50 features, which helps explain its shorter time despite the additional
+features. An increase in feature count can change both work per iteration and the
+number of iterations, so the observed ratios are not isolated computational-complexity
+measurements.
+
+## Common Isomap initialization
+
+We rerun all four methods on the same 120 observed datasets using Isomap with
+$k=15$ neighbors, the package default and the earlier pilot setting. The
+undirected union of Euclidean nearest-neighbor edges defines shortest-path
+geodesic distances; all 200 samples serve as landmarks for one-dimensional
+classical MDS. Every graph is connected, and all samples are retained. The
+coordinate is centered and scaled to variance one before use. Neighborhood size
+is fixed across replicates and is not selected using recovery.
+
+MPCurve maps the shared coordinate into 50 quantile bins. The two GP models
+receive that coordinate directly, with the same random seeds and other fitting
+settings as their PCA runs. Principal curves first smooth each feature against
+Isomap using df=5, then project observations onto the resulting geometric curve.
+This projection can change the actual initial ordering; Table 6 documents
+its effect. Thus the comparison uses a common upstream Isomap start, with each
+method's required internal representation.
+
+```{r isomap-recovery, echo=FALSE, out.width='100%', fig.cap='Figure 6. Absolute Spearman ordering recovery from common Isomap k=15 starts, with N=200 and 30 replicates in each panel. Rows show P=12 and P=50; columns show low and high noise. Boxes span Tukey hinges, center lines show medians, and whiskers extend to the most extreme value within 1.5 hinge ranges. All endpoints appear as dots or, when the stopping rule is unmet, crosses. A triangle marks one principal-curve fit with a numerical smoothing warning. The dashed line marks 0.95 recovery. Numbers above boxes are medians; global reversal is allowed.'}
+fig('ordering_recovery',source=study_isomap,prefix='isomap_')
+```
+
+<div style="overflow-x: auto;">
+
+```{r isomap-recovery-table, echo=FALSE}
+tab <- isomap_summary[,c('P','noise','method','median_pca_rho','median_rho','mean_change','mcse_change','converged')]
+tab$noise <- ifelse(tab$noise=='low','Low','High')
+tab$method <- unname(isomap_names[tab$method])
+tab$converged[tab$method=='Initial embedding'] <- NA
+knitr::kable(tab,row.names=FALSE,digits=4,
+ col.names=c('P','Noise','Method','PCA median','Isomap median','Mean paired change','Monte Carlo SE','Converged'),
+ caption='Table 5. Median absolute Spearman recovery under PCA and Isomap initialization on identical data. Changes are paired Isomap minus PCA results over 30 replicates per condition. The initial-embedding row compares the embeddings themselves. Convergence counts refer to Isomap fits and are out of 30; all endpoints are retained.')
+```
+
+</div>
+
+<div style="overflow-x: auto;">
+
+```{r isomap-projection, echo=FALSE}
+tab <- isomap_summary[isomap_summary$method=='PCurve',c('P','noise','median_actual_initial_rho','median_start_agreement','median_rho')]
+knitr::kable(tab,row.names=FALSE,digits=4,
+ col.names=c('P','Noise','Actual initial recovery','Rank agreement with Isomap','Final recovery'),
+ caption='Table 6. Principal-curve initialization audit. Entries are replicate medians of absolute Spearman recovery after the geometric projection, absolute rank correlation of that projected start with upstream Isomap, and final recovery. Rank agreement need not be one; this adaptation precedes the principal-curve iterations.')
+```
+
+</div>
+
+```{r isomap-effect, echo=FALSE, out.width='100%', fig.cap='Figure 7. Paired change in absolute Spearman recovery after replacing PCA with Isomap initialization on the same data. Positive values favor Isomap; the dashed line marks no change. The first column compares the embeddings themselves, and the other columns compare fitted endpoints. Boxes and whiskers follow Figure 6. Crosses indicate that either the PCA or the Isomap fit did not meet its stopping rule; a triangle marks a numerical smoothing warning. Each panel contains 30 paired replicates.'}
+fig('initialization_effect',source=study_isomap,prefix='isomap_')
+```
+
+Isomap substantially improves low-noise recovery (Figures 6 and 7, Table 5): for MPCurve, median absolute
+Spearman rises from 0.612 to 0.881 at $P=12$ and from 0.693 to 0.9997 at $P=50$.
+The other methods improve as well. At $P=50$ and low noise, all four fitted
+medians are approximately 0.9997, but the number of endpoints at or above 0.95
+is 24/30 for MPCurve, 29/30 for principal curves, 24/30 for GPLVM and 28/30 for
+Bayesian GPLVM. The corresponding means are 0.9721, 0.9957, 0.9766 and 0.9841.
+Principal curves therefore improve the lower tail in this condition: their
+paired mean advantage over MPCurve is 0.0235 (Monte Carlo SE 0.0082), despite
+near-identical medians.
+
+At high noise, MPCurve has the largest median among the four methods at $P=12$
+(0.636 versus 0.550, 0.605 and 0.543). At $P=50$, principal curves have the
+largest median (0.883), followed by Bayesian GPLVM (0.857), GPLVM (0.846) and
+MPCurve (0.839). However, principal curves' mean recovery in this condition is
+0.803, below MPCurve's 0.834, because several replicates deteriorate substantially.
+The higher median does not imply better performance throughout the distribution.
+
+All 480 fitted endpoints are finite. MPCurve and GPLVM meet their stopping rules
+in 120/120 fits each, principal curves in 104/120 and Bayesian GPLVM in 115/120.
+The exceptions are 16 principal-curve iteration caps and five Bayesian line-search
+errors; all remain in the analysis. One converged principal-curve fit
+($P=12$, low noise, replicate 22) emits smoothing warnings and falls back to
+reported df=1 within the numerical smoother despite the requested df=5. It is
+retained and flagged with a triangle in the figures.
+
+### Runtime with Isomap
+
+<div style="overflow-x: auto;">
+
+```{r isomap-runtime, echo=FALSE}
+tab <- isomap_summary[isomap_summary$method!='Isomap',c('P','noise','method','median_pca_fit_seconds','median_fit_seconds','median_total_seconds')]
+tab$method <- unname(isomap_names[tab$method])
+knitr::kable(tab,row.names=FALSE,digits=2,
+ col.names=c('P','Noise','Method','PCA fit seconds','Isomap fit seconds','Isomap total seconds'),
+ caption='Table 7. Median runtime across 30 replicates. Fit times use the same boundaries as Table 4. Isomap total time adds the shared embedding cost to every fit and adds geometric-curve construction for principal curves, per replicate before taking medians. Two R processes and two GP workers each use one BLAS thread; times are descriptive under method-specific stopping rules.')
+```
+
+</div>
+
+With initialization cost included (Table 7), median MPCurve time is 0.22/0.52 seconds at
+$P=12$ and 0.51/1.42 seconds at $P=50$ (low/high noise). MPCurve is fastest in
+three conditions; at $P=50$ and high noise, GPLVM is faster at 0.76 seconds total.
+The shared Isomap computation takes a median 0.04--0.08 seconds per dataset.
+
+## Interpretation and reproduction
+
+The same-data Isomap comparison shows that initialization choice materially
+changes ordering recovery, especially at low noise. A good common initialization
+brings the typical fit close to perfect recovery at $P=50$, while the remaining
+hard replicates expose differences that medians alone conceal. The relative
+performance depends on noise and feature count; these results describe fixed
+$k=15$, not a search over Isomap neighborhoods.
+
+At $P=12$, the paired mean differences relative to MPCurve range from about -0.014 to
++0.010, and each is smaller in magnitude than its Monte Carlo standard error.
+These 30 replicates therefore do not establish a consistent recovery advantage
+for any comparator. This is not an equivalence result. Principal curves have
+three low-noise endpoints above 0.95 recovery, whereas the other methods have
+none, but principal curves also lose more than 0.05 relative to PCA in 12/30
+low-noise replicates, as often as they gain more than 0.05. Their occasional
+large recoveries do not translate into a higher mean or median here.
+
+Under PCA initialization, MPCurve and both GPLVM variants usually change initial recovery only
+modestly. Poor recovery persists even at low noise in many replicates, motivating
+the Isomap comparison above. That comparison demonstrates a benefit of changing
+initialization without establishing it as the sole cause of every failure.
+
+This experiment measures recovery for random cubic B-spline curves at one sample
+size and two feature counts under shared PCA and Isomap starts. The per-replicate results and
+paired differences should guide interpretation alongside the medians: a method
+can improve some trajectories while worsening others. These results characterize
+this generator and these fixed fitting settings; sensitivity to spline complexity
+and other neighborhood choices remains a separate question. Because PCA is
+recomputed at each feature count, the paired extension combines changes in the
+initial ordering with changes in how the methods use additional features.
+
+The experiment directory contains generating coefficients and noise, full R fits,
+GP parameters and optimizer statuses, sample positions, input hashes, seeds,
+package versions, and plotting scripts. The
+[reproduction instructions](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/m1_bspline_comparison)
+specify the frozen MPCurver source commit
+`15f2b0bbe5dfa61cd46da5160b2bc251e75a0475` and pinned comparator versions.
+The [Isomap comparison](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/m1_bspline_isomap)
+retains the unchanged input hashes, full geodesic matrices, actual initial
+positions, fit records and paired PCA endpoints.
+The [50-feature extension](https://github.com/AgueroZZ/InferOrder/tree/master/experiments/m1_bspline_comparison_p50)
+also saves parent input hashes and verifies its retained coefficients and noise.
+Checks reconstruct every observed matrix, verify the shared PCA ranks and ordered
+MPCurve bins, and recompute ordering metrics from saved coordinates. The page
+loads saved results and performs no model fitting.

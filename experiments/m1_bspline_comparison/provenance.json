@@ -1,0 +1,12 @@
+{
+  "InferOrder_commit": "3b0f27a1036115fc8a9fa2eb330e08aee6657b79",
+  "MPCurver_workspace_commit": "dbb10542594ff6e8a93726ec3041040211243675",
+  "MPCurver_fitting_source_commit": "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475",
+  "archive_sha256": "58d0c99c6170994c82eedba190fb1c28a63eb47530c575705323c3cf3992b7c6",
+  "orientation": "samples by features",
+  "versions": {
+    "MPCurver": "0.3.4",
+    "princurve": "2.1.6",
+    "GPy": "1.13.2"
+  }
+}

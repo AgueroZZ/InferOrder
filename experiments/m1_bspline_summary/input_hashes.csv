@@ -1,0 +1,5 @@
+"path","sha256"
+"experiments/m1_bspline_comparison/inputs/rep01.rds","cfd3e643605a7b0afba8fcc9159ea54bd730f8df1340304a57f9df25a11975bd"
+"experiments/m1_bspline_comparison/metrics.csv","a6c247aba55c64325f82db55f14dd8df903568ef76fb9eea6e81d9e7fba7b900"
+"experiments/m1_bspline_comparison_p50/metrics.csv","db301c6544a247deab9178353e52ba78708866c234d7fb5091e75d7042098d5b"
+"experiments/m1_bspline_isomap/metrics.csv","2de0c2e33fad8c9ce36db2f67b9cbdf6a8aac0893efd67a286bbbe9386522810"

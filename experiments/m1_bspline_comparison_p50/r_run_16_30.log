@@ -1,0 +1,61 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+low_r16 MPCurve converged 0.7263562 0.554 seconds
+low_r16 PCurve converged 0.5002597 3.177 seconds
+high_r16 MPCurve converged 0.7044866 1.504 seconds
+high_r16 PCurve converged 0.5009524 2.749 seconds
+low_r17 MPCurve converged 0.7851431 0.304 seconds
+low_r17 PCurve converged 0.9994644 4 seconds
+high_r17 MPCurve converged 0.7176311 1.534 seconds
+high_r17 PCurve converged 0.9962196 4.175 seconds
+low_r18 MPCurve converged 0.672737 0.223 seconds
+low_r18 PCurve converged 0.1741267 4.304 seconds
+high_r18 MPCurve converged 0.7464307 1.071 seconds
+high_r18 PCurve converged 0.7816704 2.359 seconds
+low_r19 MPCurve converged 0.6964626 0.19 seconds
+low_r19 PCurve converged 0.4915842 2.067 seconds
+high_r19 MPCurve converged 0.6339263 0.792 seconds
+high_r19 PCurve converged 0.4847091 1.458 seconds
+low_r20 MPCurve converged 0.7220518 0.153 seconds
+low_r20 PCurve iteration limit 0.5861064 53.657 seconds
+high_r20 MPCurve converged 0.7447551 1.884 seconds
+high_r20 PCurve converged 0.5036677 2.395 seconds
+low_r21 MPCurve converged 0.7408472 0.376 seconds
+low_r21 PCurve converged 0.1518305 3.07 seconds
+high_r21 MPCurve converged 0.7541919 1.008 seconds
+high_r21 PCurve converged 0.9265776 3.404 seconds
+low_r22 MPCurve converged 0.6735112 0.295 seconds
+low_r22 PCurve converged 0.649634 4.392 seconds
+high_r22 MPCurve converged 0.6954084 1.877 seconds
+high_r22 PCurve converged 0.5350984 1.61 seconds
+low_r23 MPCurve converged 0.6880459 0.172 seconds
+low_r23 PCurve iteration limit 0.4686692 51.122 seconds
+high_r23 MPCurve converged 0.6909608 1.023 seconds
+high_r23 PCurve iteration limit 0.4596001 52.235 seconds
+low_r24 MPCurve converged 0.8615107 0.15 seconds
+low_r24 PCurve converged 0.9997664 1.871 seconds
+high_r24 MPCurve converged 0.8918818 0.689 seconds
+high_r24 PCurve converged 0.9975094 2.745 seconds
+low_r25 MPCurve converged 0.603047 0.25 seconds
+low_r25 PCurve converged 0.9996557 4.521 seconds
+high_r25 MPCurve converged 0.698611 1.172 seconds
+high_r25 PCurve converged 0.9966794 3.896 seconds
+low_r26 MPCurve converged 0.7145182 0.86 seconds
+low_r26 PCurve converged 0.2270798 3.591 seconds
+high_r26 MPCurve converged 0.7466437 1.409 seconds
+high_r26 PCurve converged 0.2052518 3.52 seconds
+low_r27 MPCurve converged 0.6148712 0.176 seconds
+low_r27 PCurve converged 0.6189486 2.269 seconds
+high_r27 MPCurve converged 0.6108528 0.898 seconds
+high_r27 PCurve iteration limit 0.5032617 51.298 seconds
+low_r28 MPCurve converged 0.3671004 0.269 seconds
+low_r28 PCurve iteration limit 0.1779918 50.878 seconds
+high_r28 MPCurve converged 0.4806015 2.11 seconds
+high_r28 PCurve iteration limit 0.2236397 48.813 seconds
+low_r29 MPCurve converged 0.7101387 0.49 seconds
+low_r29 PCurve converged 0.9997315 2.127 seconds
+high_r29 MPCurve converged 0.7690437 1.195 seconds
+high_r29 PCurve converged 0.9969192 1.982 seconds
+low_r30 MPCurve converged 0.2216431 0.36 seconds
+low_r30 PCurve converged 0.3391141 1.778 seconds
+high_r30 MPCurve converged 0.1470592 1.338 seconds
+high_r30 PCurve converged 0.2903278 1.682 seconds

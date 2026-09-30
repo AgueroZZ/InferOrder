@@ -1,0 +1,9 @@
+"P","noise","method","median_evaluations"
+12,"low","GPLVM",673
+12,"low","BayesianGPLVM",837
+12,"high","GPLVM",430
+12,"high","BayesianGPLVM",233.5
+50,"low","GPLVM",577
+50,"low","BayesianGPLVM",1297
+50,"high","GPLVM",152
+50,"high","BayesianGPLVM",222.5

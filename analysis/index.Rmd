@@ -27,8 +27,14 @@ provides full vignettes and software documentation.
 
 - **Fixed $M=1$**
 
+  - [Simulation summary: three figures](simulation_summary.html) compares four
+    methods under shared PCA and Isomap initialization.
+
   - [One ordering: a noisy spiral](simulation_m1.html) tests recovery of a
     known sample order.
+  - [Random B-splines: four methods](simulation_m1_comparison.html) compares
+    ordering recovery from common PCA and Isomap starts over 30 replicates at two noise levels,
+    with 12 features and a paired extension to 50 features.
 
 - **Fixed $M=2$**
 

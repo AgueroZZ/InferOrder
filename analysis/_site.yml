@@ -9,8 +9,12 @@ navbar:
       href: method.html
     - text: Simulation
       menu:
+        - text: Simulation summary
+          href: simulation_summary.html
         - text: One ordering
           href: simulation_m1.html
+        - text: "One ordering: method comparison"
+          href: simulation_m1_comparison.html
         - text: Two orderings
           href: simulation_m2.html
         - text: "Estimate M: all monotone"

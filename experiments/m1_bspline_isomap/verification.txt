@@ -1,0 +1,4 @@
+Verified all 120 input matrices and hashes against the PCA studies; all Isomap graphs connected;
+independent classical MDS ranks; shared GP coordinates; monotone MPCurve bins; PCurve initial projection replay;
+all 600 baseline/method records finite; metrics and driver hashes verified; all endpoints retained.
+Converged method fits: 459/480.

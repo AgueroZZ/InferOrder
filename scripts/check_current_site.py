@@ -14,7 +14,9 @@ DOCS = ROOT / "docs"
 PAGES = {
     "index.html": ("Method", "Simulation", "Analysis"),
     "method.html": ("Model", "Variational inference", "Several orderings"),
+    "simulation_summary.html": ("Simulation design", "PCA initialization", "Isomap initialization"),
     "simulation_m1.html": ("Question and design", "Ordering recovery"),
+    "simulation_m1_comparison.html": ("Question and design", "Ordering recovery", "Paired method differences", "Increasing feature count to 50", "Common Isomap initialization"),
     "simulation_m2.html": ("Feature assignments", "Sample orderings"),
     "estimate_intrinsic_m.html": ("Simulation design", "Methods", "Recovery of M", "Summary and reproduction"),
     "estimate_intrinsic_m_smooth.html": ("Simulation design", "Methods", "Recovery of M", "Summary and reproduction"),
@@ -24,7 +26,9 @@ PAGES = {
 EXPECTED_IMAGES = {
     "index.html": 0,
     "method.html": 0,
+    "simulation_summary.html": 3,
     "simulation_m1.html": 2,
+    "simulation_m1_comparison.html": 7,
     "simulation_m2.html": 3,
     "estimate_intrinsic_m.html": 11,
     "estimate_intrinsic_m_smooth.html": 11,
@@ -34,7 +38,9 @@ EXPECTED_IMAGES = {
 EXPECTED_TITLES = {
     "index.html": "MPCurve: Methods and Results",
     "method.html": "MPCurve and CAVI",
+    "simulation_summary.html": "Simulation Summary: Single-Ordering Recovery",
     "simulation_m1.html": "Simulation: One Latent Ordering",
+    "simulation_m1_comparison.html": "Simulation: Comparing Single-Ordering Recovery",
     "simulation_m2.html": "Simulation: Two Latent Orderings",
     "estimate_intrinsic_m.html": "Simulation: Estimating M with All-Monotone Trajectories",
     "estimate_intrinsic_m_smooth.html": "Simulation: Estimating M with One Monotone Anchor per Ordering",
@@ -209,7 +215,7 @@ def main():
         assert "custom <code>fig.path</code>" not in html, name
 
         text = page_text(page)
-        assert "CAVI" in text, name
+        assert ("MPCurve" if name == "simulation_summary.html" else "CAVI") in text, name
         assert "smooth-em" not in text.lower(), name
         assert "smoothemr" not in text.lower(), name
         for item in page.links + page.images:
@@ -221,6 +227,31 @@ def main():
                 continue
             target = path.parent / unquote(parsed_url.path)
             assert target.exists(), f"Broken local reference in {name}: {item}"
+
+    comparison_text = page_text(parsed["simulation_m1_comparison.html"])
+    for study_name in ("m1_bspline_comparison", "m1_bspline_comparison_p50"):
+        study = ROOT / "experiments" / study_name
+        metrics = rows(study / "metrics.csv")
+        summary = rows(study / "summary.csv")
+        assert len(metrics) == 300 and len(summary) == 10
+        assert len({(row["id"], row["method"]) for row in metrics}) == 300
+        assert all(row["valid"] == "TRUE" for row in metrics)
+        assert all(f'{float(row["median_rho"]):.3f}' in comparison_text for row in summary)
+    isomap_study = ROOT / "experiments/m1_bspline_isomap"
+    isomap_metrics = rows(isomap_study / "metrics.csv")
+    isomap_summary = rows(isomap_study / "summary.csv")
+    assert len(isomap_metrics) == 600 and len(isomap_summary) == 20
+    assert len({(row["id"], row["method"]) for row in isomap_metrics}) == 600
+    for row in isomap_summary:
+        assert f'{float(row["median_rho"]):.4f}' in comparison_text
+        if row["method"] != "Isomap":
+            assert f'{float(row["median_total_seconds"]):.2f}' in comparison_text
+    dimension_summary = rows(ROOT / "experiments/m1_bspline_comparison_p50/dimension_summary.csv")
+    assert len(dimension_summary) == 10
+    for row in dimension_summary:
+        assert f'{float(row["mean_change"]):.3f}' in comparison_text
+        if row["method"] != "PCA":
+            assert f'{float(row["median_seconds_p50"]):.2f}' in comparison_text
 
     assert parsed["index.html"].headings == ["Method", "Simulation", "Analysis"]
     index_text = page_text(parsed["index.html"])

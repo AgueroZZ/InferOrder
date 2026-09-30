@@ -5,6 +5,8 @@ local({
     "index.Rmd",
     "method.Rmd",
     "simulation_m1.Rmd",
+    "simulation_m1_comparison.Rmd",
+    "simulation_summary.Rmd",
     "simulation_m2.Rmd",
     "estimate_intrinsic_m.Rmd",
     "estimate_intrinsic_m_smooth.Rmd",

@@ -1,0 +1,11 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+Rendering analysis/index.Rmd
+Rendering analysis/method.Rmd
+Rendering analysis/simulation_m1.Rmd
+Rendering analysis/simulation_m1_comparison.Rmd
+Rendering analysis/simulation_m2.Rmd
+Rendering analysis/estimate_intrinsic_m.Rmd
+Rendering analysis/estimate_intrinsic_m_smooth.Rmd
+Rendering analysis/fitness.Rmd
+Rendering analysis/pancreas.Rmd
+Rendered and checked 9 current pages.

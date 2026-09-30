@@ -1,0 +1,4 @@
+Verified: 60 paired inputs; 300 method/baseline records; input SHA256 hashes;
+exact signal/noise reconstruction; shared PCA ranks; MPCurve monotone 50-bin quantization;
+R/Python recovery metric agreement; all endpoints retained regardless of convergence.
+Finite endpoints: 300/300. Converged method fits: 221/240.

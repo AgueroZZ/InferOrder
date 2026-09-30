@@ -1,0 +1,136 @@
+function (X, k = 15, ndim = 1, component = 1, landmark = NULL, 
+    landmark_method = c("random", "kmeans"), seed = NULL, keep = c("giant", 
+        "all"), return_full = TRUE, orient_by_pc1 = TRUE, scale01 = TRUE, 
+    eps = 1e-08) 
+{
+    X <- as.matrix(X)
+    n0 <- nrow(X)
+    if (n0 < 3) 
+        stop("Need n >= 3.")
+    if (k < 2 || k >= n0) 
+        stop("Require 2 <= k < n.")
+    if (ndim < 1) 
+        stop("ndim must be >= 1.")
+    if (component < 1 || component > ndim) 
+        stop("component must be between 1 and ndim.")
+    keep <- match.arg(keep)
+    landmark_method <- match.arg(landmark_method)
+    if (!is.null(seed)) 
+        set.seed(seed)
+    nn <- RANN::nn2(data = X, query = X, k = k + 1, treetype = "kd")
+    idx <- nn$nn.idx[, -1, drop = FALSE]
+    dist <- nn$nn.dists[, -1, drop = FALSE]
+    i <- rep(seq_len(n0), each = k)
+    j <- as.vector(t(idx))
+    w <- as.vector(t(dist))
+    edges <- data.frame(from = i, to = j, weight = w)
+    g <- igraph::graph_from_data_frame(edges, directed = FALSE, 
+        vertices = seq_len(n0))
+    comp <- igraph::components(g)
+    keep_idx <- seq_len(n0)
+    if (keep == "giant" && comp$no > 1) {
+        giant <- which.max(comp$csize)
+        keep_idx <- which(comp$membership == giant)
+    }
+    if (length(keep_idx) < 3) {
+        if (return_full) {
+            return(list(t = rep(NA_real_, n0), keep_idx = keep_idx, 
+                n_components = comp$no, embed = NULL, landmark_idx = integer(0), 
+                geodesic_to_landmark = NULL))
+        }
+        stop("Largest connected component has < 3 nodes; increase k or filter outliers.")
+    }
+    if (length(keep_idx) < n0) {
+        gk <- igraph::induced_subgraph(g, vids = keep_idx)
+        Xk <- X[keep_idx, , drop = FALSE]
+    }
+    else {
+        gk <- g
+        Xk <- X
+    }
+    n <- nrow(Xk)
+    if (is.null(landmark)) 
+        landmark <- min(1000L, n)
+    landmark <- as.integer(landmark)
+    landmark <- max(3L, min(landmark, n))
+    if (landmark_method == "random") {
+        Lk <- sort(sample.int(n, landmark))
+    }
+    else {
+        centers <- max(1L, min(landmark, n))
+        Lk <- tryCatch({
+            km <- stats::kmeans(Xk, centers = centers, iter.max = 30)
+            nnc <- RANN::nn2(data = Xk, query = km$centers, k = 1, 
+                treetype = "kd")
+            L0 <- unique(as.integer(nnc$nn.idx[, 1]))
+            if (length(L0) < 3) 
+                L0 <- sort(sample.int(n, min(centers, n)))
+            if (length(L0) < centers) {
+                extra <- setdiff(seq_len(n), L0)
+                if (length(extra) > 0) {
+                  add <- sample(extra, min(centers - length(L0), 
+                    length(extra)))
+                  L0 <- sort(c(L0, add))
+                }
+            }
+            sort(L0)
+        }, error = function(e) {
+            sort(sample.int(n, landmark))
+        })
+    }
+    D_to_L <- igraph::distances(gk, v = seq_len(n), to = Lk, 
+        weights = igraph::E(gk)$weight)
+    D_LL <- D_to_L[Lk, , drop = FALSE]
+    if (any(!is.finite(D_LL))) {
+        if (keep == "all") {
+            warning("kNN graph appears disconnected: Inf geodesic distances found. ", 
+                "Consider keep='giant' or increase k.")
+        }
+        finite_max <- suppressWarnings(max(D_LL[is.finite(D_LL)]))
+        if (!is.finite(finite_max)) 
+            finite_max <- 1
+        D_LL2 <- D_LL
+        D_LL2[!is.finite(D_LL2)] <- 2 * finite_max
+        YL <- stats::cmdscale(as.dist(D_LL2), k = ndim, eig = FALSE)
+    }
+    else {
+        YL <- stats::cmdscale(as.dist(D_LL), k = ndim, eig = FALSE)
+    }
+    YL <- as.matrix(YL)
+    if (ncol(YL) < ndim) {
+        YL <- cbind(YL, matrix(0, nrow = nrow(YL), ncol = ndim - 
+            ncol(YL)))
+    }
+    W <- 1/(pmax(D_to_L, 0) + eps)
+    W[!is.finite(W)] <- 0
+    denom <- rowSums(W)
+    denom[denom <= 0] <- 1
+    Y <- (W %*% YL)/denom
+    t_kept <- Y[, component]
+    if (orient_by_pc1) 
+        t_kept <- .orient_by_ref(t_kept, .pc1(Xk))
+    if (scale01) 
+        t_kept <- .scale01(t_kept)
+    if (return_full) {
+        t_full <- rep(NA_real_, n0)
+        t_full[keep_idx] <- t_kept
+        Y_full <- matrix(NA_real_, nrow = n0, ncol = ndim)
+        Y_full[keep_idx, ] <- Y
+        landmark_idx_full <- keep_idx[Lk]
+        t_out <- t_full
+        embed_out <- Y_full
+        landmark_idx_out <- landmark_idx_full
+    }
+    else {
+        t_out <- t_kept
+        embed_out <- Y
+        landmark_idx_out <- Lk
+    }
+    if (comp$no > 1) {
+        warning("The kNN graph has ", comp$no, " connected components; ", 
+            "Isomap computed on ", length(keep_idx), " nodes (keep='", 
+            keep, "').")
+    }
+    list(t = t_out, keep_idx = keep_idx, n_components = comp$no, 
+        embed = embed_out, landmark_idx = landmark_idx_out, geodesic_to_landmark = D_to_L)
+}

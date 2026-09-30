@@ -1,0 +1,3 @@
+All 1,200 displayed baseline/model endpoints match the saved source metrics.
+Thirty replicates per method, feature count, noise level and initialization; no endpoints filtered.
+Figure 1 uses fixed replicate 1, P=12, features 1-3, identical signal and standard errors at both noise levels.

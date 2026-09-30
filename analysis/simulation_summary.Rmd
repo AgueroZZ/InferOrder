@@ -1,0 +1,63 @@
+---
+title: "Simulation Summary: Single-Ordering Recovery"
+author: "Ziang Zhang"
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path='simulation_summary_files/figure-html/')
+figure_dir <- 'experiments/m1_bspline_summary/figures'
+show_figure <- function(name) {
+  destination <- file.path('docs','simulation_summary_files','figure-html',paste0(name,'.png'))
+  dir.create(dirname(destination),recursive=TRUE,showWarnings=FALSE)
+  stopifnot(file.copy(file.path(figure_dir,paste0(name,'.png')),destination,overwrite=TRUE))
+  knitr::include_graphics(normalizePath(destination),rel_path=FALSE)
+}
+```
+
+## Simulation design
+
+How well do MPCurve, principal curves, GPLVM and Bayesian GPLVM recover a single
+sample ordering? We simulate **200 samples**, **12 or 50 features**, and **30
+replicates per condition** using random cubic B-splines with eight basis functions.
+Average signal variance is one; Gaussian noise has SD 0.25 or 1 (SNR 16 or 1).
+All methods receive the same data and a shared one-dimensional initialization.
+Recovery is **absolute Spearman correlation** with the true sample position,
+allowing the ordering to be reversed. Figure 1 illustrates the generating
+trajectories and noise levels.
+
+```{r trajectories, echo=FALSE, out.width='100%', fig.cap='Figure 1. Three generating trajectories (solid lines) and their noisy observations (same-color points), shown against true sample position. Left: lower-noise, simpler observations; right: higher-noise, more challenging observations. Both panels use the first P=12 replicate and features 1-3, with identical curves and standard-normal error draws. Only the noise multiplier changes.'}
+show_figure('figure1_trajectories')
+```
+
+## PCA initialization
+
+We first use a shared PC1 computed from centered observations without feature
+variance scaling. Recovery varies widely across trajectories; MPCurve and the
+GPLVM variants have similar distributions, while principal curves show both
+large successes and substantial failures (Figure 2).
+
+```{r pca, echo=FALSE, out.width='100%', fig.cap='Figure 2. Recovery with shared PCA initialization. Rows: P=12 and P=50; columns: low and high noise. Each box contains 30 replicates. Boxes span Tukey hinges, center lines are medians, and whiskers extend to the most extreme values within 1.5 hinge ranges. Every endpoint is shown; crosses indicate an unmet stopping rule. Numbers are medians; the dashed line marks 0.95 recovery. The initial PCA is included as a baseline.'}
+show_figure('figure2_pca')
+```
+
+## Isomap initialization
+
+Replacing PCA with **Isomap ($k=15$)** substantially improves low-noise recovery.
+At $P=50$, all four fitted medians are approximately **0.9997**. Harder replicates
+still distinguish the methods: 24, 29, 24 and 28 of 30 low-noise fits reach 0.95
+for MPCurve, principal curves, GPLVM and Bayesian GPLVM, respectively.
+MPCurve remains competitive across conditions; no method leads throughout (Figure 3).
+
+```{r isomap, echo=FALSE, out.width='100%', fig.cap='Figure 3. Recovery with shared Isomap initialization on exactly the same datasets, using the Figure 2 layout and boxplot conventions. All neighborhood graphs are connected. MPCurve bins the initial coordinate; GP models use it directly; principal curves smooth against it and project onto a geometric starting curve. Crosses mark unmet stopping rules, and a triangle marks one numerical smoothing warning. All endpoints are retained.'}
+show_figure('figure3_isomap')
+```
+
+**Initialization strongly affects recovery, and similar medians can conceal
+differences in the difficult replicates.** The
+[detailed comparison](simulation_m1_comparison.html) records fitting settings,
+package versions, paired comparisons, runtime and reproducibility checks.

@@ -1,0 +1,6 @@
+list(N = 200L, P = 50L, replications = 30L, spline_df = 8L, degree = 3L, 
+    noise_sd = c(low = 0.25, high = 1), seed_base = 202609290L, 
+    parent_study = "experiments/m1_bspline_comparison", additional_seed_offset = 1000000L, 
+    K = 50L, mp_max_iter = 2000L, mp_tol = 1e-06, pc_max_iter = 1000L, 
+    pc_tol = 1e-06, gp_block_budget = 2000L, gp_max_blocks = 3L, 
+    inducing = 50L, package_commit = "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475")

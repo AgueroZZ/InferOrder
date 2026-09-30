@@ -1,0 +1,143 @@
+function (X, ordering_vec, S = NULL, K, rw_q = 2L, ridge = 0, 
+    lambda_init = 1, lambda_sd_prior_rate = NULL, lambda_min = 1e-10, 
+    lambda_max = 1e+10, sigma_min = 1e-10, sigma_max = 1e+10, 
+    max_iter = 5L, tol = 1e-06, discretization = c("quantile", 
+        "equal", "kmeans"), strict_K = FALSE, ordering_label = NULL, 
+    verbose = FALSE) 
+{
+    discretization <- match.arg(discretization)
+    init <- .cavi_exact_k_init_from_ordering(X = X, ordering_vec = ordering_vec, 
+        K = K, discretization = discretization, strict_K = strict_K)
+    disc_used <- attr(init, "discretization_used") %||% discretization
+    fallback_from <- attr(init, "fallback_from")
+    if (!is.null(fallback_from)) {
+        prefix <- if (is.null(ordering_label) || !nzchar(ordering_label)) 
+            ""
+        else paste0(ordering_label, ": ")
+        warning(prefix, attr(init, "fallback_reason"), " Falling back to equal-width bins so all orderings use the same K.", 
+            call. = FALSE)
+    }
+    gamma0 <- .cavi_hard_gamma_from_cluster_rank(init$cluster_rank, 
+        nrow(X), length(init$pi))
+    cavi_args <- list(X = X, K = length(init$pi), responsibilities_init = gamma0, 
+        position_prior_init = init$pi, S = S, lambda_init = rep(lambda_init, 
+            ncol(X)), lambda_sd_prior_rate = lambda_sd_prior_rate, 
+        lambda_min = lambda_min, lambda_max = lambda_max, sigma_min = sigma_min, 
+        sigma_max = sigma_max, rw_q = rw_q, ridge = ridge, discretization = disc_used, 
+        max_iter = max_iter, tol = tol, convergence = "relative", 
+        verbose = verbose)
+    if (is.null(S)) {
+        cavi_args$sigma2_init <- init$sigma2
+    }
+    do.call(cavi, cavi_args)
+}
+function (x, start = NULL, thresh = 0.001, maxit = 10, stretch = 2, 
+    smoother = c("smooth_spline", "lowess", "periodic_lowess"
+    ), approx_points = FALSE, trace = FALSE, plot_iterations = FALSE, 
+    ...) 
+{
+    if (!is.matrix(x)) {
+        stop("Argument ", sQuote("x"), " must be a matrix.")
+    }
+    if (is.function(smoother)) {
+        smoother_function <- smoother
+        bias_correct_curve <- FALSE
+    }
+    else if (is.character(smoother)) {
+        smoother <- gsub(".", "_", smoother, fixed = TRUE)
+        smoother <- match.arg(smoother)
+        smoother_function <- smoother_functions[[smoother]]
+        if (smoother == "periodic_lowess") {
+            stretch <- 0
+            bias_correct_curve <- TRUE
+        }
+        else {
+            bias_correct_curve <- FALSE
+        }
+    }
+    function_call <- match.call()
+    dist_old <- sum(diag(stats::var(x)))
+    if (missing(start) || is.null(start)) {
+        if (is.character(smoother) && smoother == "periodic_lowess") {
+            start <- start_circle(x)
+        }
+        else {
+            xbar <- colMeans(x)
+            xstar <- scale(x, center = xbar, scale = FALSE)
+            svd_xstar <- svd(xstar)
+            dd <- svd_xstar$d
+            lambda <- svd_xstar$u[, 1] * dd[1]
+            ord <- order(lambda)
+            s <- scale(outer(lambda, svd_xstar$v[, 1]), center = -xbar, 
+                scale = FALSE)
+            dimnames(s) <- dimnames(x)
+            dist <- sum((dd^2)[-1]) * nrow(x)
+            start <- list(s = s, ord = ord, lambda = lambda, 
+                dist = dist)
+        }
+    }
+    else if (!inherits(start, "principal_curve")) {
+        if (is.matrix(start)) {
+            start <- project_to_curve(x = x, s = start, stretch = stretch)
+        }
+        else {
+            stop("Invalid starting curve: should be a matrix or principal_curve")
+        }
+    }
+    pcurve <- start
+    if (plot_iterations) {
+        plot(x[, 1:2], xlim = grDevices::extendrange(x[, 1], 
+            f = 0.2), ylim = grDevices::extendrange(x[, 2], f = 0.2))
+        lines(pcurve$s[pcurve$ord, 1:2])
+    }
+    it <- 0
+    if (trace) {
+        cat("Starting curve---distance^2: ", pcurve$dist, "\n", 
+            sep = "")
+    }
+    s <- matrix(as.double(NA), nrow = ifelse(approx_points > 
+        0, approx_points, nrow(x)), ncol = ncol(x), dimnames = list(NULL, 
+        colnames(x)))
+    has_converged <- abs(dist_old - pcurve$dist) <= thresh * 
+        dist_old
+    while (!has_converged && it < maxit) {
+        it <- it + 1
+        if (approx_points > 0) {
+            sort_lambda <- sort(pcurve$lambda)
+            xout_lambda <- seq(sort_lambda[[1]], sort_lambda[[length(sort_lambda)]], 
+                length.out = approx_points)
+        }
+        for (jj in seq_len(ncol(x))) {
+            yjj <- smoother_function(pcurve$lambda, x[, jj], 
+                ...)
+            if (approx_points > 0) {
+                yjj <- stats::approx(x = sort_lambda, y = yjj, 
+                  xout = xout_lambda, ties = "ordered")$y
+            }
+            s[, jj] <- yjj
+        }
+        dist_old <- pcurve$dist
+        pcurve <- project_to_curve(x = x, s = s, stretch = stretch)
+        if (bias_correct_curve) {
+            pcurve <- bias_correct_curve(x = x, pcurve = pcurve, 
+                ...)
+        }
+        has_converged <- abs(dist_old - pcurve$dist) <= thresh * 
+            dist_old
+        if (plot_iterations) {
+            plot(x[, 1:2], xlim = grDevices::extendrange(x[, 
+                1], f = 0.2), ylim = grDevices::extendrange(x[, 
+                2], f = 0.2))
+            lines(pcurve$s[pcurve$ord, 1:2])
+        }
+        if (trace) {
+            cat("Iteration ", it, "---distance^2: ", pcurve$dist, 
+                "\n", sep = "")
+        }
+    }
+    out <- list(s = pcurve$s, ord = pcurve$ord, lambda = pcurve$lambda, 
+        dist = pcurve$dist, converged = has_converged, num_iterations = as.integer(it), 
+        call = function_call)
+    class(out) <- "principal_curve"
+    out
+}

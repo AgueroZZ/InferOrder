@@ -1,0 +1,8 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+Warning: 'timedatectl' indicates the non-existent timezone name 'n/a'
+unable to deduce timezone name from 'America/Chicago'
+   P noise isomap_rho
+1 12  high  0.6146149
+2 50  high  0.8159056
+3 12   low  0.8686620
+4 50   low  0.9996550

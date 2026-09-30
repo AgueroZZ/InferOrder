@@ -1,0 +1,1 @@
+All 30 seeds exactly regenerate sample positions, spline coefficients, and noise; spline knots and unit average signal variance verified.

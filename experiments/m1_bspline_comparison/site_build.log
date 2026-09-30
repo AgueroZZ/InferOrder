@@ -1,0 +1,165 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+ERROR: logger: socket /dev/log: Operation not permitted
+      while executing
+  "exec logger -t modulecmd "[get-env USER]: $command [join $args]""
+      (procedure "module" line 6)
+      invoked from within
+  "module autoinit"
+      ("eval" body line 1)
+      invoked from within
+  "eval $execcmdlist"
+  Please report this issue at https://github.com/cea-hpc/modules/issues
+Rendering analysis/index.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/method.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/simulation_m1.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/simulation_m1_comparison.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/simulation_m2.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/estimate_intrinsic_m.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/estimate_intrinsic_m_smooth.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/fitness.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendering analysis/pancreas.Rmd
+[WARNING] Could not fetch resource https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png: HttpExceptionRequest Request {
+    host                 = "github.com"
+    port                 = 443
+    secure               = True
+    requestHeaders       = []
+    path                 = "/workflowr/workflowr-assets/raw/main/img/reproducible.png"
+    queryString          = ""
+    method               = "GET"
+    proxy                = Nothing
+    rawBody              = False
+    redirectCount        = 10
+    responseTimeout      = ResponseTimeoutDefault
+    requestVersion       = HTTP/1.1
+    proxySecureMode      = ProxySecureWithConnect
+  }
+   (ConnectionFailure Network.Socket.getAddrInfo (called with preferred socket type/protocol: AddrInfo {addrFlags = [AI_ADDRCONFIG], addrFamily = AF_UNSPEC, addrSocketType = Stream, addrProtocol = 0, addrAddress = 0.0.0.0:0, addrCanonName = Nothing}, host name: Just "github.com", service name: Just "443"): does not exist (System error))
+Rendered and checked 9 current pages.

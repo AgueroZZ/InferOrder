@@ -1,0 +1,30 @@
+{
+  "InferOrder_commit": "3b0f27a1036115fc8a9fa2eb330e08aee6657b79",
+  "MPCurver_workspace_commit": "dbb10542594ff6e8a93726ec3041040211243675",
+  "MPCurver_fitting_source_commit": "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475",
+  "archive_sha256": "58d0c99c6170994c82eedba190fb1c28a63eb47530c575705323c3cf3992b7c6",
+  "orientation": "samples by features",
+  "versions": {
+    "MPCurver": "0.3.4",
+    "princurve": "2.1.6",
+    "GPy": "1.13.2"
+  },
+  "parent_study": "experiments/m1_bspline_comparison",
+  "P": 50,
+  "extension": "Preserved t, original 12 coefficient sets and noise; 38 independent features; global signal renormalization.",
+  "source_sha256": {
+    "compare_dimensions.R": "4f43f064cd32c91d523e8a4eabea67d8ea11a82d5771eaacb4e7f01e44208f60",
+    "build_site.R": "04d507ed8fdd062b91ce5d3075c081d8a47f714cc6df81368711e16693cce185",
+    "verify_generator.R": "fdbe5b709c92f21cfd3c9822e5b9f76a350ee170b82bb4e9b8accd26734bdf35",
+    "run_gpy.py": "a357f0323c6a5fb78daaa09a352f5b25b22687d4c9defaa460870b43b9b1274d",
+    "run_r_methods.R": "4be8292c5d32f4d7ccd3f5f13d6c8b48ade9b29c340f3d48de482e57cbd904ed",
+    "prepare.R": "44b295bd02b5d14652bf0c01e3741b9b5c233c816a4c9dee7a3ed0c20ce2eae4",
+    "summarize.R": "12f81522ec2e5de07be261e9edbd7c16928707563e1f9b38d0474dc74287cee5",
+    "common.R": "3bbcb7b3d4cbde3f84f77958fb66051d6d69b0b40273b152221279321d7119ea"
+  },
+  "concurrent_fits": {
+    "R": 2,
+    "GPy": 2,
+    "BLAS_threads_per_fit": 1
+  }
+}
