@@ -1,0 +1,22 @@
+{
+  "python": "3.9.19 | packaged by conda-forge | (main, Mar 20 2024, 12:50:21) \n[GCC 12.3.0]",
+  "numpy": "1.26.4",
+  "scipy": "1.12.0",
+  "GPy": "1.13.2",
+  "seed": 20260929,
+  "jitter_relative_to_kernel_amplitude": 1e-06,
+  "package_commit": "15f2b0bbe5dfa61cd46da5160b2bc251e75a0475",
+  "inputs": {
+    "external_methods/inputs/B_noise1_positions.csv": "0018429ce7c6e32e467bf755c0b1a072cf0d7f0003bb56f3e30613c3b4c5c4cc",
+    "external_methods/inputs/B_noise0_X.csv": "0e03d2ab1a1f0ac5e905bcc5592269e39352a5633eec30ad26bea8e6a2562320",
+    "external_methods/inputs/B_noise0_positions.csv": "53bb116958a80d2d84c872c34475661af9a78fd3f266e3cdf08551f317781ffc",
+    "external_methods/inputs/B_noise05_X.csv": "d356133c6de88d16f11e7561534c05f1d6666ba213b056230a7c152882ae0206",
+    "external_methods/inputs/B_noise1_X.csv": "f08923901be4a529342215576e892e274edc99764f5f9ed7576ef22348079862",
+    "external_methods/inputs/B_noise05_positions.csv": "b0a986b0eeba784b421d2e81cf44404cdc7720696ab0cdbaa22c7d9948300ee0"
+  },
+  "comparator_files": [
+    "external_methods/gpy_results/11_B_noise0_BayesianGPLVM_pca_m50_s20260929.json",
+    "external_methods/gpy_results/12_B_noise05_BayesianGPLVM_pca_m50_s20260929.json",
+    "external_methods/gpy_results/13_B_noise1_BayesianGPLVM_pca_m50_s20260929.json"
+  ]
+}

@@ -1,0 +1,6 @@
+Verified at UTC: 2026-10-03 19:47:00
+PASS: 12 converged fits, 9 new and 3 reused; zero raw/fitting warnings or fallback.
+PASS: all 24 plotted scores match source fits and absolute Spearman calculations.
+PASS: all 1600 feature coordinates/colors match input and original Isomap vectors.
+PASS: source input/fits, frozen archive, and original fit/design script hashes preserved.
+Verification script SHA256: 745c096fcd28e7022d1bf6d04ffd38c45a5db389e5b89d447473cece51cac1a7

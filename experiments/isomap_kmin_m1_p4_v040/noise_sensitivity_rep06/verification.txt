@@ -1,0 +1,20 @@
+List of 11
+ $ verified_at_utc                : chr "2026-10-03 19:36:04"
+ $ levels                         : int 4
+ $ new_fits                       : int 9
+ $ reused_fits                    : int 3
+ $ converged                      : int 12
+ $ failures                       : int 0
+ $ warnings                       : int 0
+ $ plotted_scores                 : int 24
+ $ plotted_feature_points         : int 1600
+ $ graph_checks                   :List of 4
+  ..$ : Named num [1:2] 0.25 4
+  .. ..- attr(*, "names")= chr [1:2] "noise_sd" "k_used"
+  ..$ : Named num [1:2] 0.1 5
+  .. ..- attr(*, "names")= chr [1:2] "noise_sd" "k_used"
+  ..$ : Named num [1:2] 0.05 7
+  .. ..- attr(*, "names")= chr [1:2] "noise_sd" "k_used"
+  ..$ : Named num [1:2] 0.01 7
+  .. ..- attr(*, "names")= chr [1:2] "noise_sd" "k_used"
+ $ source_input_and_fits_preserved: logi TRUE

@@ -1,0 +1,22 @@
+R version 4.3.3 (2024-02-29)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/python-anaconda-2022.05-el8-x86_64/lib/libopenblasp-r0.3.27.so;  LAPACK version 3.12.0
+
+locale:
+[1] C
+
+time zone: NA
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mclust_6.1.3  digest_0.6.35 clue_0.3-68  
+
+loaded via a namespace (and not attached):
+[1] compiler_4.3.3    tools_4.3.3       Rcpp_1.1.2        MPCurver_0.3.4   
+[5] matrixStats_1.5.0 cluster_2.1.8.3   princurve_2.1.6  

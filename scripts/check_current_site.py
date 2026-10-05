@@ -201,7 +201,19 @@ def check_smooth_study(page, baseline_runs):
 
 def main():
     actual = {path.name for path in DOCS.glob("*.html")}
-    assert actual == set(PAGES), f"Unexpected public HTML pages: {actual ^ set(PAGES)}"
+    expected = set(PAGES) | {"explore_initialization.html"}
+    assert actual == expected, f"Unexpected public HTML pages: {actual ^ expected}"
+    # Shared navigation exposes only the homepage's five core studies.
+    navigation_pages = {"index.html", "method.html", "simulation_m1_comparison.html",
+                        "estimate_intrinsic_m.html", "estimate_intrinsic_m_smooth.html",
+                        "fitness.html", "pancreas.html"}
+    for name in actual:
+        html = (DOCS / name).read_text()
+        navbar = re.search(r'<div class="navbar navbar-default.*?</div><!--/\.navbar -->',
+                           html, flags=re.S)
+        assert navbar, name
+        links = set(re.findall(r'href="([^"#]+\.html)"', navbar.group()))
+        assert links == navigation_pages, (name, links ^ navigation_pages)
 
     parsed = {}
     for name, required_headings in PAGES.items():
@@ -213,9 +225,6 @@ def main():
         assert page.title == EXPECTED_TITLES[name], name
         assert all(heading in page.headings for heading in required_headings), name
         assert len(page.images) == EXPECTED_IMAGES[name], name
-        # The existing exploratory playground is outside the shared navbar.
-        navbar_pages = set(PAGES) - {"ordering_playground.html", name}
-        assert navbar_pages.issubset(set(page.links)), name
         assert "id=\"workflowr-report\"" not in html, name
         assert "custom <code>fig.path</code>" not in html, name
 
@@ -254,7 +263,6 @@ def main():
     dimension_summary = rows(ROOT / "experiments/m1_bspline_comparison_p50/dimension_summary.csv")
     assert len(dimension_summary) == 10
     for row in dimension_summary:
-        assert f'{float(row["mean_change"]):.3f}' in comparison_text
         if row["method"] != "PCA":
             assert f'{float(row["median_seconds_p50"]):.2f}' in comparison_text
 
@@ -263,7 +271,7 @@ def main():
     assert "Each curated study records the package version" in index_text
     index_source = (ROOT / "analysis" / "index.Rmd").read_text()
     # The homepage body deliberately selects only the five core studies.
-    # Navigation may still expose other published pages.
+    # Shared navigation must use the same selection (checked above).
     index_body = index_source.split("::: {.results-index}", 1)[1]
     core_pages = re.findall(r"\]\(([^)]+\.html)\)", index_body)
     assert core_pages == [

@@ -1,0 +1,25 @@
+"noise_sd","method","stage","score"
+0.25,"Auto kmin","Raw Isomap",0.690936773419336
+0.25,"Fixed k=15","Raw Isomap",0.679827495687392
+0.25,"Fixed k=10","Raw Isomap",0.691373284332108
+0.1,"Auto kmin","Raw Isomap",0.624134103352584
+0.1,"Fixed k=15","Raw Isomap",0.714611865296632
+0.1,"Fixed k=10","Raw Isomap",0.665926648166204
+0.05,"Auto kmin","Raw Isomap",0.65571139278482
+0.05,"Fixed k=15","Raw Isomap",0.674359858996475
+0.05,"Fixed k=10","Raw Isomap",0.656410410260257
+0.01,"Auto kmin","Raw Isomap",0.661273531838296
+0.01,"Fixed k=15","Raw Isomap",0.677289432235806
+0.01,"Fixed k=10","Raw Isomap",0.681831545788645
+0.25,"Auto kmin","Final MPCurve",0.694689867246681
+0.25,"Fixed k=15","Final MPCurve",0.649025725643141
+0.25,"Fixed k=10","Final MPCurve",0.691772294307358
+0.1,"Auto kmin","Final MPCurve",0.620346508662717
+0.1,"Fixed k=15","Final MPCurve",0.689764830743734
+0.1,"Fixed k=10","Final MPCurve",0.664340599796916
+0.05,"Auto kmin","Final MPCurve",0.657092851947883
+0.05,"Fixed k=15","Final MPCurve",0.671146310592264
+0.05,"Fixed k=10","Final MPCurve",0.657092851947883
+0.01,"Auto kmin","Final MPCurve",0.658472750021597
+0.01,"Fixed k=15","Final MPCurve",0.685637567958038
+0.01,"Fixed k=10","Final MPCurve",0.69110982789177

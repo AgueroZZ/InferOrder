@@ -35,9 +35,21 @@ local({
     writeLines(sub("[[:blank:]]+$", "", lines), output, useBytes = TRUE)
   }
 
-  # Keep the published exploratory playground without rerunning its model fits.
-  # It is maintained separately from these saved-result pages.
-  expected <- c(sub("\\.Rmd$", ".html", pages), "ordering_playground.html")
+  # Refresh navigation on retained exploratory pages without rerunning fits.
+  retained <- c("ordering_playground.html", "explore_initialization.html")
+  navbar_pattern <- '(?s)<div class="navbar navbar-default.*?</div><!--/\\.navbar -->'
+  index_html <- paste(readLines("docs/index.html", warn = FALSE), collapse = "\n")
+  navbar <- regmatches(index_html, regexpr(navbar_pattern, index_html, perl = TRUE))
+  stopifnot(length(navbar) == 1L, nzchar(navbar))
+  for (page in retained) {
+    path <- file.path("docs", page)
+    html <- paste(readLines(path, warn = FALSE), collapse = "\n")
+    match <- regexpr(navbar_pattern, html, perl = TRUE)
+    stopifnot(match[1] > 0)
+    regmatches(html, match) <- navbar
+    writeLines(html, path, useBytes = TRUE)
+  }
+  expected <- c(sub("\\.Rmd$", ".html", pages), retained)
   actual <- list.files("docs", pattern = "\\.html$", full.names = FALSE)
   if (!setequal(actual, expected)) {
     stop(

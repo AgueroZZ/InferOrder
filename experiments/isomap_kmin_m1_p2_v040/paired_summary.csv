@@ -1,0 +1,3 @@
+"comparator","metric","complete_pairs","missing_pairs","mean_difference","median_difference","monte_carlo_se","improvements","ties","declines"
+"fixed_k10","spearman",20,0,-0.0173438085952149,-0.000602265056626416,0.0236186516630658,9,0,11
+"fixed_k15","spearman",20,0,-0.00710132753318835,0.000513762844071078,0.0253430248525255,11,1,8

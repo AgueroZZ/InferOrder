@@ -9,23 +9,17 @@ navbar:
       href: method.html
     - text: Simulation
       menu:
-        - text: Simulation summary
-          href: simulation_summary.html
-        - text: One ordering
-          href: simulation_m1.html
-        - text: "One ordering: method comparison"
+        - text: "Single-ordering method comparison"
           href: simulation_m1_comparison.html
-        - text: Two orderings
-          href: simulation_m2.html
         - text: "Estimate M: all monotone"
           href: estimate_intrinsic_m.html
         - text: "Estimate M: one monotone anchor"
           href: estimate_intrinsic_m_smooth.html
     - text: Analysis
       menu:
-        - text: Fitness
+        - text: Fitness across environments
           href: fitness.html
-        - text: Pancreas loadings
+        - text: Pancreatic cell loadings
           href: pancreas.html
   right:
     - text: Source

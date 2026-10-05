@@ -1,0 +1,4 @@
+PASS: 398 complete directed candidates, 12 chosen neighbors, 400 displayed background points.
+PASS: all four-dimensional and projected distances/ranks reproduce coordinate differences.
+PASS: green query chooses five green plus one blue; blue query chooses six blue.
+PASS: shortcut ranks 6 and 64, reversed coordinate differences, report links, whitespace, PNG/PDF signatures.

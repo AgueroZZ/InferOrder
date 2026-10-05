@@ -1,0 +1,10 @@
+All parent experiment artifacts match source/parent_files_at_start.csv byte-for-byte.
+The source archive matches the frozen parent SHA256.
+All 120 P=2/P=4 endpoints match the plotted score CSV and have unique method/replicate/feature-count keys.
+All 120 raw/final paired differences reproduce from the endpoint scores.
+All six paired summaries reproduce their means and Monte Carlo standard errors from twenty differences.
+The eight replicate-6 panels contain 1,600 points with identical observed feature coordinates.
+The six feature projections contain 1,200 points.
+All expected PNG/PDF artifacts are nonempty; README links and English source text pass static checks.
+The paired boxplot, replicate-6 feature-plane comparison, and six-projection PNGs were visually inspected.
+Core input/fit/graph/function checks are recorded in verification.txt and verification.rds.

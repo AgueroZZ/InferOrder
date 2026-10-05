@@ -1,0 +1,7 @@
+# Standalone M=1 neighborhood screening
+
+Use each of the 72 source orderings from the M2 study as a standalone 300-by-12 dataset. This retains all cases without filtering on previous performance. There are 24 underlying single-ordering signal realizations paired across three SNR levels; these are reused data, not an independent replication of the preceding study. There is no feature clustering, assignment estimation, or multiple-ordering fit.
+
+Use frozen MPCurver 0.3.4, K=50, second-order random-walk smoothness, quantile discretization and the same single-ordering helper as the prior screening. Select Isomap k among 5,10,15,20,30 by exactly one CAVI sweep's ELBO, breaking exact ties with the smaller k and excluding disconnected candidates. Fit each connected candidate independently from its raw initialization to relative tolerance 1e-6 (2000 sweeps initially, extend to 10000 if needed). Both default and selected arms use identical fitting controls. Also retain all other converged candidates to assess the oracle rescue ceiling, without feeding their outcomes into the selector.
+
+Primary denominator: default k=15 final absolute Spearman recovery <0.90. A rescue requires selected final recovery >=0.95. Separately report raw default initialization failures and how many ordinary iterations already repair. Report selection losses, regressions >0.05, convergence and timings. No website or package changes.

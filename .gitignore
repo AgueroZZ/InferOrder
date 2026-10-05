@@ -10,3 +10,12 @@ analysis/*html
 analysis/*_cache
 analysis/site_libs
 docs/site_libs/header-attrs-2.26/
+
+# Internal (non-workflowr) pages: keep sources only
+internal/*.html
+internal/*_files/
+internal/*_cache/
+
+# Local Python bytecode caches
+__pycache__/
+*.py[cod]

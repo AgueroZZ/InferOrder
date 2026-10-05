@@ -1,0 +1,5 @@
+Twenty new GP seeds: 20260931 through 20260950, all retained.
+Matern nu=2.5, length-scale=0.2; same latent positions and observation noise as the preceding example.
+Each feature centered/scaled to unit sample variance; N300, D12, SNR4.
+PCA initialization, K50, fixed uniform prior, quantile discretization, relative tolerance 1e-6.
+This measures trajectory-draw sensitivity conditional on a fixed position/noise realization.

@@ -1,0 +1,13 @@
+"noise_sd","method","k_used","raw_spearman","final_spearman","status","converged","iterations","warnings","warning_count","graph_components","retained_samples","initializer","baseline_reused"
+0.25,"auto_kmin",4,0.690936773419336,0.694689867246681,"converged",TRUE,60,"",0,1,200,"isomap",TRUE
+0.25,"fixed_k15",15,0.679827495687392,0.649025725643141,"converged",TRUE,61,"",0,1,200,"isomap",TRUE
+0.25,"fixed_k10",10,0.691373284332108,0.691772294307358,"converged",TRUE,119,"",0,1,200,"isomap",TRUE
+0.1,"auto_kmin",5,0.624134103352584,0.620346508662717,"converged",TRUE,93,"",0,1,200,"isomap",FALSE
+0.1,"fixed_k15",15,0.714611865296632,0.689764830743734,"converged",TRUE,73,"",0,1,200,"isomap",FALSE
+0.1,"fixed_k10",10,0.665926648166204,0.664340599796916,"converged",TRUE,45,"",0,1,200,"isomap",FALSE
+0.05,"auto_kmin",7,0.65571139278482,0.657092851947883,"converged",TRUE,41,"",0,1,200,"isomap",FALSE
+0.05,"fixed_k15",15,0.674359858996475,0.671146310592264,"converged",TRUE,27,"",0,1,200,"isomap",FALSE
+0.05,"fixed_k10",10,0.656410410260257,0.657092851947883,"converged",TRUE,40,"",0,1,200,"isomap",FALSE
+0.01,"auto_kmin",7,0.661273531838296,0.658472750021597,"converged",TRUE,19,"",0,1,200,"isomap",FALSE
+0.01,"fixed_k15",15,0.677289432235806,0.685637567958038,"converged",TRUE,27,"",0,1,200,"isomap",FALSE
+0.01,"fixed_k10",10,0.681831545788645,0.69110982789177,"converged",TRUE,24,"",0,1,200,"isomap",FALSE

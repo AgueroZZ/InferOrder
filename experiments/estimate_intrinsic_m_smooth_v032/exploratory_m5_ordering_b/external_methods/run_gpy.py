@@ -1,0 +1,116 @@
+"""Standard GPy GPLVM/BayesianGPLVM on fixed feature groups, with saved starts."""
+import os
+for key in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS'):
+    os.environ[key] = '1'
+os.environ['MPLCONFIGDIR'] = '/tmp/mpcurve-gpy-matplotlib'
+import argparse
+import hashlib
+import json
+import pathlib
+import time
+import warnings
+import numpy as np
+import scipy
+from scipy.stats import spearmanr
+import GPy
+
+ROOT = pathlib.Path(__file__).resolve().parent
+JOBS = []
+for case in ('B_noise0','B_noise05','B_noise1','A_noise1','C_noise1','D_noise1','E_noise1'):
+    JOBS.append(dict(case=case, model='GPLVM', start='pca', inducing=0, seed=20260929))
+for inducing in (10,50):
+    for case in ('B_noise0','B_noise05','B_noise1'):
+        JOBS.append(dict(case=case,model='BayesianGPLVM',start='pca',inducing=inducing,seed=20260929))
+for model, inducing in (('GPLVM',0),('BayesianGPLVM',50)):
+    for start in ('isomap10','isomap15'):
+        JOBS.append(dict(case='B_noise1',model=model,start=start,inducing=inducing,seed=20260929))
+for seed in (20260930,20260931):
+    JOBS.append(dict(case='B_noise1',model='BayesianGPLVM',start='pca',inducing=50,seed=seed))
+
+# Matched centered, unscaled R PCA controls; native GPy PCA standardizes features.
+for model, inducing in (('GPLVM',0),('BayesianGPLVM',50)):
+    for case in ('B_noise0','B_noise05','B_noise1'):
+        JOBS.append(dict(case=case,model=model,start='pca_matched',inducing=inducing,seed=20260929))
+
+def latent(model, bayesian):
+    return np.asarray(model.X.mean.values if bayesian else model.X.values).reshape(-1).copy()
+
+def rho(x,y):
+    return float(abs(spearmanr(x,y).statistic))
+
+def run(index):
+    job = JOBS[index-1]
+    tag = f"{index:02d}_{job['case']}_{job['model']}_{job['start']}_m{job['inducing']}_s{job['seed']}"
+    result_dir = ROOT/'gpy_results'
+    result_dir.mkdir(exist_ok=True)
+    path = result_dir/(tag+'.json')
+    if path.exists():
+        print('CACHED',tag,flush=True)
+        return
+    input_path = ROOT/'inputs'/f"{job['case']}_X.csv"
+    raw = np.loadtxt(input_path,delimiter=',',skiprows=1)
+    positions = np.genfromtxt(ROOT/'inputs'/f"{job['case']}_positions.csv",delimiter=',',names=True)
+    # Mean centering is fixed and does not use truth; no feature variance scaling.
+    Y = raw - raw.mean(axis=0)
+    np.random.seed(job['seed'])
+    args = dict(Y=Y,input_dim=1,init='PCA')
+    if job['start'] != 'pca':
+        x = positions['pca' if job['start']=='pca_matched' else job['start']]
+        args['X'] = ((x-x.mean())/x.std()).reshape(-1,1)
+    bayesian = job['model']=='BayesianGPLVM'
+    started = time.monotonic()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter('always')
+        if bayesian:
+            model = GPy.models.BayesianGPLVM(**args,num_inducing=job['inducing'])
+        else:
+            model = GPy.models.GPLVM(**args)
+        initial = latent(model,bayesian)
+        initial_params = model.param_array.copy()
+        initial_score = float(model.log_likelihood())
+        blocks = []
+        # Same budget/stopping across methods. Continue only budget-limited runs.
+        for block in range(3):
+            model.optimize(optimizer='lbfgsb',max_iters=2000,messages=False,
+                           bfgs_factor=1e7,gtol=1e-5)
+            opt = model.optimization_runs[-1]
+            block_info = dict(block=block+1,status=opt.status,evaluations=int(opt.funct_eval),
+                              objective=float(model.log_likelihood()),
+                              rho=rho(positions['truth'],latent(model,bayesian)))
+            blocks.append(block_info)
+            print(tag,block_info,flush=True)
+            if not opt.status.startswith('Maximum'):
+                break
+        final = latent(model,bayesian)
+        prediction, variance = model.predict(final[:,None])
+        gradient = model._objective_grads(model.optimizer_array)[1]
+    warnings_text = sorted(set(str(x.message) for x in caught))
+    data = dict(job=job,index=index,initial=initial.tolist(),final=final.tolist(),
+                truth=positions['truth'].tolist(),initial_rho=rho(positions['truth'],initial),
+                final_rho=rho(positions['truth'],final),initial_final_rho=rho(initial,final),
+                initial_objective=initial_score,objective=float(model.log_likelihood()),
+                optimizer_status=blocks[-1]['status'],blocks=blocks,
+                gradient_inf_norm=float(np.max(np.abs(gradient))),
+                warning_messages=warnings_text,elapsed_seconds=time.monotonic()-started,
+                noise_variance=float(model.likelihood.variance[0]),
+                training_rmse=float(np.sqrt(np.mean((prediction-Y)**2))),
+                kernel=str(model.kern),gpy_version=GPy.__version__,numpy_version=np.__version__,
+                scipy_version=scipy.__version__,preprocessing='column centering; no variance scaling',
+                input_file_sha256=hashlib.sha256(input_path.read_bytes()).hexdigest(),
+                script_sha256=hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest())
+    np.savez_compressed(result_dir/(tag+'.npz'),initial_parameters=initial_params,
+                        final_parameters=model.param_array.copy(),prediction=prediction,
+                        parameter_names=np.asarray(model.parameter_names()),
+                        initial=initial,final=final)
+    path.write_text(json.dumps(data,indent=2,allow_nan=False)+'\n')
+    print('DONE',tag,round(data['initial_rho'],4),'->',round(data['final_rho'],4),
+          data['optimizer_status'],flush=True)
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser()
+    parser.add_argument('indices',nargs='+',type=int)
+    args=parser.parse_args()
+    for index in args.indices:
+        if not 1<=index<=len(JOBS):
+            raise ValueError(index)
+        run(index)

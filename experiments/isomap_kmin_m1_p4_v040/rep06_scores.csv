@@ -1,0 +1,7 @@
+"replication","P","method","k_used","converged","status","raw_spearman","final_spearman"
+6,2,"auto_kmin",3,TRUE,"converged",0.131800795019876,0.134917872946824
+6,2,"fixed_k15",15,TRUE,"converged",0.527785194629866,0.463390084752119
+6,2,"fixed_k10",10,TRUE,"converged",0.527590189754744,0.463402085052126
+6,4,"auto_kmin",4,TRUE,"converged",0.690936773419336,0.694689867246681
+6,4,"fixed_k15",15,TRUE,"converged",0.679827495687392,0.649025725643141
+6,4,"fixed_k10",10,TRUE,"converged",0.691373284332108,0.691772294307358

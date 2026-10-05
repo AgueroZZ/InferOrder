@@ -1,0 +1,542 @@
+function (X, K = NULL, method = c("PCA", "fiedler", "pcurve", 
+    "tSNE", "random", "isomap"), responsibilities_init = NULL, 
+    position_prior = c("adaptive", "fixed"), position_prior_init = NULL, 
+    pi_init = NULL, sigma2_init = NULL, S = NULL, lambda_init = NULL, 
+    rw_q = 2L, ridge = 0, discretization = c("quantile", "equal", 
+        "kmeans"), fix_lambda = FALSE, lambda_sd_prior_rate = NULL, 
+    lambda_min = 1e-10, lambda_max = 1e+10, sigma_min = 1e-10, 
+    sigma_max = 1e+10, max_iter = 100L, tol = 1e-06, verbose = FALSE, 
+    convergence = c("normalized", "relative")) 
+{
+    convergence <- match.arg(convergence)
+    method <- match.arg(method)
+    discretization <- match.arg(discretization)
+    position_prior <- match.arg(position_prior)
+    X <- as.matrix(X)
+    n <- nrow(X)
+    d <- ncol(X)
+    if (n < 2L) 
+        stop("X must have at least two rows.")
+    if (d < 1L) 
+        stop("X must have at least one column.")
+    if (is.null(K)) {
+        K <- max(2L, min(50L, as.integer(floor(n/5))))
+    }
+    else {
+        K <- as.integer(K)
+    }
+    rw_q <- as.integer(rw_q)
+    max_iter <- as.integer(max_iter)
+    if (length(K) != 1L || is.na(K) || K < 2L) 
+        stop("K must be a single integer >= 2.")
+    if (length(rw_q) != 1L || is.na(rw_q) || rw_q < 1L || rw_q >= 
+        K) {
+        stop("rw_q must be an integer in {1, ..., K-1}.")
+    }
+    if (length(max_iter) != 1L || is.na(max_iter) || max_iter < 
+        0L) {
+        stop("max_iter must be an integer >= 0.")
+    }
+    lambda_min <- as.numeric(lambda_min)
+    lambda_max <- as.numeric(lambda_max)
+    lambda_sd_prior_rate <- .normalize_lambda_sd_prior_rate(lambda_sd_prior_rate)
+    lambda_sd_prior_rate_val <- .lambda_sd_prior_rate_value(lambda_sd_prior_rate)
+    sigma_min <- as.numeric(sigma_min)
+    sigma_max <- as.numeric(sigma_max)
+    tol <- as.numeric(tol)
+    if (!is.finite(lambda_min) || !is.finite(lambda_max) || lambda_min <= 
+        0 || lambda_max <= 0 || lambda_min > lambda_max) {
+        stop("lambda_min/lambda_max must be positive finite numbers with lambda_min <= lambda_max.")
+    }
+    if (!is.finite(sigma_min) || !is.finite(sigma_max) || sigma_min <= 
+        0 || sigma_max <= 0 || sigma_min > sigma_max) {
+        stop("sigma_min/sigma_max must be positive finite numbers with sigma_min <= sigma_max.")
+    }
+    if (!is.finite(tol) || tol < 0) 
+        stop("tol must be a nonnegative finite number.")
+    Q_K <- make_random_walk_precision(K = K, d = 1, q = rw_q, 
+        lambda = 1, ridge = ridge)
+    Q_K <- 0.5 * (as.matrix(Q_K) + t(as.matrix(Q_K)))
+    prior_meta <- .rw_precision_metadata(Q_K, rw_q = rw_q)
+    r_rank <- prior_meta$rank
+    logdet_Q <- prior_meta$logdet
+    skip_raw_gamma_preinit <- FALSE
+    raw_gamma_preinit <- FALSE
+    raw_init <- NULL
+    if (is.null(responsibilities_init)) {
+        init <- initialize_ordering_csmooth(X = X, K = K, method = method, 
+            discretization = discretization, modelName = "homoskedastic")
+        params0 <- init$params
+        K_init <- length(params0$pi)
+        if (K_init != K) {
+            K <- K_init
+            if (rw_q >= K) {
+                stop("Initialisation reduced K below rw_q + 1; try a smaller rw_q or different discretization.")
+            }
+            Q_K <- make_random_walk_precision(K = K, d = 1, q = rw_q, 
+                lambda = 1, ridge = ridge)
+            Q_K <- 0.5 * (as.matrix(Q_K) + t(as.matrix(Q_K)))
+            prior_meta <- .rw_precision_metadata(Q_K, rw_q = rw_q)
+            r_rank <- prior_meta$rank
+            logdet_Q <- prior_meta$logdet
+        }
+        keep_idx <- init$keep_idx %||% seq_len(n)
+        cluster_rank <- init$cluster_rank
+        R <- matrix(1/K, nrow = n, ncol = K)
+        R[keep_idx, ] <- 0
+        R[cbind(keep_idx, cluster_rank)] <- 1
+    }
+    else {
+        skip_raw_gamma_preinit <- isTRUE(attr(responsibilities_init, 
+            "cavi_skip_raw_preinit"))
+        R <- .cavi_normalize_responsibilities(responsibilities_init, 
+            n = n, K = K)
+        params0 <- NULL
+        raw_gamma_preinit <- !skip_raw_gamma_preinit
+        if (raw_gamma_preinit) {
+            raw_init <- .cavi_raw_moments_from_responsibilities(X = X, 
+                R = R, sigma_min = sigma_min, sigma_max = sigma_max)
+        }
+    }
+    position_prior_ctl <- .cavi_validate_position_prior(position_prior = position_prior, 
+        position_prior_init = position_prior_init, pi_init = pi_init, 
+        K = K, caller = "cavi()")
+    pi_vec <- .cavi_initialize_position_prior(R = R, K = K, position_prior = position_prior_ctl$position_prior, 
+        position_prior_init = position_prior_ctl$position_prior_init)
+    noise_info <- .cavi_resolve_measurement_sd(S = S, X = X, 
+        caller = "cavi()")
+    if (!is.null(noise_info$measurement_sd) && !is.null(sigma2_init)) {
+        stop("sigma2_init cannot be supplied when S is non-NULL.", 
+            call. = FALSE)
+    }
+    sigma2 <- if (is.null(noise_info$measurement_sd)) {
+        if (!is.null(sigma2_init)) {
+            tmp <- as.numeric(sigma2_init)
+            if (length(tmp) == 1L) 
+                tmp <- rep(tmp, d)
+            if (length(tmp) != d) 
+                stop("sigma2_init must have length 1 or ncol(X).")
+            pmin(pmax(tmp, sigma_min), sigma_max)
+        }
+        else if (raw_gamma_preinit) {
+            raw_init$sigma2_raw
+        }
+        else if (!is.null(params0)) {
+            pmin(pmax(as.numeric(params0$sigma2), sigma_min), 
+                sigma_max)
+        }
+        else {
+            pmin(pmax(apply(X, 2, stats::var), sigma_min), sigma_max)
+        }
+    }
+    else {
+        NULL
+    }
+    lambda_vec <- if (raw_gamma_preinit) {
+        if (!is.null(lambda_init)) {
+            tmp <- as.numeric(lambda_init)
+            if (length(tmp) == 1L) 
+                tmp <- rep(tmp, d)
+            if (length(tmp) != d) 
+                stop("lambda_init must have length 1 or ncol(X).")
+            pmin(pmax(tmp, lambda_min), lambda_max)
+        }
+        else if (isTRUE(fix_lambda)) {
+            rep(1, d)
+        }
+        else {
+            .cavi_lambda_init_from_mu_raw(mu_raw = raw_init$mu_raw, 
+                Q_K = Q_K, r_rank = r_rank, lambda_sd_prior_rate = lambda_sd_prior_rate, 
+                lambda_min = lambda_min, lambda_max = lambda_max)
+        }
+    }
+    else if (!is.null(lambda_init)) {
+        tmp <- as.numeric(lambda_init)
+        if (length(tmp) == 1L) 
+            tmp <- rep(tmp, d)
+        if (length(tmp) != d) 
+            stop("lambda_init must have length 1 or ncol(X).")
+        pmin(pmax(tmp, lambda_min), lambda_max)
+    }
+    else if (!is.null(params0)) {
+        mu_init_mat <- do.call(cbind, params0$mu)
+        tmp <- numeric(d)
+        for (j in seq_len(d)) {
+            quad_j <- as.numeric(crossprod(mu_init_mat[j, ], 
+                Q_K %*% mu_init_mat[j, ]))
+            tmp[j] <- r_rank/pmax(quad_j, 1e-12)
+        }
+        pmin(pmax(tmp, lambda_min), lambda_max)
+    }
+    else {
+        rep(1, d)
+    }
+    .update_q_u <- function(R, sigma2, lambda_vec, iteration = 0L) {
+        Nk <- colSums(R)
+        Nk[Nk < 1e-08] <- 1e-08
+        GX <- t(X) %*% R
+        m_mat <- matrix(0, nrow = d, ncol = K)
+        sdiag_mat <- matrix(0, nrow = d, ncol = K)
+        S_list <- vector("list", d)
+        logdetS <- numeric(d)
+        eq_quad <- numeric(d)
+        for (j in seq_len(d)) {
+            diag_j <- as.numeric(Nk/sigma2[j])
+            A_j <- diag(diag_j, K, K) + lambda_vec[j] * Q_K
+            A_j <- 0.5 * (A_j + t(A_j))
+            L_j <- tryCatch(chol(A_j), error = function(e) {
+                .cavi_stop_precision_failure(iteration = iteration, 
+                  feature_index = j, lambda_j = lambda_vec[j], 
+                  diag_term = diag_j, A_j = A_j, R = R, rw_q = rw_q, 
+                  ridge = ridge, sigma2_j = sigma2[j], original_error = e)
+            })
+            S_j <- chol2inv(L_j)
+            rhs_j <- as.numeric(GX[j, ])/sigma2[j]
+            y_j <- forwardsolve(t(L_j), rhs_j)
+            m_j <- as.numeric(backsolve(L_j, y_j))
+            S_list[[j]] <- S_j
+            m_mat[j, ] <- m_j
+            sdiag_mat[j, ] <- diag(S_j)
+            logdetS[j] <- -2 * sum(log(diag(L_j)))
+            eq_quad[j] <- as.numeric(crossprod(m_j, Q_K %*% m_j) + 
+                sum(Q_K * S_j))
+        }
+        list(m_mat = m_mat, sdiag_mat = sdiag_mat, S_list = S_list, 
+            logdetS = logdetS, eq_quad = eq_quad)
+    }
+    .update_q_u_known <- function(R, lambda_vec, var_mat, iteration = 0L) {
+        m_mat <- matrix(0, nrow = d, ncol = K)
+        sdiag_mat <- matrix(0, nrow = d, ncol = K)
+        S_list <- vector("list", d)
+        logdetS <- numeric(d)
+        eq_quad <- numeric(d)
+        for (j in seq_len(d)) {
+            inv_vj <- 1/var_mat[, j]
+            diag_j <- as.numeric(crossprod(inv_vj, R))
+            A_j <- diag(diag_j, K, K) + lambda_vec[j] * Q_K
+            A_j <- 0.5 * (A_j + t(A_j))
+            L_j <- tryCatch(chol(A_j), error = function(e) {
+                .cavi_stop_precision_failure(iteration = iteration, 
+                  feature_index = j, lambda_j = lambda_vec[j], 
+                  diag_term = diag_j, A_j = A_j, R = R, rw_q = rw_q, 
+                  ridge = ridge, measurement_sd = noise_info$measurement_sd, 
+                  original_error = e)
+            })
+            S_j <- chol2inv(L_j)
+            rhs_j <- as.numeric(crossprod(inv_vj * X[, j], R))
+            y_j <- forwardsolve(t(L_j), rhs_j)
+            m_j <- as.numeric(backsolve(L_j, y_j))
+            S_list[[j]] <- S_j
+            m_mat[j, ] <- m_j
+            sdiag_mat[j, ] <- diag(S_j)
+            logdetS[j] <- -2 * sum(log(diag(L_j)))
+            eq_quad[j] <- as.numeric(crossprod(m_j, Q_K %*% m_j) + 
+                sum(Q_K * S_j))
+        }
+        list(m_mat = m_mat, sdiag_mat = sdiag_mat, S_list = S_list, 
+            logdetS = logdetS, eq_quad = eq_quad)
+    }
+    .update_r <- function(q_u, pi_vec, sigma2) {
+        m_mat <- q_u$m_mat
+        sdiag_mat <- q_u$sdiag_mat
+        inv_s2 <- 1/sigma2
+        Xs2 <- drop(X^2 %*% inv_s2)
+        cross <- X %*% (inv_s2 * m_mat)
+        mu2_s <- colSums(inv_s2 * m_mat^2)
+        unc_s <- colSums(inv_s2 * sdiag_mat)
+        quad_mat <- Xs2 - 2 * cross + rep(mu2_s + unc_s, each = n)
+        const_sigma <- sum(log(2 * base::pi * sigma2))
+        log_r <- rep(log(pmax(pi_vec, 1e-300)), each = n) - 0.5 * 
+            (const_sigma + quad_mat)
+        lse <- matrixStats::rowLogSumExps(log_r)
+        exp(log_r - lse)
+    }
+    .update_r_known <- function(q_u, pi_vec, var_mat) {
+        m_mat <- q_u$m_mat
+        sdiag_mat <- q_u$sdiag_mat
+        inv_var_mat <- 1/var_mat
+        const_row <- rowSums(log(2 * base::pi * var_mat))
+        log_r <- matrix(0, nrow = n, ncol = K)
+        for (k in seq_len(K)) {
+            diff_k <- sweep(X, 2, m_mat[, k], "-")
+            quad_det <- rowSums(inv_var_mat * diff_k^2)
+            quad_unc <- drop(inv_var_mat %*% sdiag_mat[, k])
+            log_r[, k] <- log(pmax(pi_vec[k], 1e-300)) - 0.5 * 
+                (const_row + quad_det + quad_unc)
+        }
+        lse <- matrixStats::rowLogSumExps(log_r)
+        exp(log_r - lse)
+    }
+    .update_sigma2 <- function(R, q_u) {
+        m_mat <- q_u$m_mat
+        sdiag_mat <- q_u$sdiag_mat
+        Nk <- colSums(R)
+        GX2 <- crossprod(X^2, R)
+        GX <- crossprod(X, R)
+        mu2_Nk <- m_mat^2 * rep(Nk, each = d)
+        resid_term <- rowSums(GX2 - 2 * m_mat * GX + mu2_Nk)
+        unc_term <- rowSums(sdiag_mat * rep(Nk, each = d))
+        sigma2_new <- (resid_term + unc_term)/n
+        pmin(pmax(sigma2_new, sigma_min), sigma_max)
+    }
+    .update_lambda <- function(q_u) {
+        denom <- pmax(q_u$eq_quad, 1e-12)
+        if (lambda_sd_prior_rate_val <= 0) {
+            return(pmin(pmax(r_rank/denom, lambda_min), lambda_max))
+        }
+        .optimize_lambda_induced_exp(eq_quad = denom, r_rank = r_rank, 
+            rate = lambda_sd_prior_rate_val, lambda_min = lambda_min, 
+            lambda_max = lambda_max)
+    }
+    .compute_elbo <- function(R, pi_vec, sigma2, lambda_vec, 
+        q_u) {
+        m_mat <- q_u$m_mat
+        sdiag_mat <- q_u$sdiag_mat
+        inv_s2 <- 1/sigma2
+        log_pi_term <- sum(R * rep(log(pmax(pi_vec, 1e-300)), 
+            each = n))
+        entropy_z <- -sum(R * log(R + 1e-300))
+        Xs2 <- drop(X^2 %*% inv_s2)
+        cross <- X %*% (inv_s2 * m_mat)
+        mu2_s <- colSums(inv_s2 * m_mat^2)
+        unc_s <- colSums(inv_s2 * sdiag_mat)
+        quad_mat <- Xs2 - 2 * cross + rep(mu2_s + unc_s, each = n)
+        const_sigma <- sum(log(2 * base::pi * sigma2))
+        lik_term <- -0.5 * sum(R * (const_sigma + quad_mat))
+        prior_term <- 0.5 * sum(r_rank * (log(lambda_vec) - log(2 * 
+            base::pi)) + logdet_Q - lambda_vec * q_u$eq_quad)
+        lambda_penalty <- sum(.lambda_sd_prior_terms(lambda_vec = lambda_vec, 
+            rate = lambda_sd_prior_rate, include_constant = TRUE))
+        entropy_u <- 0.5 * sum(K * log(2 * base::pi * exp(1)) + 
+            q_u$logdetS)
+        as.numeric(log_pi_term + entropy_z + lik_term + prior_term + 
+            lambda_penalty + entropy_u)
+    }
+    .compute_elbo_known <- function(R, pi_vec, lambda_vec, q_u, 
+        var_mat) {
+        m_mat <- q_u$m_mat
+        sdiag_mat <- q_u$sdiag_mat
+        inv_var_mat <- 1/var_mat
+        log_pi_term <- sum(R * rep(log(pmax(pi_vec, 1e-300)), 
+            each = n))
+        entropy_z <- -sum(R * log(R + 1e-300))
+        const_row <- rowSums(log(2 * base::pi * var_mat))
+        lik_term <- 0
+        for (k in seq_len(K)) {
+            diff_k <- sweep(X, 2, m_mat[, k], "-")
+            quad_det <- rowSums(inv_var_mat * diff_k^2)
+            quad_unc <- drop(inv_var_mat %*% sdiag_mat[, k])
+            lik_term <- lik_term - 0.5 * sum(R[, k] * (const_row + 
+                quad_det + quad_unc))
+        }
+        prior_term <- 0.5 * sum(r_rank * (log(lambda_vec) - log(2 * 
+            base::pi)) + logdet_Q - lambda_vec * q_u$eq_quad)
+        lambda_penalty <- sum(.lambda_sd_prior_terms(lambda_vec = lambda_vec, 
+            rate = lambda_sd_prior_rate, include_constant = TRUE))
+        entropy_u <- 0.5 * sum(K * log(2 * base::pi * exp(1)) + 
+            q_u$logdetS)
+        as.numeric(log_pi_term + entropy_z + lik_term + prior_term + 
+            lambda_penalty + entropy_u)
+    }
+    .compute_observed_loglik <- function(q_u, pi_vec, sigma2) {
+        m_mat <- q_u$m_mat
+        inv_s2 <- 1/sigma2
+        Xs2 <- drop(X^2 %*% inv_s2)
+        cross <- X %*% (inv_s2 * m_mat)
+        mu2_s <- colSums(inv_s2 * m_mat^2)
+        quad_mat <- Xs2 - 2 * cross + rep(mu2_s, each = n)
+        const_sigma <- sum(log(2 * base::pi * sigma2))
+        logdens <- rep(log(pmax(pi_vec, 1e-300)), each = n) - 
+            0.5 * (const_sigma + quad_mat)
+        sum(matrixStats::rowLogSumExps(logdens))
+    }
+    .compute_observed_loglik_known <- function(q_u, pi_vec, var_mat) {
+        m_mat <- q_u$m_mat
+        inv_var_mat <- 1/var_mat
+        const_row <- rowSums(log(2 * base::pi * var_mat))
+        logdens <- matrix(0, nrow = n, ncol = K)
+        for (k in seq_len(K)) {
+            diff_k <- sweep(X, 2, m_mat[, k], "-")
+            quad_det <- rowSums(inv_var_mat * diff_k^2)
+            logdens[, k] <- log(pmax(pi_vec[k], 1e-300)) - 0.5 * 
+                (const_row + quad_det)
+        }
+        sum(matrixStats::rowLogSumExps(logdens))
+    }
+    lambda_trace <- list(lambda_vec)
+    pi_trace <- list(pi_vec)
+    converged <- FALSE
+    if (is.null(noise_info$measurement_sd)) {
+        q_u <- .update_q_u(R, sigma2, lambda_vec, iteration = 0L)
+        elbo_trace <- .compute_elbo(R, pi_vec, sigma2, lambda_vec, 
+            q_u)
+        loglik_trace <- .compute_observed_loglik(q_u, pi_vec, 
+            sigma2)
+        sigma2_trace <- list(sigma2)
+        if (max_iter > 0L) {
+            for (iter in seq_len(max_iter)) {
+                R <- .update_r(q_u, pi_vec, sigma2)
+                if (identical(position_prior_ctl$position_prior, 
+                  "adaptive")) {
+                  pi_vec <- pmax(colMeans(R), .Machine$double.eps)
+                  pi_vec <- pi_vec/sum(pi_vec)
+                }
+                sigma2 <- .update_sigma2(R, q_u)
+                if (!fix_lambda) 
+                  lambda_vec <- .update_lambda(q_u)
+                q_u <- .update_q_u(R, sigma2, lambda_vec, iteration = iter)
+                elbo_new <- .compute_elbo(R, pi_vec, sigma2, 
+                  lambda_vec, q_u)
+                loglik_new <- .compute_observed_loglik(q_u, pi_vec, 
+                  sigma2)
+                elbo_trace <- c(elbo_trace, elbo_new)
+                loglik_trace <- c(loglik_trace, loglik_new)
+                lambda_trace[[length(lambda_trace) + 1L]] <- lambda_vec
+                sigma2_trace[[length(sigma2_trace) + 1L]] <- sigma2
+                pi_trace[[length(pi_trace) + 1L]] <- pi_vec
+                delta <- elbo_trace[length(elbo_trace)] - elbo_trace[length(elbo_trace) - 
+                  1L]
+                scaled_delta <- .mpcurve_elbo_change(delta, elbo_trace[length(elbo_trace) - 
+                  1L], n, d, convergence, relative_offset = 1)
+                if (verbose) {
+                  cat(sprintf("[cavi %3d] ELBO=%.6f  delta=%.3e  sigma2=[%.3g, %.3g]  lambda=[%.3g, %.3g]\n", 
+                    iter, elbo_new, delta, min(sigma2), max(sigma2), 
+                    min(lambda_vec), max(lambda_vec)))
+                }
+                if (delta < -1e-08) {
+                  warning(sprintf("ELBO decreased by %.3e at iteration %d.", 
+                    delta, iter), call. = FALSE)
+                }
+                if (delta >= 0 && abs(scaled_delta) < tol) {
+                  converged <- TRUE
+                  break
+                }
+            }
+        }
+    }
+    else {
+        var_mat <- noise_info$var_mat
+        q_u <- .update_q_u_known(R, lambda_vec, var_mat, iteration = 0L)
+        elbo_trace <- .compute_elbo_known(R, pi_vec, lambda_vec, 
+            q_u, var_mat)
+        loglik_trace <- .compute_observed_loglik_known(q_u, pi_vec, 
+            var_mat)
+        sigma2_trace <- list()
+        if (max_iter > 0L) {
+            for (iter in seq_len(max_iter)) {
+                R <- .update_r_known(q_u, pi_vec, var_mat)
+                if (identical(position_prior_ctl$position_prior, 
+                  "adaptive")) {
+                  pi_vec <- pmax(colMeans(R), .Machine$double.eps)
+                  pi_vec <- pi_vec/sum(pi_vec)
+                }
+                if (!fix_lambda) 
+                  lambda_vec <- .update_lambda(q_u)
+                q_u <- .update_q_u_known(R, lambda_vec, var_mat, 
+                  iteration = iter)
+                elbo_new <- .compute_elbo_known(R, pi_vec, lambda_vec, 
+                  q_u, var_mat)
+                loglik_new <- .compute_observed_loglik_known(q_u, 
+                  pi_vec, var_mat)
+                elbo_trace <- c(elbo_trace, elbo_new)
+                loglik_trace <- c(loglik_trace, loglik_new)
+                lambda_trace[[length(lambda_trace) + 1L]] <- lambda_vec
+                pi_trace[[length(pi_trace) + 1L]] <- pi_vec
+                delta <- elbo_trace[length(elbo_trace)] - elbo_trace[length(elbo_trace) - 
+                  1L]
+                scaled_delta <- .mpcurve_elbo_change(delta, elbo_trace[length(elbo_trace) - 
+                  1L], n, d, convergence, relative_offset = 1)
+                if (verbose) {
+                  rng_sd <- .cavi_measurement_sd_range(noise_info$measurement_sd)
+                  cat(sprintf("[cavi %3d] ELBO=%.6f  delta=%.3e  known_sd=[%.3g, %.3g]  lambda=[%.3g, %.3g]\n", 
+                    iter, elbo_new, delta, rng_sd[1], rng_sd[2], 
+                    min(lambda_vec), max(lambda_vec)))
+                }
+                if (delta < -1e-08) {
+                  warning(sprintf("ELBO decreased by %.3e at iteration %d.", 
+                    delta, iter), call. = FALSE)
+                }
+                if (delta >= 0 && abs(scaled_delta) < tol) {
+                  converged <- TRUE
+                  break
+                }
+            }
+        }
+    }
+    params <- list(pi = pi_vec, mu = lapply(seq_len(K), function(k) q_u$m_mat[, 
+        k]), sigma2 = sigma2)
+    out <- structure(list(params = params, gamma = R, measurement_sd = noise_info$measurement_sd, 
+        posterior = list(mean = q_u$m_mat, cov = q_u$S_list, 
+            var = q_u$sdiag_mat, diag = q_u$sdiag_mat), lambda_vec = lambda_vec, 
+        Q_K = Q_K, rw_q = rw_q, elbo_trace = elbo_trace, loglik_trace = loglik_trace, 
+        ml_trace = numeric(0), lambda_trace = lambda_trace, sigma2_trace = sigma2_trace, 
+        pi_trace = pi_trace, iter = length(elbo_trace) - 1L, 
+        converged = converged, control = list(modelName = "homoskedastic", 
+            noise_model = noise_info$noise_model, adaptive = if (fix_lambda) "fixed_lambda" else "variational", 
+            position_prior = position_prior_ctl$position_prior, 
+            method = method, discretization = discretization, 
+            fix_lambda = fix_lambda, prior_proper = prior_meta$proper, 
+            prior_rank = prior_meta$rank, prior_logdet = prior_meta$logdet, 
+            gamma_preinit = if (is.null(responsibilities_init)) {
+                "ordering_init"
+            } else if (raw_gamma_preinit) {
+                "raw_unpenalized"
+            } else {
+                "direct_penalized"
+            }, lambda_sd_prior_rate = lambda_sd_prior_rate, lambda_min = lambda_min, 
+            lambda_max = lambda_max, sigma_min = sigma_min, sigma_max = sigma_max, 
+            max_iter = max_iter, tol = tol, convergence = convergence, 
+            ridge = ridge), data = X), class = "cavi")
+    out$priors <- .mpcurve_priors_from_cavi_fit(out)
+    out
+}
+function (X, K, method = c("PCA", "fiedler", "pcurve", "tSNE", 
+    "random", "isomap"), discretization = c("equal", "quantile", 
+    "kmeans"), modelName = c("homoskedastic", "heteroskedastic"), 
+    nugget = 0, eps = 1e-12, ...) 
+{
+    method <- match.arg(method)
+    discretization <- match.arg(discretization)
+    modelName <- match.arg(modelName)
+    X <- as.matrix(X)
+    if (nrow(X) < 1L) 
+        stop("X must have at least one row.")
+    K <- as.integer(K)
+    if (length(K) != 1L || is.na(K) || K < 2L) 
+        stop("K must be a single integer >= 2.")
+    nugget <- as.numeric(nugget)
+    if (!is.finite(nugget) || nugget < 0) 
+        stop("nugget must be nonnegative.")
+    eps <- as.numeric(eps)
+    if (!is.finite(eps) || eps <= 0) 
+        stop("eps must be positive.")
+    if (method == "random") {
+        init <- make_default_init(X = X, K = K, ordering = TRUE)
+        init$keep_idx <- seq_len(nrow(X))
+        init$ordering <- list(method = method, t = NA_real_, 
+            keep_idx = init$keep_idx)
+        params_cs <- .convert_initparams_to_csmooth(init_params = init, 
+            modelName = modelName, eps = eps)
+        if (modelName == "homoskedastic") {
+            params_cs$sigma2 <- pmax(as.numeric(params_cs$sigma2) + 
+                nugget, eps)
+        }
+        else {
+            params_cs$sigma2 <- pmax(as.matrix(params_cs$sigma2) + 
+                nugget, eps)
+        }
+        return(list(params = params_cs, keep_idx = init$keep_idx, 
+            ordering = init$ordering))
+    }
+    ordering_result <- switch(method, PCA = PCA_ordering(X, ...), 
+        tSNE = tSNE_ordering(X, ...), pcurve = pcurve_ordering(X, 
+            ...), fiedler = fiedler_ordering(X, ...), isomap = isomap_ordering(X, 
+            ...), stop("Unknown method: ", method))
+    init <- make_init_csmooth(X = X, ordering_vec = ordering_result$t, 
+        K = K, modelName = modelName, nugget = nugget, discretization = discretization, 
+        na_action = "drop", eps = eps)
+    ordering <- c(ordering_result, list(method = method))
+    list(params = list(pi = init$pi, mu = init$mu, sigma2 = init$sigma2), 
+        keep_idx = init$keep_idx, cluster_rank = init$cluster_rank, 
+        ordering = ordering)
+}

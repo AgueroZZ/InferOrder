@@ -1,0 +1,31 @@
+List of 6
+ $ verified_at_utc         : chr "2026-10-02 13:50:31"
+ $ candidate_count         : int 26
+ $ timing_count            : int 20
+ $ score_checks            :List of 4
+  ..$ :List of 2
+  .. ..$ k                       : int 5
+  .. ..$ max_absolute_differences: Named num [1:2] 0 0
+  .. .. ..- attr(*, "names")= chr [1:2] "elbo" "positions"
+  ..$ :List of 2
+  .. ..$ k                       : int 10
+  .. ..$ max_absolute_differences: Named num [1:2] 0 0
+  .. .. ..- attr(*, "names")= chr [1:2] "elbo" "positions"
+  ..$ :List of 2
+  .. ..$ k                       : int 15
+  .. ..$ max_absolute_differences: Named num [1:2] 0 0
+  .. .. ..- attr(*, "names")= chr [1:2] "elbo" "positions"
+  ..$ :List of 2
+  .. ..$ k                       : int 30
+  .. ..$ max_absolute_differences: Named num [1:2] 0 0
+  .. .. ..- attr(*, "names")= chr [1:2] "elbo" "positions"
+ $ installed_function_count: int 340
+ $ uninterrupted_checks    :List of 2
+  ..$ :List of 2
+  .. ..$ k                       : int 15
+  .. ..$ max_absolute_differences: Named num [1:4] 2.33e-15 9.66e-15 1.87e-14 1.36e-12
+  .. .. ..- attr(*, "names")= chr [1:4] "position" "responsibilities" "trajectory" "elbo_trace"
+  ..$ :List of 2
+  .. ..$ k                       : int 10
+  .. ..$ max_absolute_differences: Named num [1:4] 2.10e-14 5.23e-13 9.63e-13 1.53e-10
+  .. .. ..- attr(*, "names")= chr [1:4] "position" "responsibilities" "trajectory" "elbo_trace"

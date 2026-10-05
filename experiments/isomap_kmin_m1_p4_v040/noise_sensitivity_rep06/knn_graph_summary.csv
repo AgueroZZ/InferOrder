@@ -1,0 +1,13 @@
+"noise_sd","k","stage","column","samples","components","unique_edges","added_edges","joining_edges","prior_component_sizes","label"
+0.25,3,"Before: kmin - 1","Noise SD = 0.25",200,2,415,0,0,"C1=5; C2=195","k=3 | 2 components
+415 unique edges"
+0.25,4,"Selected: kmin","Noise SD = 0.25",200,1,534,119,1,"C1=5; C2=195","k=4 | 1 component
+534 unique edges"
+0.01,6,"Before: kmin - 1","Noise SD = 0.01",200,2,704,0,0,"C1=166; C2=34","k=6 | 2 components
+704 unique edges"
+0.01,7,"Selected: kmin","Noise SD = 0.01",200,1,823,119,2,"C1=166; C2=34","k=7 | 1 component
+823 unique edges"
+0,5,"Before: kmin - 1","Noise SD = 0.00",200,3,594,0,0,"C1=94; C2=34; C3=72","k=5 | 3 components
+594 unique edges"
+0,6,"Selected: kmin","Noise SD = 0.00",200,1,702,108,2,"C1=94; C2=34; C3=72","k=6 | 1 component
+702 unique edges"

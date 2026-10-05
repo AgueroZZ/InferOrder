@@ -1,0 +1,88 @@
+---
+title: "Exploring methods to obtain an initial ordering"
+author: "Ziang Zhang"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+    highlight: textmate
+    self_contained: true
+editor_options:
+  chunk_output_type: console
+---
+
+<!--
+Internal working page. It is deliberately outside `analysis/` and `docs/`:
+it is not a workflowr page, is not built by `scripts/build_current_site.R`,
+and is not linked from the public navbar.
+
+Render from the repository root:
+  Rscript -e 'rmarkdown::render("internal/initial_ordering_methods.Rmd", knit_root_dir = getwd())'
+-->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Question
+
+We generate the following matrix $Y \in \mathbb{R}^{N \times P}$, where $N = 100$ and $P = 2$:
+
+We first generate two random B-spline functions $f_1$ and $f_2$ on the interval $[0, 1]$, and then generate $t_1, \ldots, t_N$ uniformly from $[0, 1]$.
+
+The matrix $Y$ is then generated as $Y_{i, j} = f_j(t_i) + \epsilon_{i, j}$, where $\epsilon_{i, j} \sim N(0, 0.1^2)$.
+
+Each $f_j$ is a random cubic B-spline with eight basis functions and standard-normal coefficients. It is centered and rescaled over a dense grid so that its average signal variance is one, following the generator used in the single-ordering simulations. Figure 1 shows the two functions and the code below generates $Y$.
+
+```{r generate-data}
+N <- 100
+P <- 2
+noise_sd <- 0.1
+spline_df <- 8
+seed <- 20260930
+
+set.seed(seed)
+
+# Basis evaluated on a dense grid, used to standardize each f_j and to plot it.
+grid <- seq(0, 1, length.out = 2001)
+basis_grid <- splines::bs(grid, df = spline_df, degree = 3,
+                          intercept = TRUE, Boundary.knots = c(0, 1))
+
+# Random coefficients define f_1 and f_2; center and scale to unit variance.
+coefficients <- matrix(rnorm(spline_df * P), spline_df, P)
+dense_signal <- basis_grid %*% coefficients
+centers <- colMeans(dense_signal)
+signal_scale <- sqrt(mean(sweep(dense_signal, 2, centers)^2))
+
+# f_j evaluated at arbitrary positions in [0, 1].
+evaluate_f <- function(x) {
+  basis_x <- predict(basis_grid, x)
+  sweep(basis_x %*% coefficients, 2, centers) / signal_scale
+}
+
+# Latent positions t_i ~ Uniform(0, 1) and observations Y = f(t) + noise.
+t_true <- runif(N)
+Y <- evaluate_f(t_true) + matrix(rnorm(N * P, sd = noise_sd), N, P)
+colnames(Y) <- paste0("f", seq_len(P))
+
+dim(Y)
+```
+
+```{r plot-functions, fig.width=7, fig.height=3.5, fig.cap="Figure 1. The two generating functions $f_1$ (blue) and $f_2$ (orange) as functions of the latent position $t \\in [0, 1]$. Each is a random cubic B-spline with eight basis functions, centered and scaled to unit average variance over $[0, 1]$."}
+f_grid <- evaluate_f(grid)
+plot_data <- data.frame(
+  t = rep(grid, times = P),
+  value = as.vector(f_grid),
+  Function = factor(rep(c("f[1]", "f[2]"), each = length(grid)))
+)
+
+library(ggplot2)
+ggplot(plot_data, aes(t, value, colour = Function)) +
+  geom_line(linewidth = 1) +
+  scale_colour_manual(values = c("f[1]" = "#0072B2", "f[2]" = "#E69F00"),
+                      labels = c(expression(f[1]), expression(f[2]))) +
+  labs(x = "Latent position t", y = "Function value") +
+  theme_bw()
+```

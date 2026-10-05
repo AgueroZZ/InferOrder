@@ -1,0 +1,4 @@
+library/
+logs/
+full_fits/
+*.tmp-*

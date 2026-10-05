@@ -1,0 +1,4 @@
+Verified saved inputs and all three initializer/final metrics.
+Reproduced all three raw Isomap coordinate vectors within 1e-12.
+All three graphs are connected and retain all 200 samples; no PCA fallback.
+No MPCurve fitting was rerun; parent results and plots were preserved.

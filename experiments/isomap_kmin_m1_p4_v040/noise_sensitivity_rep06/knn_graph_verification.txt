@@ -1,0 +1,4 @@
+PASS: 1200 nodes, 3772 unique displayed edges, six graph panels, five connecting edges.
+PASS: every edge endpoint matches its sample feature coordinates; component colors match across rows.
+PASS: independent connectivity counts match all six summaries; removing red edges restores earlier components.
+PASS: neighbor ranks, nested edge sets, report links, and PNG/PDF signatures.

@@ -1,0 +1,147 @@
+# .structural_partition_update_gamma
+function (X, q_u, pi_vec, sigma2, measurement_sd, weights) 
+{
+    X <- as.matrix(X)
+    n <- nrow(X)
+    d <- ncol(X)
+    K <- length(pi_vec)
+    weights <- as.numeric(weights)
+    if (length(weights) != d || any(!is.finite(weights)) || any(weights < 
+        0)) {
+        stop("Structural q(C) weights must be finite, nonnegative, and length d.", 
+            call. = FALSE)
+    }
+    noise_info <- .cavi_resolve_measurement_sd(S = measurement_sd, 
+        X = X, caller = ".structural_partition_update_gamma()")
+    known_noise <- !is.null(noise_info$measurement_sd)
+    log_r <- matrix(0, nrow = n, ncol = K)
+    if (!known_noise) {
+        inv_var_weight <- matrix(weights/sigma2, nrow = n, ncol = d, 
+            byrow = TRUE)
+        const_term <- sum(weights * log(2 * base::pi * sigma2))
+    }
+    else {
+        inv_var_weight <- matrix(weights, nrow = n, ncol = d, 
+            byrow = TRUE)/noise_info$var_mat
+        const_term <- rowSums(matrix(weights, nrow = n, ncol = d, 
+            byrow = TRUE) * log(2 * base::pi * noise_info$var_mat))
+    }
+    for (k in seq_len(K)) {
+        diff_k <- sweep(X, 2, q_u$m_mat[, k], "-")
+        quad_det <- rowSums(inv_var_weight * diff_k^2)
+        quad_unc <- if (!known_noise) {
+            rep(sum(weights * q_u$sdiag_mat[, k]/sigma2), n)
+        }
+        else {
+            drop(inv_var_weight %*% q_u$sdiag_mat[, k])
+        }
+        log_r[, k] <- log(pmax(pi_vec[k], .Machine$double.eps)) - 
+            0.5 * (const_term + quad_det + quad_unc)
+    }
+    lse <- matrixStats::rowLogSumExps(log_r)
+    .structural_partition_stabilize_gamma(exp(log_r - lse))
+}
+
+# .structural_partition_sweep
+function (state, T_now = 1) 
+{
+    X <- state$data
+    M <- state$M
+    d <- state$d
+    labels <- state$ordering_labels
+    q_u <- vector("list", M)
+    for (m in seq_len(M)) {
+        q_u[[m]] <- .structural_partition_q_u(X = X, R = state$gamma[[m]], 
+            sigma2 = state$sigma2, measurement_sd = state$measurement_sd, 
+            lambda_vec = state$lambda_mat[, m], Q_K = state$Q_K, 
+            ordering_label = labels[m])
+    }
+    gamma <- vector("list", M)
+    for (m in seq_len(M)) {
+        gamma[[m]] <- .structural_partition_update_gamma(X = X, 
+            q_u = q_u[[m]], pi_vec = state$position_pi[[m]], 
+            sigma2 = state$sigma2, measurement_sd = state$measurement_sd, 
+            weights = state$pi_weights[, m])
+    }
+    names(gamma) <- labels
+    position_pi <- lapply(seq_len(M), function(m) {
+        if (identical(state$control$position_prior, "fixed")) {
+            state$position_pi[[m]]
+        }
+        else {
+            value <- pmax(colMeans(gamma[[m]]), .Machine$double.eps)
+            value/sum(value)
+        }
+    })
+    names(position_pi) <- labels
+    sigma_update <- NULL
+    sigma2 <- state$sigma2
+    if (is.null(state$measurement_sd)) {
+        sigma_update <- .structural_partition_update_sigma2(X = X, 
+            gamma = gamma, q_u = q_u, weights = state$pi_weights, 
+            sigma_min = state$control$sigma_min, sigma_max = state$control$sigma_max)
+        sigma2 <- sigma_update$sigma2
+    }
+    lambda_mat <- state$lambda_mat
+    if (!isTRUE(state$control$fix_lambda)) {
+        rank_q <- .rw_precision_metadata(state$Q_K, rw_q = state$rw_q)$rank
+        for (m in seq_len(M)) {
+            lambda_mat[, m] <- .cavi_update_lambda_weighted(q_u = q_u[[m]], 
+                r_rank = rank_q, lambda_sd_prior_rate = state$control$lambda_sd_prior_rate, 
+                lambda_min = state$control$lambda_min, lambda_max = state$control$lambda_max, 
+                feature_weights = rep(1, d), feature_active = rep(TRUE, 
+                  d))
+        }
+    }
+    local_blocks <- .structural_partition_local_blocks(X = X, 
+        gamma = gamma, q_u = q_u, sigma2 = sigma2, measurement_sd = state$measurement_sd, 
+        lambda_mat = lambda_mat, Q_K = state$Q_K, rw_q = state$rw_q, 
+        lambda_sd_prior_rate = state$control$lambda_sd_prior_rate)
+    weight_update <- .structural_partition_update_weights(local_blocks = local_blocks, 
+        weights = state$pi_weights, T_now = T_now, control = state$control)
+    objective <- .structural_partition_objective(gamma = gamma, 
+        position_pi = position_pi, weights = weight_update$weights, 
+        local_blocks = local_blocks, assignment_info = weight_update$assignment_info)
+    state$gamma <- gamma
+    state$position_pi <- position_pi
+    state$q_u <- q_u
+    state$sigma2 <- sigma2
+    state$lambda_mat <- lambda_mat
+    state$pi_weights <- weight_update$weights
+    colnames(state$pi_weights) <- labels
+    state$local_blocks <- local_blocks
+    colnames(state$local_blocks) <- labels
+    state$assignment_info <- weight_update$assignment_info
+    state$objective <- objective$objective
+    state$objective_terms <- objective
+    state$expected_residuals <- sigma_update$residuals %||% NULL
+    state
+}
+
+# .structural_partition_update_weights
+function (local_blocks, weights, T_now, control) 
+{
+    if (!is.numeric(T_now) || length(T_now) != 1L || !is.finite(T_now) || 
+        T_now <= 0) {
+        stop("T_now must be a finite positive number.", call. = FALSE)
+    }
+    old_info <- .structural_partition_assignment_info(weights, 
+        T_now, control)
+    logits <- (local_blocks + matrix(old_info$e_log_omega, nrow(local_blocks), 
+        ncol(local_blocks), byrow = TRUE))/T_now
+    lse <- matrixStats::rowLogSumExps(logits)
+    weights_new <- exp(logits - lse)
+    info_new <- .structural_partition_assignment_info(weights_new, 
+        T_now, control)
+    list(weights = weights_new, assignment_info = info_new)
+}
+
+# .structural_partition_stabilize_gamma
+function (R) 
+{
+    R <- as.matrix(R)
+    floor_prob <- sqrt(.Machine$double.eps)/ncol(R)
+    R <- pmax(R, floor_prob)
+    R/rowSums(R)
+}
+

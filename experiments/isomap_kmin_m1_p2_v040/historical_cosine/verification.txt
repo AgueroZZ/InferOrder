@@ -1,0 +1,52 @@
+List of 11
+ $ verified_at_utc    : chr "2026-10-03 02:01:13"
+ $ replicates         : int 20
+ $ fits               : int 60
+ $ converged          : int 60
+ $ failures           : int 0
+ $ fallback_count     : int 0
+ $ warning_count      : int 0
+ $ primary_metric     : chr "cosine"
+ $ plotted_count      : int 60
+ $ installed_functions: int 343
+ $ graph_checks       :List of 20
+  ..$ : Named int [1:2] 1 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 2 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 3 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 4 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 5 6
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 6 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 7 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 8 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 9 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 10 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 11 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 12 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 13 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 14 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 15 5
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 16 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 17 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 18 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 19 4
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"
+  ..$ : Named int [1:2] 20 3
+  .. ..- attr(*, "names")= chr [1:2] "replication" "k"

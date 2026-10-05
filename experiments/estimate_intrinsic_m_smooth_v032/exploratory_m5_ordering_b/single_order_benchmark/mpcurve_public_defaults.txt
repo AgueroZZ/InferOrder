@@ -1,0 +1,153 @@
+$X
+
+
+$algorithm
+c("cavi", "csmooth_em", "smooth_em")
+
+$method
+c("PCA", "fiedler", "pcurve", "tSNE", "random", "isomap")
+
+$K
+NULL
+
+$rw_q
+[1] 2
+
+$lambda
+[1] 1
+
+$S
+NULL
+
+$sigma2_init
+NULL
+
+$fix_lambda
+[1] FALSE
+
+$iter
+[1] 100
+
+$tol
+[1] 1e-06
+
+$num_cores
+[1] 1
+
+$intrinsic_dim
+[1] 1
+
+$greedy
+c("none", "forward", "backward")
+
+$partition_init
+c("similarity", "ordering_methods")
+
+$discretization
+NULL
+
+$ridge
+[1] 0
+
+$lambda_sd_prior_rate
+NULL
+
+$lambda_min
+[1] 1e-10
+
+$lambda_max
+[1] 1e+10
+
+$sigma_min
+[1] 1e-10
+
+$sigma_max
+[1] 1e+10
+
+$position_prior
+c("adaptive", "fixed")
+
+$position_prior_init
+NULL
+
+$partition_prior
+c("adaptive", "fixed")
+
+$partition_prior_init
+NULL
+
+$effective_weight_tol
+[1] 1e-12
+
+$assignment_prior
+NULL
+
+$ordering_alpha
+NULL
+
+$similarity_metric
+c("spearman", "pearson", "smooth_fit", "spline_r2")
+
+$smooth_fit_lambda_mode
+c("optimize", "fixed")
+
+$smooth_fit_lambda_value
+[1] 1
+
+$cluster_linkage
+[1] "single"
+
+$similarity_min_feature_sd
+[1] 1e-08
+
+$T_start
+[1] 5
+
+$T_end
+[1] 1
+
+$n_outer
+[1] 25
+
+$inner_iter
+[1] 1
+
+$max_converge_iter
+NULL
+
+$tol_outer
+[1] 1e-06
+
+$freeze_unused_ordering
+NULL
+
+$freeze_unused_ordering_threshold
+NULL
+
+$freeze_feature
+NULL
+
+$freeze_feature_weight_threshold
+NULL
+
+$drop_unused_ordering
+NULL
+
+$verbose
+[1] FALSE
+
+$convergence
+c("normalized", "relative")
+
+$max_intrinsic_dim
+[1] 8
+
+$spline_r2_df
+[1] 5
+
+$similarity_min_cluster_size
+[1] 2
+
+$...
+
+

@@ -1,0 +1,3 @@
+"regime","orderings","mean_default","mean_selected","default_failures","rescued","selected_failures","gains_over_005","drops_over_005","good_to_bad","median_delta","mean_delta"
+"inferred",72,0.611371016798751,0.715695741850216,50,12,38,23,5,0,4.00004444497948e-06,0.104324725051465
+"truth",72,0.611371016798751,0.715695741850216,50,12,38,23,5,0,4.00004444497948e-06,0.104324725051465

@@ -1,0 +1,5 @@
+12 primary fits; 18 total endpoints; 300 finite positions per fit.
+All source fit input SHA-256 hashes match the same per-case matrix.
+MPCurve uses the public intrinsic_dim=1 PCA initializer; no injected coordinates.
+P-curve starts are NULL. GP starts are native PCA; Bayesian inducing count is 10.
+All main runs at half/original noise converged. Both zero-noise GP runs exhausted the budget.

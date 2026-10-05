@@ -1,0 +1,197 @@
+---
+title: "Single-ordering playground"
+output:
+  html_document:
+    toc: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                     fig.width = 11, fig.height = 7)
+# Prefer the installed package. Set MPCURVER_LIB to use a particular library.
+if (nzchar(Sys.getenv("MPCURVER_LIB")))
+  .libPaths(c(Sys.getenv("MPCURVER_LIB"), .libPaths()))
+library(MPCurver)
+library(ggplot2)
+theme_set(theme_minimal(base_size = 12))
+```
+
+## Intro
+
+Change `config` or replace `simulate_signal()`. The remaining chunks use the
+same interface: a sample-by-feature signal matrix evaluated at `t`.
+
+```{r configuration}
+config <- list(
+  seed = 20260932L, n = 300L, p = 12L, snr = 4,
+  generator = "matern",       # "matern" or "fourier"
+  length_scale = 0.2,         # Matern 5/2
+  frequencies = 2:6, decay = 1.5,  # Fourier
+  reference = "V1",           # Figure 2 horizontal axis
+  K = 50L, position_prior = "fixed", # "fixed" = uniform; or "adaptive"
+  max_iter = 2000L, tol = 1e-6
+)
+```
+
+```{r simulation-module}
+simulate_signal <- function(t, p, config) {
+  if (config$generator == "matern") {
+    distance <- abs(outer(t, t, "-"))
+    z <- sqrt(5) * distance / config$length_scale
+    covariance <- (1 + z + z^2 / 3) * exp(-z)
+    L <- t(chol(covariance + diag(1e-10, length(t))))
+    return(L %*% matrix(rnorm(length(t) * p), length(t), p))
+  }
+  if (config$generator == "fourier") {
+    h <- config$frequencies
+    angles <- outer(t, pi * h)
+    a <- matrix(rnorm(length(h) * p), length(h), p)
+    b <- matrix(rnorm(length(h) * p), length(h), p)
+    return(sin(angles) %*% (h^(-config$decay) * a) +
+           cos(angles) %*% (h^(-config$decay) * b))
+  }
+  stop("Unknown generator: ", config$generator)
+}
+
+simulate_data <- function(config) {
+  stopifnot(config$n > config$K, config$p >= 1, config$snr > 0)
+  set.seed(config$seed)
+  t <- runif(config$n)
+  signal <- simulate_signal(t, config$p, config)
+  stopifnot(identical(dim(signal), c(config$n, config$p)),
+            all(is.finite(signal)), all(apply(signal, 2, sd) > 0))
+  signal <- scale(signal)  # unit signal variance per column
+  # Separate noise seed keeps noise fixed when changing the generator.
+  set.seed(config$seed + 1L)
+  X <- signal + matrix(rnorm(length(signal)), nrow(signal)) / sqrt(config$snr)
+  colnames(X) <- colnames(signal) <- paste0("V", seq_len(config$p))
+  list(t = t, signal = signal, X = X)
+}
+data <- simulate_data(config)
+```
+
+```{r plotting-module}
+scale01 <- function(x) {
+  stopifnot(diff(range(x)) > 0)
+  (x - min(x)) / diff(range(x))
+}
+recovery <- function(x, truth) abs(cor(x, truth, method = "spearman"))
+
+feature_frame <- function(values, position, truth) {
+  do.call(rbind, lapply(seq_len(ncol(values)), function(j)
+    data.frame(position = position, value = values[, j], truth = truth,
+               feature = factor(colnames(values)[j], levels = colnames(values)))))
+}
+
+plot_features <- function(data, position, xlabel, signal_position = NULL) {
+  observed <- feature_frame(data$X, position, data$t)
+  if (is.null(signal_position)) {
+    ggplot(observed, aes(position, value, color = truth)) +
+      geom_point(size = 0.8, alpha = 0.65) +
+      scale_color_viridis_c(name = "True t", limits = c(0, 1)) +
+      facet_wrap(~feature, ncol = 4) + labs(x = xlabel, y = "Observed value")
+  } else {
+    idx <- order(data$t)
+    paths <- feature_frame(data$signal[idx, , drop = FALSE],
+                           signal_position[idx], data$t[idx])
+    ggplot(observed, aes(position, value)) +
+      geom_point(color = "gray55", size = 0.6, alpha = 0.3) +
+      geom_path(data = paths, color = "#0072B2", linewidth = 0.8) +
+      facet_wrap(~feature, ncol = 4) + labs(x = xlabel, y = "Feature value")
+  }
+}
+```
+
+```{r figure-1, fig.cap="Figure 1. Features versus true t. Blue paths join noiseless values in true-position order; gray points are observations."}
+plot_features(data, data$t, "True latent position", signal_position = data$t)
+```
+
+```{r figure-2, fig.cap="Figure 2. Features versus the reference column. Blue paths are noiseless pairs; gray points contain noise on both axes."}
+j <- match(config$reference, colnames(data$X))
+stopifnot(!is.na(j))
+plot_features(data, data$X[, j], config$reference,
+              signal_position = data$signal[, j])
+```
+
+## PCA
+
+PC1 uses centered, unscaled observed columns. Its sign is aligned with truth
+only for display; positions retain score spacing.
+
+```{r pca}
+pca <- prcomp(data$X, center = TRUE, scale. = FALSE)
+pc_raw <- pca$x[, 1]
+direction <- if (cor(pc_raw, data$t, method = "spearman") < 0) -1 else 1
+pc_position <- scale01(direction * pc_raw)
+```
+
+```{r figure-3, fig.cap="Figure 3. Observations versus scaled PC1 scores; colors indicate true t."}
+plot_features(data, pc_position, "PC1 scores scaled to [0,1]")
+```
+
+```{r figure-4, fig.height=5, fig.cap="Figure 4. PCA positions versus true t. Dashed line: identity."}
+ggplot(data.frame(truth = data$t, estimate = pc_position), aes(truth, estimate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = "gray70") +
+  geom_point(alpha = 0.65, size = 1.2) + coord_equal() +
+  labs(x = "True latent position", y = "Scaled PC1 position",
+       title = sprintf("PCA: |Spearman rho| = %.3f", recovery(pc_position, data$t)))
+```
+
+## MPCurve
+
+Single-ordering CAVI, initialized from PCA using quantile bins. Fixed prior
+means probability `1/K` throughout fitting. Uses MPCurver 0.3.4 internal helpers.
+
+```{r fitting-module}
+fit_from_positions <- function(X, position, config) {
+  init <- MPCurver:::.cavi_exact_k_init_from_ordering(
+    X = X, ordering_vec = position, K = config$K,
+    discretization = "quantile", strict_K = TRUE)
+  gamma0 <- MPCurver:::.cavi_hard_gamma_from_cluster_rank(
+    init$cluster_rank, nrow(X), config$K)
+  MPCurver:::cavi(
+    X = X, K = config$K, responsibilities_init = gamma0,
+    position_prior_init = rep(1 / config$K, config$K),
+    position_prior = config$position_prior, sigma2_init = init$sigma2,
+    lambda_init = rep(1, ncol(X)), rw_q = 2L, ridge = 0,
+    discretization = "quantile", max_iter = config$max_iter,
+    tol = config$tol, convergence = "relative", verbose = FALSE)
+}
+fit <- fit_from_positions(data$X, pc_raw, config)
+mp_position <- as.numeric(fit$gamma %*% seq(0, 1, length.out = config$K))
+if (direction < 0) mp_position <- 1 - mp_position
+initial_elbo <- head(fit$elbo_trace, 1)
+final_elbo <- tail(fit$elbo_trace, 1)
+# Keep convergence status visible even when the iteration budget is exhausted.
+data.frame(version = as.character(packageVersion("MPCurver")),
+           iterations = fit$iter, converged = fit$converged,
+           initial_ELBO = initial_elbo, final_ELBO = final_elbo)
+```
+
+```{r figure-5, fig.cap="Figure 5. Observations versus MPCurve posterior mean positions; colors indicate true t."}
+plot_features(data, mp_position, "MPCurve posterior mean position")
+```
+
+```{r figure-6, fig.height=5.8, fig.cap="Figure 6. Before/after comparison against true t, with the same orientation. Initial ELBO is evaluated after PCA quantile discretization and variational initialization, before CAVI updates."}
+labels <- c(
+  sprintf("PCA initialization\nrho = %.3f | ELBO = %.2f",
+          recovery(pc_position, data$t), initial_elbo),
+  sprintf("MPCurve: %d updates, converged = %s\nrho = %.3f | ELBO = %.2f",
+          fit$iter, fit$converged, recovery(mp_position, data$t), final_elbo))
+comparison <- data.frame(
+  truth = rep(data$t, 2), estimate = c(pc_position, mp_position),
+  stage = factor(rep(labels, each = length(data$t)), levels = labels))
+ggplot(comparison, aes(truth, estimate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2, color = "gray70") +
+  geom_point(alpha = 0.65, size = 1.2) + facet_wrap(~stage, nrow = 1) +
+  coord_equal(xlim = c(0, 1), ylim = c(0, 1)) +
+  labs(x = "True latent position", y = "Estimated latent position")
+```
+
+```{r provenance, include=FALSE}
+# Available in the knitted session for saving/reusing results.
+experiment <- list(config = config, data = data, pca = pca, fit = fit,
+                   pc_position = pc_position, mp_position = mp_position,
+                   session = sessionInfo())
+```

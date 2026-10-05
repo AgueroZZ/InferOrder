@@ -1,0 +1,8 @@
+"id","ordering","noise_scale"
+"B_noise0","B",0
+"B_noise05","B",0.5
+"B_noise1","B",1
+"A_noise1","A",1
+"C_noise1","C",1
+"D_noise1","D",1
+"E_noise1","E",1

@@ -117,11 +117,12 @@ save_plot('example_trajectories',function(){
     xlab='True latent position',ylab='Noiseless feature value',main='Replicate 1: all 12 trajectories')
   for(noise in c('low','high')) {
     d <- readRDS(file.path(study,'inputs',paste0(noise,'_r01.rds')))
-    point_colors <- hcl.colors(200,'Viridis')[rank(d$truth)]
-    pca <- prcomp(d$X,center=FALSE)
-    plot(pca$x[,1:2],pch=16,col=point_colors,cex=.7,xlab='PC1 score',ylab='PC2 score',
-         main=if(noise=='low')'Low noise: PCA geometry' else 'High noise: PCA geometry')
-    legend('topright',c('Earlier t','Later t'),col=hcl.colors(200,'Viridis')[c(1,200)],pch=16,bty='n',cex=.8)
+    # Use the saved shared initialization, preserving score spacing and sign.
+    plot(d$truth,d$initial,pch=16,col='#0072B2',cex=.7,
+         xlab='True latent position',ylab='PC1 score (unit variance)',
+         main=if(noise=='low')'Low noise (SNR 16)' else 'High noise (SNR 1)')
+    legend('topleft',sprintf('Absolute Spearman = %.3f',recovery(d$truth,d$initial)),
+           bty='n',cex=.85)
   }
 },width=13,height=4.6)
 writeLines(c('Verified: 60 paired inputs; 300 method/baseline records; input SHA256 hashes;',
